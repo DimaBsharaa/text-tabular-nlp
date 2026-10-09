@@ -25,6 +25,7 @@ Entry template:
 | E5 | 2026-10-09 | fast engine (cached frozen layers + bucketing) + compute budget | CPU 10.7× on Book Price; old-engine pilot 12.4 GPU-h/variant |
 | note | 2026-10-09 | tar_repro frozen at 96c1f5c; golden-fingerprint test | 14 tests pass |
 | E6 | 2026-10-09 | T4 speed benchmark, Book Price fold 0 | fast 11.9×/epoch; pilot 1.1 GPU-h, full 9.6 GPU-h per variant |
+| E7 | 2026-10-09 | Book Price fold 0, fast vs old engine | same fine-tune quality; CatBoost 0.5608 vs 0.5736 (noise ~0.01) |
 
 ---
 
@@ -275,3 +276,30 @@ Changes to P1:
   **19.6 GPU-hours** with TabPFN's separate fine-tune. Old engine for comparison: 12.4 / 108 / 219.
 - Conclusion: the full benchmark is now feasible on Colab (TAR baseline + 3 variants ≈ 40–80 GPU-hours).
 - Next step: run the tar_repro pilot (cell 7) on the fast engine.
+
+## E7 — Book Price fold 0 re-run on the fast engine vs the old engine   (2026-10-09, commit 96c1f5c, Colab T4)
+- Question: does the fast engine give the same tar_repro result as the old one on a real job?
+- Source: Colab export `results_export.zip` (2 result JSONs, log, benchmark), read from Windows Downloads.
+- Result (CatBoost / REG_TEXT_BOOK_PRICE / fold 0):
+  | | old engine (tar_engine/1, E4) | fast engine (tar_engine/2) |
+  |---|---|---|
+  | best val loss (epoch) | 2.8606 (17 of 20) | 2.8626 (18 of 21) |
+  | head R² e5_train / e5_val / learner_val / test | 0.419 / 0.331 / 0.353 / 0.371 | 0.426 / 0.331 / 0.358 / 0.372 |
+  | **CatBoost R² (test)** | **0.5736** | **0.5608** |
+  | TAR train / whole job | 38.6 / 40.3 min | 3.2 / 5.3 min (cache 19 s) |
+  CSV `ft` 0.5793; CSV CatBoost TAR fold sd 0.016 → fast is −0.0185 (1.2 sd), old was −0.0056.
+- Reading: the fine-tune itself is equally good on both engines (val loss +0.002, head R² within ±0.007 on every
+  split), but the learner's score moved by −0.013. That is fine-tune-to-fine-tune noise reaching the learner:
+  a different but equally good LoRA solution → different embeddings → different PCA features → different trees.
+  (E1: a much smaller embedding perturbation, CPU vs GPU frozen E5, moved the score by +0.005.)
+- Hostile review:
+  - Is the fast engine worse? Not supported: every fine-tune metric is equal or slightly better; one fold cannot
+    separate engine effect from noise. The pilot (18 jobs) will show whether tar_repro sits systematically below CSV.
+  - Same split / commit / clean tree: both JSONs report the same n_train/n_test; fast run at 96c1f5c, not dirty.
+- **Consequence for the pilot rule (P1):** if a single fine-tune moves a fold's score by ~±0.01 at random, a variant
+  that changes nothing could still reach "mean gain ≥ +0.005" by luck. Over 6 datasets × 3 folds the mean
+  difference of two runs has a noise sd of roughly 0.014/√18 ≈ 0.003 if all folds were this noisy (classification
+  AUROC is usually less noisy). Proposal for Dima (not adopted): measure it directly with an A/A control — run
+  tar_repro with a second seed (43) on the 18 pilot jobs (~1.1 GPU-h) and apply the advance rule to seed 43 vs
+  seed 42 before any variant result exists. If the A/A run "passes", the bar is too low.
+- Next step: run the remaining 17 pilot jobs; Dima decides on the A/A control.
