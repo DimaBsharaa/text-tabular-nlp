@@ -44,6 +44,19 @@ def load_runs(out: str, run_name: str, learner: str = "catboost") -> pd.DataFram
     return df[df.dataset.isin(PILOT_DATASETS) & df.fold.isin(PILOT_FOLDS)].reset_index(drop=True)
 
 
+def load_control(out: str, run_names: list[str], learner: str = "catboost") -> pd.DataFrame:
+    """P1 amendment 3: control score per (dataset, fold) = mean over the given runs (tar_repro seeds 42 and 43).
+    Only (dataset, fold) pairs present in ALL runs are kept, so an incomplete control can never pass a variant."""
+    runs = [load_runs(out, n, learner)[["dataset", "fold", "score", "csv_tar"]] for n in run_names]
+    m = runs[0]
+    for i, r in enumerate(runs[1:], 1):
+        m = m.merge(r[["dataset", "fold", "score"]], on=["dataset", "fold"], suffixes=("", f"_{i}"))
+    cols = ["score"] + [f"score_{i}" for i in range(1, len(runs))]
+    m["score"] = m[cols].mean(axis=1)
+    m["run_name"] = "+".join(run_names)
+    return m[["run_name", "dataset", "fold", "score", "csv_tar"]]
+
+
 def _wilcoxon(d: np.ndarray) -> dict:
     d = np.asarray(d, dtype=float)
     if len(d) < 2 or np.allclose(d, 0):
@@ -124,7 +137,9 @@ def main() -> None:
     p.add_argument("--out", required=True, help="results root (the folder containing tar_repro/)")
     p.add_argument("--baseline", default="tar_repro")
     p.add_argument("--aa", default="tar_repro__s43", help="run name of the A/A control")
-    p.add_argument("--variant", action="append", default=[], help="run name(s) of variants to test vs baseline")
+    p.add_argument("--variant", action="append", default=[], help="run name(s) of variants to test vs the control")
+    p.add_argument("--control", default="tar_repro,tar_repro__s43",
+                   help="comma-separated runs averaged per (dataset, fold) = the P1 control (amendment 3)")
     p.add_argument("--report_dir", default=join(REPO_ROOT, "reports", "pilot"))
     a = p.parse_args()
     os.makedirs(a.report_dir, exist_ok=True)
@@ -155,10 +170,13 @@ def main() -> None:
         json.dump({**aa, "threshold_candidates": cand}, open(join(a.report_dir, "aa_control.json"), "w"), indent=1)
         if aa["passes"]:
             print("\n  !! The A/A control PASSES the advance rule -> amendment 2: tighten the rule before any variant runs.")
+    control = load_control(a.out, a.control.split(","))
+    print(f"\ncontrol ({a.control}): {len(control)} / 18 (dataset, fold) pairs with all runs present")
     for v in a.variant:
-        v_ds, vs = advance_rule(load_runs(a.out, v), base)
-        _show(f"Variant {v} vs {a.baseline} under the advance rule", v_ds, vs)
+        v_ds, vs = advance_rule(load_runs(a.out, v), control)
+        _show(f"Variant {v} vs control ({a.control}) under the advance rule", v_ds, vs)
         v_ds.to_csv(join(a.report_dir, f"advance_{v}.csv"), index=False)
+        json.dump(vs, open(join(a.report_dir, f"advance_{v}.json"), "w"), indent=1)
 
 
 if __name__ == "__main__":

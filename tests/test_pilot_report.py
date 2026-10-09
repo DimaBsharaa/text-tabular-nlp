@@ -61,3 +61,18 @@ def test_incomplete_never_passes_and_old_engine_files_ignored(tmp_path):
     assert len(base) == 18
     _, s = pr.advance_rule(pr.load_runs(out, "v"), base)
     assert not s["complete"] and not s["passes"]
+
+
+def test_control_is_mean_of_seeds_and_requires_both(tmp_path):
+    out = str(tmp_path)
+    a, b = _scores(seed=1), _scores(seed=2)
+    _write(out, "tar_repro", a)
+    _write(out, "tar_repro__s43", dict(list(b.items())[:17]), seed=43)  # one pair missing
+    c = pr.load_control(out, ["tar_repro", "tar_repro__s43"])
+    assert len(c) == 17
+    row = c.iloc[0]
+    k = (row.dataset, row.fold)
+    assert np.isclose(row.score, (a[k] + b[k]) / 2)
+    _write(out, "v", {k: v + 0.02 for k, v in a.items()})
+    _, s = pr.advance_rule(pr.load_runs(out, "v"), c)
+    assert not s["complete"] and not s["passes"]  # incomplete control -> never passes

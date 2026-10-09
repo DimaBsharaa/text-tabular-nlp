@@ -29,6 +29,7 @@ Entry template:
 | P1 am. 2 | 2026-10-09 | A/A control (seed 43) + engine-bias check; C1: leaderboard TAR primary, tar_repro secondary | awaiting the 18 tar_repro results |
 | E8 | 2026-10-09 | tar_repro pilot seed 42 (18 jobs): engine bias + leakage | bias −0.0036 (p 0.15; Book Price/Readability −0.018/−0.011); leakage gap +0.031 (16/18, p 0.0002) |
 | E9 | 2026-10-10 | A/A control, seed 43 vs 42 | does not pass (+0.0028, 3/6) → advance rule unchanged; seed sd per fold ≈ 0.008 |
+| P1 am. 3 / P2 | 2026-10-10 | control = mean of seeds 42+43; variant spec + predictions (docs/method_spec.md) | written before any variant result |
 
 ---
 
@@ -174,6 +175,15 @@ Changes to P1:
   - Engine-bias check (reported, not an advance criterion): after the 18 tar_repro jobs, mean and std of
     (tar_repro − leaderboard ft) per dataset and overall, with paired two-sided Wilcoxon tests over the 18 jobs and
     over the 6 dataset means (`pilot_report.py`).
+- **Amendment 3 (2026-10-10): control = mean of tar_repro seeds 42 and 43, added BEFORE any variant result exists.**
+  - For every (dataset, fold) the control score is the mean of `tar_repro` (seed 42) and `tar_repro__s43`
+    (seed 43); the per-dataset gain is mean over folds 0–2 of (variant − control). Both control runs must exist.
+  - Why: averaging two fine-tunes halves the control's seed variance: Var(variant − control) = σ² + σ²/2 = 1.5σ²
+    instead of 2σ² with seed 42 alone (E9: per-fold seed sd σ ≈ 0.008).
+  - Caveat (Claude): variants also run with seed 42; if same-seed runs are positively correlated (same LoRA init,
+    same batch order), seed 42 alone would cancel part of that noise and the mean keeps only half of it. Not
+    measured; judged smaller than the variance gain.
+  - The advance rule itself is unchanged (mean gain ≥ +0.005 and ≥ 4/6 wins).
 
 ## E3 — TAR engine + experiment runner + Colab notebook (no real results yet)   (2026-10-09, base 7a7a286; code in this entry's commit)
 - Question: can we re-run Joint TAR ourselves, faithfully, with caching, resumability and a leakage diagnostic?
@@ -396,3 +406,22 @@ Changes to P1:
 - Hostile review: noise simulation assumes independent, zero-mean fold differences; real folds share data, so the
   2.9% is approximate. Variant-vs-tar_repro comparisons will both use seed 42, the same setting as this A/A.
 - Next step: Dima defines the variants; they are judged by the unchanged P1 rule.
+- **Known limitation (added 2026-10-10, Dima's decision: not diagnosed further):** tar_repro sits slightly below the
+  leaderboard on the two datasets with the longest texts — Book Price (two-seed mean −0.012) and Book Readability
+  (−0.006). Overall bias with both seeds is −0.0022 (n.s.), the leaderboard is the primary baseline, and GPU time
+  goes to the variants. Length-bucketed batching (or no dropout in the frozen layers) is a plausible but untested
+  cause.
+
+## Pilot protocol P2 — TAR variants. Written 2026-10-10, BEFORE any variant is implemented or run. Do not edit.
+- **Spec:** `docs/method_spec.md` (sections 1–6 = Dima's spec; section 7 = details Claude resolved, to confirm).
+- **Variants** (built and pushed in this order): (a) `offset`; (b) `prefix`, `prefix_offset`;
+  (c) `context`, `context_offset`. Each is run on the 18 P1 pilot jobs (6 datasets × folds 0–2, CatBoost, seed 42,
+  T4) and judged by the P1 advance rule (unchanged) against the P1 control (amendment 3).
+- **Predictions (Dima, 2026-10-10):**
+  - `offset` ≥ tar_repro, with larger gains where the structured model is strong and text is complementary;
+  - `context` ≈ tar_repro or slightly worse;
+  - `context_offset` ≥ `offset`;
+  - `prefix` ≈ tar_repro (risk: it learns the structure and ignores the text);
+  - `prefix_offset` ≥ `offset`, largest gains where Phase 0 complementarity is large.
+- **Diagnostics recorded per job:** TAR head qualities; for offset variants struct_only_quality, combined_quality
+  and lift on e5_train / e5_val / learner_val / test (spec section 5).
