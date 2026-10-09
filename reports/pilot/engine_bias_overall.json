@@ -1,0 +1,16 @@
+{
+ "n_jobs": 18,
+ "mean_diff": -0.0036039771004750163,
+ "std_diff": 0.011593533152079347,
+ "n_negative": 12,
+ "wilcoxon_jobs": {
+  "n": 18,
+  "W": 52.0,
+  "p_value": 0.15404510498046875
+ },
+ "wilcoxon_datasets": {
+  "n": 6,
+  "W": 8.0,
+  "p_value": 0.6875
+ }
+}

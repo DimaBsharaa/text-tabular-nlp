@@ -27,6 +27,7 @@ Entry template:
 | E6 | 2026-10-09 | T4 speed benchmark, Book Price fold 0 | fast 11.9×/epoch; pilot 1.1 GPU-h, full 9.6 GPU-h per variant |
 | E7 | 2026-10-09 | Book Price fold 0, fast vs old engine | same fine-tune quality; CatBoost 0.5608 vs 0.5736 (noise ~0.01) |
 | P1 am. 2 | 2026-10-09 | A/A control (seed 43) + engine-bias check; C1: leaderboard TAR primary, tar_repro secondary | awaiting the 18 tar_repro results |
+| E8 | 2026-10-09 | tar_repro pilot seed 42 (18 jobs): engine bias + leakage | bias −0.0036 (p 0.15; Book Price/Readability −0.018/−0.011); leakage gap +0.031 (16/18, p 0.0002) |
 
 ---
 
@@ -325,3 +326,46 @@ Changes to P1:
   tar_repro with a second seed (43) on the 18 pilot jobs (~1.1 GPU-h) and apply the advance rule to seed 43 vs
   seed 42 before any variant result exists. If the A/A run "passes", the bar is too low.
 - Next step: run the remaining 17 pilot jobs; Dima decides on the A/A control.
+
+## E8 — tar_repro pilot, seed 42: engine-bias check + leakage diagnostic (18/18 jobs)   (2026-10-09, commit 96c1f5c, Colab T4)
+- Source: Colab export `results_export (2).zip` (18 result JSONs + logs); analysis `scripts/pilot_report.py` →
+  `reports/pilot/engine_bias.csv`, `engine_bias_overall.json`, `leakage.csv`. All 18 jobs on `tar_engine/2`
+  (fast path), seed 42, CatBoost; 66.7 job-minutes in total on a T4.
+- **Engine bias** (tar_repro − leaderboard `ft`, per fold):
+  | dataset | fold 0 | fold 1 | fold 2 | mean | std |
+  |---|---|---|---|---|---|
+  | Data Scientist Salary | −0.0017 | +0.0020 | −0.0039 | −0.0012 | 0.0030 |
+  | Product Sentiment | +0.0203 | +0.0067 | −0.0084 | +0.0062 | 0.0144 |
+  | Baby Products | +0.0008 | −0.0107 | +0.0151 | +0.0017 | 0.0129 |
+  | Book Price | −0.0185 | −0.0116 | −0.0226 | −0.0176 | 0.0055 |
+  | Book Readability | −0.0232 | −0.0028 | −0.0069 | −0.0109 | 0.0108 |
+  | Montgomery Salaries | −0.0012 | +0.0053 | −0.0037 | +0.0001 | 0.0047 |
+  Overall: mean −0.0036, std 0.0116, 12/18 negative; paired two-sided Wilcoxon over 18 jobs W = 52, p = 0.154
+  (critical W for n = 18: 40); over the 6 dataset means p = 0.69. → **no significant overall bias**, but Book Price
+  (3/3 folds negative, −0.018) and Book Readability (3/3, −0.011) are consistently below the leaderboard. They are the
+  two datasets with the longest cells (mean 53 and 50 tokens vs 12–38 elsewhere), i.e. where the fast path's
+  length-bucketing changes batch composition most (long Synopsis-like cells batched apart from short ones).
+  Hypothesis, not shown: bucketing (or no dropout in frozen layers) costs ~0.01–0.02 on long-text multi-column data.
+  On Book Price fold 0 the old engine gave −0.0056 (E4) vs fast −0.0185 (E7) with equal fine-tune quality.
+- **Leakage diagnostic** (head quality of the fine-tuning head; AUROC for cls, R² for reg; mean over 3 folds):
+  | dataset | e5_train | learner_val | test | gap (train − test) | gap vs learner_val |
+  |---|---|---|---|---|---|
+  | Data Scientist Salary | 0.836 | 0.804 | 0.804 | +0.032 | +0.032 |
+  | Product Sentiment | 0.845 | 0.813 | 0.811 | +0.034 | +0.032 |
+  | Baby Products | 0.465 | 0.424 | 0.466 | −0.001 | +0.041 |
+  | Book Price | 0.410 | 0.354 | 0.357 | +0.053 | +0.056 |
+  | Book Readability | 0.578 | 0.540 | 0.549 | +0.028 | +0.038 |
+  | Montgomery Salaries | 0.582 | 0.568 | 0.541 | +0.041 | +0.014 |
+  Overall gap e5_train − test: mean +0.031, std 0.023, positive in 16/18 jobs, Wilcoxon p = 0.0002; vs learner_val
+  positive on all 6 datasets. → the fine-tuned encoder is consistently better on its own training rows (relative
+  +4% for cls AUROC, +5–15% for reg R²). This is the in-sample effect idea C targets; whether it *hurts the learner*
+  is not measured here (that is what a cross-fitted variant would test).
+- Other observations: Baby Products ran the full 50 epochs (best 49) on all folds — upstream's 50-epoch cap binds
+  (faithful, but its TAR is under-trained). Montgomery Salaries has 4 text columns at full size (summary: 3).
+- Hostile review:
+  - Old-engine Book Price JSON (`fold0.tar_engine-1.json`) excluded by `load_runs`; all 18 used files are engine 2.
+  - Leaderboard values are the same (dataset, CatBoost, `ft`, fold) rows; folds 0–2; same commit for all jobs.
+  - 3 folds per dataset: per-dataset means have large uncertainty (e.g. Product Sentiment std 0.014).
+  - The primary C1 baseline is the leaderboard, so a lower engine can only make our result look worse, never better.
+- Next step: A/A control (seed 43, running). Open question for Dima: diagnose the Book Price / Book Readability gap
+  (e.g. same jobs with `--no_fast`, ~3 GPU-h, or fast path without bucketing as a separate run name).
