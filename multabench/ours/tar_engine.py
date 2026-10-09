@@ -17,7 +17,17 @@ Deliberate differences (speed / determinism only):
   - dynamic padding: truncate at 512, pad to the longest sequence in the batch (upstream pads everything to 512)
   - fp16 autocast + GradScaler on GPU (upstream trains in fp32)
   - our own fixed seed for init and shuffling (upstream's Trainer RNG stream can't be reproduced bit-for-bit)
-  - inference deduplicates identical texts per column (same text → same embedding)
+  - identical cell strings are tokenized / encoded once (same text → same result)
+Fast path (default; `fast=False` = the old path above, kept for comparison):
+  - LoRA only touches the top `text_layers` (3) of 12 layers, so the frozen embeddings + lower 9 layers are run ONCE
+    per unique cell string (eval mode, no grad) and their output is stored in fp16 on local disk (np.memmap, one row
+    per token, with per-cell offsets/lengths). Training and inference then run only the top 3 layers + head on it.
+    DEVIATION: the frozen lower layers run without dropout during training (upstream: dropout 0.1 everywhere in
+    train mode). Everything above layer 9 (LoRA, its dropout, the top layers' dropout, head) is unchanged.
+  - length-bucketed batches: shuffle, cut into chunks of 50 batches, sort each chunk by length, cut into batches of
+    256, shuffle the batch order. Same batch size and same optimizer steps per epoch; batches are just less padded
+    (batch composition is length-correlated instead of fully random).
+  - falls back to the old path (logged) if the lower-layer cache would not fit on local disk.
 
 Besides embeddings, every fit records head quality (AUROC / R² of the fine-tuning head itself) on four row sets:
   e5_train (rows E5 was trained on), e5_val (rows used for early stopping), learner_val (the learner's own
@@ -45,6 +55,7 @@ from pandas import DataFrame, Series
 from peft import LoraConfig, get_peft_model
 from sklearn.preprocessing import LabelEncoder
 from transformers import AutoModel, AutoTokenizer, get_linear_schedule_with_warmup
+from transformers.modeling_attn_mask_utils import _prepare_4d_attention_mask_for_sdpa
 
 from multabench.baselines.training.metrics import calculate_metric
 from multabench.e5.constants import E5_DIM, E5_NUM_LAYERS, E5_PASSAGE_PREFIX, E5_SMALL_V2, format_e5_passage
@@ -53,7 +64,7 @@ from multabench.finetune.utils import encoder_finetune_loss
 from multabench.preprocessing.discretize import discretize_numerical
 from multabench.preprocessing.splits import split_to_val
 
-ENGINE_VERSION = "tar_engine/1"
+ENGINE_VERSION = "tar_engine/2"
 VARIANTS = {"tar_repro"}
 SPLITS = ("e5_train", "e5_val", "learner_val", "test")
 
@@ -75,11 +86,15 @@ class TarConfig:
     n_bins: int = 20
     fp16: bool = True  # only takes effect on CUDA
     seed: int = 42
-    # Not part of the result: only how the work is chunked.
+    fast: bool = True  # lower-layer cache + length-bucketed batches (see module docstring)
+    bucket_chunk_batches: int = 50
+    # Not part of the result: only how the work is chunked / where it is stored.
     micro_batch_size: int = 256  # split each 256-batch into chunks of this size (gradient accumulation) if VRAM is short
     eval_batch_size: int = 256
+    lower_cache_dir: Optional[str] = None  # local disk (not Drive); default ~/.cache/tar_lower_cache
+    stop_after_epochs: Optional[int] = None  # benchmarking only: stop early, keep the full-length LR schedule
 
-    _NON_RESULT_FIELDS = ("micro_batch_size", "eval_batch_size")
+    _NON_RESULT_FIELDS = ("micro_batch_size", "eval_batch_size", "lower_cache_dir", "stop_after_epochs")
 
     def result_dict(self, device: torch.device) -> dict:
         d = {k: v for k, v in asdict(self).items() if k not in self._NON_RESULT_FIELDS}
@@ -143,27 +158,29 @@ def prepare_e5_data(x_fit: DataFrame, y_fit: Series, text_cols: list[str], is_cl
             "val_labels": np.repeat(label_enc.transform(y_va.astype(str).to_numpy()), rep)}
 
 
-# --------------------------------------------------------------------------------------------- batching
+# --------------------------------------------------------------------------------------------- tokens + batches
 
-class _Tokenized:
-    """Pre-tokenized texts (truncated at max_length, unpadded) + dynamic-padding batch builder."""
+class TokenStore:
+    """Unique cell strings, tokenized once (truncated at max_length, unpadded). Cells refer to strings by id."""
 
-    def __init__(self, texts: list[str], tokenizer, max_length: int):
-        enc = tokenizer(texts, truncation=True, max_length=max_length, padding=False)
-        self.ids = enc["input_ids"]
-        self.lengths = np.array([len(i) for i in self.ids])
+    def __init__(self, strings: list[str], tokenizer, max_length: int):
+        self.strings = strings
+        self.index = {s: i for i, s in enumerate(strings)}
+        assert len(self.index) == len(strings), "TokenStore strings must be unique"
+        self.ids = tokenizer(strings, truncation=True, max_length=max_length, padding=False)["input_ids"]
+        self.lengths = np.array([len(i) for i in self.ids], dtype=np.int64)
         self.pad_id = tokenizer.pad_token_id
 
-    def __len__(self) -> int:
-        return len(self.ids)
+    def uids(self, texts: list[str]) -> np.ndarray:
+        return np.array([self.index[t] for t in texts], dtype=np.int64)
 
-    def batch(self, rows: np.ndarray, device: torch.device) -> tuple[torch.Tensor, torch.Tensor]:
-        max_len = int(self.lengths[rows].max())
-        input_ids = torch.full((len(rows), max_len), self.pad_id, dtype=torch.long)
-        mask = torch.zeros((len(rows), max_len), dtype=torch.long)
-        for i, r in enumerate(rows):
-            n = self.lengths[r]
-            input_ids[i, :n] = torch.tensor(self.ids[r])
+    def batch(self, uids: np.ndarray, device: torch.device) -> tuple[torch.Tensor, torch.Tensor]:
+        max_len = int(self.lengths[uids].max())
+        input_ids = torch.full((len(uids), max_len), self.pad_id, dtype=torch.long)
+        mask = torch.zeros((len(uids), max_len), dtype=torch.long)
+        for i, u in enumerate(uids):
+            n = self.lengths[u]
+            input_ids[i, :n] = torch.tensor(self.ids[u])
             mask[i, :n] = 1
         return input_ids.to(device), mask.to(device)
 
@@ -172,19 +189,57 @@ def _autocast(device: torch.device, enabled: bool):
     return torch.autocast(device_type=device.type, dtype=torch.float16, enabled=enabled)
 
 
+def random_batches(n: int, batch_size: int, gen: torch.Generator) -> list[np.ndarray]:
+    perm = torch.randperm(n, generator=gen).numpy()
+    return [perm[i:i + batch_size] for i in range(0, n, batch_size)]
+
+
+def bucketed_batches(lengths: np.ndarray, batch_size: int, gen: torch.Generator, chunk_batches: int) -> list[np.ndarray]:
+    """Shuffle; cut into chunks of chunk_batches*batch_size; sort each chunk by length; cut into batches; shuffle
+    the batch order. Same batch size and same number of batches as random_batches (only the last one is partial)."""
+    perm = torch.randperm(len(lengths), generator=gen).numpy()
+    chunk = chunk_batches * batch_size
+    batches = []
+    for c in range(0, len(perm), chunk):
+        part = perm[c:c + chunk]
+        part = part[np.argsort(lengths[part], kind="stable")]
+        batches += [part[i:i + batch_size] for i in range(0, len(part), batch_size)]
+    order = torch.randperm(len(batches), generator=gen).numpy()
+    return [batches[i] for i in order]
+
+
 # --------------------------------------------------------------------------------------------- model
 
 def build_model(cfg: TarConfig, d_output: int, device: torch.device) -> E5ForTuning:
     """Fresh e5 + LoRA + head, built in the same order and with the same settings as finetune_e5_with_lora."""
-    backbone = AutoModel.from_pretrained(cfg.model_name)
+    backbone = AutoModel.from_pretrained(cfg.model_name, attn_implementation="sdpa")
     num_layers = E5_NUM_LAYERS[cfg.model_name]
-    n_layers = min(max(1, cfg.text_layers), num_layers)
     lora = LoraConfig(r=cfg.lora_rank, lora_alpha=cfg.lora_rank * 2,
-                      target_modules=_get_lora_target_modules(list(range(num_layers))[-n_layers:]),
+                      target_modules=_get_lora_target_modules(list(range(num_layers))[-n_lora_layers(cfg):]),
                       lora_dropout=cfg.lora_dropout, bias="none")
     backbone = get_peft_model(backbone, lora)
     model = E5ForTuning(backbone=backbone, d_output=d_output, d_model=E5_DIM[cfg.model_name])
     return model.to(device)
+
+
+def n_lora_layers(cfg: TarConfig) -> int:
+    return min(max(1, cfg.text_layers), E5_NUM_LAYERS[cfg.model_name])
+
+
+def n_frozen_layers(cfg: TarConfig) -> int:
+    return E5_NUM_LAYERS[cfg.model_name] - n_lora_layers(cfg)
+
+
+def _bert(model: E5ForTuning):
+    return model.backbone.base_model.model  # PeftModel -> LoraModel -> BertModel
+
+
+def _run_layers(layers, h: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+    """Run BertLayers exactly as BertModel does with SDPA attention (same 4-d mask helper)."""
+    m4 = _prepare_4d_attention_mask_for_sdpa(mask, h.dtype, tgt_len=h.shape[1])
+    for layer in layers:
+        h = layer(h, m4)[0]
+    return h
 
 
 def _trainable_state(model: torch.nn.Module) -> Dict[str, torch.Tensor]:
@@ -204,56 +259,181 @@ def _optimizer(model: torch.nn.Module, cfg: TarConfig) -> torch.optim.Optimizer:
     return torch.optim.AdamW(groups, lr=cfg.learning_rate, betas=(0.9, 0.999), eps=1e-8)
 
 
+# --------------------------------------------------------------------------------------------- lower-layer cache
+
+class LowerCache:
+    """Output of the frozen embeddings + lower layers for every unique string: fp16 np.memmap (one row per token)
+    on local disk, plus per-string offsets/lengths. Keyed by content, so seeds/learners/variants with the same
+    strings share it."""
+
+    def __init__(self, path: str):
+        meta = json.load(open(join(path, "meta.json")))
+        self.path, self.meta = path, meta
+        self.offsets = np.load(join(path, "offsets.npy"))
+        self.lengths = np.load(join(path, "lengths.npy"))
+        self.h = np.memmap(join(path, "hidden.f16"), dtype=np.float16, mode="r", shape=(meta["total_tokens"], meta["d"]))
+
+    @staticmethod
+    def key(cfg: TarConfig, tokens: TokenStore) -> str:
+        h = hashlib.sha1(json.dumps([ENGINE_VERSION, cfg.model_name, cfg.max_length, n_frozen_layers(cfg)]).encode())
+        for s in tokens.strings:
+            h.update(s.encode())
+            h.update(b"\x00")
+        return h.hexdigest()[:16]
+
+    @classmethod
+    def get_or_build(cls, model: E5ForTuning, tokens: TokenStore, cfg: TarConfig, device: torch.device) -> Optional["LowerCache"]:
+        root = cfg.lower_cache_dir or join(os.path.expanduser("~"), ".cache", "tar_lower_cache")
+        os.makedirs(root, exist_ok=True)
+        path = join(root, cls.key(cfg, tokens))
+        if exists(join(path, "meta.json")):
+            print(f"  [TAR] lower-layer cache hit ({path})", flush=True)
+            return cls(path)
+        d = model.head.in_features
+        total = int(tokens.lengths.sum())
+        need = total * d * 2
+        free = shutil.disk_usage(root).free
+        if need > 0.8 * free - 2 * 1024 ** 3:
+            print(f"  [TAR] lower-layer cache would need {need / 1e9:.1f} GB but only {free / 1e9:.1f} GB free "
+                  f"-> falling back to the full-model path", flush=True)
+            return None
+        t0 = time.time()
+        use_fp16 = bool(cfg.fp16 and device.type == "cuda")
+        tmp = tempfile.mkdtemp(prefix=".tmp_", dir=root)
+        offsets = np.concatenate([[0], np.cumsum(tokens.lengths)[:-1]]).astype(np.int64)
+        h_out = np.memmap(join(tmp, "hidden.f16"), dtype=np.float16, mode="w+", shape=(total, d))
+        bert, k = _bert(model), n_frozen_layers(cfg)
+        model.eval()
+        order = np.argsort(tokens.lengths, kind="stable")
+        with torch.no_grad():
+            for i in range(0, len(order), cfg.eval_batch_size):
+                uids = order[i:i + cfg.eval_batch_size]
+                ids, mask = tokens.batch(uids, device)
+                with _autocast(device, use_fp16):
+                    h = _run_layers(bert.encoder.layer[:k], bert.embeddings(input_ids=ids), mask)
+                h = h.to(torch.float16).cpu().numpy()
+                for j, u in enumerate(uids):
+                    h_out[offsets[u]:offsets[u] + tokens.lengths[u]] = h[j, :tokens.lengths[u]]
+        h_out.flush()
+        del h_out
+        np.save(join(tmp, "offsets.npy"), offsets)
+        np.save(join(tmp, "lengths.npy"), tokens.lengths)
+        json.dump({"total_tokens": total, "d": d, "n_strings": len(tokens.strings), "frozen_layers": k,
+                   "model_name": cfg.model_name, "build_seconds": round(time.time() - t0, 1), "bytes": need},
+                  open(join(tmp, "meta.json"), "w"))
+        if exists(path):
+            shutil.rmtree(path)
+        os.replace(tmp, path)
+        print(f"  [TAR] built lower-layer cache: {len(tokens.strings)} strings, {total} tokens, {need / 1e9:.2f} GB, "
+              f"{time.time() - t0:.0f}s", flush=True)
+        return cls(path)
+
+    def batch(self, uids: np.ndarray, device: torch.device) -> tuple[torch.Tensor, torch.Tensor]:
+        lens = self.lengths[uids]
+        out = np.zeros((len(uids), int(lens.max()), self.h.shape[1]), dtype=np.float16)
+        mask = torch.zeros((len(uids), int(lens.max())), dtype=torch.long)
+        for i, u in enumerate(uids):
+            out[i, :lens[i]] = self.h[self.offsets[u]:self.offsets[u] + lens[i]]
+            mask[i, :lens[i]] = 1
+        # fp32 residual stream, as between layers in the full model (LayerNorm outputs fp32 under autocast)
+        return torch.from_numpy(out).to(device).float(), mask.to(device)
+
+
+class _FullModelSource:
+    """Old path: token ids through the whole backbone."""
+    fast = False
+
+    def __init__(self, model: E5ForTuning, tokens: TokenStore):
+        self.model, self.tokens = model, tokens
+        self.lengths = tokens.lengths
+
+    def last_hidden(self, uids, device, use_fp16):
+        ids, mask = self.tokens.batch(uids, device)
+        with _autocast(device, use_fp16):
+            return self.model.backbone(input_ids=ids, attention_mask=mask).last_hidden_state, mask
+
+
+class _CachedLowerSource:
+    """Fast path: cached lower-layer states through the top (LoRA) layers only."""
+    fast = True
+
+    def __init__(self, model: E5ForTuning, cache: LowerCache, cfg: TarConfig):
+        self.layers = _bert(model).encoder.layer[n_frozen_layers(cfg):]
+        self.cache = cache
+        self.lengths = cache.lengths
+
+    def last_hidden(self, uids, device, use_fp16):
+        h, mask = self.cache.batch(uids, device)
+        with _autocast(device, use_fp16):
+            return _run_layers(self.layers, h, mask), mask
+
+
+def make_source(model: E5ForTuning, tokens: TokenStore, cfg: TarConfig, device: torch.device):
+    if cfg.fast:
+        cache = LowerCache.get_or_build(model, tokens, cfg, device)
+        if cache is not None:
+            return _CachedLowerSource(model, cache, cfg)
+    return _FullModelSource(model, tokens)
+
+
+def _logits(model: E5ForTuning, source, uids, device, use_fp16) -> torch.Tensor:
+    h, mask = source.last_hidden(uids, device, use_fp16)
+    with _autocast(device, use_fp16):
+        return model.head(_mean_pool(h, mask, l2_normalize=False))  # = E5ForTuning.forward
+
+
+# --------------------------------------------------------------------------------------------- train / encode
+
 @torch.no_grad()
-def _val_loss(model: E5ForTuning, tok: _Tokenized, labels: torch.Tensor, cfg: TarConfig, device: torch.device,
-              use_fp16: bool) -> float:
+def _val_loss(model: E5ForTuning, source, uids: np.ndarray, labels: torch.Tensor, cfg: TarConfig,
+              device: torch.device, use_fp16: bool) -> float:
     model.eval()
-    order = np.argsort(tok.lengths)
+    order = np.argsort(source.lengths[uids], kind="stable")
     total = 0.0
     for i in range(0, len(order), cfg.eval_batch_size):
         rows = order[i:i + cfg.eval_batch_size]
-        ids, mask = tok.batch(rows, device)
-        with _autocast(device, use_fp16):
-            logits = model(input_ids=ids, attention_mask=mask)["logits"]
+        logits = _logits(model, source, uids[rows], device, use_fp16)
         total += float(encoder_finetune_loss(logits.float(), labels[rows].to(device))) * len(rows)
     return total / len(order)
 
 
-def train_tar(cfg: TarConfig, train_texts: list[str], train_labels: np.ndarray, val_texts: list[str],
-              val_labels: np.ndarray, d_output: int, tokenizer, device: torch.device) -> tuple[E5ForTuning, dict]:
-    """LoRA fine-tune with early stopping on val loss; returns the model at its best epoch and a training log."""
-    set_seed(cfg.seed)
+def train_tar(cfg: TarConfig, model: E5ForTuning, source, train_uids: np.ndarray, train_labels: np.ndarray,
+              val_uids: np.ndarray, val_labels: np.ndarray, device: torch.device) -> dict:
+    """LoRA fine-tune with early stopping on val loss; leaves the model at its best epoch, returns a training log.
+    train_uids / val_uids: one entry per training cell (duplicates kept: every cell is a training example)."""
     use_fp16 = bool(cfg.fp16 and device.type == "cuda")
-    model = build_model(cfg, d_output=d_output, device=device)
-    tr, va = _Tokenized(train_texts, tokenizer, cfg.max_length), _Tokenized(val_texts, tokenizer, cfg.max_length)
     y_tr, y_va = torch.tensor(train_labels, dtype=torch.long), torch.tensor(val_labels, dtype=torch.long)
-
-    steps_per_epoch = (len(tr) + cfg.batch_size - 1) // cfg.batch_size
+    n = len(train_uids)
+    steps_per_epoch = (n + cfg.batch_size - 1) // cfg.batch_size
     optimizer = _optimizer(model, cfg)
     scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=0,
                                                 num_training_steps=steps_per_epoch * cfg.epochs)
     scaler = torch.amp.GradScaler(device.type, enabled=use_fp16)
     gen = torch.Generator().manual_seed(cfg.seed)
     micro = max(1, min(cfg.micro_batch_size, cfg.batch_size))
+    bucketed = source.fast and cfg.bucket_chunk_batches > 0
+    trainable = [p for p in model.parameters() if p.requires_grad]
+    cell_lengths = source.lengths[train_uids]
 
     history, best_loss, best_state, best_epoch, bad = [], float("inf"), None, 0, 0
+    if device.type == "cuda":
+        torch.cuda.reset_peak_memory_stats(device)
     t_start = time.time()
     for epoch in range(1, cfg.epochs + 1):
         t0 = time.time()
         model.train()
-        perm = torch.randperm(len(tr), generator=gen).numpy()
+        batches = (bucketed_batches(cell_lengths, cfg.batch_size, gen, cfg.bucket_chunk_batches) if bucketed
+                   else random_batches(n, cfg.batch_size, gen))
+        assert len(batches) == steps_per_epoch
         train_loss_sum = 0.0
-        for b in range(steps_per_epoch):
-            rows = perm[b * cfg.batch_size:(b + 1) * cfg.batch_size]
+        for rows in batches:
             while True:
                 try:
                     optimizer.zero_grad(set_to_none=True)
                     batch_loss = 0.0
                     for m in range(0, len(rows), micro):  # gradient accumulation == one 256-batch step
                         sub = rows[m:m + micro]
-                        ids, mask = tr.batch(sub, device)
-                        with _autocast(device, use_fp16):
-                            logits = model(input_ids=ids, attention_mask=mask)["logits"]
+                        logits = _logits(model, source, train_uids[sub], device, use_fp16)
                         loss = encoder_finetune_loss(logits.float(), y_tr[sub].to(device))
                         scaler.scale(loss * (len(sub) / len(rows))).backward()
                         batch_loss += float(loss) * len(sub)
@@ -267,12 +447,12 @@ def train_tar(cfg: TarConfig, train_texts: list[str], train_labels: np.ndarray, 
                     print(f"  [TAR] CUDA out of memory -> micro_batch_size {micro}", flush=True)
             train_loss_sum += batch_loss
             scaler.unscale_(optimizer)
-            torch.nn.utils.clip_grad_norm_([p for p in model.parameters() if p.requires_grad], cfg.max_grad_norm)
+            torch.nn.utils.clip_grad_norm_(trainable, cfg.max_grad_norm)
             scaler.step(optimizer)
             scaler.update()
             scheduler.step()
-        val_loss = _val_loss(model, va, y_va, cfg, device, use_fp16)
-        history.append({"epoch": epoch, "train_loss": train_loss_sum / len(tr), "val_loss": val_loss,
+        val_loss = _val_loss(model, source, val_uids, y_va, cfg, device, use_fp16)
+        history.append({"epoch": epoch, "train_loss": train_loss_sum / n, "val_loss": val_loss,
                         "seconds": round(time.time() - t0, 1)})
         print(f"  [TAR] epoch {epoch:>2}: train_loss {history[-1]['train_loss']:.4f}  val_loss {val_loss:.4f}  "
               f"epoch {history[-1]['seconds']:.0f}s  elapsed {(time.time() - t_start) / 60:.1f} min", flush=True)
@@ -282,32 +462,43 @@ def train_tar(cfg: TarConfig, train_texts: list[str], train_labels: np.ndarray, 
             bad += 1
             if bad >= cfg.patience:
                 break
+        if cfg.stop_after_epochs and epoch >= cfg.stop_after_epochs:
+            break
     model.load_state_dict(best_state, strict=False)
     model.eval()
-    log = {"history": history, "best_epoch": best_epoch, "best_val_loss": best_loss, "epochs_run": len(history),
-           "n_train_cells": len(tr), "n_val_cells": len(va), "steps_per_epoch": steps_per_epoch, "fp16": use_fp16,
-           "mean_train_tokens": float(tr.lengths.mean()), "micro_batch_size_used": micro, "truncated_frac": float((tr.lengths >= cfg.max_length).mean())}
-    return model, log
+    lengths = source.lengths[train_uids]
+    return {"history": history, "best_epoch": best_epoch, "best_val_loss": best_loss, "epochs_run": len(history),
+            "n_train_cells": n, "n_val_cells": len(val_uids), "steps_per_epoch": steps_per_epoch, "fp16": use_fp16,
+            "fast_path": source.fast, "bucketed_batches": bucketed,
+            "mean_train_tokens": float(lengths.mean()), "micro_batch_size_used": micro,
+            "truncated_frac": float((lengths >= cfg.max_length).mean()),
+            "peak_gpu_gb": round(torch.cuda.max_memory_allocated(device) / 1e9, 2) if device.type == "cuda" else None}
 
 
 @torch.no_grad()
-def encode(model: E5ForTuning, tokenizer, texts: list[str], cfg: TarConfig, device: torch.device) -> tuple[np.ndarray, np.ndarray]:
-    """(L2-normalized mean-pooled embeddings as upstream's encode_texts_with_e5, head logits) for each text."""
+def encode(model: E5ForTuning, source, uids: np.ndarray, cfg: TarConfig, device: torch.device) -> tuple[np.ndarray, np.ndarray]:
+    """(L2-normalized mean-pooled embeddings as upstream's encode_texts_with_e5, head logits) for each uid."""
     model.eval()
     use_fp16 = bool(cfg.fp16 and device.type == "cuda")
-    tok = _Tokenized(texts, tokenizer, cfg.max_length)
-    order = np.argsort(tok.lengths)  # length-sorted batches: much less padding, same results
-    emb = np.zeros((len(texts), model.head.in_features), dtype=np.float32)
-    logits = np.zeros((len(texts), model.head.out_features), dtype=np.float32)
+    order = np.argsort(source.lengths[uids], kind="stable")  # length-sorted batches: less padding, same results
+    emb = np.zeros((len(uids), model.head.in_features), dtype=np.float32)
+    logits = np.zeros((len(uids), model.head.out_features), dtype=np.float32)
     for i in range(0, len(order), cfg.eval_batch_size):
         rows = order[i:i + cfg.eval_batch_size]
-        ids, mask = tok.batch(rows, device)
-        with _autocast(device, use_fp16):
-            hidden = model.backbone(input_ids=ids, attention_mask=mask).last_hidden_state
-        pooled = _mean_pool(hidden.float(), mask, l2_normalize=False)
+        h, mask = source.last_hidden(uids[rows], device, use_fp16)
+        pooled = _mean_pool(h.float(), mask, l2_normalize=False)
         emb[rows] = torch.nn.functional.normalize(pooled, p=2, dim=1).cpu().numpy()
         logits[rows] = model.head(pooled).float().cpu().numpy()
     return emb, logits
+
+
+def encode_strings(model: E5ForTuning, tokenizer, strings: list[str], cfg: TarConfig, device: torch.device) -> tuple[np.ndarray, np.ndarray]:
+    """Convenience: encode arbitrary (already prefixed) strings with the path cfg.fast selects."""
+    uniq = list(dict.fromkeys(strings))
+    tokens = TokenStore(uniq, tokenizer, cfg.max_length)
+    emb, logits = encode(model, make_source(model, tokens, cfg, device), tokens.uids(uniq), cfg, device)
+    back = tokens.uids(strings)
+    return emb[back], logits[back]
 
 
 # --------------------------------------------------------------------------------------------- result + cache
@@ -433,25 +624,39 @@ def run_tar(x_fit: DataFrame, y_fit: Series, text_cols: list[str], is_cls: bool,
     x_tr, x_va, y_tr = d["x_tr"], d["x_va"], d["y_tr"]
     classes = d["classes"]
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
+
+    # Every string we will ever run through E5: training/val cells + the encoding strings of all rows, deduplicated.
+    frames = [x_fit] + [x for x, _ in extra.values()]
+    rows_by_col, raw_by_col = {}, {}
+    for col in text_cols:
+        rows_by_col[col] = np.concatenate([np.asarray(f.index) for f in frames])
+        raw_by_col[col] = list(itertools.chain.from_iterable(encoding_texts(f, col) for f in frames))
+    enc_strings = {col: [format_e5_passage(col, t) for t in raw_by_col[col]] for col in text_cols}
+    all_strings = list(dict.fromkeys(itertools.chain(d["train_texts"], d["val_texts"], *enc_strings.values())))
+    tokens = TokenStore(all_strings, tokenizer, cfg.max_length)
+
+    set_seed(cfg.seed)
+    model = build_model(cfg, d_output=len(classes), device=device)
+    t1 = time.time()
+    source = make_source(model, tokens, cfg, device)
+    t_lower = time.time() - t1
     print(f"  [TAR] fine-tuning {cfg.model_name} on {len(x_tr)} rows × {len(text_cols)} text cols = "
-          f"{len(d['train_texts'])} cells (val {len(x_va)} rows), d_output={len(classes)}, device={device}", flush=True)
-    model, train_log = train_tar(cfg, d["train_texts"], d["train_labels"], d["val_texts"], d["val_labels"],
-                                 len(classes), tokenizer, device)
-    t_train = time.time() - t0
+          f"{len(d['train_texts'])} cells (val {len(x_va)} rows), d_output={len(classes)}, device={device}, "
+          f"path={'fast (cached lower layers)' if source.fast else 'full model'}", flush=True)
+    train_log = train_tar(cfg, model, source, tokens.uids(d["train_texts"]), d["train_labels"],
+                          tokens.uids(d["val_texts"]), d["val_labels"], device)
+    t_train = time.time() - t1 - t_lower
 
     # Encode every row we will ever be asked about (fit rows + extras), deduplicated per column.
-    t1 = time.time()
-    frames = [x_fit] + [x for x, _ in extra.values()]
+    t2 = time.time()
     columns = {}
     for col in text_cols:
-        row_idx = np.concatenate([np.asarray(f.index) for f in frames])
-        texts = list(itertools.chain.from_iterable(encoding_texts(f, col) for f in frames))
-        uniq, inverse = np.unique(np.array(texts, dtype=object), return_inverse=True)
+        uniq, inverse = np.unique(np.array(raw_by_col[col], dtype=object), return_inverse=True)
         uniq = uniq.tolist()
-        emb, logits = encode(model, tokenizer, [format_e5_passage(col, t) for t in uniq], cfg, device)
+        emb, logits = encode(model, source, tokens.uids([format_e5_passage(col, t) for t in uniq]), cfg, device)
         columns[col] = ColumnOutputs(emb=emb, logits=logits, text_hash=_text_hash(uniq),
-                                     row_uid=dict(zip(row_idx.tolist(), inverse.tolist())))
-    t_encode = time.time() - t1
+                                     row_uid=dict(zip(rows_by_col[col].tolist(), inverse.tolist())))
+    t_encode = time.time() - t2
 
     head = {"classes": classes, "d_output": len(classes)}
     if not is_cls:
@@ -465,7 +670,8 @@ def run_tar(x_fit: DataFrame, y_fit: Series, text_cols: list[str], is_cls: bool,
     y_by_split = {"e5_train": y_fit.loc[x_tr.index], "e5_val": y_fit.loc[x_va.index]}
     y_by_split.update({k: y for k, (_, y) in extra.items()})
     result.diagnostics = {"head_quality": _head_quality(result, y_by_split, is_cls), "train": train_log,
-                          "seconds_train": round(t_train, 1), "seconds_encode": round(t_encode, 1),
+                          "seconds_lower_cache": round(t_lower, 1), "seconds_train": round(t_train, 1),
+                          "seconds_encode": round(t_encode, 1), "seconds_total_tar": round(time.time() - t0, 1),
                           "n_unique_texts": {c: int(len(columns[c].emb)) for c in text_cols},
                           "device": str(device)}
     hq = result.diagnostics["head_quality"]

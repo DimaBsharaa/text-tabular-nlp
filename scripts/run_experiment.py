@@ -32,7 +32,25 @@ SUFFIX = {"epochs": "ep", "train_examples": "n", "seed": "s"}
 
 def run_name(method: str, args: argparse.Namespace) -> str:
     parts = [f"{SUFFIX[k]}{getattr(args, k)}" for k in DEFAULTS if getattr(args, k) != DEFAULTS[k]]
+    if getattr(args, "no_fast", False):
+        parts.append("nofast")  # old full-model path: a different run, never mixed with fast-path results
     return method if not parts else f"{method}__{'_'.join(parts)}"
+
+
+def existing_result_ok(path: str) -> bool:
+    """True if a finished result exists AND was produced by the current engine version. A result from an older
+    engine is kept (renamed to fold<k>.<engine>.json) and the job counts as not done, so it is re-run."""
+    if not exists(path):
+        return False
+    from multabench.ours.tar_engine import ENGINE_VERSION  # lazy: keeps this module importable without torch
+    r = json.load(open(path))
+    engine = ((r.get("tar") or {}).get("config") or {}).get("engine_version")
+    if engine == ENGINE_VERSION:
+        return True
+    old = path[:-len(".json")] + f".{str(engine).replace('/', '-')}.json"
+    os.replace(path, old)
+    print(f"  result made by engine {engine} (current {ENGINE_VERSION}) kept as {old}; job will re-run", flush=True)
+    return False
 
 
 def result_path(out: str, name: str, learner: str, dataset: str, fold: int) -> str:
@@ -86,8 +104,9 @@ def run_one(args: argparse.Namespace) -> dict:
     learner_cls = make_learner(args.learner)
     model = learner_cls(problem_type=dataset.task_type, device=device, verbose=False, dataset=dataset_id,
                         image_folder=dataset.image_folder, tune_e5=False, pca_components=30, no_pca=False)
-    cfg = TarConfig(epochs=args.epochs, seed=args.seed, micro_batch_size=args.micro_batch_size,
-                    eval_batch_size=256 if device.type == "cuda" else 16)  # eval batch size: speed only
+    cfg = TarConfig(epochs=args.epochs, seed=args.seed, fast=not args.no_fast, micro_batch_size=args.micro_batch_size,
+                    eval_batch_size=256 if device.type == "cuda" else 16,  # eval batch size: speed only
+                    lower_cache_dir=args.lower_cache_dir)
     model.configure_ours(variant=args.method, cfg=cfg, cache_dir=args.cache_dir, dataset=args.dataset, fold=args.fold,
                          test=(x_test, y_test))
     model.fit(x_train, y_train)
@@ -105,6 +124,7 @@ def run_one(args: argparse.Namespace) -> dict:
         "task": args.dataset[:3], "score": score, "metrics": json.loads(json.dumps(asdict(metrics), default=float)),
         "reference": ref, "diff_vs_csv_joint_tar": (score - ref["joint_tar"]) if "joint_tar" in ref else None,
         "runtime_s": {"total": round(runtime, 1), "fit": round(t_fit, 1), "predict": round(runtime - t_fit, 1),
+                      "tar_lower_cache": None if (not tar or tar.cache_hit) else tar.diagnostics.get("seconds_lower_cache"),
                       "tar_train": None if (not tar or tar.cache_hit) else tar.diagnostics["seconds_train"],
                       "tar_encode": None if (not tar or tar.cache_hit) else tar.diagnostics["seconds_encode"]},
         "tar": None if not tar else {
@@ -112,6 +132,7 @@ def run_one(args: argparse.Namespace) -> dict:
             "head_quality": hq, "n_unique_texts": tar.diagnostics["n_unique_texts"],
             "train": {k: tar.diagnostics["train"][k] for k in ("epochs_run", "best_epoch", "best_val_loss", "history",
                                                                 "n_train_cells", "n_val_cells", "mean_train_tokens", "micro_batch_size_used",
+                                                                "fast_path", "bucketed_batches", "peak_gpu_gb",
                                                                 "truncated_frac", "fp16")},
             "split_sizes": {k: int(len(v)) for k, v in tar.splits.items()},
         },
@@ -120,6 +141,7 @@ def run_one(args: argparse.Namespace) -> dict:
         if hq and hq.get("e5_train", {}).get("score") is not None and hq.get("test", {}).get("score") is not None else None,
         "n_train": int(len(y_train)), "n_test": int(len(y_test)), "train_examples": args.train_examples,
         "config": {"epochs": args.epochs, "seed": args.seed, "micro_batch_size": args.micro_batch_size,
+                   "fast": not args.no_fast,
                    "pca_components": 30, "cache_dir": args.cache_dir},
         "git": git_info(), "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"), "argv": sys.argv[1:],
         "hardware": json.loads(json.dumps(get_hardware_dict(device), default=str)),
@@ -161,11 +183,13 @@ def run_jobs(args: argparse.Namespace) -> int:
     n_done = n_failed = n_run = 0
     common = ["--out", args.out, "--cache_dir", args.cache_dir, "--train_examples", str(args.train_examples),
               "--epochs", str(args.epochs), "--seed", str(args.seed), "--micro_batch_size", str(args.micro_batch_size)]
+    common += ["--no_fast"] if args.no_fast else []
+    common += ["--lower_cache_dir", args.lower_cache_dir] if args.lower_cache_dir else []
     for i, (method, learner, dataset, fold) in enumerate(jobs, 1):
         name = run_name(method, args)
         path = result_path(args.out, name, learner, dataset, fold)
         tag = f"[{i}/{len(jobs)}] {name} {learner} {dataset} fold{fold}"
-        if exists(path) and not args.force:
+        if not args.force and existing_result_ok(path):
             print(f"{tag}: done already, skipping", flush=True)
             n_done += 1
             continue
@@ -218,6 +242,10 @@ def main() -> int:
     p.add_argument("--epochs", type=int, default=DEFAULTS["epochs"], help="max fine-tuning epochs (upstream: 50)")
     p.add_argument("--seed", type=int, default=DEFAULTS["seed"])
     p.add_argument("--micro_batch_size", type=int, default=256, help="lower if the GPU runs out of memory (same result)")
+    p.add_argument("--no_fast", action="store_true",
+                   help="old full-model TAR path (no lower-layer cache, random batches); results go to <method>__nofast")
+    p.add_argument("--lower_cache_dir", default=None,
+                   help="local-disk dir for the frozen-layer cache (default ~/.cache/tar_lower_cache; not Drive)")
     p.add_argument("--force", action="store_true", help="re-run even if the result JSON exists")
     p.add_argument("--stream", action="store_true", help="--jobs_file: echo every log line, not just progress")
     args = p.parse_args()
@@ -227,7 +255,7 @@ def main() -> int:
     if None in (args.method, args.learner, args.dataset, args.fold):
         p.error("give --method --learner --dataset --fold, or --jobs_file")
     path = result_path(args.out, run_name(args.method, args), args.learner, args.dataset, args.fold)
-    if exists(path) and not args.force:
+    if not args.force and existing_result_ok(path):
         print(f"{path} exists, skipping")
         return 0
     result = run_one(args)

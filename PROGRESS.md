@@ -14,6 +14,16 @@ Entry template:
 - Next step:
 ```
 
+## Ledger (one line per entry; details below)
+| entry | date | what | key number |
+|---|---|---|---|
+| E0 | 2026-10-09 | environment (uv, Python 3.11, pinned deps) | 232 packages, all compatible |
+| E1 | 2026-10-09 | CPU smoke test, CatBoost / Book Price / fold 0 / Frozen | R² 0.5602 vs CSV 0.5551 |
+| E2 | 2026-10-09 | Phase 0 diagnostics on upstream CSVs | TAR > Frozen significant for 4/5 learners; median gain +0.011 |
+| E3 | 2026-10-09 | TAR engine + runner + Colab notebook | parity tests vs upstream pass |
+| E4 | 2026-10-09 | first GPU job, tar_repro / CatBoost / Book Price / fold 0 | R² 0.5736 vs CSV 0.5793; 40.8 min on T4; head train−test +0.048 |
+| E5 | 2026-10-09 | fast engine (cached frozen layers + bucketing) + compute budget | CPU 10.7× on Book Price; old-engine pilot 12.4 GPU-h/variant |
+
 ---
 
 ## Pre-registration
@@ -171,3 +181,70 @@ Changes to P1:
     Trainer (same optimizer, schedule, clipping, early stopping rule). Expect fold-level differences of the order
     seen in E1 (~0.005); judged by `tar_repro` vs CSV in the pilot.
 - Next step: Dima runs `jobs/pilot_tar_repro.txt` on Colab; then E4 = tar_repro vs CSV + leakage diagnostic.
+
+## E4 — First GPU job: tar_repro / CatBoost / Book Price / fold 0 (old engine)   (2026-10-09, commit 7002687, Colab T4)
+- Question: does our TAR reproduction match the leaderboard on a real GPU run, and what does the leakage diagnostic show?
+- Command / config: Colab `notebooks/colab_run.ipynb`, cell 7 with `JOB_FILTER = ["REG_TEXT_BOOK_PRICE", "fold 0"]`,
+  `MAX_JOBS = 1` → `run_experiment.py --method tar_repro --learner catboost --dataset REG_TEXT_BOOK_PRICE --fold 0`;
+  engine `tar_engine/1` (full-model path), upstream hyperparameters, fp16 on a Tesla T4. Log read from the
+  notebook outputs Dima saved to GitHub (commit ebfdcf5; checked: no secrets in it).
+- Result: **R² 0.5736 vs leaderboard `ft` 0.5793 (diff −0.0056)**; CSV CatBoost TAR folds 0–4 = 0.579, 0.580, 0.568,
+  0.551, 0.546 (sd 0.016), so the gap is ~0.35 sd. Fine-tune: 3,638 rows × 5 text cols = 18,190 cells, 20 epochs
+  (best 17, val loss 2.996 → 2.861; ln 20 = 2.996 = uniform over 20 bins), ~115 s/epoch = **6.3 ms/cell/epoch**,
+  38.6 min TAR training, **40.8 min per job**.
+- Leakage diagnostic (R² of the fine-tuning head itself, cell predictions averaged per row):
+  e5_train 0.4193 | e5_val 0.3311 | learner_val 0.3531 | test 0.3709.
+- Our reading:
+  - The head is better on the rows E5 was trained on than on unseen rows: 0.419 vs 0.371 on test (+0.048) and
+    0.363 on learner_val + test pooled (+0.057). Final train/val CE: 2.73 vs 2.86 nats. So the in-sample advantage
+    exists but is moderate on this dataset.
+  - This matters for the learner: CatBoost is trained on embeddings of e5_train + e5_val rows (90% in-sample) but
+    early-stops and is tested on rows E5 never saw. Its trees can learn to trust text features that are "too good"
+    on training rows. That is exactly what idea C (cross-fitted TAR) targets; this fold says the effect is real but
+    not huge.
+  - e5_val (404 rows) below test is small-sample noise (it is the early-stopping set, so if anything it is biased
+    upward), not evidence of anything.
+  - One dataset, one fold: no conclusion about C until the pilot shows the gap across 6 datasets × 3 folds.
+- Hostile review:
+  - Same split as the CSV? Same upstream code paths (`subsample_dataset`, tabstar `split_to_test`, seed 42 + fold);
+    n_train/n_test 4491/498 as in E1. Score within 0.35 sd of the CSV value.
+  - Metric: upstream `score_all_metrics` (sklearn R²) on the 498 test rows.
+  - Test labels used? Only in `_head_quality` (diagnostic); not for training, early stopping, PCA or CatBoost.
+  - Speed is the blocker: 12.4 GPU-hours per variant for the pilot on this engine (see E5).
+- Next step: fast engine (E5), then re-run this job with it (the engine-1 result is kept as
+  `fold0.tar_engine-1.json` for comparison) and continue the pilot.
+
+## E5 — Fast TAR engine (tar_engine/2) + compute budget   (2026-10-09, base ebfdcf5; code in this entry's commit)
+- Question: can fine-tuning be made much faster without changing the method?
+- Built (only `multabench/ours/`, `scripts/`, `tests/`, notebook): frozen embeddings + layers 0–8 run once per unique
+  cell string (eval mode, no grad) → fp16 np.memmap on local disk (offsets + lengths per string), content-keyed so
+  seeds/learners/variants with the same strings share it; training and inference run only layers 9–11 (LoRA) + head
+  on it. Length-bucketed batches (shuffle → chunks of 50 batches → sort by length → batches of 256 → shuffle batch
+  order): same batch size, same optimizer steps per epoch. Explicit `attn_implementation="sdpa"`, one tokenization per
+  unique string, deduplicated cells. Old path kept: `--no_fast` (results go to `tar_repro__nofast`). Falls back to the
+  old path if the cache would not fit on local disk. `scripts/speed_benchmark.py` + Colab cell 6b;
+  `scripts/compute_budget.py` → `reports/compute_budget.csv`; Colab cell 9 exports results as a zip.
+- **Deviations from upstream introduced by the fast path** (documented in `tar_engine.py`):
+  1. the frozen lower 9 layers (and embeddings) run without dropout during training (upstream: dropout 0.1 there too);
+  2. batches are length-bucketed instead of fully random (same size and number of steps).
+  Everything that is trained (LoRA on layers 9–11, their dropout, the head), the loss, optimizer, schedule and early
+  stopping are unchanged.
+- Parity (CPU, `pytest tests/test_tar_engine.py`: 12 passed):
+  - eval mode, random non-zero LoRA: fast vs old embeddings max |diff| 2.0e-5 (cosine ≥ 0.999999), head logits
+    4.8e-5 — only fp16 storage rounding;
+  - dropout off everywhere + same batch order: one epoch on each path gives the same LoRA weights (< 1e-3) and the
+    same val loss (< 1e-3);
+  - both paths match upstream `encode_texts_with_e5` with a fresh LoRA; same fine-tuning inputs as upstream.
+- CPU speed (provisional, laptop, `speed_benchmark.py --train_examples 300`): Book Price 242 s → 23 s per epoch
+  (**10.7×**, cache build 7 s, epoch-1 val loss 3.0177 vs 3.0174); Product Sentiment (1 short column) 2.5×. The
+  GPU speedup must be measured on Colab (cell 6b); the GPU may gain less than the CPU from skipping layers.
+- **Compute budget** (`reports/compute_budget.csv`; 6.3 ms/cell/epoch, 20 epochs per fine-tune, cost ∝ cells):
+  - old engine: **pilot 12.4 GPU-hours per variant** (6 datasets × 3 folds, CatBoost); **full run 108 GPU-hours per
+    variant** (20 datasets × 5 folds, one fine-tune per dataset-fold, shared by CatBoost/LightGBM/TabM) and
+    **219 GPU-hours** if TabPFN's own fine-tune (no learner val split → different rows; 18 datasets × 5 folds) is
+    added. TAR baseline + 3 variants on the old engine ≈ 400–900 GPU-hours: impossible before Oct 26.
+  - fast engine, IF the GPU speedup is like the CPU's (~10×): pilot ≈ 1.2 h, full ≈ 10 h (≈ 21 h with TabPFN) per
+    variant. To be replaced by the measured T4 speedup (`compute_budget.py --speedup X`).
+  - The per-cell model overstates short-cell datasets (Data Scientist Salary: 43 chars/cell, 85 min predicted) and
+    understates long ones (Fake Job Postings: 591 chars/cell); Book Price, where 6.3 ms was measured, has 221.
+- Next step: Colab → cell 6b (speed benchmark), then cell 7 on all pilot jobs; update the budget with the T4 speedup.

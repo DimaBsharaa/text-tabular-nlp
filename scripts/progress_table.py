@@ -34,6 +34,7 @@ def progress_table(jobs_file: str, out: str, **overrides) -> pd.DataFrame:
                 "cache_hit": (r.get("tar") or {}).get("cache_hit"),
                 "min_total": round(r["runtime_s"]["total"] / 60, 1),
                 "min_tar_train": None if r["runtime_s"].get("tar_train") is None else round(r["runtime_s"]["tar_train"] / 60, 1),
+                "fast": tr.get("fast_path"), "engine": ((r.get("tar") or {}).get("config") or {}).get("engine_version"),
                 "git": r["git"]["commit"][:7] + ("*" if r["git"]["dirty"] else ""),
             })
         rows.append(row)
