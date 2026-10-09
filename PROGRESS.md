@@ -24,6 +24,7 @@ Entry template:
 | E4 | 2026-10-09 | first GPU job, tar_repro / CatBoost / Book Price / fold 0 | R² 0.5736 vs CSV 0.5793; 40.8 min on T4; head train−test +0.048 |
 | E5 | 2026-10-09 | fast engine (cached frozen layers + bucketing) + compute budget | CPU 10.7× on Book Price; old-engine pilot 12.4 GPU-h/variant |
 | note | 2026-10-09 | tar_repro frozen at 96c1f5c; golden-fingerprint test | 14 tests pass |
+| E6 | 2026-10-09 | T4 speed benchmark, Book Price fold 0 | fast 11.9×/epoch; pilot 1.1 GPU-h, full 9.6 GPU-h per variant |
 
 ---
 
@@ -261,3 +262,16 @@ Changes to P1:
   verified). Mutation check: changing the text prefix, the bucketing chunk size or the weight decay each fails it.
 - Result JSONs now also carry top-level `engine_version` and `tar_path` (fast / full_model); JSONs from the running
   pilot have the version under `tar.config.engine_version` (same value). Metadata only — no effect on results.
+
+## E6 — T4 speed benchmark: old vs fast TAR path   (2026-10-09, commit 96c1f5c, Colab Tesla T4, Colab cell 6b)
+- Command: `scripts/speed_benchmark.py --dataset REG_TEXT_BOOK_PRICE --fold 0` (full 50-epoch LR schedule, 1 epoch timed).
+- Result: 18,190 train cells, 12,941 unique strings (929,484 tokens; lower-layer cache 0.71 GB, built in 12 s).
+  Old path 107.2 s/epoch (5.9 ms/cell), fast path 9.0 s/epoch (0.50 ms/cell) → **11.9× per epoch, 11.2× for a
+  20-epoch fine-tune** including the cache build. Epoch-1 val loss 2.9956 (old) vs 2.9961 (fast), diff +0.0005.
+  Peak GPU memory 11.26 GB on both: it is set by the longest batch (256 × 512 tokens through the 3 trainable layers),
+  which is the same on both paths; the frozen layers never stored activations even on the old path.
+- **Compute budget with the measured speedup** (`compute_budget.py --speedup 11.2`, `reports/compute_budget.csv`):
+  **pilot 1.1 GPU-hours per variant; full run 9.6 GPU-hours per variant** (20 × 5, one fine-tune per dataset-fold),
+  **19.6 GPU-hours** with TabPFN's separate fine-tune. Old engine for comparison: 12.4 / 108 / 219.
+- Conclusion: the full benchmark is now feasible on Colab (TAR baseline + 3 variants ≈ 40–80 GPU-hours).
+- Next step: run the tar_repro pilot (cell 7) on the fast engine.
