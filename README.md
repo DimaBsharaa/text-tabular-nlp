@@ -1,3 +1,14 @@
+# text-tabular-nlp
+
+> **Credit / upstream.** This repository is built on top of
+> [alanarazi7/MulTaBench](https://github.com/alanarazi7/MulTaBench) (tag `paper_version`), the code
+> accompanying *MulTaBench: Benchmarking Multimodal Tabular Learning with Text and Image*
+> ([arXiv:2605.10616](https://arxiv.org/abs/2605.10616)). All benchmark, preprocessing and evaluation
+> code is theirs and is kept unmodified; our additions for the Technion 097215 NLP final project
+> (Track 1: Algorithm, text-tabular) live in `multabench/ours/`.
+
+---
+
 # MulTaBench
 
 A benchmark for multimodal tabular learning: tables whose columns include images or free text, not
