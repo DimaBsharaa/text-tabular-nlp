@@ -1,0 +1,21 @@
+dataset,name,task,classes,N,n_struct_cols,n_text_cols,raw_cached
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Postings,binary,2,12725,2,3,False
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary,2,100000,30,1,False
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter,binary,2,86502,6,3,False
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass,6,15841,1,5,False
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Guide,multiclass,5,18843,5,6,False
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass,4,5091,1,1,False
+MUL_TEXT_SPOTIFY_GENRES,Spotify Genres,multiclass,114,114000,15,3,False
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass,4,100001,38,6,False
+MUL_TEXT_WINE_REVIEW,Wine Review,multiclass,30,84123,3,2,False
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women's Clothing,multiclass,5,18788,8,2,False
+REG_TEXT_BABIES_PRICES,Baby Products,regression,,5085,8,4,False
+REG_TEXT_BOOK_PRICE,Book Price,regression,,4989,3,5,True
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,,4724,24,6,False
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,,100000,3,6,False
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,,9228,8,3,False
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,,7158,2,13,False
+REG_TEXT_SCIMAGOJR_IMPACT,SciMagojr Impact,regression,,31136,12,10,False
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,,44574,3,2,False
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,,16598,3,2,False
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,,41665,8,7,False

@@ -71,3 +71,35 @@ Changes to a frozen claim: append below with date and reason; never edit the tex
   fold-averaged, multi-dataset results — never single folds.
 - Next step: choose the method (A–D); build the embedding cache + resumable JSON runner in `multabench/ours/`;
   run real experiments on Colab GPU.
+
+## E2 — Phase 0 diagnostics on precomputed baselines   (2026-10-09, base commit 8a5903f; code committed with this entry)
+- Question: how big, how noisy and how significant is Joint TAR's gain over Joint Frozen — i.e. how hard is C1?
+- Command / config: `python scripts/phase0_diagnostics.py` → `reports/phase0/*.csv`; `notebooks/phase0.ipynb`
+  (executed, outputs saved). Input: upstream CSVs only (1,920 runs, 384 dataset×learner×state cells, all 5 folds,
+  no duplicates). CPU only; no E5, no fine-tuning. Dev deps (ipykernel, nbclient, nbformat) via `pyproject.toml` +
+  `uv.lock`, whose 231 runtime pins are verified identical to `requirements.txt`.
+- Result (summary):
+  1. Our C1 test on TAR − Frozen: significant for 4/5 learners. CatBoost +0.020, LightGBM +0.025, TabPFN-v2 +0.016
+     win on every dataset (W = 0); TabM +0.012 (16/20, p = 0.002); TabPFN-v2p5 +0.009 (14/18, W = 41 vs crit 40,
+     p = 0.054) misses by one rank.
+  2. Gains are small: median over datasets +0.011; mean without Jigsaw +0.011; Jigsaw alone +0.117.
+  3. 88/96 dataset×learner cells have gain > 0; only 41/96 exceed TAR's fold std.
+  4. Noise: median TAR fold std ≈ 0.012; paired (same-split) diff std is smaller → median per-dataset detectable
+     gain (5 folds, paired t) = 0.0098 (unpaired 0.018). TAR's own gain clears it on only 10/20 datasets.
+  5. Headroom ≈ 0: TAR is the best of the 4 conditions in 88/96 cells (max headroom 0.005, Fake Jobs).
+  6. Complementarity: Joint Frozen beats the best unimodal by median +0.026 (max +0.171, Vancouver Salaries);
+     text > structured on 15/20 datasets.
+  7. TAR gain is unrelated to dataset size (Spearman 0.02; train is capped at 10k).
+  8. Text length known only for cached Book Price (Synopsis ≈ 1,000 chars mean; other columns 14–44).
+- Hostile review:
+  - Pairing: Frozen and TAR folds are matched by fold id; both use `random_state = SEED + fold` from the same
+    code tag (`preprocessing/splits.py:34`), so fold k is the same split. Pairing done per (dataset, learner, fold).
+  - Missing cells: TabPFN has no SPOTIFY_GENRES / WINE_REVIEW → n = 18, handled explicitly (not imputed).
+  - Metric direction: AUROC and R² both higher-is-better; negative R² values exist (min −0.038) and are kept.
+  - Wilcoxon: scipy exact two-sided; critical W checked against tables (52 for n = 20, 40 for n = 18).
+  - "Best of 4 conditions" picks the max on test scores — descriptive only, never used to choose a method.
+  - MDE uses TAR − Frozen diff std as a proxy for our-method − TAR noise; could differ for our method.
+- Conclusion: C1 is demanding but passable; it rewards consistency across datasets more than big wins.
+  Representation must improve (not modality selection); text/structure complementarity favors ideas A/B;
+  D alone touches only the 10 regression datasets; C needs a direct pilot to size.
+- Next step: Dima chooses the main idea; pilot it on 4–5 datasets before freezing C1.
