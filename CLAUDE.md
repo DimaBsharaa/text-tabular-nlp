@@ -39,9 +39,25 @@ C. Cross-fitted TAR: out-of-fold embeddings for training rows.
 D. Ordinal/soft-label loss for regression instead of 20-bin CE.
 
 ## How we work
-- Laptop (Windows + WSL Ubuntu): Claude Code edits code, CPU smoke tests on tiny subsets.
+- Laptop (Windows + WSL Ubuntu): Claude Code edits code, CPU smoke tests on tiny subsets only
+  (frozen E5 on CPU took 91 min for one BOOK_PRICE fold — use `--train_examples`).
 - Google Colab Pro (GPU): `git pull` + run experiments; results written to Google Drive.
-- All experiment scripts must be **resumable**: one JSON per (method, model, dataset, fold); skip if exists.
-- Keep upstream eval code untouched; our code lives in `multabench/ours/` + a new CLI option.
-- Secrets live only in `.env` (gitignored) / Colab Secrets. Never print or commit tokens. W&B disabled (`WANDB_MODE=disabled`).
-- Explain decisions to Dima as we go — he wants to understand everything, not just get code.
+
+## Working rules
+1. **Lab notebook.** Read `PROGRESS.md` at the start of every session. After every experiment append an entry:
+   date, git commit, question, exact command/config, result numbers, conclusion, next step.
+2. **Pre-registration.** Before any multi-dataset run, write the claim in `PROGRESS.md` (method, baseline, metric,
+   datasets, folds, learners, statistical test, success threshold). Never edit it afterwards; if something must
+   change, append the change and why. Default claim is in `PROGRESS.md` (to be confirmed on the course forum).
+3. **Hostile review.** After every result, list what could make the number wrong — leakage (test rows touched by
+   fine-tuning, PCA or preprocessing), fold/split mismatch vs the baseline CSVs, seeds, metric definition, train
+   size, hyperparameters chosen on test — and check each one with evidence (code line, log line, count).
+4. **Output hygiene.** Redirect long logs to files; read only the tail or a summary; never paste huge outputs.
+5. **Upstream protection.** Never modify upstream files (splits, metrics, baselines, preprocessing, datasets) except
+   adding our CLI option in `benchmark.py`; all our code goes in `multabench/ours/`. Accepted plumbing exceptions:
+   `README.md` credit, `init.sh` uv fix, `CLAUDE.md`, `PROGRESS.md`, future `pyproject.toml`/`uv.lock`.
+   Before every commit run `git diff --stat paper_version` (a tag — there is no `upstream/paper_version`) and
+   show Dima the result.
+6. **Resumable experiments.** One JSON per (method, learner, dataset, fold); skip if it exists.
+7. **Secrets & teaching.** Secrets live only in `.env` (gitignored) / Colab Secrets; never print or commit them.
+   W&B is disabled (`WANDB_MODE=disabled`). Explain things simply — Dima is learning.
