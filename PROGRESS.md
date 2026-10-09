@@ -28,6 +28,7 @@ Entry template:
 | E7 | 2026-10-09 | Book Price fold 0, fast vs old engine | same fine-tune quality; CatBoost 0.5608 vs 0.5736 (noise ~0.01) |
 | P1 am. 2 | 2026-10-09 | A/A control (seed 43) + engine-bias check; C1: leaderboard TAR primary, tar_repro secondary | awaiting the 18 tar_repro results |
 | E8 | 2026-10-09 | tar_repro pilot seed 42 (18 jobs): engine bias + leakage | bias −0.0036 (p 0.15; Book Price/Readability −0.018/−0.011); leakage gap +0.031 (16/18, p 0.0002) |
+| E9 | 2026-10-10 | A/A control, seed 43 vs 42 | does not pass (+0.0028, 3/6) → advance rule unchanged; seed sd per fold ≈ 0.008 |
 
 ---
 
@@ -369,3 +370,29 @@ Changes to P1:
   - The primary C1 baseline is the leaderboard, so a lower engine can only make our result look worse, never better.
 - Next step: A/A control (seed 43, running). Open question for Dima: diagnose the Book Price / Book Readability gap
   (e.g. same jobs with `--no_fast`, ~3 GPU-h, or fast path without bucketing as a separate run name).
+
+## E9 — A/A control: tar_repro seed 43 vs seed 42 (P1 amendment 2)   (2026-10-10, Colab T4, code at d66a711+)
+- Source: the 18 seed-43 `DONE score` lines from Colab cell 7 (pasted in two parts; the first paste was cut by the
+  chat's 50,000-character limit) + the 18 seed-42 JSONs from E8. Scores have 4 decimals. To be re-checked against the
+  seed-43 JSONs when they are exported.
+- Advance rule applied to seed 43 vs seed 42 (`pilot_report.advance_rule`, the code that will judge variants):
+  | dataset | gain (mean of folds 0–2) | fold sd |
+  |---|---|---|
+  | Book Price | +0.0104 | 0.016 |
+  | Book Readability | +0.0102 | 0.011 |
+  | Product Sentiment | +0.0058 | 0.010 |
+  | Data Scientist Salary | −0.0001 | 0.002 |
+  | Montgomery Salaries | −0.0022 | 0.005 |
+  | Baby Products | −0.0077 | 0.011 |
+  Mean gain **+0.0028**, wins **3/6** → **the A/A control does NOT pass** (needs ≥ +0.005 and ≥ 4/6).
+- **Amendment 2 outcome: the advance rule stays unchanged** (as pre-specified for a non-passing A/A). No amendment 3.
+- Measured noise level: per-fold seed-to-seed difference sd 0.0112 (single fine-tune sd ≈ 0.008); A/A mean |gain|
+  0.0061, max |gain| 0.0104; noise sd of the 18-pair mean 0.0026. Simulating pure Gaussian noise with that sd
+  (independent folds), the current rule (≥ +0.005, ≥ 4/6) is passed by luck 2.9% of the time (+0.0075: 0.2%).
+  Reading guide: a single dataset moving by ~0.01 is within seed noise; only the 6-dataset pattern counts.
+- Engine bias revisited: seed 43 − leaderboard mean −0.0008 (Wilcoxon over 18 jobs p = 0.12); two-seed average
+  −0.0022 (p = 0.18). Book Price two-seed mean −0.012 (sd 0.004), Book Readability −0.006. The −0.018 Book Price
+  gap in E8 was mostly seed luck; the bucketing hypothesis from E8 is weakened (not tested).
+- Hostile review: noise simulation assumes independent, zero-mean fold differences; real folds share data, so the
+  2.9% is approximate. Variant-vs-tar_repro comparisons will both use seed 42, the same setting as this A/A.
+- Next step: Dima defines the variants; they are judged by the unchanged P1 rule.
