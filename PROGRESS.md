@@ -103,3 +103,58 @@ Changes to a frozen claim: append below with date and reason; never edit the tex
   Representation must improve (not modality selection); text/structure complementarity favors ideas A/B;
   D alone touches only the 10 regression datasets; C needs a direct pilot to size.
 - Next step: Dima chooses the main idea; pilot it on 4–5 datasets before freezing C1.
+
+---
+
+## Pilot protocol P1 — written 2026-10-09, BEFORE any pilot run. Do not edit; append changes below with date + reason.
+- **Pilot set:** 5 small datasets, 3 folds, CatBoost only. Datasets: Book Price, Product Sentiment, Baby Products,
+  Book Readability, Montgomery Salaries (`REG_TEXT_BOOK_PRICE`, `MUL_TEXT_PRODUCT_SENTIMENT`,
+  `REG_TEXT_BABIES_PRICES`, `REG_TEXT_BOOK_READABILITY`, `REG_TEXT_MONTGOMERY_SALARIES`). Folds 0, 1, 2.
+- **Variants:** reproduction of TAR (`tar_repro`), then A, B, C.
+- **Advance rule:** a variant moves to the full run only if its mean gain over TAR is at least +0.005 and it wins on
+  at least 4 of the 5 datasets.
+- **Combinations:** if two variants pass, we test them together once.
+- **Operational definitions** (drafted by Claude; Dima to confirm before the first A/B/C run, then they are fixed):
+  - "TAR" in the advance rule = our `tar_repro` on the same 5 datasets × 3 folds (same code, hardware, seed 42),
+    not the upstream CSV.
+  - Per-dataset gain = mean over folds 0–2 of (variant − tar_repro); mean gain = mean over the 5 datasets;
+    a "win" = per-dataset gain > 0.
+  - Upstream hyperparameters (LoRA r16 top-3, lr 1e-4, ≤ 50 epochs, patience 3, batch 256), train cap 10,000.
+  - `tar_repro` sanity check (not an advance criterion): per-dataset fold-mean difference vs the CSV `joint_tar`,
+    flagged if larger than 2 × the CSV fold std.
+
+Changes to P1: (none yet)
+
+## E3 — TAR engine + experiment runner + Colab notebook (no real results yet)   (2026-10-09, base 7a7a286; code in this entry's commit)
+- Question: can we re-run Joint TAR ourselves, faithfully, with caching, resumability and a leakage diagnostic?
+- Built: `multabench/ours/tar_engine.py` (re-implementation of `fit_text_encoders_tuned` + `finetune_e5_with_lora`
+  with only dynamic padding / fp16+GradScaler on GPU / fixed seed changed; cache per dataset/fold/variant/seed/
+  config-hash/rows-hash), `multabench/ours/learners.py` (upstream learners subclassed; only the text-encoder step
+  swapped), `scripts/run_experiment.py` (single job or `--jobs_file`; one JSON per method/learner/dataset/fold;
+  skip if exists), `scripts/progress_table.py`, `jobs/pilot_tar_repro.txt` (15 jobs), `notebooks/colab_run.ipynb`,
+  `tests/test_tar_engine.py`. Nothing under `multabench/` outside `ours/` changed.
+- Local CPU checks (tiny settings, scores meaningless): `--train_examples 300 --epochs 1 --micro_batch_size 8`:
+  CatBoost/Book Price ran end-to-end in 4 min; LightGBM on the same fold hit the TAR cache (10 s); Product
+  Sentiment (multiclass) and TabPFN-v2 (no learner val split → own cache entry) ran; re-running a finished job
+  skipped it. `pytest tests/test_tar_engine.py`: 6 passed, incl. two parity tests against upstream code.
+- Findings while building:
+  - The settings `benchmark.py` actually passes for `ft` are `E5TrainArgs`: batch 256, weight decay 0.001,
+    50 epochs, patience 3 (not `finetune_e5_with_lora`'s own defaults of 32 / 0.01 / 40).
+  - Upstream TAR's E5 sees only the learner's training rows (after the learner's own 90/10 split, val ≤ 1,000),
+    then splits those 90/10 again for early stopping. TabPFN has no learner split → a different fine-tune.
+  - Regression needs ≥ ~223 train rows: the stratified E5 val split must contain all 20 bins (upstream crashes too).
+  - Batch 256 × up to 512 tokens does not fit in 7.5 GB RAM; micro-batching (gradient accumulation, same math) and
+    automatic halving on CUDA OOM added.
+  - Which columns count as "text" depends on the data: Book Price has 5 text columns at full size but 4 with 300 rows.
+- Hostile review:
+  - Same fine-tuning inputs as upstream? Test runs upstream's `fit_text_encoders_tuned` with the fine-tune stubbed
+    out and checks texts, labels and E5 train/val rows are identical (cls + reg). Passed.
+  - Dynamic padding = upstream padding? Fresh LoRA (B = 0) model encoded both ways: max |diff| < 1e-5. Passed.
+  - Test labels used for training? No: `run_tar` uses extras' y only in `_head_quality` (diagnostic); E5 trains on
+    `prepare_e5_data(x_fit, y_fit)` only; PCA is fit on training-row embeddings only (`learners.py`).
+  - Cache could return stale/wrong embeddings? Key includes config hash + hash of all row indices; every lookup
+    checks a hash of the text against the cached one (mismatch test passed).
+  - Remaining non-identical parts: RNG streams (init/shuffle/dropout), fp16 numerics, own AdamW loop instead of HF
+    Trainer (same optimizer, schedule, clipping, early stopping rule). Expect fold-level differences of the order
+    seen in E1 (~0.005); judged by `tar_repro` vs CSV in the pilot.
+- Next step: Dima runs `jobs/pilot_tar_repro.txt` on Colab; then E4 = tar_repro vs CSV + leakage diagnostic.
