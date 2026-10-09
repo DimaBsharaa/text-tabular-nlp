@@ -26,6 +26,7 @@ Entry template:
 | note | 2026-10-09 | tar_repro frozen at 96c1f5c; golden-fingerprint test | 14 tests pass |
 | E6 | 2026-10-09 | T4 speed benchmark, Book Price fold 0 | fast 11.9×/epoch; pilot 1.1 GPU-h, full 9.6 GPU-h per variant |
 | E7 | 2026-10-09 | Book Price fold 0, fast vs old engine | same fine-tune quality; CatBoost 0.5608 vs 0.5736 (noise ~0.01) |
+| P1 am. 2 | 2026-10-09 | A/A control (seed 43) + engine-bias check; C1: leaderboard TAR primary, tar_repro secondary | awaiting the 18 tar_repro results |
 
 ---
 
@@ -33,8 +34,13 @@ Entry template:
 
 ### Claim C1 — DRAFT (not yet frozen; confirm the test with the course forum, then mark FROZEN + date)
 - **Method:** our method (TBD — chosen from candidates A–D in CLAUDE.md; name it here when frozen).
-- **Baseline:** Joint TAR = `multimodal_state=ft` rows in `multabench/leaderboard/results/text/*.csv`
-  (upstream precomputed, tag `paper_version`).
+- **Baselines (draft revised 2026-10-09):** the claim is tested against BOTH
+  1. **primary — the official leaderboard Joint TAR**: `multimodal_state=ft` rows in
+     `multabench/leaderboard/results/text/*.csv` (upstream precomputed, tag `paper_version`). This test decides
+     success, so an engine that runs systematically below the leaderboard can never inflate our result;
+  2. **secondary — our own `tar_repro`** (frozen engine `tar_engine/2`, same folds, same learners): the same test,
+     reported next to the primary one. It isolates the effect of our method from engine differences.
+  Both are reported in the paper; if they disagree, both are shown and the disagreement is discussed.
 - **Metric:** upstream `test_score` — AUROC (binary), macro-OvR AUROC (multiclass), R² (regression).
 - **Datasets:** the 20 MulTaBench text datasets (files in `multabench/leaderboard/results/text/`).
   TabPFN-v2 and TabPFN-v2p5 have no baseline on MUL_TEXT_SPOTIFY_GENRES and MUL_TEXT_WINE_REVIEW
@@ -150,6 +156,22 @@ Changes to P1:
   - TAR = our own `tar_repro` on the same datasets and folds (not the upstream CSV).
   - Per-dataset gain = mean over folds 0–2 of (variant − `tar_repro`); mean gain = mean over the 6 datasets.
   - Win = per-dataset gain > 0.
+- **Amendment 2 (2026-10-09): A/A control, added BEFORE any variant result exists** (no variant is implemented yet;
+  only tar_repro seed 42 results exist).
+  - Why: E7 showed that two equally good fine-tunes can move a fold's CatBoost score by ~0.01, so a variant that
+    changes nothing might pass the advance rule by luck.
+  - What: run tar_repro with seed 43 on the same 18 pilot jobs (`jobs/pilot_tar_repro_seed43.txt`, results in
+    `tar_repro__s43`) and apply the advance rule to "seed 43 vs seed 42" exactly as to a variant
+    (`scripts/pilot_report.py`).
+  - Rule: if the A/A comparison PASSES the advance rule (mean gain ≥ +0.005 and ≥ 4/6 wins), the rule is tightened
+    before any variant runs, e.g. the mean gain must exceed the A/A mean |gain| by a clear margin. Claude proposes the
+    exact new threshold from the A/A numbers (`pilot_report.py` prints candidates: 2 × A/A mean |gain|, A/A mean
+    |gain| + 0.005, 3 × A/A noise sd of the mean, A/A max |gain|); Dima sees it before it is frozen, and it is
+    then recorded here as amendment 3. If the A/A comparison does not pass, the rule stays as is and the A/A
+    numbers are reported as the measured noise level.
+  - Engine-bias check (reported, not an advance criterion): after the 18 tar_repro jobs, mean and std of
+    (tar_repro − leaderboard ft) per dataset and overall, with paired two-sided Wilcoxon tests over the 18 jobs and
+    over the 6 dataset means (`pilot_report.py`).
 
 ## E3 — TAR engine + experiment runner + Colab notebook (no real results yet)   (2026-10-09, base 7a7a286; code in this entry's commit)
 - Question: can we re-run Joint TAR ourselves, faithfully, with caching, resumability and a leakage diagnostic?

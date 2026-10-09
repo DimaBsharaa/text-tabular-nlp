@@ -11,16 +11,18 @@ from os.path import exists
 
 import pandas as pd
 
-from run_experiment import DEFAULTS, read_jobs, result_path, run_name
+from run_experiment import DEFAULTS, job_args, read_jobs, result_path, run_name
 
 
 def progress_table(jobs_file: str, out: str, **overrides) -> pd.DataFrame:
     """One row per job. overrides: the same result-changing settings passed to run_experiment (e.g. epochs=1)."""
     args = argparse.Namespace(**{**DEFAULTS, **overrides})
     rows = []
-    for method, learner, dataset, fold in read_jobs(jobs_file):
-        path = result_path(out, run_name(method, args), learner, dataset, fold)
-        row = {"method": method, "learner": learner, "dataset": dataset, "fold": fold, "status": "pending"}
+    for method, learner, dataset, fold, seed in read_jobs(jobs_file, default_seed=args.seed):
+        name = run_name(method, job_args(args, seed))
+        path = result_path(out, name, learner, dataset, fold)
+        row = {"method": method, "run_name": name, "seed": seed, "learner": learner, "dataset": dataset, "fold": fold,
+               "status": "pending"}
         if exists(path):
             r = json.load(open(path))
             hq = (r.get("tar") or {}).get("head_quality", {})
@@ -46,7 +48,7 @@ def per_dataset_summary(table: pd.DataFrame) -> pd.DataFrame:
     done = table[table["status"] == "done"]
     if done.empty:
         return pd.DataFrame()
-    return done.groupby(["method", "learner", "dataset"]).agg(
+    return done.groupby(["run_name", "learner", "dataset"]).agg(
         folds_done=("fold", "count"), score=("score", "mean"), csv_tar=("csv_tar", "mean"),
         diff_vs_csv_tar=("diff_vs_csv_tar", "mean"), leak_gap=("leak_gap", "mean"),
         min_total=("min_total", "sum")).reset_index()

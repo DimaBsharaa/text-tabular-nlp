@@ -159,18 +159,28 @@ def write_json(path: str, obj: dict) -> None:
     os.replace(tmp, path)  # atomic: a crash never leaves a half-written result that would be "skipped"
 
 
-def read_jobs(path: str) -> list[tuple[str, str, str, int]]:
+def read_jobs(path: str, default_seed: int = DEFAULTS["seed"]) -> list[tuple[str, str, str, int, int]]:
+    """Lines "method learner dataset fold [seed]"; a missing seed means default_seed (the --seed flag, default 42)."""
     jobs = []
     for line in open(path):
         line = line.split("#", 1)[0].strip()
-        if line:
-            method, learner, dataset, fold = line.split()
-            jobs.append((method, learner, dataset, int(fold)))
+        if not line:
+            continue
+        parts = line.split()
+        if len(parts) not in (4, 5):
+            raise ValueError(f"{path}: expected 'method learner dataset fold [seed]', got {line!r}")
+        method, learner, dataset, fold = parts[:4]
+        jobs.append((method, learner, dataset, int(fold), int(parts[4]) if len(parts) == 5 else default_seed))
     return jobs
 
 
-def job_label(method: str, learner: str, dataset: str, fold: int) -> str:
-    return f"{method} {learner} {dataset} fold {fold}"
+def job_label(method: str, learner: str, dataset: str, fold: int, seed: int = DEFAULTS["seed"]) -> str:
+    return f"{method} {learner} {dataset} fold {fold}" + (f" seed {seed}" if seed != DEFAULTS["seed"] else "")
+
+
+def job_args(args: argparse.Namespace, seed: int) -> argparse.Namespace:
+    """args with this job's seed (so run_name / result_path pick the seed-specific run, e.g. tar_repro__s43)."""
+    return argparse.Namespace(**{**vars(args), "seed": seed})
 
 
 def _fmt_secs(s: float) -> str:
@@ -178,17 +188,17 @@ def _fmt_secs(s: float) -> str:
 
 
 def run_jobs(args: argparse.Namespace) -> int:
-    jobs = read_jobs(args.jobs_file)
+    jobs = read_jobs(args.jobs_file, default_seed=args.seed)
     if args.filter:  # every substring must appear in "method learner dataset fold k"
         jobs = [j for j in jobs if all(f in job_label(*j) for f in args.filter)]
         print(f"filter {args.filter}: {len(jobs)} matching jobs", flush=True)
     n_done = n_failed = n_run = 0
     common = ["--out", args.out, "--cache_dir", args.cache_dir, "--train_examples", str(args.train_examples),
-              "--epochs", str(args.epochs), "--seed", str(args.seed), "--micro_batch_size", str(args.micro_batch_size)]
+              "--epochs", str(args.epochs), "--micro_batch_size", str(args.micro_batch_size)]
     common += ["--no_fast"] if args.no_fast else []
     common += ["--lower_cache_dir", args.lower_cache_dir] if args.lower_cache_dir else []
-    for i, (method, learner, dataset, fold) in enumerate(jobs, 1):
-        name = run_name(method, args)
+    for i, (method, learner, dataset, fold, seed) in enumerate(jobs, 1):
+        name = run_name(method, job_args(args, seed))
         path = result_path(args.out, name, learner, dataset, fold)
         tag = f"[{i}/{len(jobs)}] {name} {learner} {dataset} fold{fold}"
         if not args.force and existing_result_ok(path):
@@ -204,7 +214,7 @@ def run_jobs(args: argparse.Namespace) -> int:
         print(f"{tag}: running (log: {log_path})", flush=True)
         t0 = time.time()
         cmd = [sys.executable, abspath(__file__), "--method", method, "--learner", learner, "--dataset", dataset,
-               "--fold", str(fold), *common] + (["--force"] if args.force else [])
+               "--fold", str(fold), "--seed", str(seed), *common] + (["--force"] if args.force else [])
         with open(log_path, "w") as log:
             proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
             for line in proc.stdout:
@@ -237,12 +247,12 @@ def main() -> int:
     p.add_argument("--jobs_file", help="run every job listed in this file instead of a single job")
     p.add_argument("--max_jobs", type=int, default=None, help="--jobs_file: start at most this many (unfinished) jobs")
     p.add_argument("--filter", action="append", default=[],
-                   help='--jobs_file: keep jobs whose "method learner dataset fold k" contains this (repeat = AND)')
+                   help='--jobs_file: keep jobs whose "method learner dataset fold k[ seed s]" contains this (repeat = AND)')
     p.add_argument("--out", required=True, help="results root (on Colab: a Google Drive folder)")
     p.add_argument("--cache_dir", default=None, help="TAR cache root (default: <out>/_cache)")
     p.add_argument("--train_examples", type=int, default=DEFAULTS["train_examples"])
     p.add_argument("--epochs", type=int, default=DEFAULTS["epochs"], help="max fine-tuning epochs (upstream: 50)")
-    p.add_argument("--seed", type=int, default=DEFAULTS["seed"])
+    p.add_argument("--seed", type=int, default=DEFAULTS["seed"], help="seed; in a jobs file a 5th column overrides it")
     p.add_argument("--micro_batch_size", type=int, default=256, help="lower if the GPU runs out of memory (same result)")
     p.add_argument("--no_fast", action="store_true",
                    help="old full-model TAR path (no lower-layer cache, random batches); results go to <method>__nofast")
