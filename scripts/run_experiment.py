@@ -145,9 +145,20 @@ def read_jobs(path: str) -> list[tuple[str, str, str, int]]:
     return jobs
 
 
+def job_label(method: str, learner: str, dataset: str, fold: int) -> str:
+    return f"{method} {learner} {dataset} fold {fold}"
+
+
+def _fmt_secs(s: float) -> str:
+    return f"{s:.0f}s" if s < 120 else f"{s / 60:.1f} min"
+
+
 def run_jobs(args: argparse.Namespace) -> int:
     jobs = read_jobs(args.jobs_file)
-    n_done = n_failed = 0
+    if args.filter:  # every substring must appear in "method learner dataset fold k"
+        jobs = [j for j in jobs if all(f in job_label(*j) for f in args.filter)]
+        print(f"filter {args.filter}: {len(jobs)} matching jobs", flush=True)
+    n_done = n_failed = n_run = 0
     common = ["--out", args.out, "--cache_dir", args.cache_dir, "--train_examples", str(args.train_examples),
               "--epochs", str(args.epochs), "--seed", str(args.seed), "--micro_batch_size", str(args.micro_batch_size)]
     for i, (method, learner, dataset, fold) in enumerate(jobs, 1):
@@ -158,6 +169,10 @@ def run_jobs(args: argparse.Namespace) -> int:
             print(f"{tag}: done already, skipping", flush=True)
             n_done += 1
             continue
+        if args.max_jobs is not None and n_run >= args.max_jobs:
+            print(f"--max_jobs {args.max_jobs} reached; {len(jobs) - i + 1} job(s) not started", flush=True)
+            break
+        n_run += 1
         log_path = join(args.out, "_logs", name, learner, f"{dataset}_fold{fold}.log")
         os.makedirs(dirname(log_path), exist_ok=True)
         print(f"{tag}: running (log: {log_path})", flush=True)
@@ -173,9 +188,10 @@ def run_jobs(args: argparse.Namespace) -> int:
             proc.wait()
         if proc.returncode == 0 and exists(path):
             r = json.load(open(path))
-            ref = r.get("diff_vs_csv_joint_tar")
-            print(f"{tag}: score {r['score']:.4f}" + (f" (vs CSV TAR {ref:+.4f})" if ref is not None else "") +
-                  f" in {time.time() - t0:.0f}s", flush=True)
+            lb = r["reference"].get("joint_tar")
+            lb_txt = (f" | leaderboard ft {lb:.4f} | diff {r['score'] - lb:+.4f}" if lb is not None
+                      else " | leaderboard ft: n/a")
+            print(f"{tag}: DONE score {r['score']:.4f}{lb_txt} | job time {_fmt_secs(time.time() - t0)}", flush=True)
             n_done += 1
         else:
             tail = open(log_path).read().splitlines()[-15:]
@@ -193,6 +209,9 @@ def main() -> int:
     p.add_argument("--dataset")
     p.add_argument("--fold", type=int)
     p.add_argument("--jobs_file", help="run every job listed in this file instead of a single job")
+    p.add_argument("--max_jobs", type=int, default=None, help="--jobs_file: start at most this many (unfinished) jobs")
+    p.add_argument("--filter", action="append", default=[],
+                   help='--jobs_file: keep jobs whose "method learner dataset fold k" contains this (repeat = AND)')
     p.add_argument("--out", required=True, help="results root (on Colab: a Google Drive folder)")
     p.add_argument("--cache_dir", default=None, help="TAR cache root (default: <out>/_cache)")
     p.add_argument("--train_examples", type=int, default=DEFAULTS["train_examples"])
@@ -213,7 +232,9 @@ def main() -> int:
         return 0
     result = run_one(args)
     write_json(path, result)
-    print(f"Score {result['score']:.4f} | wrote {path}")
+    lb = result["reference"].get("joint_tar")
+    print(f"Score {result['score']:.4f} | leaderboard ft (same dataset/learner/fold) "
+          f"{'n/a' if lb is None else f'{lb:.4f}'} | wrote {path}")
     return 0
 
 

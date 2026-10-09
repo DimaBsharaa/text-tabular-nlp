@@ -123,7 +123,20 @@ Changes to a frozen claim: append below with date and reason; never edit the tex
   - `tar_repro` sanity check (not an advance criterion): per-dataset fold-mean difference vs the CSV `joint_tar`,
     flagged if larger than 2 × the CSV fold std.
 
-Changes to P1: (none yet)
+Changes to P1:
+- **Amendment 1 (2026-10-09): pilot set amended on 2026-10-09 BEFORE any pilot run, to include a second
+  classification dataset.**
+  - Added `MUL_TEXT_DATA_SCIENTIST_SALARY` (Data Scientist Salary, multiclass, 6 classes). Rule used: among the
+    classification datasets in `datasets_summary.csv`, the smallest N × text length (text length measured on the raw
+    data with upstream's text-column detection): 15,841 rows × 227 chars/row ≈ 3.6 M chars. Next: Women's Clothing
+    6.2 M (5 classes), Fake Job Postings 16.4 M (smallest binary; long job descriptions, 1,290 chars/row),
+    Kickstarter 19.3 M (binary), Jigsaw 29.7 M (binary). Product Sentiment (0.5 M) was already in the set.
+  - Pilot set is now 6 datasets × folds 0, 1, 2, CatBoost only = 18 jobs (`jobs/pilot_tar_repro.txt`).
+  - **Advance rule becomes:** mean gain over TAR ≥ +0.005 **and** wins on at least **4 of 6** datasets.
+- **Operational definitions confirmed by Dima (2026-10-09)** — now fixed:
+  - TAR = our own `tar_repro` on the same datasets and folds (not the upstream CSV).
+  - Per-dataset gain = mean over folds 0–2 of (variant − `tar_repro`); mean gain = mean over the 6 datasets.
+  - Win = per-dataset gain > 0.
 
 ## E3 — TAR engine + experiment runner + Colab notebook (no real results yet)   (2026-10-09, base 7a7a286; code in this entry's commit)
 - Question: can we re-run Joint TAR ourselves, faithfully, with caching, resumability and a leakage diagnostic?

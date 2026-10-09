@@ -237,6 +237,7 @@ def train_tar(cfg: TarConfig, train_texts: list[str], train_labels: np.ndarray, 
     micro = max(1, min(cfg.micro_batch_size, cfg.batch_size))
 
     history, best_loss, best_state, best_epoch, bad = [], float("inf"), None, 0, 0
+    t_start = time.time()
     for epoch in range(1, cfg.epochs + 1):
         t0 = time.time()
         model.train()
@@ -274,7 +275,7 @@ def train_tar(cfg: TarConfig, train_texts: list[str], train_labels: np.ndarray, 
         history.append({"epoch": epoch, "train_loss": train_loss_sum / len(tr), "val_loss": val_loss,
                         "seconds": round(time.time() - t0, 1)})
         print(f"  [TAR] epoch {epoch:>2}: train_loss {history[-1]['train_loss']:.4f}  val_loss {val_loss:.4f}  "
-              f"({history[-1]['seconds']}s)", flush=True)
+              f"epoch {history[-1]['seconds']:.0f}s  elapsed {(time.time() - t_start) / 60:.1f} min", flush=True)
         if val_loss < best_loss:  # same rule as HF EarlyStoppingCallback (threshold 0)
             best_loss, best_state, best_epoch, bad = val_loss, _trainable_state(model), epoch, 0
         else:
