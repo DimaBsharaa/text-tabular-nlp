@@ -89,7 +89,7 @@ def run_one(args: argparse.Namespace) -> dict:
     from multabench.datasets.multimodal import MultimodalState
     from multabench.datasets.utils import dataset_from_name
     from multabench.ours.learners import make_learner
-    from multabench.ours.tar_engine import TarConfig, set_seed
+    from multabench.ours.tar_engine import ENGINE_VERSION, TarConfig, set_seed
     from multabench.utils.hardware import get_hardware_dict
 
     t0 = time.time()
@@ -119,7 +119,9 @@ def run_one(args: argparse.Namespace) -> dict:
     ref = reference_scores(args.dataset, learner_cls.MODEL_NAME, args.fold)
     score = float(metrics.score)
     return {
-        "method": args.method, "run_name": run_name(args.method, args), "learner": args.learner,
+        "method": args.method, "run_name": run_name(args.method, args), "engine_version": ENGINE_VERSION,
+        "tar_path": None if not tar else ("fast" if tar.diagnostics["train"].get("fast_path") else "full_model"),
+        "learner": args.learner,
         "learner_model_name": learner_cls.MODEL_NAME, "dataset": args.dataset, "fold": args.fold,
         "task": args.dataset[:3], "score": score, "metrics": json.loads(json.dumps(asdict(metrics), default=float)),
         "reference": ref, "diff_vs_csv_joint_tar": (score - ref["joint_tar"]) if "joint_tar" in ref else None,

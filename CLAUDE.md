@@ -59,5 +59,9 @@ D. Ordinal/soft-label loss for regression instead of 20-bin CE.
    Before every commit run `git diff --stat paper_version` (a tag — there is no `upstream/paper_version`) and
    show Dima the result.
 6. **Resumable experiments.** One JSON per (method, learner, dataset, fold); skip if it exists.
-7. **Secrets & teaching.** Secrets live only in `.env` (gitignored) / Colab Secrets; never print or commit them.
+7. **tar_repro is frozen at commit 96c1f5c** (engine `tar_engine/2`, the code the tar_repro pilot runs on). Never
+   change anything on its code path or its results; implement variants alongside it with their own engine version.
+   `tests/test_tar_repro_frozen.py` checks its texts, labels, split, tokens, batch order and config against
+   `tests/golden/tar_repro_96c1f5c.json` (generated from a 96c1f5c checkout). Every result JSON records `engine_version`.
+8. **Secrets & teaching.** Secrets live only in `.env` (gitignored) / Colab Secrets; never print or commit them.
    W&B is disabled (`WANDB_MODE=disabled`). Explain things simply — Dima is learning.

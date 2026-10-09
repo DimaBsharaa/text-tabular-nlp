@@ -64,6 +64,9 @@ from multabench.finetune.utils import encoder_finetune_loss
 from multabench.preprocessing.discretize import discretize_numerical
 from multabench.preprocessing.splits import split_to_val
 
+# Version of the tar_repro method. FROZEN at commit 96c1f5c (the tar_repro pilot): never change tar_repro's code path
+# or bump this string — tests/test_tar_repro_frozen.py guards it, and run_experiment re-runs any result whose
+# engine_version differs. New variants get their own version strings.
 ENGINE_VERSION = "tar_engine/2"
 VARIANTS = {"tar_repro"}
 SPLITS = ("e5_train", "e5_val", "learner_val", "test")
