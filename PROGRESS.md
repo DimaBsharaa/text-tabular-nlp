@@ -31,6 +31,7 @@ Entry template:
 | E9 | 2026-10-10 | A/A control, seed 43 vs 42 | does not pass (+0.0028, 3/6) → advance rule unchanged; seed sd per fold ≈ 0.008 |
 | P1 am. 3 / P2 | 2026-10-10 | control = mean of seeds 42+43; variant spec + predictions (docs/method_spec.md) | written before any variant result |
 | E10 | 2026-10-10 | variant (a) offset implemented + tested | jobs/pilot_offset.txt ready |
+| E11 | 2026-10-10 | variants (b) prefix, prefix_offset implemented + tested | jobs/pilot_prefix*.txt ready |
 
 ---
 
@@ -444,3 +445,19 @@ Changes to P1:
   bit-for-bit training fingerprint (tiny CPU runs, fast + full path, cls + reg) generated from a 96c1f5c checkout.
 - Tiny real-data check (CPU, 300 rows, 1 epoch): Book Price top structured features BookCategory, Genre, Ratings;
   Product Sentiment: Product_Type. Runs end to end.
+
+## E11 — P2 variant (b) `prefix` and `prefix_offset` implemented (no results yet)   (2026-10-10; code in this entry's commit)
+- Built: `multabench/ours/feature_tokens.py` (FeatureSpec / RowFeatures / FeatureTokenizer / PrefixSource) and the
+  prefix branch of `run_variant`; `--method prefix|prefix_offset`; `jobs/pilot_prefix.txt`, `jobs/pilot_prefix_offset.txt`.
+- Mechanism: top-8 structured features by full-fit CatBoost importance → one token each,
+  `W_name · E5_frozen("passage: {name}") + value_enc(x)` (PLE over ≤ 16 pool quantile bins → Linear(16→384);
+  categories with ≥ 3 pool occurrences get an embedding, others "other"; missing → learned vector). Tokens are
+  concatenated to the cached layer-8 states at the input of layer 9; attention over text + feature tokens; mean
+  pool over text tokens only. New parameters train with LoRA + head (same optimizer, lr, early stopping). Text
+  inputs identical to TAR → tar_repro's lower-layer cache is reused. Embeddings stored per (row, column).
+  `prefix_offset` adds the offset loss of (a).
+- Tests (CPU): PLE smooth and monotone; masked feature tokens → embeddings equal TAR's (< 1e-5), visible tokens
+  change them; rare/unseen categories → "other", upstream's missing placeholder → missing vector; prefix and
+  prefix_offset end to end for cls and reg, no new lower-layer cache, cache hit on re-run.
+- Tiny real-data check (CPU, 300 rows, 1 epoch): Book Price and Product Sentiment run end to end for both methods,
+  lower-layer cache hit each time.

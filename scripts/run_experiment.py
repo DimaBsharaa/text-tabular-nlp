@@ -25,7 +25,7 @@ REPO_ROOT = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, REPO_ROOT)  # works with plain `uv sync` (no .pth file needed)
 os.environ.setdefault("WANDB_MODE", "disabled")
 
-METHODS = ("tar_repro", "offset")  # see docs/method_spec.md; more variants are added as they are built
+METHODS = ("tar_repro", "offset", "prefix", "prefix_offset")  # see docs/method_spec.md; more variants are added as they are built
 DEFAULTS = {"train_examples": 10_000, "epochs": 50, "seed": 42}
 SUFFIX = {"epochs": "ep", "train_examples": "n", "seed": "s"}
 

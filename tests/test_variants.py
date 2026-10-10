@@ -128,3 +128,93 @@ def test_no_structured_columns_equals_tar_repro(tmp_path, cfg, task):
     for c in cols:
         assert np.array_equal(off.columns[c].emb, tar.columns[c].emb)
     assert off.config["engine_version"] == "variants/1"
+
+
+# ------------------------------------------------------------------ prefix variants
+
+# (6) the numeric encoding is smooth: nearby values -> nearby encodings / tokens
+def test_ple_is_smooth_and_monotone():
+    from multabench.ours.feature_tokens import ple_edges, ple_encode
+    vals = np.random.default_rng(0).lognormal(0, 1, 1000)
+    edges = ple_edges(vals)
+    x = np.linspace(vals.min() - 1, vals.max() + 1, 20001)
+    enc = ple_encode(x, edges)
+    step = np.abs(np.diff(enc, axis=0)).sum(axis=1)
+    assert step.max() < 0.05, "a tiny change in x caused a jump in the encoding"
+    assert (np.diff(enc, axis=0) >= -1e-7).all(), "encoding is not monotone"
+    assert np.allclose(enc[0], 0) and np.allclose(enc[-1, :len(edges) - 1], 1)
+    assert np.allclose(ple_encode(np.array([np.nan]), edges), 0)
+
+
+def _prefix_setup(cfg):
+    """A fresh model + lower cache + feature tokens on a tiny table, shared by tests 4/5."""
+    from transformers import AutoTokenizer
+    from multabench.ours.feature_tokens import FeatureSpec, FeatureTokenizer, PrefixSource, RowFeatures, frozen_name_vectors
+    x, _, _ = _table(60)
+    strings = list(dict.fromkeys(f"passage: review: {t}" for t in x["review"]))
+    tok = AutoTokenizer.from_pretrained(cfg.model_name)
+    tokens = te.TokenStore(strings, tok, cfg.max_length)
+    model = te.build_model(cfg, d_output=2, device=CPU).eval()
+    with torch.no_grad():  # non-trivial LoRA, so the comparison is meaningful
+        for n, p in model.named_parameters():
+            if "lora_B" in n:
+                p.normal_(0, 0.02)
+    cache = te.LowerCache.get_or_build(model, tokens, cfg, CPU)
+    specs = [FeatureSpec("price", "num", x["price"]), FeatureSpec("brand", "cat", x["brand"])]
+    feats = RowFeatures(specs, x[["price", "brand"]])
+    model.feature_tokenizer = FeatureTokenizer(specs, frozen_name_vectors(model, tok, ["price", "brand"], cfg, CPU), 384)
+    uids = tokens.uids([f"passage: review: {t}" for t in x["review"]])
+    src = PrefixSource(model, cache, cfg, uids, np.arange(len(x)), feats)
+    return model, cache, tokens, src, uids, x
+
+
+# (5) with all feature tokens masked out, prefix embeddings equal TAR's
+def test_masked_feature_tokens_equal_tar(cfg):
+    model, cache, tokens, src, uids, x = _prefix_setup(cfg)
+    src.features_visible = False
+    emb_prefix, _ = te.encode(model, src, np.arange(len(x)), cfg, CPU)
+    emb_tar, _ = te.encode(model, te._CachedLowerSource(model, cache, cfg), uids, cfg, CPU)
+    assert np.abs(emb_prefix - emb_tar).max() < 1e-5
+    src.features_visible = True
+    emb_seen, _ = te.encode(model, src, np.arange(len(x)), cfg, CPU)
+    assert np.abs(emb_seen - emb_tar).max() > 1e-4, "visible feature tokens should change the embeddings"
+
+
+def test_feature_tokens_shape_missing_and_rare_categories(cfg):
+    from tabstar.preprocessing.feat_types import MISSING_VALUE  # upstream's placeholder for missing categoricals
+    from multabench.ours.feature_tokens import FeatureSpec, RowFeatures
+    s = pd.Series(["a"] * 5 + ["b"] * 2 + [MISSING_VALUE] * 4)
+    spec = FeatureSpec("c", "cat", s)
+    assert spec.vocab == {"a": 1}  # "b" seen only twice -> "other"; the placeholder never gets its own category
+    ids, miss = spec.encode(pd.Series(["a", "b", "zzz", MISSING_VALUE]))
+    assert ids.tolist() == [1, 0, 0, 0] and miss.tolist() == [False, False, False, True]
+    model, cache, tokens, src, uids, x = _prefix_setup(cfg)
+    toks = model.feature_tokenizer(src.feats, np.arange(4), CPU)
+    assert toks.shape == (4, 2, 384)
+
+
+# (4) prefix reuses tar_repro's lower-layer cache; (7) prefix variants end to end
+@pytest.mark.parametrize("method,task", [("prefix", "cls"), ("prefix", "reg"), ("prefix_offset", "cls"),
+                                         ("prefix_offset", "reg")])
+def test_prefix_variants_end_to_end_and_cache_reuse(tmp_path, cfg, method, task):
+    import os
+    x, y_cls, y_reg = _table()
+    y = y_cls if task == "cls" else y_reg
+    x_fit, y_fit, extra = _split(x, y)
+    cols = ["review", "title"]
+    tar = te.run_tar(x_fit[cols], y_fit, cols, task == "cls", {k: (v[0][cols], v[1]) for k, v in extra.items()},
+                     cfg, CPU, None, "SYNTH", 0)
+    before = set(os.listdir(cfg.lower_cache_dir))
+    res = run_variant(method, x_fit, y_fit, cols, ["price", "brand"], ["brand"], task == "cls", extra, cfg, CPU,
+                      str(tmp_path / "tar"), "SYNTH", 0)
+    assert set(os.listdir(cfg.lower_cache_dir)) == before, "prefix built a new lower-layer cache"
+    assert res.config["method"] == method and res.diagnostics["feature_info"]["top_features"]
+    test_x = extra["test"][0]
+    emb = res.row_embeddings("review", test_x.index, texts=te.encoding_texts(test_x, "review"))
+    assert emb.shape == (40, 384) and np.allclose(np.linalg.norm(emb, axis=1), 1, atol=1e-4)
+    # embeddings are per row: two rows with the same review text but different structure may differ
+    assert len(res.columns["title"].emb) == len(x)
+    if method == "prefix_offset":
+        assert "combined_quality" in res.diagnostics
+    assert run_variant(method, x_fit, y_fit, cols, ["price", "brand"], ["brand"], task == "cls", extra, cfg, CPU,
+                       str(tmp_path / "tar"), "SYNTH", 0).cache_hit

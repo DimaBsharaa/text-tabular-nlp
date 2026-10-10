@@ -1,7 +1,7 @@
 """TAR variants (docs/method_spec.md). tar_repro itself lives in tar_engine.run_tar and is never changed here.
 
 Every variant reuses TAR's split, texts, encoder, LoRA, head, optimizer, schedule, early stopping and PCA, and changes
-only what its spec section says. Implemented so far: `offset`.
+only what its spec section says. Implemented so far: `offset`, `prefix`, `prefix_offset`.
 """
 from __future__ import annotations
 
@@ -27,8 +27,10 @@ from multabench.ours import tar_engine as te
 from multabench.ours.structured_offset import StructuredOffset, fit_structured_offset
 
 VARIANT_ENGINE_VERSION = "variants/1"
-OFFSET_METHODS = {"offset"}
-METHODS = {"offset"}
+OFFSET_METHODS = {"offset", "prefix_offset"}
+PREFIX_METHODS = {"prefix", "prefix_offset"}
+METHODS = {"offset", "prefix", "prefix_offset"}
+TOP_K = 8
 
 
 def engine_version(method: str) -> str:
@@ -76,8 +78,9 @@ def run_variant(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[st
     text_cols = sorted(text_cols)
     struct_cols = [c for c in struct_cols if c not in text_cols]
     extra = {k: v for k, v in extra.items() if v is not None}
+    uses_offset, uses_prefix = method in OFFSET_METHODS, method in PREFIX_METHODS
 
-    if method in OFFSET_METHODS and not struct_cols:
+    if not struct_cols:
         # Spec 7.6: no structured columns -> exactly the tar_repro computation (same cache entry).
         res = te.run_tar(x_fit[text_cols], y_fit, text_cols, is_cls, {k: (x[text_cols], y) for k, (x, y) in extra.items()},
                          cfg, device, cache_root, dataset, fold, variant="tar_repro")
@@ -117,13 +120,13 @@ def run_variant(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[st
     t_struct = time.time() - t0
     rep = len(text_cols)
 
+    # ---- target and loss
     train_offsets = val_offsets = None
-    if is_cls:
-        classes = d["classes"]
-        train_labels, val_labels = d["train_labels"], d["val_labels"]
+    classes, train_labels, val_labels = d["classes"], d["train_labels"], d["val_labels"]
+    if uses_offset and is_cls:
         train_offsets = np.repeat(so.log_offset(so.oof_for(x_tr.index)), rep, axis=0)
         val_offsets = np.repeat(so.log_offset(so.oof_for(x_va.index)), rep, axis=0)
-    else:
+    elif uses_offset:
         y_num = pd.to_numeric(y_fit)
         r_tr = y_num.loc[x_tr.index] - so.oof_for(x_tr.index)
         r_va = y_num.loc[x_va.index] - so.oof_for(x_va.index)
@@ -139,18 +142,57 @@ def run_variant(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[st
     te.set_seed(cfg.seed)
     model = te.build_model(cfg, d_output=len(classes), device=device)
     t1 = time.time()
-    source = te.make_source(model, tokens, cfg, device)
+    feature_info = {"top_features": so.top_features(TOP_K)}
+
+    # ---- inputs: which cells, through which source
+    if uses_prefix:
+        from multabench.ours.feature_tokens import (FeatureSpec, FeatureTokenizer, PrefixSource, RowFeatures,
+                                                    frozen_name_vectors)
+        assert cfg.fast, "prefix variants need the fast (cached frozen layers) path"
+        cache = te.LowerCache.get_or_build(model, tokens, cfg, device)
+        assert cache is not None, "prefix variants need the lower-layer cache (not enough local disk)"
+        top = so.top_features(TOP_K)
+        specs = [FeatureSpec(c, "cat" if c in struct_cfg["cat_cols"] else "num", x_pool[c]) for c in top]
+        all_rows = pd.concat([f[top] for f in frames])
+        feats = RowFeatures(specs, all_rows)
+        model.feature_tokenizer = FeatureTokenizer(specs, frozen_name_vectors(model, tokenizer, top, cfg, device),
+                                                   model.head.in_features).to(device)
+        # cell table: train cells, val cells, then one cell per (column, row) for encoding
+        tr_rows = np.repeat(feats.positions(x_tr.index), rep)
+        va_rows = np.repeat(feats.positions(x_va.index), rep)
+        enc_uid = {col: tokens.uids(enc_strings[col]) for col in text_cols}
+        enc_pos = {col: feats.positions(rows_by_col[col]) for col in text_cols}
+        cell_uid = np.concatenate([tokens.uids(d["train_texts"]), tokens.uids(d["val_texts"])]
+                                  + [enc_uid[c] for c in text_cols])
+        cell_pos = np.concatenate([tr_rows, va_rows] + [enc_pos[c] for c in text_cols])
+        source = PrefixSource(model, cache, cfg, cell_uid, cell_pos, feats)
+        n_tr, n_va = len(d["train_texts"]), len(d["val_texts"])
+        train_ids, val_ids = np.arange(n_tr), np.arange(n_tr, n_tr + n_va)
+        start, enc_ids = n_tr + n_va, {}
+        for c in text_cols:
+            enc_ids[c] = np.arange(start, start + len(enc_uid[c]))
+            start += len(enc_uid[c])
+        feature_info["feature_kinds"] = {s.name: s.kind for s in specs}
+    else:
+        source = te.make_source(model, tokens, cfg, device)
+        train_ids, val_ids = tokens.uids(d["train_texts"]), tokens.uids(d["val_texts"])
     t_lower = time.time() - t1
     print(f"  [TAR:{method}] fine-tuning on {len(x_tr)} rows × {rep} text cols = {len(d['train_texts'])} cells "
           f"(val {len(x_va)} rows), d_output={len(classes)}, struct cols={len(struct_cols)}, "
           f"path={'fast' if source.fast else 'full model'}", flush=True)
-    train_log = te.train_tar(cfg, model, source, tokens.uids(d["train_texts"]), train_labels,
-                             tokens.uids(d["val_texts"]), val_labels, device, train_offsets, val_offsets)
+    train_log = te.train_tar(cfg, model, source, train_ids, train_labels, val_ids, val_labels, device,
+                             train_offsets, val_offsets)
     t_train = time.time() - t1 - t_lower
 
+    # ---- embeddings for every row we will be asked about
     t2 = time.time()
     columns = {}
     for col in text_cols:
+        if uses_prefix:  # per (row, column): the embedding depends on the row's structured features (spec 7.9)
+            emb, logits = te.encode(model, source, enc_ids[col], cfg, device)
+            columns[col] = te.ColumnOutputs(emb=emb, logits=logits, text_hash=te._text_hash(raw_by_col[col]),
+                                            row_uid={int(r): i for i, r in enumerate(rows_by_col[col])})
+            continue
         uniq, inverse = np.unique(np.array(raw_by_col[col], dtype=object), return_inverse=True)
         uniq = uniq.tolist()
         emb, logits = te.encode(model, source, tokens.uids([format_e5_passage(col, t) for t in uniq]), cfg, device)
@@ -159,23 +201,39 @@ def run_variant(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[st
     t_encode = time.time() - t2
 
     head = {"classes": classes, "d_output": len(classes)}
-    if not is_cls:
+    if uses_offset and not is_cls:
         head["bin_means"] = [float(resid_means[c]) for c in classes]  # head predicts the residual
+    elif not is_cls:
+        yb = pd.Series(d["y_tr"].astype(str).to_numpy(), index=d["y_tr"].index)
+        means = pd.to_numeric(y_fit.loc[d["y_tr"].index]).groupby(yb).mean()
+        head["bin_means"] = [float(means[c]) for c in classes]
     splits = {"e5_train": np.asarray(x_tr.index), "e5_val": np.asarray(x_va.index)}
     splits.update({k: np.asarray(x.index) for k, (x, _) in extra.items()})
     config = {**cfg.result_dict(device), "engine_version": VARIANT_ENGINE_VERSION, "method": method,
-              "structured": {**struct_cfg, "catboost": {"iterations": 500, "depth": 6, "seed": 42}, "oof_folds": 5}}
+              "structured": {**struct_cfg, "catboost": {"iterations": 500, "depth": 6, "seed": 42}, "oof_folds": 5},
+              **({"prefix": {"top_k": TOP_K, "ple_bins": 16, "min_category_count": 3}} if uses_prefix else {})}
     result = te.TarResult(variant=method, cache_key=key, cache_hit=False, config=config, text_cols=text_cols,
                           splits=splits, columns=columns, head=head, diagnostics={})
-    result.diagnostics = {"train": train_log, **_offset_diagnostics(result, so, y_fit, extra, x_tr, x_va, is_cls),
+    if uses_offset:
+        diag = _offset_diagnostics(result, so, y_fit, extra, x_tr, x_va, is_cls)
+    else:
+        y_by_split = {"e5_train": y_fit.loc[x_tr.index], "e5_val": y_fit.loc[x_va.index]}
+        y_by_split.update({k: y for k, (_, y) in extra.items()})
+        hq = te._head_quality(result, y_by_split, is_cls)
+        diag = {"head_quality": hq, "head_quality_scores": {k: v["score"] for k, v in hq.items()},
+                "offset_info": {"has_features": so.has_features, "n_struct_cols": len(so.feature_cols),
+                                "top_features": so.top_features(8),
+                                "importances": {k: round(v, 3) for k, v in so.importances.items()}}}
+    result.diagnostics = {"train": train_log, **diag, "feature_info": feature_info,
                           "seconds_struct": round(t_struct, 1), "seconds_lower_cache": round(t_lower, 1),
                           "seconds_train": round(t_train, 1), "seconds_encode": round(t_encode, 1),
                           "seconds_total_tar": round(time.time() - t0, 1),
                           "n_unique_texts": {c: int(len(columns[c].emb)) for c in text_cols}, "device": str(device)}
     dg = result.diagnostics
-    print("  [TAR:%s] head %s | struct_only %s | combined %s" % (method, *[
-        ", ".join(f"{s}={v:.4f}" for s, v in dg[k].items() if v is not None)
-        for k in ("head_quality_scores", "struct_only_quality", "combined_quality")]), flush=True)
+    parts = [k for k in ("head_quality_scores", "struct_only_quality", "combined_quality") if k in dg]
+    print(f"  [TAR:{method}] " + " | ".join(
+        f"{k.replace('_quality', '').replace('_scores', '')} " +
+        ", ".join(f"{s}={v:.4f}" for s, v in dg[k].items() if v is not None) for k in parts), flush=True)
     if path:
         os.makedirs(os.path.dirname(path), exist_ok=True)
         te._save(result, model, path)
