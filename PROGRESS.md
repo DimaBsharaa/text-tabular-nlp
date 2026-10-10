@@ -34,6 +34,7 @@ Entry template:
 | E11 | 2026-10-10 | variants (b) prefix, prefix_offset implemented + tested | jobs/pilot_prefix*.txt ready |
 | E12 | 2026-10-10 | variants (c) context, context_offset + sensitivity probe implemented + tested | jobs/pilot_context*.txt ready |
 | E13 | 2026-10-10 | P2 pilot: 5 variants vs control | none passes; offset +0.0031 (4/6) best; context −0.022 |
+| P3 | 2026-10-10 | stacking: cross-fitted head predictions as features (4 variants) + decision rule | written before any P3 run |
 
 ---
 
@@ -530,3 +531,52 @@ Changes to P1:
   encoder see the structure (context, prefix) makes its *own* predictions better but its *embeddings* worse for a
   learner that already has the structure. offset is closest (+0.0031, 4/6) but below the bar.
 - Next step: Dima decides (see options in the chat); any new variant needs a P3 pre-registration first.
+- **Summary:** P2 failed: none of 5 variants passed; inference: the gain lives in the head's predictions and is lost
+  through PCA'd embeddings, and encoders that see the table collapse onto it -> P3 tests cross-fitted head
+  predictions as features.
+
+## Pilot protocol P3 — cross-fitted head predictions as features (stacking). Written 2026-10-10, BEFORE any P3 run. Do not edit.
+- **Why:** E13 — the text head's predictions carry the gain (offset: structured → structured + text head on test,
+  e.g. Data Scientist Salary AUROC 0.550 → 0.796), but it is lost through the PCA'd embeddings; and in-sample head
+  predictions on training rows would leak (E8 leakage gap +0.031). So: give the learner the head's predictions as
+  extra features, cross-fitted so no training row's prediction comes from a model that saw its label.
+- **Setting:** CatBoost, the same 18 P1 pilot jobs (6 datasets × folds 0–2), seed 42, T4; control = mean of tar_repro
+  seeds 42 + 43 (P1 amendment 3); the P1 advance rule unchanged (mean gain ≥ +0.005 and ≥ 4/6 wins).
+- **Variants:**
+  - `insample_pred` (ablation): tar_repro features + the full-fit TAR head's predictions on all rows (training rows
+    in-sample).
+  - `xfit_pred`: tar_repro features + cross-fitted TAR head predictions. K = 3 folds over the E5 pool (stratified for
+    classification); per fold, fine-tune exactly like tar_repro on the other 2/3 (same hyperparameters, early
+    stopping on a split taken from those 2/3 only), predict the held-out third. Test and learner-val rows get the
+    MEAN of the 3 fold models' predictions.
+  - `frozen_xfit_pred`: Joint Frozen E5 PCA embeddings (as upstream `all`) + the same cross-fitted predictions as
+    `xfit_pred` (reuses its fine-tunes; written by the same job).
+  - `xfit_offset_pred`: tar_repro features + cross-fitted predictions of the OFFSET head (fold models trained with
+    the offset loss, using the existing pool-level OOF structured offsets). The feature is the text head's own output
+    without the offset added.
+- **Prediction features, per text column:** classification = class probabilities (binary: 1 column; multiclass:
+  C − 1 columns); regression = expected value over the 20 bin midpoints + the distribution's std. Offset heads: the
+  same on the residual scale.
+- **Predictions (Dima, 2026-10-10):** insample_pred ≤ tar_repro; xfit_pred > tar_repro; xfit_offset_pred ≥ xfit_pred,
+  largest where the structured model is strong; frozen_xfit_pred ≈ xfit_pred.
+- **Decision rule (pre-registered):** if no P3 variant passes the advance rule, the variant with the highest pilot
+  mean gain goes to the full run as the final method; the full run is the real test.
+- **Diagnostics per job:** quality of the prediction features on training rows (OOF for xfit, in-sample for
+  insample) vs test — the leakage gap should close for xfit and stay open for insample; CatBoost feature importance
+  of the new columns.
+- **Implementation choices (Claude; same spirit as docs/method_spec.md §7):**
+  1. Pool = the learner's rows handed to the text-encoder step (TAR's E5 train ∪ val). Folds:
+     `StratifiedKFold(3, shuffle=True, random_state=42)` on the class label (cls; plain `KFold` if a class has < 3
+     rows) and `KFold(3, shuffle=True, random_state=42)` (reg).
+  2. Fold fine-tunes call the frozen tar_repro function (`tar_engine.run_tar`) on the fold's 2/3 (it does its own
+     90/10 early-stopping split and its own 20 y-bins inside those rows); the held-out third, learner-val and test
+     rows are passed as extra row sets (predicted, never trained on). Offset folds call `run_variant("offset")` the
+     same way with the pool-level OOF structured model passed in (not refitted per fold).
+  3. Regression bin midpoints = midpoints of the quantile edges of the fold model's own target bins (y for TAR heads,
+     residual for offset heads); "std" = std of the head's bin distribution around its expected value.
+  4. Per text column, a row's features come from that column's cell; the feature columns are appended to that text
+     column's 30 PCA components (upstream names them `<col>_txt_pca_30…`), so no upstream code changes.
+  5. insample_pred reuses the cached seed-42 tar_repro fine-tune (its head = the "full-fit TAR head").
+- **GPU estimate (T4, from E8/E13 timings):** insample_pred ≈ 0.2 h (cache hits, CatBoost only); xfit_pred +
+  frozen_xfit_pred ≈ 3 fine-tunes on 2/3 of the pool ≈ 2 × tar_repro ≈ 2–2.5 h; xfit_offset_pred ≈ 2–2.5 h.
+  Total ≈ 4.5–5.5 GPU-hours.
