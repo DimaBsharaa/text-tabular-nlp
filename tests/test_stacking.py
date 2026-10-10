@@ -152,3 +152,24 @@ def test_learner_receives_prediction_columns(tmp_path, cfg):
     imp = model.stack_feature_importance()
     assert set(imp["pred_columns"]) == {"review_txt_pca_30"} and 0 <= imp["pred_share"] <= 1
     assert 0.0 <= model.score_all_metrics(X=x_te, y=y_te).score <= 1.0
+
+
+def test_companion_reuses_the_first_methods_device(tmp_path, monkeypatch):
+    """tabstar's get_device() refuses a GPU already holding memory (ours, after xfit_pred): the companion
+    (frozen_xfit_pred) must reuse the device chosen for the first method instead of asking again."""
+    import sys as _sys
+    _sys.path.insert(0, str(__import__("pathlib").Path(__file__).parents[1] / "scripts"))
+    import run_experiment as rx
+    seen, sentinel = [], object()
+
+    def fake_run_one(margs):
+        seen.append((margs.method, margs._device))
+        margs._device = margs._device or sentinel
+        return {"score": 0.5, "reference": {}, "method": margs.method}
+    monkeypatch.setattr(rx, "run_one", fake_run_one)
+    monkeypatch.setattr(rx, "existing_result_ok", lambda p: False)
+    monkeypatch.setattr(_sys, "argv", ["run_experiment.py", "--method", "xfit_pred", "--learner", "catboost",
+                                       "--dataset", "X", "--fold", "0", "--out", str(tmp_path)])
+    assert rx.main() == 0
+    assert [m for m, _ in seen] == ["xfit_pred", "frozen_xfit_pred"]
+    assert seen[0][1] is None and seen[1][1] is sentinel

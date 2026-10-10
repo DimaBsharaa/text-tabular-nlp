@@ -36,6 +36,7 @@ Entry template:
 | E13 | 2026-10-10 | P2 pilot: 5 variants vs control | none passes; offset +0.0031 (4/6) best; context −0.022 |
 | P3 | 2026-10-10 | stacking: cross-fitted head predictions as features (4 variants) + decision rule | written before any P3 run |
 | E14 | 2026-10-10 | P3 implemented + tested | jobs/pilot_p3.txt ready (54 jobs, ≈ 5 GPU-h) |
+| E15 | 2026-10-10 | P3 pilot, 3 of 4 variants | none passes; xfit_offset_pred +0.0035 (6/6) best; frozen_xfit_pred failed (GPU check), fixed |
 
 ---
 
@@ -607,3 +608,43 @@ Changes to P1:
   asserted) — an environment problem, not P3 code. Fix: pytest temp folders moved to the real disk
   (`pyproject.toml`: `--basetemp=.pytest_tmp`), `/tmp` cleaned; full suite 54 passed, 1 skipped (slow bit-for-bit
   check, unchanged code path). Commits now require pytest's own exit code 0.
+
+## E15 — P3 pilot results for 3 of 4 variants (frozen_xfit_pred failed to run)   (2026-10-10, commit 60b19ad, Colab T4)
+- Source: `results_export_20261010_171243.zip`; one unattended run of `jobs/pilot_p3.txt`. 54 jobs at 60b19ad,
+  clean tree; base tar_repro fine-tunes all cache hits. GPU time: insample_pred 27 min, xfit_pred 119 min,
+  xfit_offset_pred 89 min. Reports: `reports/pilot/advance_{insample_pred,xfit_pred,xfit_offset_pred}.*`.
+- **frozen_xfit_pred did not run:** in every xfit_pred job the companion step raised tabstar's
+  `RuntimeError("No free GPU found!")` — `get_device()` refuses a GPU that already holds memory, i.e. our own
+  process after xfit_pred. The xfit_pred JSONs were written before that, so they are complete. Fix (this entry's
+  commit): one device per job, reused by the companion (+ test). Re-running `jobs/pilot_p3.txt` now only computes
+  the 18 missing frozen_xfit_pred results (fold fine-tunes are cached on Drive).
+- **Advance rule vs control (mean of tar_repro seeds 42 + 43):**
+  | dataset | insample_pred | xfit_pred | xfit_offset_pred |
+  |---|---|---|---|
+  | Data Scientist Salary | +0.0002 | +0.0018 | +0.0011 |
+  | Product Sentiment | +0.0083 | +0.0024 | +0.0048 |
+  | Baby Products | +0.0056 | +0.0096 | +0.0026 |
+  | Book Price | +0.0013 | +0.0061 | +0.0061 |
+  | Book Readability | −0.0013 | −0.0022 | +0.0045 |
+  | Montgomery Salaries | +0.0026 | +0.0019 | +0.0018 |
+  | **mean gain / wins** | **+0.0028 / 5** | **+0.0033 / 5** | **+0.0035 / 6** |
+  | passes (≥ +0.005, ≥ 4/6) | no | no | no |
+- **Diagnostics:**
+  - Leakage gap of the prediction features (quality on training rows − test): insample_pred +0.03…+0.05 (5/6
+    datasets; Baby Products −0.005), xfit_pred and xfit_offset_pred ≈ 0 or negative (−0.07…+0.004). → cross-fitting
+    closes the gap, as predicted. (Negative gaps: training rows get one fold model trained on 2/3 of the pool,
+    test rows the mean of 3 models.)
+  - CatBoost importance share of the prediction columns: insample_pred 0.12–0.44, xfit_pred 0.07–0.25,
+    xfit_offset_pred 0.01–0.25 → CatBoost leans much harder on the leaky in-sample predictions.
+  - Test quality of the prediction features (cls AUROC / reg R², mean over text columns): insample ≈ xfit_pred
+    (e.g. Montgomery 0.618 / 0.599); xfit_offset_pred lower by construction (residual-scale head alone).
+- Predictions (P3) so far: insample_pred ≤ tar_repro — no (+0.0028, 5/6); xfit_pred > tar_repro — yes but small
+  (+0.0033, 5/6, below the bar); xfit_offset_pred ≥ xfit_pred — yes, marginally (+0.0035 vs +0.0033) and the only
+  variant so far that wins on all 6 datasets; frozen_xfit_pred ≈ xfit_pred — pending.
+- Noise reference: with the per-fold seed sd σ ≈ 0.008 (E9) and the two-seed control, a no-effect variant's
+  per-dataset gain has sd ≈ 0.0057, so all 6 datasets positive by chance ≈ 1/64 (1.6%); mean ≥ +0.005 by chance
+  rare too. The gains are consistent but small (+0.001…+0.006 per dataset).
+- Hostile review: control complete; same rows/splits as tar_repro (base fine-tune cache hits = same rows hash);
+  test labels only in diagnostics; fold models never trained on rows they predict (test suite, spy).
+- **P3 decision rule not applied yet** — it needs all four P3 variants; waiting for frozen_xfit_pred.
+- Next step: re-run `jobs/pilot_p3.txt` (≈ 30 min, only frozen_xfit_pred left), then apply the P3 decision rule.

@@ -98,7 +98,10 @@ def run_one(args: argparse.Namespace) -> dict:
 
     t0 = time.time()
     set_seed(args.seed)
-    device = get_device(device=DEVICE)
+    # One device per process: tabstar's get_device() refuses a GPU that already holds memory, which is our own after
+    # the first method of a job (P3 companions: xfit_pred -> frozen_xfit_pred).
+    device = getattr(args, "_device", None) or get_device(device=DEVICE)
+    args._device = device
     dataset_id = dataset_from_name(name=args.dataset)
     # Same loading / subsampling / test split as upstream evaluate_on_loaded_dataset with multimodal_state=ft.
     dataset = download_dataset(dataset_id=dataset_id, multimodal_state=MultimodalState.ALL, target_override=None)
@@ -306,13 +309,15 @@ def main() -> int:
         return run_jobs(args)
     if None in (args.method, args.learner, args.dataset, args.fold):
         p.error("give --method --learner --dataset --fold, or --jobs_file")
+    device = None
     for method in [args.method] + COMPANIONS.get(args.method, []):
-        margs = argparse.Namespace(**{**vars(args), "method": method})
+        margs = argparse.Namespace(**{**vars(args), "method": method, "_device": device})
         path = result_path(args.out, run_name(method, margs), args.learner, args.dataset, args.fold)
         if not args.force and existing_result_ok(path):
             print(f"{path} exists, skipping")
             continue
         result = run_one(margs)
+        device = margs._device  # reuse it for the companion
         write_json(path, result)
         lb = result["reference"].get("joint_tar")
         print(f"Score {result['score']:.4f} | leaderboard ft (same dataset/learner/fold) "
