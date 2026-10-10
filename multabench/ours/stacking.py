@@ -87,7 +87,7 @@ def head_features(result: te.TarResult, rows: np.ndarray, is_cls: bool, all_clas
 class StackResult:
     method: str
     embedding_result: te.TarResult           # embeddings fed to PCA (tar_repro's, or frozen E5)
-    base_result: te.TarResult                # the full-pool tar_repro fine-tune (for the JSON's TAR diagnostics)
+    base_result: Optional[te.TarResult]      # the full-pool tar_repro fine-tune (JSON diagnostics); None = skipped
     features: Dict[str, DataFrame]           # per text column: rows (pool + extras) x prediction features
     diagnostics: dict = field(default_factory=dict)
 
@@ -148,6 +148,24 @@ def frozen_embeddings(x_fit: DataFrame, extra: dict, text_cols: list[str], cfg: 
                         diagnostics={})
 
 
+def tar_repro_cache_key(x_fit: DataFrame, extra: dict, cfg: te.TarConfig, device: torch.device, dataset: str,
+                        fold: int) -> str:
+    """The cache key tar_engine.run_tar would use for these inputs (same formula; tests/test_stacking.py checks it)."""
+    extra = {k: v for k, v in extra.items() if v is not None}
+    return (f"{dataset}/fold{fold}/tar_repro/seed{cfg.seed}/{te.config_hash(cfg, 'tar_repro', device)}_"
+            f"{te._rows_hash(x_fit.index, *[x.index for x, _ in extra.values()])}")
+
+
+def cached_tar_repro(x_fit: DataFrame, extra: dict, cfg: te.TarConfig, device: torch.device, cache_root: Optional[str],
+                     dataset: str, fold: int) -> Optional[te.TarResult]:
+    """The full-pool tar_repro result if it is already cached, else None (never trains)."""
+    if not cache_root:
+        return None
+    from os.path import exists, join
+    path = join(cache_root, tar_repro_cache_key(x_fit, extra, cfg, device, dataset, fold))
+    return te._load(path) if exists(join(path, "meta.json")) else None
+
+
 def run_stacking(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], struct_cols: list[str],
                  cat_cols: list[str], is_cls: bool, extra: Dict[str, tuple[DataFrame, Series]], cfg: te.TarConfig,
                  device: torch.device, cache_root: Optional[str], dataset: str, fold: int) -> StackResult:
@@ -156,8 +174,16 @@ def run_stacking(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[s
     extra = {k: v for k, v in extra.items() if v is not None}
     pool = pd.Index(x_fit.index)
     x_t, extra_t = _tar_inputs(x_fit, text_cols, extra)
-    # The full-pool tar_repro fine-tune (cache hit for the pilot jobs): tar_repro embeddings + the in-sample head.
-    base = te.run_tar(x_t, y_fit, text_cols, is_cls, extra_t, cfg, device, cache_root, dataset, fold, variant="tar_repro")
+    # The full-pool tar_repro fine-tune: tar_repro embeddings + the in-sample head. frozen_xfit_pred needs it only for
+    # the JSON's TAR diagnostics, so it loads it if cached (full run: tar_repro CatBoost runs first) and otherwise
+    # skips it (e.g. the TabPFN rows) instead of spending a fine-tune on diagnostics (P4).
+    if method == "frozen_xfit_pred":
+        base = cached_tar_repro(x_t, extra_t, cfg, device, cache_root, dataset, fold)
+        print(f"  [STACK:{method}] base tar_repro diagnostics: {'cache hit' if base else 'skipped (not cached)'}",
+              flush=True)
+    else:
+        base = te.run_tar(x_t, y_fit, text_cols, is_cls, extra_t, cfg, device, cache_root, dataset, fold,
+                          variant="tar_repro")
     classes = sorted(y_fit.astype(str).unique()) if is_cls else []
     extra_rows = {k: np.asarray(x.index) for k, (x, _) in extra.items()}
     diag = {"engine_version": STACKING_ENGINE_VERSION, "k_folds": K_FOLDS, "method": method}

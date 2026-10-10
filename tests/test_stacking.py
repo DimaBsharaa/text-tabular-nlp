@@ -173,3 +173,23 @@ def test_companion_reuses_the_first_methods_device(tmp_path, monkeypatch):
     assert rx.main() == 0
     assert [m for m, _ in seen] == ["xfit_pred", "frozen_xfit_pred"]
     assert seen[0][1] is None and seen[1][1] is sentinel
+
+
+def test_frozen_base_loaded_if_cached_else_skipped(tmp_path, cfg):
+    """P4: frozen_xfit_pred loads the full-pool tar_repro result for diagnostics only if it is cached; else skips it."""
+    x, y, _ = _table()
+    x_fit, y_fit, extra = _split(x, y)
+    cols = ["review", "title"]
+    root = str(tmp_path / "tar")
+    x_t, extra_t = st._tar_inputs(x_fit, cols, extra)
+    assert st.cached_tar_repro(x_t, extra_t, cfg, CPU, root, "SYNTH", 0) is None
+    r0 = st.run_stacking("frozen_xfit_pred", x_fit, y_fit, cols, ["price", "brand"], ["brand"], True, extra, cfg, CPU,
+                         root, "SYNTH", 0)
+    assert r0.base_result is None and r0.embedding_result.variant == "frozen"
+    tar = te.run_tar(x_t, y_fit, cols, True, extra_t, cfg, CPU, root, "SYNTH", 0, variant="tar_repro")
+    assert st.tar_repro_cache_key(x_t, extra_t, cfg, CPU, "SYNTH", 0) == tar.cache_key  # same formula as run_tar
+    r1 = st.run_stacking("frozen_xfit_pred", x_fit, y_fit, cols, ["price", "brand"], ["brand"], True, extra, cfg, CPU,
+                         root, "SYNTH", 0)
+    assert r1.base_result is not None and r1.base_result.cache_key == tar.cache_key
+    for c in cols:  # the method's own output does not depend on whether the base was available
+        assert np.allclose(r0.features[c].to_numpy(), r1.features[c].to_numpy())

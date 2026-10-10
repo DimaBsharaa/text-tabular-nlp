@@ -38,6 +38,7 @@ Entry template:
 | E14 | 2026-10-10 | P3 implemented + tested | jobs/pilot_p3.txt ready (54 jobs, ≈ 5 GPU-h) |
 | E15 | 2026-10-10 | P3 pilot, 3 of 4 variants | none passes; xfit_offset_pred +0.0035 (6/6) best; frozen_xfit_pred failed (GPU check), fixed |
 | E16 | 2026-10-10 | P3 complete; decision rule | frozen_xfit_pred +0.0040 (4/6) highest → final method for the full run |
+| P4 | 2026-10-10 | C1 FROZEN (CatBoost vs leaderboard Joint TAR) + full-run plan | jobs/full_part{1,2}.txt; ≈ 20 h A100 / 34 h L4 |
 
 ---
 
@@ -670,3 +671,40 @@ Changes to P1:
 - Pilot caveat: the pilot gains are small (+0.004 mean) and below the pilot bar; the full run (20 datasets × 5 folds
   × 5 learners, C1 primary baseline = leaderboard Joint TAR) is the real test, as pre-registered.
 - Next step: freeze C1 for frozen_xfit_pred and plan the full run (P4).
+
+## P4 — Full run + claim C1 FROZEN. Written 2026-10-10, BEFORE any full-run result exists. Do not edit.
+### Claim C1 — FROZEN (2026-10-10; supersedes the C1 draft above, which stays for the record)
+- **Method:** `frozen_xfit_pred` (P3 decision rule, E16): Joint Frozen E5 PCA embeddings (upstream `all`) + K = 3
+  cross-fitted tar_repro head predictions per text column (`multabench/ours/stacking.py`, engine `stacking/1`).
+- **Primary test (decides C1):** learner **CatBoost**; frozen_xfit_pred vs the **official leaderboard Joint TAR**
+  (`ft` rows of `multabench/leaderboard/results/text/*.csv`); per dataset d = mean over folds 0–4 of (ours − `ft`);
+  **two-sided Wilcoxon signed-rank test over the 20 datasets; pass = p < 0.05 AND mean d > 0.**
+- **Secondary (all reported regardless of outcome):** LightGBM, TabM, TabPFN-v2, TabPFN-v2.5 (TabPFN: n = 18, no
+  leaderboard baseline on Spotify Genres / Wine Review) vs leaderboard `ft`, same test, **Holm-corrected over these 4**.
+  Plus CatBoost frozen_xfit_pred vs **our tar_repro** (CatBoost, same GPU type, same folds), same test.
+- **Reported for every comparison:** n, mean / median difference, 95% bootstrap CI of the mean (10,000 resamples of
+  datasets, seed 42), Wilcoxon W and p, matched-pairs rank-biserial r, Cohen's d_z, wins. A dataset enters a
+  comparison only if all 5 folds exist on both sides (excluded datasets are listed). Implemented and tested before any
+  full-run result: `scripts/full_report.py` (`tests/test_full_report.py`).
+- **Forum:** no answer yet; if the course forum prescribes a different test, it is added here as an amendment
+  BEFORE full-run results exist.
+### Run plan
+- Datasets: the 20 MulTaBench text datasets; folds 0–4; seed 42; upstream splits / caps; upstream learner defaults.
+- Jobs, in this order (cheapest datasets first within each block, by `reports/compute_budget.csv`):
+  `jobs/full_part1.txt` — tar_repro CatBoost (100), frozen_xfit_pred CatBoost (100), LightGBM (100), TabM (100);
+  `jobs/full_part2.txt` — frozen_xfit_pred TabPFN-v2 (90), then TabPFN-v2.5 (90, reuses v2's fold fine-tunes).
+  The split keeps every learner that shares fold fine-tunes in the same file (CatBoost / LightGBM / TabM use the same
+  training rows; TabPFN has its own), so the fine-tune cache can live on the session's local disk.
+- frozen_xfit_pred's base tar_repro fine-tune is only for JSON diagnostics: loaded if cached (CatBoost / LightGBM /
+  TabM after tar_repro CatBoost), otherwise skipped (TabPFN). It never changes the method's features (test).
+- **GPU:** A100 if available, else L4 — the **same type for every full-run job** (tar_repro and frozen_xfit_pred);
+  recorded per JSON (`gpu`, `hardware.gpu_type`); `full_report.py` checks `same_gpu_type`. The pilot stays on T4.
+- **Results root:** `MyDrive/text-tabular-nlp/results_full` (separate from the pilot's `results/`, so no T4 pilot
+  result is reused). Fine-tune cache: local disk (`--cache_dir /content/tar_cache`) — a full run makes ~670 fine-tunes
+  (~20–50 GB of cached embeddings), too much for Drive; a session that ends early only costs re-running its
+  unfinished jobs (finished JSONs are on Drive and skipped).
+- **Estimate** (T4 cost model calibrated on the pilot: predicted 1.1 h for tar_repro's 18 jobs, measured 67 min;
+  xfit ≈ 1.8 × tar_repro measured; A100 ≈ 3 × and L4 ≈ 1.8 × a T4 assumed, to be checked on the first jobs; learner
+  times for TabM / TabPFN guessed): part 1 ≈ 37 T4-h → **≈ 12 h A100 / ≈ 21 h L4**; part 2 ≈ 24 T4-h →
+  **≈ 8 h A100 / ≈ 13 h L4**. Each part fits a 24-hour session at the estimate; if one does not finish, run the same
+  file again (resumes).

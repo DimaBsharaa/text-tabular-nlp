@@ -157,12 +157,15 @@ def run_one(args: argparse.Namespace) -> dict:
                    "fast": not args.no_fast,
                    "pca_components": 30, "cache_dir": args.cache_dir},
         "git": git_info(), "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"), "argv": sys.argv[1:],
+        "gpu": torch.cuda.get_device_name(device) if device.type == "cuda" else "cpu",  # P4: same type per run
         "hardware": json.loads(json.dumps(get_hardware_dict(device), default=str)),
         "torch": torch.__version__, "numpy": np.__version__,
     }
     if stack is not None:  # P3: engine version of this method + stacking diagnostics
+        if out["tar"] is None:  # frozen_xfit_pred without a cached base fine-tune (diagnostics skipped, P4)
+            out["tar"] = {"cache_hit": None, "head_quality": {}, "config": {}, "base_skipped": True}
         out["tar"]["config"] = {**out["tar"]["config"], "engine_version": engine_version(args.method),
-                                "method": args.method, "base": "tar_repro"}
+                                "method": args.method, "base": "tar_repro" if stack.base_result else None}
         out["stacking"] = {**stack.diagnostics, "catboost_importance": model.stack_feature_importance()}
     return out
 
