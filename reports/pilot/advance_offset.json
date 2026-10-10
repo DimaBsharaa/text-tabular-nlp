@@ -1,0 +1,13 @@
+{
+ "n_pairs": 18,
+ "complete": true,
+ "mean_gain": 0.003061656001170532,
+ "wins": 4,
+ "n_datasets": 6,
+ "mean_abs_gain": 0.006022924800994822,
+ "max_abs_gain": 0.013966863911458257,
+ "fold_diff_std": 0.013963321361438904,
+ "min_gain": 0.005,
+ "min_wins": 4,
+ "passes": false
+}

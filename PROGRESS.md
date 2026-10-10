@@ -33,6 +33,7 @@ Entry template:
 | E10 | 2026-10-10 | variant (a) offset implemented + tested | jobs/pilot_offset.txt ready |
 | E11 | 2026-10-10 | variants (b) prefix, prefix_offset implemented + tested | jobs/pilot_prefix*.txt ready |
 | E12 | 2026-10-10 | variants (c) context, context_offset + sensitivity probe implemented + tested | jobs/pilot_context*.txt ready |
+| E13 | 2026-10-10 | P2 pilot: 5 variants vs control | none passes; offset +0.0031 (4/6) best; context −0.022 |
 
 ---
 
@@ -480,3 +481,52 @@ Changes to P1:
   context and context_offset end to end (cls, reg), cache hit on re-run.
 - Sensitivity probe (tiny CPU check, Book Price, 300 rows, 1 epoch, 20 rows, top-2 features): mean cosine change
   tar_repro 0.00000 (by construction), prefix ~0.00001 (barely trained), context ~0.014.
+
+## E13 — P2 pilot results: all 5 variants vs the control (mean of tar_repro seeds 42 + 43)   (2026-10-10, commit 746c2a9, Colab T4)
+- Source: `MyDrive/.../exports/results_export_20261010_085057.zip` (90 variant JSONs + both control runs, logs,
+  reports); one unattended run of `jobs/pilot_all_variants.txt`, AUTO_DISCONNECT. All 90 jobs at 746c2a9, clean tree,
+  0 failures (no Traceback in any log), no variant delegated to tar_repro. Analysis: `scripts/pilot_report.py`
+  → `reports/pilot/advance_<variant>.{csv,json}`. GPU time: offset 59 min, prefix 74, prefix_offset 69,
+  context 139, context_offset 96 (sum of job times).
+- **Advance rule (P1 + amendments 1–3; gain = mean over folds 0–2 of variant − control):**
+  | dataset | offset | prefix | prefix_offset | context | context_offset |
+  |---|---|---|---|---|---|
+  | Data Scientist Salary | +0.0007 | +0.0003 | −0.0003 | +0.0016 | +0.0005 |
+  | Product Sentiment | −0.0070 | −0.0053 | −0.0088 | −0.0141 | −0.0053 |
+  | Baby Products | **+0.0122** | +0.0063 | +0.0013 | −0.0154 | −0.0122 |
+  | Book Price | +0.0140 | −0.0283 | −0.0089 | −0.0760 | −0.0805 |
+  | Book Readability | −0.0019 | +0.0004 | −0.0018 | −0.0145 | −0.0254 |
+  | Montgomery Salaries | +0.0004 | −0.0123 | −0.0045 | −0.0148 | −0.0115 |
+  | **mean gain / wins** | **+0.0031 / 4** | −0.0065 / 3 | −0.0038 / 1 | −0.0222 / 1 | −0.0224 / 1 |
+  | passes (≥ +0.005 and ≥ 4/6) | no | no | no | no | no |
+  → **No variant passes; per P1 none advances to the full run and no combination is tested.**
+- **Predictions (P2) vs outcome:** offset ≥ tar_repro — weakly (+0.0031, 4/6; the A/A noise level was +0.0028,
+  3/6, so not distinguishable from noise overall); context ≈ or slightly worse — clearly worse (−0.022);
+  context_offset ≥ offset — no (−0.022); prefix ≈ tar_repro — slightly worse (−0.0065); prefix_offset ≥ offset — no
+  (−0.0038).
+- **Diagnostics:**
+  - offset, per dataset: Baby Products +0.012 with fold sd 0.002 (3/3 folds up) is the only consistent gain;
+    Product Sentiment −0.007 (sd 0.004) is a consistent loss; Book Price +0.014 is noise (sd 0.030). The offset
+    model works as intended at the head level — structured-only vs structured + text-head on test: Data Scientist
+    Salary AUROC 0.550 → 0.796, Product Sentiment 0.819 → 0.898, Baby Products R² 0.406 → 0.618, Book Price
+    0.214 → 0.325 — but that complementary signal reaches the CatBoost score only on Baby Products.
+  - context / prefix: the fine-tuning head is much better than TAR's on test (context: Montgomery R² 0.917 vs
+    0.541, Book Readability 0.749 vs 0.549, Baby Products 0.617 vs 0.466; prefix similar) because it now sees the
+    structured features — yet the downstream score drops. PCA-30 explained variance rises (Montgomery 0.963 context /
+    0.996 prefix vs 0.800 TAR; Book Readability 0.977 / 0.994 vs 0.827): the embeddings collapse onto the
+    structured information, which CatBoost already has as raw columns, and the text-specific detail is squeezed out
+    of the 30 PCA components. Book Price (context −0.08) is the extreme case.
+  - Leakage gap (head e5_train − test) persists in every variant (~0.01–0.05), similar to tar_repro (E8).
+- Hostile review:
+  - Control complete (18/18 pairs, both seeds); variants judged with the same code as the A/A control.
+  - E9 re-check: seed-43 JSON scores equal the pasted ones (max |diff| 4.5e-5, 4-decimal rounding).
+  - Same splits/rows: variants use TAR's E5 split; n_train/n_test identical to tar_repro per (dataset, fold).
+  - Test labels: only in diagnostics (head/struct/combined quality); OOF offsets never see their own row's label
+    (test 1); the full structured fit is never applied to pool rows.
+  - context token budget: mean training cell 23–131 tokens (TAR 12–53), so no truncation pressure explains it.
+  - The context/prefix explanation (redundancy + PCA collapse) is an interpretation of the PCA-variance and head
+    numbers, not a tested causal claim.
+- Conclusion: P2 is a negative result for all five variants on the pilot. The clearest lesson: making the text
+  encoder see the structure (context, prefix) makes its *own* predictions better but its *embeddings* worse for a
+  learner that already has the structure. offset is closest (+0.0031, 4/6) but below the bar.
+- Next step: Dima decides (see options in the chat); any new variant needs a P3 pre-registration first.

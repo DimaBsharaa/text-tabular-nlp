@@ -1,0 +1,22 @@
+{
+ "n_pairs": 18,
+ "complete": true,
+ "mean_gain": 0.0027620205256630634,
+ "wins": 3,
+ "n_datasets": 6,
+ "mean_abs_gain": 0.006063840253782877,
+ "max_abs_gain": 0.010457317469798166,
+ "fold_diff_std": 0.011176998648485717,
+ "min_gain": 0.005,
+ "min_wins": 4,
+ "passes": false,
+ "threshold_candidates": {
+  "aa_mean_abs_gain": 0.006063840253782877,
+  "aa_max_abs_gain": 0.010457317469798166,
+  "aa_noise_sd_of_mean": 0.0026344438458857093,
+  "candidate_2x_mean_abs": 0.012127680507565753,
+  "candidate_mean_abs_plus_0.005": 0.011063840253782877,
+  "candidate_3sd_of_mean": 0.007903331537657128,
+  "candidate_max_abs": 0.010457317469798166
+ }
+}
