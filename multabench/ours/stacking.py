@@ -1,0 +1,228 @@
+"""P3 (PROGRESS.md): TAR head predictions as extra features for the learner ("stacking").
+
+Methods:
+- insample_pred     tar_repro embeddings + the full-fit tar_repro head's predictions (training rows in-sample; ablation)
+- xfit_pred         tar_repro embeddings + K=3 cross-fitted tar_repro head predictions
+- frozen_xfit_pred  Joint Frozen E5 embeddings + the same cross-fitted predictions as xfit_pred
+- xfit_offset_pred  tar_repro embeddings + K=3 cross-fitted OFFSET head predictions (pool-level OOF structured offsets)
+
+Cross-fitting: the E5 pool (the learner's rows given to the text-encoder step) is split into K folds; for fold k the
+model is the *unchanged* tar_repro (or offset) code run on the other K−1 folds, and it predicts the held-out fold,
+learner-val and test rows. Pool rows keep the prediction of the one model that never saw them; learner-val / test
+rows get the mean over the K models. tar_repro itself is never modified.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import Dict, Optional
+
+import numpy as np
+import pandas as pd
+import torch
+from pandas import DataFrame, Series
+from sklearn.model_selection import KFold, StratifiedKFold
+
+from multabench.ours import tar_engine as te
+from multabench.ours.variants import _metric, run_variant
+from multabench.ours.structured_offset import fit_structured_offset
+
+STACKING_ENGINE_VERSION = "stacking/1"
+K_FOLDS = 3
+SEED = 42
+STACK_METHODS = {"insample_pred", "xfit_pred", "frozen_xfit_pred", "xfit_offset_pred"}
+COMPANIONS = {"xfit_pred": ["frozen_xfit_pred"]}  # written by the same job (shared fold fine-tunes)
+
+
+def xfit_folds(pool_index: pd.Index, y: Series, is_cls: bool, k: int = K_FOLDS, seed: int = SEED) -> list[np.ndarray]:
+    """K disjoint held-out index sets covering the pool; deterministic for the same pool order and labels."""
+    n = len(pool_index)
+    labels = y.loc[pool_index].astype(str).to_numpy() if is_cls else None
+    if is_cls and pd.Series(labels).value_counts().min() >= k:
+        splits = StratifiedKFold(n_splits=k, shuffle=True, random_state=seed).split(np.zeros(n), labels)
+    else:
+        splits = KFold(n_splits=k, shuffle=True, random_state=seed).split(np.zeros(n))
+    return [np.asarray(pool_index)[te_idx] for _, te_idx in splits]
+
+
+# ---------------------------------------------------------------------------------------- prediction features
+
+def _bin_midpoints(classes: list[str], edges: np.ndarray) -> np.ndarray:
+    """Midpoint of each "Quantile a-b%" class (upstream discretize_numerical labels), in class order."""
+    n = len(edges) - 1
+    step = 100 / n
+    label_to_bin = {f"Quantile {round(i * step)}-{round((i + 1) * step)}%": i for i in range(n)}
+    mids = (edges[:-1] + edges[1:]) / 2
+    return np.array([mids[label_to_bin[c]] for c in classes])
+
+
+def _y_edges(y: Series, n_bins: int) -> np.ndarray:
+    _, edges = pd.qcut(pd.to_numeric(y), q=n_bins, labels=False, duplicates="drop", retbins=True)
+    return np.asarray(edges, dtype=float)
+
+
+def head_features(result: te.TarResult, rows: np.ndarray, is_cls: bool, all_classes: Optional[list[str]],
+                  midpoints: Optional[np.ndarray]) -> Dict[str, np.ndarray]:
+    """Per text column: (n_rows, f) features from the head's softmax of that column's cell (offset NOT added).
+    cls: probabilities on all_classes (binary -> P(classes[1]); multiclass -> drop the first class);
+    reg: [expected value over bin midpoints, std of that distribution]."""
+    out = {}
+    for col in result.text_cols:
+        c = result.columns[col]
+        uid = np.array([c.row_uid[int(r)] for r in rows])
+        p = torch.softmax(torch.tensor(c.logits[uid]), dim=-1).numpy()
+        if is_cls:
+            full = np.zeros((len(rows), len(all_classes)))
+            pos = {cl: i for i, cl in enumerate(all_classes)}
+            for j, cl in enumerate(result.head["classes"]):
+                full[:, pos[cl]] = p[:, j]
+            out[col] = full[:, 1:2] if len(all_classes) == 2 else full[:, 1:]
+        else:
+            ev = p @ midpoints
+            sd = np.sqrt(np.clip(p @ (midpoints ** 2) - ev ** 2, 0, None))
+            out[col] = np.stack([ev, sd], axis=1)
+    return out
+
+
+@dataclass
+class StackResult:
+    method: str
+    embedding_result: te.TarResult           # embeddings fed to PCA (tar_repro's, or frozen E5)
+    base_result: te.TarResult                # the full-pool tar_repro fine-tune (for the JSON's TAR diagnostics)
+    features: Dict[str, DataFrame]           # per text column: rows (pool + extras) x prediction features
+    diagnostics: dict = field(default_factory=dict)
+
+
+def _features_frame(per_col_rows: list[tuple[np.ndarray, Dict[str, np.ndarray]]], text_cols: list[str]) -> Dict[str, DataFrame]:
+    out = {}
+    for col in text_cols:
+        idx = np.concatenate([r for r, _ in per_col_rows])
+        vals = np.concatenate([f[col] for _, f in per_col_rows])
+        out[col] = pd.DataFrame(vals, index=idx).sort_index()
+    return out
+
+
+def _quality(features: Dict[str, DataFrame], y: Series, rows: np.ndarray, is_cls: bool, classes: list[str],
+             residual_of: Optional[np.ndarray] = None) -> Optional[float]:
+    """Quality of the prediction features themselves (mean over text columns of the head output) on these rows."""
+    if len(rows) == 0:
+        return None
+    f = np.mean([features[c].loc[rows].to_numpy() for c in features], axis=0)
+    if is_cls:
+        probs = np.hstack([1 - f.sum(axis=1, keepdims=True), f]) if f.shape[1] == len(classes) - 1 else f
+        return _metric(y.loc[rows].to_numpy(), probs, True, classes)
+    target = pd.to_numeric(y.loc[rows]).to_numpy(dtype=float) - (0 if residual_of is None else residual_of)
+    return _metric(target, f[:, 0], False, [])
+
+
+# ---------------------------------------------------------------------------------------- main entry
+
+def _tar_inputs(x: DataFrame, text_cols: list[str], extra: dict) -> tuple[DataFrame, dict]:
+    return x[text_cols], {k: (v[0][text_cols], v[1]) for k, v in extra.items()}
+
+
+def frozen_embeddings(x_fit: DataFrame, extra: dict, text_cols: list[str], cfg: te.TarConfig,
+                      device: torch.device) -> te.TarResult:
+    """Joint Frozen embeddings (vanilla e5-small-v2, "passage: col: val", L2-normalized mean pool) for all rows —
+    numerically equal to upstream's encode_texts_with_e5 (tests/test_tar_engine.py), via the fast path."""
+    from transformers import AutoTokenizer
+    from multabench.e5.constants import format_e5_passage
+    import itertools
+    tok = AutoTokenizer.from_pretrained(cfg.model_name)
+    frames = [x_fit] + [x for x, _ in extra.values()]
+    te.set_seed(cfg.seed)
+    model = te.build_model(cfg, d_output=2, device=device)  # fresh LoRA (B = 0) = vanilla E5; head unused
+    columns = {}
+    for col in sorted(text_cols):
+        rows = np.concatenate([np.asarray(f.index) for f in frames])
+        raw = list(itertools.chain.from_iterable(te.encoding_texts(f, col) for f in frames))
+        uniq, inverse = np.unique(np.array(raw, dtype=object), return_inverse=True)
+        uniq = uniq.tolist()
+        strings = [format_e5_passage(col, t) for t in uniq]
+        tokens = te.TokenStore(strings, tok, cfg.max_length)
+        emb, logits = te.encode(model, te.make_source(model, tokens, cfg, device), tokens.uids(strings), cfg, device)
+        columns[col] = te.ColumnOutputs(emb=emb, logits=logits, text_hash=te._text_hash(uniq),
+                                        row_uid=dict(zip(rows.tolist(), inverse.tolist())))
+    del model
+    return te.TarResult(variant="frozen", cache_key="", cache_hit=False, config={"model_name": cfg.model_name},
+                        text_cols=sorted(text_cols), splits={}, columns=columns, head={"classes": [], "d_output": 0},
+                        diagnostics={})
+
+
+def run_stacking(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], struct_cols: list[str],
+                 cat_cols: list[str], is_cls: bool, extra: Dict[str, tuple[DataFrame, Series]], cfg: te.TarConfig,
+                 device: torch.device, cache_root: Optional[str], dataset: str, fold: int) -> StackResult:
+    assert method in STACK_METHODS, method
+    text_cols = sorted(text_cols)
+    extra = {k: v for k, v in extra.items() if v is not None}
+    pool = pd.Index(x_fit.index)
+    x_t, extra_t = _tar_inputs(x_fit, text_cols, extra)
+    # The full-pool tar_repro fine-tune (cache hit for the pilot jobs): tar_repro embeddings + the in-sample head.
+    base = te.run_tar(x_t, y_fit, text_cols, is_cls, extra_t, cfg, device, cache_root, dataset, fold, variant="tar_repro")
+    classes = sorted(y_fit.astype(str).unique()) if is_cls else []
+    extra_rows = {k: np.asarray(x.index) for k, (x, _) in extra.items()}
+    diag = {"engine_version": STACKING_ENGINE_VERSION, "k_folds": K_FOLDS, "method": method}
+
+    if method == "insample_pred":
+        mids = None if is_cls else _bin_midpoints(base.head["classes"], _y_edges(y_fit, cfg.n_bins))
+        all_rows = np.concatenate([np.asarray(pool)] + list(extra_rows.values()))
+        feats = _features_frame([(all_rows, head_features(base, all_rows, is_cls, classes, mids))], text_cols)
+        diag["fold_models"] = []
+        emb = base
+        residual_of_pool = residual_of_test = None
+    else:
+        offset = method == "xfit_offset_pred"
+        so = None
+        if offset:
+            struct_cols_ = [c for c in struct_cols if c not in text_cols]
+            d = te.prepare_e5_data(x_t, y_fit, text_cols, is_cls, cfg.n_bins)  # TAR's split -> its strata
+            strata = pd.concat([d["y_tr"], d["y_va"]]).loc[pool].astype(str).to_numpy()
+            so = fit_structured_offset(x_fit.loc[pool], y_fit.loc[pool], struct_cols_, [c for c in cat_cols if c in struct_cols_],
+                                       is_cls, d["classes"] if is_cls else [], strata=strata) if struct_cols_ else None
+        folds = xfit_folds(pool, y_fit, is_cls)
+        pieces, test_like = [], {k: [] for k in extra_rows}
+        diag["fold_models"] = []
+        for k, held in enumerate(folds):
+            train_rows = pool.difference(pd.Index(held), sort=False)
+            sub_extra = {"heldout": (x_fit.loc[held], y_fit.loc[held]), **extra}
+            if offset and so is not None:
+                res = run_variant("offset", x_fit.loc[train_rows], y_fit.loc[train_rows], text_cols, so.feature_cols,
+                                  so.cat_cols, is_cls, sub_extra, cfg, device, cache_root, dataset, fold, structured=so)
+                mids = None if is_cls else _bin_midpoints(res.head["classes"], np.asarray(res.head["bin_edges"]))
+            else:  # plain tar_repro on the fold's rows (also offset with no structured columns = tar_repro, spec 7.6)
+                sx, sextra = _tar_inputs(x_fit.loc[train_rows], text_cols, sub_extra)
+                res = te.run_tar(sx, y_fit.loc[train_rows], text_cols, is_cls, sextra, cfg, device, cache_root, dataset,
+                                 fold, variant="tar_repro")
+                mids = None if is_cls else _bin_midpoints(res.head["classes"], _y_edges(y_fit.loc[train_rows], cfg.n_bins))
+            pieces.append((np.asarray(held), head_features(res, np.asarray(held), is_cls, classes, mids)))
+            for name, rows in extra_rows.items():
+                test_like[name].append(head_features(res, rows, is_cls, classes, mids))
+            diag["fold_models"].append({"fold": k, "n_train_rows": int(len(train_rows)), "n_heldout": int(len(held)),
+                                        "cache_key": res.cache_key, "cache_hit": res.cache_hit,
+                                        "best_epoch": res.diagnostics.get("train", {}).get("best_epoch"),
+                                        "train_rows_hash": te._rows_hash(pd.Index(train_rows)),
+                                        "heldout_rows_hash": te._rows_hash(pd.Index(held))})
+        for name, rows in extra_rows.items():  # mean over the K fold models
+            pieces.append((rows, {c: np.mean([f[c] for f in test_like[name]], axis=0) for c in text_cols}))
+        feats = _features_frame(pieces, text_cols)
+        emb = frozen_embeddings(x_t, extra_t, text_cols, cfg, device) if method == "frozen_xfit_pred" else base
+        diag["folds_cover_pool"] = bool(np.array_equal(np.sort(np.concatenate(folds)), np.sort(np.asarray(pool))))
+        residual_of_pool = residual_of_test = None
+        if offset and so is not None and not is_cls:
+            residual_of_pool = so.oof_for(pool)
+            residual_of_test = so.predict_full(extra["test"][0]) if "test" in extra else None
+
+    # Quality of the prediction features: training rows (OOF for xfit, in-sample for insample) vs test.
+    q = {"train_rows": _quality(feats, y_fit, np.asarray(pool), is_cls, classes, residual_of_pool)}
+    if "test" in extra:
+        q["test"] = _quality(feats, extra["test"][1], np.asarray(extra["test"][0].index), is_cls, classes,
+                             residual_of_test)
+    if "learner_val" in extra:
+        q["learner_val"] = _quality(feats, extra["learner_val"][1], np.asarray(extra["learner_val"][0].index),
+                                    is_cls, classes, None if residual_of_test is None else
+                                    so.predict_full(extra["learner_val"][0]))
+    q["gap_train_minus_test"] = (q["train_rows"] - q["test"]) if q.get("train_rows") is not None and q.get("test") is not None else None
+    diag["pred_feature_quality"] = q
+    diag["n_pred_features_per_col"] = {c: int(feats[c].shape[1]) for c in text_cols}
+    print(f"  [STACK:{method}] pred-feature quality: " +
+          ", ".join(f"{k}={v:.4f}" for k, v in q.items() if v is not None), flush=True)
+    return StackResult(method=method, embedding_result=emb, base_result=base, features=feats, diagnostics=diag)

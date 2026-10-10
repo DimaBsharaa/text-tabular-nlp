@@ -35,6 +35,7 @@ Entry template:
 | E12 | 2026-10-10 | variants (c) context, context_offset + sensitivity probe implemented + tested | jobs/pilot_context*.txt ready |
 | E13 | 2026-10-10 | P2 pilot: 5 variants vs control | none passes; offset +0.0031 (4/6) best; context −0.022 |
 | P3 | 2026-10-10 | stacking: cross-fitted head predictions as features (4 variants) + decision rule | written before any P3 run |
+| E14 | 2026-10-10 | P3 implemented + tested | jobs/pilot_p3.txt ready (54 jobs, ≈ 5 GPU-h) |
 
 ---
 
@@ -580,3 +581,23 @@ Changes to P1:
 - **GPU estimate (T4, from E8/E13 timings):** insample_pred ≈ 0.2 h (cache hits, CatBoost only); xfit_pred +
   frozen_xfit_pred ≈ 3 fine-tunes on 2/3 of the pool ≈ 2 × tar_repro ≈ 2–2.5 h; xfit_offset_pred ≈ 2–2.5 h.
   Total ≈ 4.5–5.5 GPU-hours.
+
+## E14 — P3 implemented (no P3 results yet)   (2026-10-10; code in this entry's commit)
+- Built: `multabench/ours/stacking.py` (`run_stacking`: insample_pred / xfit_pred / frozen_xfit_pred /
+  xfit_offset_pred; K = 3 deterministic folds; prediction features; frozen embeddings; diagnostics),
+  `PredColumnEncoder` in `learners.py` (appends the features after each text column's PCA components, inside the
+  object upstream's `transform_text_features` calls), `run_variant(..., structured=)` for the offset folds,
+  `run_experiment --method …` (+ companion: an xfit_pred job also writes frozen_xfit_pred; engine `stacking/1`),
+  `jobs/pilot_p3.txt` (54 jobs: insample_pred, xfit_pred, xfit_offset_pred). `pilot_report.py` without `--variant`
+  now judges every run it finds (so the AUTO_DISCONNECT report covers P3). Colab cell 7 now also echoes the
+  variants' `[TAR:…]` / `[STACK:…]` lines.
+- Fold fine-tunes are the unchanged tar_repro function (or `run_variant("offset")`) on the fold's 2/3 with the
+  held-out third, learner-val and test as predict-only row sets; cached like any job. insample_pred and the base of
+  every P3 job reuse the cached full-pool tar_repro fine-tune (cache hit on Drive for the pilot jobs).
+- Tests (CPU): folds deterministic, disjoint, covering, stratified; a spy on `run_tar` shows no fold model trains on
+  rows it predicts and the 3 held-out folds cover the pool; a direct tar_repro run on a fold's rows hits the fold
+  model's cache entry (same code path, same key); all 4 methods × binary / multiclass / regression end to end with
+  the right feature shapes (1 / C − 1 / 2 per text column); frozen embeddings = upstream frozen encoder (< 1e-3);
+  through the real learner, the appended column reaches CatBoost (first real-data check caught that upstream calls
+  the PCA object directly — fixed and covered by this test). tar_repro checks unchanged.
+- GPU estimate unchanged from P3: ≈ 4.5–5.5 T4-hours for the 54 jobs.

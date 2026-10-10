@@ -25,8 +25,10 @@ REPO_ROOT = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, REPO_ROOT)  # works with plain `uv sync` (no .pth file needed)
 os.environ.setdefault("WANDB_MODE", "disabled")
 
-METHODS = ("tar_repro", "offset", "prefix", "prefix_offset", "context", "context_offset")  # see docs/method_spec.md; more variants are added as they are built
+METHODS = ("tar_repro", "offset", "prefix", "prefix_offset", "context", "context_offset",
+           "insample_pred", "xfit_pred", "frozen_xfit_pred", "xfit_offset_pred")  # see docs/method_spec.md; more variants are added as they are built
 DEFAULTS = {"train_examples": 10_000, "epochs": 50, "seed": 42}
+COMPANIONS = {"xfit_pred": ["frozen_xfit_pred"]}  # P3: written by the same job (shares the fold fine-tunes)
 SUFFIX = {"epochs": "ep", "train_examples": "n", "seed": "s"}
 
 
@@ -116,11 +118,12 @@ def run_one(args: argparse.Namespace) -> dict:
     metrics = model.score_all_metrics(X=x_test, y=y_test)
     runtime = time.time() - t0
 
-    tar = model.tar_result
+    stack = getattr(model, "stack_result", None)
+    tar = stack.base_result if stack is not None else model.tar_result  # P3: TAR diagnostics of the base fine-tune
     hq = tar.diagnostics["head_quality"] if tar else {}
     ref = reference_scores(args.dataset, learner_cls.MODEL_NAME, args.fold)
     score = float(metrics.score)
-    return {
+    out = {
         "method": args.method, "run_name": run_name(args.method, args), "engine_version": engine_version(args.method),
         "tar_path": None if not tar else ("fast" if tar.diagnostics["train"].get("fast_path") else "full_model"),
         "learner": args.learner,
@@ -154,6 +157,11 @@ def run_one(args: argparse.Namespace) -> dict:
         "hardware": json.loads(json.dumps(get_hardware_dict(device), default=str)),
         "torch": torch.__version__, "numpy": np.__version__,
     }
+    if stack is not None:  # P3: engine version of this method + stacking diagnostics
+        out["tar"]["config"] = {**out["tar"]["config"], "engine_version": engine_version(args.method),
+                                "method": args.method, "base": "tar_repro"}
+        out["stacking"] = {**stack.diagnostics, "catboost_importance": model.stack_feature_importance()}
+    return out
 
 
 def prune_lower_cache(root: str, max_gb: float) -> None:
@@ -227,7 +235,9 @@ def run_jobs(args: argparse.Namespace) -> int:
         name = run_name(method, job_args(args, seed))
         path = result_path(args.out, name, learner, dataset, fold)
         tag = f"[{i}/{len(jobs)}] {name} {learner} {dataset} fold{fold}"
-        if not args.force and existing_result_ok(path):
+        companion_paths = [result_path(args.out, run_name(m, job_args(args, seed)), learner, dataset, fold)
+                           for m in COMPANIONS.get(method, [])]
+        if not args.force and all(existing_result_ok(q) for q in [path] + companion_paths):
             print(f"{tag}: done already, skipping", flush=True)
             n_done += 1
             continue
@@ -247,7 +257,7 @@ def run_jobs(args: argparse.Namespace) -> int:
             proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
             for line in proc.stdout:
                 log.write(line)
-                if args.stream or "[TAR]" in line or "Score" in line or "Error" in line:
+                if args.stream or line.lstrip().startswith(("[TAR", "[STACK")) or "Score" in line or "Error" in line:
                     print("    " + line.rstrip(), flush=True)
             proc.wait()
         if proc.returncode == 0 and exists(path):
@@ -296,15 +306,17 @@ def main() -> int:
         return run_jobs(args)
     if None in (args.method, args.learner, args.dataset, args.fold):
         p.error("give --method --learner --dataset --fold, or --jobs_file")
-    path = result_path(args.out, run_name(args.method, args), args.learner, args.dataset, args.fold)
-    if not args.force and existing_result_ok(path):
-        print(f"{path} exists, skipping")
-        return 0
-    result = run_one(args)
-    write_json(path, result)
-    lb = result["reference"].get("joint_tar")
-    print(f"Score {result['score']:.4f} | leaderboard ft (same dataset/learner/fold) "
-          f"{'n/a' if lb is None else f'{lb:.4f}'} | wrote {path}")
+    for method in [args.method] + COMPANIONS.get(args.method, []):
+        margs = argparse.Namespace(**{**vars(args), "method": method})
+        path = result_path(args.out, run_name(method, margs), args.learner, args.dataset, args.fold)
+        if not args.force and existing_result_ok(path):
+            print(f"{path} exists, skipping")
+            continue
+        result = run_one(margs)
+        write_json(path, result)
+        lb = result["reference"].get("joint_tar")
+        print(f"Score {result['score']:.4f} | leaderboard ft (same dataset/learner/fold) "
+              f"{'n/a' if lb is None else f'{lb:.4f}'} | wrote {path}")
     return 0
 
 

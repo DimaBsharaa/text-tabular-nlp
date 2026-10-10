@@ -44,6 +44,27 @@ class CachedColumnEncoder:
         return self.encoder.transform(X)
 
 
+class _PCAWithPredictions:
+    """What upstream's transform_text_features calls as `wrapper.encoder.transform(embeddings)`: the PCA output
+    followed by the head prediction features of the rows being transformed."""
+
+    def __init__(self, pca, features, owner: "PredColumnEncoder"):
+        self.pca, self.features, self.owner = pca, features, owner
+        self.n_components = pca.n_components + features.shape[1]
+
+    def transform(self, X: np.ndarray) -> np.ndarray:
+        return np.hstack([self.pca.transform(X), self.features.loc[self.owner.current_rows].to_numpy()])
+
+
+class PredColumnEncoder(CachedColumnEncoder):
+    """CachedColumnEncoder whose output is [PCA(embedding), head prediction features] for the current rows. The
+    learner sees n_components = PCA components + prediction features (upstream names them <col>_txt_pca_<i>)."""
+
+    def __init__(self, result: TarResult, col_name: str, encoder, features):
+        super().__init__(result=result, col_name=col_name, encoder=_PCAWithPredictions(encoder, features, self))
+        self.features = features
+
+
 class OursTextMixin:
     """Mixin placed before an upstream TabularModel subclass. Call configure_ours(...) before fit()."""
 
@@ -101,16 +122,20 @@ class OursTextMixin:
             self.tar_result = run_tar(x_fit=x_train[text_cols], y_fit=y_train, text_cols=text_cols, is_cls=self.is_cls,
                                       extra=extra, cfg=self.ours_cfg, device=self.device, cache_root=self.ours_cache_dir,
                                       dataset=self.ours_dataset, fold=self.ours_fold, variant=self.ours_variant)
-        else:  # variants also see the structured columns (docs/method_spec.md)
+        else:  # variants also see the structured columns (docs/method_spec.md, PROGRESS.md P3)
+            from multabench.ours.stacking import STACK_METHODS, run_stacking
             from multabench.ours.variants import run_variant
             struct_cols = sorted((set(self.numerical_features) | set(self.categorical_features)) - set(text_cols))
             cols = text_cols + struct_cols
             extra = {k: (self._ours_preprocess_like_transform(x)[cols], y) for k, (x, y) in extra.items()}
-            self.tar_result = run_variant(self.ours_variant, x_fit=x_train[cols], y_fit=y_train, text_cols=text_cols,
-                                          struct_cols=struct_cols, cat_cols=sorted(self.categorical_features),
-                                          is_cls=self.is_cls, extra=extra, cfg=self.ours_cfg, device=self.device,
-                                          cache_root=self.ours_cache_dir, dataset=self.ours_dataset,
-                                          fold=self.ours_fold)
+            kw = dict(x_fit=x_train[cols], y_fit=y_train, text_cols=text_cols, struct_cols=struct_cols,
+                      cat_cols=sorted(self.categorical_features), is_cls=self.is_cls, extra=extra, cfg=self.ours_cfg,
+                      device=self.device, cache_root=self.ours_cache_dir, dataset=self.ours_dataset, fold=self.ours_fold)
+            if self.ours_variant in STACK_METHODS:
+                self.stack_result = run_stacking(self.ours_variant, **kw)
+                self.tar_result = self.stack_result.embedding_result
+            else:
+                self.tar_result = run_variant(self.ours_variant, **kw)
         encoders = {}
         for col in text_cols:
             # PCA exactly as upstream: fit on the embeddings of all training rows, in their order.
@@ -121,8 +146,26 @@ class OursTextMixin:
                 pca = PCA(n_components=self.pca_components, random_state=SEED)
                 pca.fit(col_emb)
                 log_pca_variance(pca=pca, col_name=col)
-            encoders[col] = CachedColumnEncoder(result=self.tar_result, col_name=col, encoder=pca)
+            stack = getattr(self, "stack_result", None)
+            if stack is None:
+                encoders[col] = CachedColumnEncoder(result=self.tar_result, col_name=col, encoder=pca)
+            else:  # P3: the head's prediction features are appended after this column's PCA components
+                encoders[col] = PredColumnEncoder(result=self.tar_result, col_name=col, encoder=pca,
+                                                  features=stack.features[col])
         return encoders
+
+    def stack_feature_importance(self) -> Optional[dict]:
+        """P3 diagnostic: share of CatBoost's feature importance on the appended prediction columns."""
+        stack = getattr(self, "stack_result", None)
+        if stack is None or not hasattr(self.model_, "get_feature_importance"):
+            return None
+        imp = dict(zip(self.model_.feature_names_, self.model_.get_feature_importance()))
+        pred_cols = [f"{c}_txt_pca_{self.pca_components + j}" for c in stack.features
+                     for j in range(stack.features[c].shape[1])]
+        total = sum(imp.values()) or 1.0
+        return {"pred_columns": {c: round(float(imp.get(c, 0.0)), 3) for c in pred_cols},
+                "pred_share": round(sum(imp.get(c, 0.0) for c in pred_cols) / total, 4),
+                "top10": sorted(((k, round(float(v), 3)) for k, v in imp.items()), key=lambda kv: -kv[1])[:10]}
 
 
 def _upstream_learners() -> Dict[str, Type[TabularModel]]:

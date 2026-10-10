@@ -172,6 +172,11 @@ def main() -> None:
             print("\n  !! The A/A control PASSES the advance rule -> amendment 2: tighten the rule before any variant runs.")
     control = load_control(a.out, a.control.split(","))
     print(f"\ncontrol ({a.control}): {len(control)} / 18 (dataset, fold) pairs with all runs present")
+    if not a.variant:  # default: every run found under --out except the control runs (and _logs, _cache, ...)
+        skip = set(a.control.split(",")) | {a.baseline, a.aa}
+        a.variant = sorted(d for d in os.listdir(a.out) if not d.startswith("_") and d not in skip
+                           and glob.glob(join(a.out, d, "*", "*", "fold*.json")))
+        print(f"variants found: {a.variant}")
     for v in a.variant:
         v_ds, vs = advance_rule(load_runs(a.out, v), control)
         _show(f"Variant {v} vs control ({a.control}) under the advance rule", v_ds, vs)

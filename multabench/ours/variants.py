@@ -34,8 +34,13 @@ METHODS = OFFSET_METHODS | PREFIX_METHODS | CONTEXT_METHODS
 TOP_K = 8
 
 
+STACK_METHOD_NAMES = {"insample_pred", "xfit_pred", "frozen_xfit_pred", "xfit_offset_pred"}  # multabench/ours/stacking.py
+
+
 def engine_version(method: str) -> str:
-    return te.ENGINE_VERSION if method == "tar_repro" else VARIANT_ENGINE_VERSION
+    if method == "tar_repro":
+        return te.ENGINE_VERSION
+    return "stacking/1" if method in STACK_METHOD_NAMES else VARIANT_ENGINE_VERSION
 
 
 def _strings_hash(strings: list[str]) -> str:
@@ -73,8 +78,11 @@ def _residual_bins(r_tr: Series, r_va: Series, n_bins: int) -> tuple[Series, Ser
 
 def run_variant(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], struct_cols: list[str],
                 cat_cols: list[str], is_cls: bool, extra: Dict[str, tuple[DataFrame, Series]], cfg: te.TarConfig,
-                device: torch.device, cache_root: Optional[str], dataset: str, fold: int) -> te.TarResult:
-    """Like tar_engine.run_tar, for a variant. x_fit / extras contain text AND structured columns (preprocessed)."""
+                device: torch.device, cache_root: Optional[str], dataset: str, fold: int,
+                structured: Optional[StructuredOffset] = None) -> te.TarResult:
+    """Like tar_engine.run_tar, for a variant. x_fit / extras contain text AND structured columns (preprocessed).
+    structured (P3 cross-fitting only): a pool-level OOF structured model whose pool covers x_fit; used instead of
+    refitting one on x_fit."""
     assert method in METHODS, f"unknown variant {method!r} (implemented: {sorted(METHODS)})"
     text_cols = sorted(text_cols)
     struct_cols = [c for c in struct_cols if c not in text_cols]
@@ -105,7 +113,9 @@ def run_variant(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[st
     struct_cfg = {"struct_cols": struct_cols, "cat_cols": [c for c in cat_cols if c in struct_cols]}
     rows_hash = te._rows_hash(x_fit.index, *[x.index for x, _ in extra.values()])
     key = (f"{dataset}/fold{fold}/{method}/seed{cfg.seed}/{te.config_hash(cfg, method, device)}_{rows_hash}_"
-           f"{_strings_hash(all_strings)}_{_strings_hash([json.dumps(struct_cfg, sort_keys=True)])}")
+           f"{_strings_hash(all_strings)}_{_strings_hash([json.dumps(struct_cfg, sort_keys=True)])}"
+           + ("" if structured is None else f"_pool{_strings_hash([str(len(structured.pool_index))])}"
+              f"{te._rows_hash(pd.Index(structured.pool_index))}"))
     path = join(cache_root, key) if cache_root else None
     if path and exists(join(path, "meta.json")):
         print(f"  [TAR] cache hit: {key}", flush=True)
@@ -116,8 +126,8 @@ def run_variant(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[st
     x_pool = x_fit.loc[pool]
     y_pool = y_fit.loc[pool]
     strata = pd.concat([d["y_tr"], d["y_va"]]).loc[pool].astype(str).to_numpy()  # TAR's labels / y-bins
-    so = fit_structured_offset(x_pool, y_pool, struct_cols, struct_cfg["cat_cols"], is_cls,
-                               d["classes"] if is_cls else [], strata=strata)
+    so = structured if structured is not None else fit_structured_offset(
+        x_pool, y_pool, struct_cols, struct_cfg["cat_cols"], is_cls, d["classes"] if is_cls else [], strata=strata)
     t_struct = time.time() - t0
     rep = len(text_cols)
 
@@ -137,6 +147,7 @@ def run_variant(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[st
         train_labels = np.repeat(enc.transform(lab_tr.astype(str).to_numpy()), rep)
         val_labels = np.repeat(enc.transform(lab_va.astype(str).to_numpy()), rep)
         resid_means = r_tr.groupby(lab_tr.astype(str)).mean()
+        _, resid_edges = pd.qcut(pd.to_numeric(r_tr), q=cfg.n_bins, labels=False, duplicates="drop", retbins=True)
 
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
     if uses_context:  # spec 4: "passage: {context} | {col}: {val}" with capped context (new lower-layer cache)
@@ -225,6 +236,7 @@ def run_variant(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[st
     head = {"classes": classes, "d_output": len(classes)}
     if uses_offset and not is_cls:
         head["bin_means"] = [float(resid_means[c]) for c in classes]  # head predicts the residual
+        head["bin_edges"] = [float(e) for e in resid_edges]  # residual quantile edges (e5_train), for midpoints
     elif not is_cls:
         yb = pd.Series(d["y_tr"].astype(str).to_numpy(), index=d["y_tr"].index)
         means = pd.to_numeric(y_fit.loc[d["y_tr"].index]).groupby(yb).mean()
