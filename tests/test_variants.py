@@ -218,3 +218,52 @@ def test_prefix_variants_end_to_end_and_cache_reuse(tmp_path, cfg, method, task)
         assert "combined_quality" in res.diagnostics
     assert run_variant(method, x_fit, y_fit, cols, ["price", "brand"], ["brand"], task == "cls", extra, cfg, CPU,
                        str(tmp_path / "tar"), "SYNTH", 0).cache_hit
+
+
+# ------------------------------------------------------------------ context variants
+
+# (3) the verbalizer is deterministic and respects token caps
+def test_verbalizer_deterministic_and_capped():
+    from transformers import AutoTokenizer
+    from multabench.ours.context_text import CONTEXT_MAX_TOKENS, Verbalizer, context_ids, full_string
+    x, _, _ = _table(100)
+    x["brand"] = x["brand"].astype(object)
+    x.loc[x.index[0], "brand"] = "a very long category value that goes on and on"
+    v1 = Verbalizer(["price", "brand"], ["brand"], x)
+    v2 = Verbalizer(["price", "brand"], ["brand"], x.sample(frac=1, random_state=3))  # row order must not matter
+    c1, c2 = v1.contexts(x), v2.contexts(x)
+    assert c1 == c2
+    long_val = "a very long category value that goes on and on"
+    assert c1[0].endswith(f"brand={long_val[:30]}") and len(long_val[:30]) == 30  # categoricals cut at 30 chars
+    assert all(("decile" in c) or ("price=missing" in c) for c in c1)
+    tok = AutoTokenizer.from_pretrained("intfloat/e5-small-v2")
+    long_ctx = "; ".join(f"feature_{i}=value number {i}" for i in range(60))
+    long_txt = "review: " + "word " * 1000
+    ids = context_ids(tok, long_ctx, long_txt, 512)
+    assert len(ids) == 512
+    ctx_len = len(tok(long_ctx, add_special_tokens=False)["input_ids"][:CONTEXT_MAX_TOKENS])
+    assert ctx_len == CONTEXT_MAX_TOKENS
+    # without caps hit, piecewise tokens == tokenizing the whole string at once
+    short = context_ids(tok, c1[1], "review: great item", 512)
+    assert short == tok(full_string(c1[1], "review: great item"))["input_ids"]
+
+
+@pytest.mark.parametrize("method,task", [("context", "cls"), ("context", "reg"), ("context_offset", "cls"),
+                                         ("context_offset", "reg")])
+def test_context_variants_end_to_end(tmp_path, cfg, method, task):
+    x, y_cls, y_reg = _table()
+    y = y_cls if task == "cls" else y_reg
+    x_fit, y_fit, extra = _split(x, y)
+    cols = ["review", "title"]
+    res = run_variant(method, x_fit, y_fit, cols, ["price", "brand"], ["brand"], task == "cls", extra, cfg, CPU,
+                      str(tmp_path / "tar"), "SYNTH", 0)
+    fi = res.diagnostics["feature_info"]
+    assert fi["context_example"].startswith("passage: ") and " | " in fi["context_example"]
+    assert "decile" in fi["context_example"] or "missing" in fi["context_example"]
+    test_x = extra["test"][0]
+    emb = res.row_embeddings("review", test_x.index, texts=te.encoding_texts(test_x, "review"))
+    assert emb.shape == (40, 384)
+    if method == "context_offset":
+        assert "combined_quality" in res.diagnostics
+    assert run_variant(method, x_fit, y_fit, cols, ["price", "brand"], ["brand"], task == "cls", extra, cfg, CPU,
+                       str(tmp_path / "tar"), "SYNTH", 0).cache_hit

@@ -32,6 +32,7 @@ Entry template:
 | P1 am. 3 / P2 | 2026-10-10 | control = mean of seeds 42+43; variant spec + predictions (docs/method_spec.md) | written before any variant result |
 | E10 | 2026-10-10 | variant (a) offset implemented + tested | jobs/pilot_offset.txt ready |
 | E11 | 2026-10-10 | variants (b) prefix, prefix_offset implemented + tested | jobs/pilot_prefix*.txt ready |
+| E12 | 2026-10-10 | variants (c) context, context_offset + sensitivity probe implemented + tested | jobs/pilot_context*.txt ready |
 
 ---
 
@@ -461,3 +462,21 @@ Changes to P1:
   prefix_offset end to end for cls and reg, no new lower-layer cache, cache hit on re-run.
 - Tiny real-data check (CPU, 300 rows, 1 epoch): Book Price and Product Sentiment run end to end for both methods,
   lower-layer cache hit each time.
+
+## E12 — P2 variants (c) `context` and `context_offset` implemented; sensitivity probe (no results yet)   (2026-10-10; code in this entry's commit)
+- Built: `multabench/ours/context_text.py` (Verbalizer, capped token construction, ContextTokenStore) and the
+  context branch of `run_variant`; `--method context|context_offset`; `jobs/pilot_context.txt`,
+  `jobs/pilot_context_offset.txt`; `scripts/sensitivity_probe.py` (to run later).
+- Mechanism: each cell's input is `passage: {context} | {col}: {val}`, context = top-8 features by full-fit
+  importance as `name=1.23 (decile 4/10)` / `name=<≤ 30 chars>` / `name=missing`, joined by "; ", deciles from the
+  pool; context ≤ 80 tokens, text truncated so the total ≤ 512. Target, loss, hyperparameters as TAR (context_offset:
+  + offset loss). New lower-layer cache (texts change); context_offset reuses context's. Embeddings per (row, column).
+- Disk: context caches are much larger (unique per row, +60–80 tokens per cell; Book Price at 300 rows 0.25 GB vs
+  0.02 GB for TAR). `run_experiment --jobs_file` now prunes the oldest lower-layer caches above
+  `--max_lower_cache_gb` (default 40) before each job, so the engine never falls back to the full-model path for
+  lack of disk (that would mix paths within a variant). Disk/rebuild time only — no effect on results.
+- Tests (CPU): verbalizer deterministic (row order irrelevant), categoricals cut at 30 chars, context capped at 80
+  tokens, total = 512 for very long inputs, piecewise tokenization == whole-string tokenization when no cap is hit;
+  context and context_offset end to end (cls, reg), cache hit on re-run.
+- Sensitivity probe (tiny CPU check, Book Price, 300 rows, 1 epoch, 20 rows, top-2 features): mean cosine change
+  tar_repro 0.00000 (by construction), prefix ~0.00001 (barely trained), context ~0.014.

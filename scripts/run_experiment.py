@@ -19,13 +19,13 @@ import subprocess
 import sys
 import time
 from dataclasses import asdict
-from os.path import abspath, dirname, exists, join
+from os.path import abspath, basename, dirname, exists, join
 
 REPO_ROOT = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, REPO_ROOT)  # works with plain `uv sync` (no .pth file needed)
 os.environ.setdefault("WANDB_MODE", "disabled")
 
-METHODS = ("tar_repro", "offset", "prefix", "prefix_offset")  # see docs/method_spec.md; more variants are added as they are built
+METHODS = ("tar_repro", "offset", "prefix", "prefix_offset", "context", "context_offset")  # see docs/method_spec.md; more variants are added as they are built
 DEFAULTS = {"train_examples": 10_000, "epochs": 50, "seed": 42}
 SUFFIX = {"epochs": "ep", "train_examples": "n", "seed": "s"}
 
@@ -140,7 +140,8 @@ def run_one(args: argparse.Namespace) -> dict:
                                                                 "truncated_frac", "fp16")},
             "split_sizes": {k: int(len(v)) for k, v in tar.splits.items()},
             **{k: tar.diagnostics[k] for k in ("struct_only_quality", "combined_quality", "lift", "offset_info",
-                                               "offset_delegated", "seconds_struct") if k in tar.diagnostics},
+                                               "feature_info", "offset_delegated", "seconds_struct")
+               if k in tar.diagnostics},
         },
         # Leakage diagnostic: head quality on rows E5 was trained on minus on unseen test rows.
         "leakage_gap_head_train_minus_test": (hq["e5_train"]["score"] - hq["test"]["score"])
@@ -153,6 +154,27 @@ def run_one(args: argparse.Namespace) -> dict:
         "hardware": json.loads(json.dumps(get_hardware_dict(device), default=str)),
         "torch": torch.__version__, "numpy": np.__version__,
     }
+
+
+def prune_lower_cache(root: str, max_gb: float) -> None:
+    """Keep the local frozen-layer cache under max_gb by deleting the oldest entries (context variants make big ones).
+    Only disk space / rebuild time is affected, never results; avoids the engine's fallback to the full-model path."""
+    import shutil
+    if not os.path.isdir(root):
+        return
+    entries = []
+    for name in os.listdir(root):
+        d = join(root, name)
+        if os.path.isdir(d) and not name.startswith(".tmp_"):
+            size = sum(os.path.getsize(join(d, f)) for f in os.listdir(d))
+            entries.append((os.path.getmtime(d), size, d))
+    total = sum(e[1] for e in entries)
+    for _, size, d in sorted(entries):
+        if total <= max_gb * 1e9:
+            break
+        shutil.rmtree(d, ignore_errors=True)
+        total -= size
+        print(f"  pruned lower-layer cache {basename(d)} ({size / 1e9:.1f} GB)", flush=True)
 
 
 def write_json(path: str, obj: dict) -> None:
@@ -213,6 +235,8 @@ def run_jobs(args: argparse.Namespace) -> int:
             print(f"--max_jobs {args.max_jobs} reached; {len(jobs) - i + 1} job(s) not started", flush=True)
             break
         n_run += 1
+        prune_lower_cache(args.lower_cache_dir or join(os.path.expanduser("~"), ".cache", "tar_lower_cache"),
+                          args.max_lower_cache_gb)
         log_path = join(args.out, "_logs", name, learner, f"{dataset}_fold{fold}.log")
         os.makedirs(dirname(log_path), exist_ok=True)
         print(f"{tag}: running (log: {log_path})", flush=True)
@@ -262,6 +286,8 @@ def main() -> int:
                    help="old full-model TAR path (no lower-layer cache, random batches); results go to <method>__nofast")
     p.add_argument("--lower_cache_dir", default=None,
                    help="local-disk dir for the frozen-layer cache (default ~/.cache/tar_lower_cache; not Drive)")
+    p.add_argument("--max_lower_cache_gb", type=float, default=40.0,
+                   help="--jobs_file: prune the oldest frozen-layer caches above this size before each job")
     p.add_argument("--force", action="store_true", help="re-run even if the result JSON exists")
     p.add_argument("--stream", action="store_true", help="--jobs_file: echo every log line, not just progress")
     args = p.parse_args()

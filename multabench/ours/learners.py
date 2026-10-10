@@ -48,9 +48,12 @@ class OursTextMixin:
     """Mixin placed before an upstream TabularModel subclass. Call configure_ours(...) before fit()."""
 
     def configure_ours(self, variant: str, cfg: TarConfig, cache_dir: Optional[str], dataset: str, fold: int,
-                       test: tuple[DataFrame, Series]):
+                       test: tuple[DataFrame, Series], probe_sets: Optional[dict] = None):
+        """probe_sets (scripts/sensitivity_probe.py only): extra raw row sets that get embeddings but are never
+        trained on; empty in normal runs."""
         self.ours_variant, self.ours_cfg, self.ours_cache_dir = variant, cfg, cache_dir
         self.ours_dataset, self.ours_fold, self.ours_test = dataset, fold, test
+        self.ours_probe_sets = dict(probe_sets or {})
         self.ours_learner_val: Optional[tuple[DataFrame, Series]] = None
         self.tar_result: Optional[TarResult] = None
 
@@ -92,6 +95,7 @@ class OursTextMixin:
         extra = {"test": self.ours_test}
         if self.ours_learner_val is not None:
             extra["learner_val"] = self.ours_learner_val
+        extra.update(getattr(self, "ours_probe_sets", {}))  # empty except in the sensitivity probe
         if self.ours_variant == "tar_repro":  # frozen path (tests/test_tar_repro_frozen.py)
             extra = {k: (self._ours_preprocess_like_transform(x)[text_cols], y) for k, (x, y) in extra.items()}
             self.tar_result = run_tar(x_fit=x_train[text_cols], y_fit=y_train, text_cols=text_cols, is_cls=self.is_cls,

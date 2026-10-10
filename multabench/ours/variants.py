@@ -1,7 +1,7 @@
 """TAR variants (docs/method_spec.md). tar_repro itself lives in tar_engine.run_tar and is never changed here.
 
 Every variant reuses TAR's split, texts, encoder, LoRA, head, optimizer, schedule, early stopping and PCA, and changes
-only what its spec section says. Implemented so far: `offset`, `prefix`, `prefix_offset`.
+only what its spec section says: `offset`, `prefix`, `prefix_offset`, `context`, `context_offset`.
 """
 from __future__ import annotations
 
@@ -27,9 +27,10 @@ from multabench.ours import tar_engine as te
 from multabench.ours.structured_offset import StructuredOffset, fit_structured_offset
 
 VARIANT_ENGINE_VERSION = "variants/1"
-OFFSET_METHODS = {"offset", "prefix_offset"}
+OFFSET_METHODS = {"offset", "prefix_offset", "context_offset"}
 PREFIX_METHODS = {"prefix", "prefix_offset"}
-METHODS = {"offset", "prefix", "prefix_offset"}
+CONTEXT_METHODS = {"context", "context_offset"}
+METHODS = OFFSET_METHODS | PREFIX_METHODS | CONTEXT_METHODS
 TOP_K = 8
 
 
@@ -78,7 +79,7 @@ def run_variant(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[st
     text_cols = sorted(text_cols)
     struct_cols = [c for c in struct_cols if c not in text_cols]
     extra = {k: v for k, v in extra.items() if v is not None}
-    uses_offset, uses_prefix = method in OFFSET_METHODS, method in PREFIX_METHODS
+    uses_offset, uses_prefix, uses_context = method in OFFSET_METHODS, method in PREFIX_METHODS, method in CONTEXT_METHODS
 
     if not struct_cols:
         # Spec 7.6: no structured columns -> exactly the tar_repro computation (same cache entry).
@@ -138,7 +139,21 @@ def run_variant(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[st
         resid_means = r_tr.groupby(lab_tr.astype(str)).mean()
 
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
-    tokens = te.TokenStore(all_strings, tokenizer, cfg.max_length)
+    if uses_context:  # spec 4: "passage: {context} | {col}: {val}" with capped context (new lower-layer cache)
+        from multabench.ours.context_text import ContextTokenStore, Verbalizer
+        verb = Verbalizer(so.top_features(TOP_K), struct_cfg["cat_cols"], x_pool)
+        part = lambda t: t[len("passage: "):]  # TAR's training cell text without the prefix
+        ctx_tr = np.repeat(verb.contexts(x_fit.loc[x_tr.index]), rep).tolist()  # x_tr/x_va hold text cols only
+        ctx_va = np.repeat(verb.contexts(x_fit.loc[x_va.index]), rep).tolist()
+        parts_tr, parts_va = [part(t) for t in d["train_texts"]], [part(t) for t in d["val_texts"]]
+        ctx_frames = [verb.contexts(f) for f in frames]
+        ctx_enc = {col: list(itertools.chain.from_iterable(ctx_frames)) for col in text_cols}
+        parts_enc = {col: [f"{col}: {t}" for t in raw_by_col[col]] for col in text_cols}  # = format_e5_passage
+        tokens = ContextTokenStore(ctx_tr + ctx_va + list(itertools.chain.from_iterable(ctx_enc[c] for c in text_cols)),
+                                   parts_tr + parts_va + list(itertools.chain.from_iterable(parts_enc[c] for c in text_cols)),
+                                   tokenizer, cfg.max_length)
+    else:
+        tokens = te.TokenStore(all_strings, tokenizer, cfg.max_length)
     te.set_seed(cfg.seed)
     model = te.build_model(cfg, d_output=len(classes), device=device)
     t1 = time.time()
@@ -173,6 +188,13 @@ def run_variant(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[st
             enc_ids[c] = np.arange(start, start + len(enc_uid[c]))
             start += len(enc_uid[c])
         feature_info["feature_kinds"] = {s.name: s.kind for s in specs}
+    elif uses_context:
+        source = te.make_source(model, tokens, cfg, device)
+        train_ids, val_ids = tokens.uids_for(ctx_tr, parts_tr), tokens.uids_for(ctx_va, parts_va)
+        enc_ids = {c: tokens.uids_for(ctx_enc[c], parts_enc[c]) for c in text_cols}
+        lens = tokens.lengths[train_ids]
+        feature_info.update({"context_example": tokens.strings[train_ids[0]][:300],
+                             "mean_train_tokens": float(lens.mean()), "max_train_tokens": int(lens.max())})
     else:
         source = te.make_source(model, tokens, cfg, device)
         train_ids, val_ids = tokens.uids(d["train_texts"]), tokens.uids(d["val_texts"])
@@ -188,7 +210,7 @@ def run_variant(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[st
     t2 = time.time()
     columns = {}
     for col in text_cols:
-        if uses_prefix:  # per (row, column): the embedding depends on the row's structured features (spec 7.9)
+        if uses_prefix or uses_context:  # per (row, column): depends on the row's structured features (spec 7.9)
             emb, logits = te.encode(model, source, enc_ids[col], cfg, device)
             columns[col] = te.ColumnOutputs(emb=emb, logits=logits, text_hash=te._text_hash(raw_by_col[col]),
                                             row_uid={int(r): i for i, r in enumerate(rows_by_col[col])})
@@ -211,7 +233,8 @@ def run_variant(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[st
     splits.update({k: np.asarray(x.index) for k, (x, _) in extra.items()})
     config = {**cfg.result_dict(device), "engine_version": VARIANT_ENGINE_VERSION, "method": method,
               "structured": {**struct_cfg, "catboost": {"iterations": 500, "depth": 6, "seed": 42}, "oof_folds": 5},
-              **({"prefix": {"top_k": TOP_K, "ple_bins": 16, "min_category_count": 3}} if uses_prefix else {})}
+              **({"prefix": {"top_k": TOP_K, "ple_bins": 16, "min_category_count": 3}} if uses_prefix else {}),
+              **({"context": {"top_k": TOP_K, "max_context_tokens": 80, "cat_max_chars": 30}} if uses_context else {})}
     result = te.TarResult(variant=method, cache_key=key, cache_hit=False, config=config, text_cols=text_cols,
                           splits=splits, columns=columns, head=head, diagnostics={})
     if uses_offset:

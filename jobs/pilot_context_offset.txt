@@ -1,0 +1,20 @@
+# P2 variant (c) context_offset: the 18 P1 pilot jobs (6 datasets x folds 0-2, CatBoost, seed 42).
+# Judged by the P1 advance rule vs the control = mean of tar_repro seeds 42 and 43 (amendment 3).
+context_offset catboost REG_TEXT_BOOK_PRICE 0
+context_offset catboost MUL_TEXT_PRODUCT_SENTIMENT 0
+context_offset catboost MUL_TEXT_DATA_SCIENTIST_SALARY 0
+context_offset catboost REG_TEXT_BABIES_PRICES 0
+context_offset catboost REG_TEXT_BOOK_READABILITY 0
+context_offset catboost REG_TEXT_MONTGOMERY_SALARIES 0
+context_offset catboost REG_TEXT_BOOK_PRICE 1
+context_offset catboost MUL_TEXT_PRODUCT_SENTIMENT 1
+context_offset catboost MUL_TEXT_DATA_SCIENTIST_SALARY 1
+context_offset catboost REG_TEXT_BABIES_PRICES 1
+context_offset catboost REG_TEXT_BOOK_READABILITY 1
+context_offset catboost REG_TEXT_MONTGOMERY_SALARIES 1
+context_offset catboost REG_TEXT_BOOK_PRICE 2
+context_offset catboost MUL_TEXT_PRODUCT_SENTIMENT 2
+context_offset catboost MUL_TEXT_DATA_SCIENTIST_SALARY 2
+context_offset catboost REG_TEXT_BABIES_PRICES 2
+context_offset catboost REG_TEXT_BOOK_READABILITY 2
+context_offset catboost REG_TEXT_MONTGOMERY_SALARIES 2
