@@ -601,3 +601,9 @@ Changes to P1:
   through the real learner, the appended column reaches CatBoost (first real-data check caught that upstream calls
   the PCA object directly — fixed and covered by this test). tar_repro checks unchanged.
 - GPU estimate unchanged from P3: ≈ 4.5–5.5 T4-hours for the 54 jobs.
+- **Test-run incident (2026-10-10):** commit 8096a22 was pushed while 8 tests were failing (my commit command checked
+  `tail`'s exit code instead of pytest's). Cause: the laptop's `/tmp` (a 3.8 GB RAM disk) had 2.5 GB free, so the
+  frozen-layer cache's disk guard refused to build in the tests' temp folders (fast-path tests fell back / prefix
+  asserted) — an environment problem, not P3 code. Fix: pytest temp folders moved to the real disk
+  (`pyproject.toml`: `--basetemp=.pytest_tmp`), `/tmp` cleaned; full suite 54 passed, 1 skipped (slow bit-for-bit
+  check, unchanged code path). Commits now require pytest's own exit code 0.

@@ -20,3 +20,6 @@ kaggle_uploads/
 # Generated outputs (kept in paper-multabench repo instead)
 results/qualitative/
 figures/
+
+# pytest temporary folders (see pyproject.toml)
+.pytest_tmp/

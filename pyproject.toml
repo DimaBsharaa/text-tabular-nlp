@@ -286,3 +286,8 @@ constraint-dependencies = [
     "yarl==1.22.0",
     "zipp==3.23.0",
 ]
+
+[tool.pytest.ini_options]
+# Temporary test folders on the real disk: /tmp is a small RAM disk on WSL, and the frozen-layer cache refuses to
+# build when local disk is short (tar_engine.LowerCache), which made the fast-path tests fail there.
+addopts = "--basetemp=.pytest_tmp"
