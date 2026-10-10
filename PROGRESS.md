@@ -37,6 +37,7 @@ Entry template:
 | P3 | 2026-10-10 | stacking: cross-fitted head predictions as features (4 variants) + decision rule | written before any P3 run |
 | E14 | 2026-10-10 | P3 implemented + tested | jobs/pilot_p3.txt ready (54 jobs, ≈ 5 GPU-h) |
 | E15 | 2026-10-10 | P3 pilot, 3 of 4 variants | none passes; xfit_offset_pred +0.0035 (6/6) best; frozen_xfit_pred failed (GPU check), fixed |
+| E16 | 2026-10-10 | P3 complete; decision rule | frozen_xfit_pred +0.0040 (4/6) highest → final method for the full run |
 
 ---
 
@@ -648,3 +649,24 @@ Changes to P1:
   test labels only in diagnostics; fold models never trained on rows they predict (test suite, spy).
 - **P3 decision rule not applied yet** — it needs all four P3 variants; waiting for frozen_xfit_pred.
 - Next step: re-run `jobs/pilot_p3.txt` (≈ 30 min, only frozen_xfit_pred left), then apply the P3 decision rule.
+
+## E16 — P3 complete: frozen_xfit_pred; P3 decision rule applied   (2026-10-10, commit 8daf8d5, Colab T4)
+- Source: `results_export_20261010_191406.zip`; re-run of `jobs/pilot_p3.txt`, which only computed the 18 missing
+  frozen_xfit_pred results (0 errors). All 18 reused xfit_pred's 3 fold fine-tunes (identical cache keys, all hits).
+- frozen_xfit_pred vs control: Data Scientist Salary +0.0017, Product Sentiment −0.0011, Baby Products −0.0045,
+  Book Price +0.0155, Book Readability +0.0101, Montgomery Salaries +0.0022 → **mean +0.0040, 4/6 wins, does not
+  pass**. Prediction columns take 0.15–0.51 of CatBoost's importance (more than with tar_repro embeddings, 0.07–0.25).
+- **All P3 variants:** insample_pred +0.0028 (5/6), xfit_pred +0.0033 (5/6), xfit_offset_pred +0.0035 (6/6),
+  frozen_xfit_pred **+0.0040** (4/6); none passes (≥ +0.005 and ≥ 4/6).
+- **P3 decision rule (pre-registered): none passed → the variant with the highest pilot mean gain goes to the full run
+  as the final method → `frozen_xfit_pred`.** (xfit_offset_pred is the most consistent, 6/6, but the rule is mean gain.)
+- P3 predictions: insample_pred ≤ tar_repro — no (+0.0028); xfit_pred > tar_repro — yes, small; xfit_offset_pred ≥
+  xfit_pred — yes, marginally; frozen_xfit_pred ≈ xfit_pred — yes (+0.0040 vs +0.0033, slightly better).
+- Reading: the final method uses NO fine-tuned embeddings: frozen E5 PCA embeddings (Joint Frozen) + K = 3
+  cross-fitted TAR head predictions. Every training row's text-derived features come from models that never saw its
+  label, so TAR's in-sample leakage is removed entirely; the y-information enters only through cross-fitted head
+  outputs. Frozen ≥ TAR embeddings with the same predictions is consistent with E8/E15: in-sample fine-tuned
+  embeddings carry a train/test gap the learner can over-trust.
+- Pilot caveat: the pilot gains are small (+0.004 mean) and below the pilot bar; the full run (20 datasets × 5 folds
+  × 5 learners, C1 primary baseline = leaderboard Joint TAR) is the real test, as pre-registered.
+- Next step: freeze C1 for frozen_xfit_pred and plan the full run (P4).
