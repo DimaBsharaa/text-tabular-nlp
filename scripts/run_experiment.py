@@ -25,7 +25,7 @@ REPO_ROOT = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, REPO_ROOT)  # works with plain `uv sync` (no .pth file needed)
 os.environ.setdefault("WANDB_MODE", "disabled")
 
-METHODS = ("tar_repro",)
+METHODS = ("tar_repro", "offset")  # see docs/method_spec.md; more variants are added as they are built
 DEFAULTS = {"train_examples": 10_000, "epochs": 50, "seed": 42}
 SUFFIX = {"epochs": "ep", "train_examples": "n", "seed": "s"}
 
@@ -42,9 +42,10 @@ def existing_result_ok(path: str) -> bool:
     engine is kept (renamed to fold<k>.<engine>.json) and the job counts as not done, so it is re-run."""
     if not exists(path):
         return False
-    from multabench.ours.tar_engine import ENGINE_VERSION  # lazy: keeps this module importable without torch
+    from multabench.ours.variants import engine_version  # lazy: keeps this module importable without torch
     r = json.load(open(path))
     engine = ((r.get("tar") or {}).get("config") or {}).get("engine_version")
+    ENGINE_VERSION = engine_version(r.get("method", "tar_repro"))
     if engine == ENGINE_VERSION:
         return True
     old = path[:-len(".json")] + f".{str(engine).replace('/', '-')}.json"
@@ -89,7 +90,8 @@ def run_one(args: argparse.Namespace) -> dict:
     from multabench.datasets.multimodal import MultimodalState
     from multabench.datasets.utils import dataset_from_name
     from multabench.ours.learners import make_learner
-    from multabench.ours.tar_engine import ENGINE_VERSION, TarConfig, set_seed
+    from multabench.ours.tar_engine import TarConfig, set_seed
+    from multabench.ours.variants import engine_version
     from multabench.utils.hardware import get_hardware_dict
 
     t0 = time.time()
@@ -119,7 +121,7 @@ def run_one(args: argparse.Namespace) -> dict:
     ref = reference_scores(args.dataset, learner_cls.MODEL_NAME, args.fold)
     score = float(metrics.score)
     return {
-        "method": args.method, "run_name": run_name(args.method, args), "engine_version": ENGINE_VERSION,
+        "method": args.method, "run_name": run_name(args.method, args), "engine_version": engine_version(args.method),
         "tar_path": None if not tar else ("fast" if tar.diagnostics["train"].get("fast_path") else "full_model"),
         "learner": args.learner,
         "learner_model_name": learner_cls.MODEL_NAME, "dataset": args.dataset, "fold": args.fold,
@@ -137,6 +139,8 @@ def run_one(args: argparse.Namespace) -> dict:
                                                                 "fast_path", "bucketed_batches", "peak_gpu_gb",
                                                                 "truncated_frac", "fp16")},
             "split_sizes": {k: int(len(v)) for k, v in tar.splits.items()},
+            **{k: tar.diagnostics[k] for k in ("struct_only_quality", "combined_quality", "lift", "offset_info",
+                                               "offset_delegated", "seconds_struct") if k in tar.diagnostics},
         },
         # Leakage diagnostic: head quality on rows E5 was trained on minus on unseen test rows.
         "leakage_gap_head_train_minus_test": (hq["e5_train"]["score"] - hq["test"]["score"])

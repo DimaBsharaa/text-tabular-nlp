@@ -1,0 +1,89 @@
+{
+ "engine_version": "tar_engine/2",
+ "runs": {
+  "cls_fast": {
+   "emb": {
+    "brand": "bbc9581843a7e696",
+    "review": "db47045b2d8fa934",
+    "title": "dc9abb5fd38dcbbb"
+   },
+   "head_quality": {
+    "e5_train": 0.5323180994045852,
+    "e5_val": 0.5986111111111111,
+    "test": 0.44322344322344326
+   },
+   "logits": {
+    "brand": "baf5f645795da1a0",
+    "review": "97b753ff72d86a60",
+    "title": "fdc129b2ad0affb5"
+   },
+   "val_losses": [
+    1.0925478682373508,
+    1.0921313726540767
+   ]
+  },
+  "cls_full": {
+   "emb": {
+    "brand": "6b04f833f09af1cc",
+    "review": "e732a19111af9120",
+    "title": "72a8e0794060d622"
+   },
+   "head_quality": {
+    "e5_train": 0.530555696885489,
+    "e5_val": 0.6144841269841269,
+    "test": 0.45108363858363854
+   },
+   "logits": {
+    "brand": "ac211951682bf68d",
+    "review": "8749ad5506a07f6f",
+    "title": "4b19d9f5b88c8a37"
+   },
+   "val_losses": [
+    1.0939035198905251,
+    1.0919542529366233
+   ]
+  },
+  "reg_fast": {
+   "emb": {
+    "brand": "cab8c2fa7aa0a9e1",
+    "review": "096895e99e08bbea",
+    "title": "27abfbabc5b555c1"
+   },
+   "head_quality": {
+    "e5_train": -0.001820370810679428,
+    "e5_val": -0.016583652931482895,
+    "test": -0.01007749198308816
+   },
+   "logits": {
+    "brand": "a2f9685b12ab283c",
+    "review": "8e07c8f192664eac",
+    "title": "a4adc271c0a95ae1"
+   },
+   "val_losses": [
+    3.022841959288626,
+    3.019420522632021
+   ]
+  },
+  "reg_full": {
+   "emb": {
+    "brand": "f60cb9b773d312b5",
+    "review": "49c652ffa1e1d04e",
+    "title": "a10adaf7a53db808"
+   },
+   "head_quality": {
+    "e5_train": -0.0030311788652999105,
+    "e5_val": -0.011984824592569998,
+    "test": -0.010743792109157324
+   },
+   "logits": {
+    "brand": "ffc13c25e62cc042",
+    "review": "bd204470f3daca58",
+    "title": "e3701eab0fefb6a8"
+   },
+   "val_losses": [
+    3.023986679134947,
+    3.0196846904176655
+   ]
+  }
+ }
+}

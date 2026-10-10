@@ -389,23 +389,29 @@ def _logits(model: E5ForTuning, source, uids, device, use_fp16) -> torch.Tensor:
 
 @torch.no_grad()
 def _val_loss(model: E5ForTuning, source, uids: np.ndarray, labels: torch.Tensor, cfg: TarConfig,
-              device: torch.device, use_fp16: bool) -> float:
+              device: torch.device, use_fp16: bool, offsets: Optional[torch.Tensor] = None) -> float:
     model.eval()
     order = np.argsort(source.lengths[uids], kind="stable")
     total = 0.0
     for i in range(0, len(order), cfg.eval_batch_size):
         rows = order[i:i + cfg.eval_batch_size]
-        logits = _logits(model, source, uids[rows], device, use_fp16)
-        total += float(encoder_finetune_loss(logits.float(), labels[rows].to(device))) * len(rows)
+        logits = _logits(model, source, uids[rows], device, use_fp16).float()
+        if offsets is not None:  # variants only (offset loss); tar_repro never passes offsets
+            logits = logits + offsets[rows].to(device)
+        total += float(encoder_finetune_loss(logits, labels[rows].to(device))) * len(rows)
     return total / len(order)
 
 
 def train_tar(cfg: TarConfig, model: E5ForTuning, source, train_uids: np.ndarray, train_labels: np.ndarray,
-              val_uids: np.ndarray, val_labels: np.ndarray, device: torch.device) -> dict:
+              val_uids: np.ndarray, val_labels: np.ndarray, device: torch.device,
+              train_offsets: Optional[np.ndarray] = None, val_offsets: Optional[np.ndarray] = None) -> dict:
     """LoRA fine-tune with early stopping on val loss; leaves the model at its best epoch, returns a training log.
-    train_uids / val_uids: one entry per training cell (duplicates kept: every cell is a training example)."""
+    train_uids / val_uids: one entry per training cell (duplicates kept: every cell is a training example).
+    train_offsets / val_offsets (variants only): per-cell logit offsets added before the loss; None = tar_repro."""
     use_fp16 = bool(cfg.fp16 and device.type == "cuda")
     y_tr, y_va = torch.tensor(train_labels, dtype=torch.long), torch.tensor(val_labels, dtype=torch.long)
+    off_tr = None if train_offsets is None else torch.tensor(train_offsets, dtype=torch.float32)
+    off_va = None if val_offsets is None else torch.tensor(val_offsets, dtype=torch.float32)
     n = len(train_uids)
     steps_per_epoch = (n + cfg.batch_size - 1) // cfg.batch_size
     optimizer = _optimizer(model, cfg)
@@ -436,8 +442,10 @@ def train_tar(cfg: TarConfig, model: E5ForTuning, source, train_uids: np.ndarray
                     batch_loss = 0.0
                     for m in range(0, len(rows), micro):  # gradient accumulation == one 256-batch step
                         sub = rows[m:m + micro]
-                        logits = _logits(model, source, train_uids[sub], device, use_fp16)
-                        loss = encoder_finetune_loss(logits.float(), y_tr[sub].to(device))
+                        logits = _logits(model, source, train_uids[sub], device, use_fp16).float()
+                        if off_tr is not None:
+                            logits = logits + off_tr[sub].to(device)
+                        loss = encoder_finetune_loss(logits, y_tr[sub].to(device))
                         scaler.scale(loss * (len(sub) / len(rows))).backward()
                         batch_loss += float(loss) * len(sub)
                     break
@@ -454,7 +462,7 @@ def train_tar(cfg: TarConfig, model: E5ForTuning, source, train_uids: np.ndarray
             scaler.step(optimizer)
             scaler.update()
             scheduler.step()
-        val_loss = _val_loss(model, source, val_uids, y_va, cfg, device, use_fp16)
+        val_loss = _val_loss(model, source, val_uids, y_va, cfg, device, use_fp16, off_va)
         history.append({"epoch": epoch, "train_loss": train_loss_sum / n, "val_loss": val_loss,
                         "seconds": round(time.time() - t0, 1)})
         print(f"  [TAR] epoch {epoch:>2}: train_loss {history[-1]['train_loss']:.4f}  val_loss {val_loss:.4f}  "

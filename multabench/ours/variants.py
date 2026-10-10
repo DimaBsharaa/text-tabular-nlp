@@ -1,0 +1,225 @@
+"""TAR variants (docs/method_spec.md). tar_repro itself lives in tar_engine.run_tar and is never changed here.
+
+Every variant reuses TAR's split, texts, encoder, LoRA, head, optimizer, schedule, early stopping and PCA, and changes
+only what its spec section says. Implemented so far: `offset`.
+"""
+from __future__ import annotations
+
+import hashlib
+import itertools
+import json
+import os
+import time
+from os.path import exists, join
+from typing import Dict, Optional
+
+import numpy as np
+import pandas as pd
+import torch
+from pandas import DataFrame, Series
+from sklearn.preprocessing import LabelEncoder
+from transformers import AutoTokenizer
+
+from multabench.baselines.training.metrics import calculate_metric
+from multabench.e5.constants import format_e5_passage
+from multabench.preprocessing.discretize import discretize_numerical
+from multabench.ours import tar_engine as te
+from multabench.ours.structured_offset import StructuredOffset, fit_structured_offset
+
+VARIANT_ENGINE_VERSION = "variants/1"
+OFFSET_METHODS = {"offset"}
+METHODS = {"offset"}
+
+
+def engine_version(method: str) -> str:
+    return te.ENGINE_VERSION if method == "tar_repro" else VARIANT_ENGINE_VERSION
+
+
+def _strings_hash(strings: list[str]) -> str:
+    h = hashlib.sha1()
+    for s in strings:
+        h.update(s.encode())
+        h.update(b"\x00")
+    return h.hexdigest()[:10]
+
+
+def _metric(y_true: np.ndarray, pred: np.ndarray, is_cls: bool, classes: list[str]) -> Optional[float]:
+    """Upstream metric (AUROC / macro-OvR AUROC / R²). Classification rows with classes unknown to TAR are dropped."""
+    if is_cls:
+        y = np.asarray(y_true).astype(str)
+        known = np.isin(y, classes)
+        y_int = LabelEncoder().fit(classes).transform(y[known])
+        if len(np.unique(y_int)) < 2:
+            return None
+        return float(calculate_metric(y_true=y_int, y_pred=pred[known], d_output=len(classes)).score)
+    return float(calculate_metric(y_true=pd.to_numeric(pd.Series(y_true)).to_numpy(), y_pred=pred, d_output=1).score)
+
+
+def _residual_bins(r_tr: Series, r_va: Series, n_bins: int) -> tuple[Series, Series]:
+    """Spec 7.5: upstream discretize_numerical on the e5_train residuals; the same edges (outer ones open) for e5_val."""
+    lab_tr = discretize_numerical(r_tr, n_bins=n_bins)
+    _, edges = pd.qcut(pd.to_numeric(r_tr), q=n_bins, labels=False, duplicates="drop", retbins=True)
+    edges = edges.copy()
+    edges[0], edges[-1] = -np.inf, np.inf
+    actual_n = len(edges) - 1
+    step = 100 / actual_n
+    label_map = {i: f"Quantile {round(i * step)}-{round((i + 1) * step)}%" for i in range(actual_n)}
+    codes = pd.cut(pd.to_numeric(r_va), bins=edges, labels=False, include_lowest=True)
+    return lab_tr, pd.Series(codes, index=r_va.index).map(label_map)
+
+
+def run_variant(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], struct_cols: list[str],
+                cat_cols: list[str], is_cls: bool, extra: Dict[str, tuple[DataFrame, Series]], cfg: te.TarConfig,
+                device: torch.device, cache_root: Optional[str], dataset: str, fold: int) -> te.TarResult:
+    """Like tar_engine.run_tar, for a variant. x_fit / extras contain text AND structured columns (preprocessed)."""
+    assert method in METHODS, f"unknown variant {method!r} (implemented: {sorted(METHODS)})"
+    text_cols = sorted(text_cols)
+    struct_cols = [c for c in struct_cols if c not in text_cols]
+    extra = {k: v for k, v in extra.items() if v is not None}
+
+    if method in OFFSET_METHODS and not struct_cols:
+        # Spec 7.6: no structured columns -> exactly the tar_repro computation (same cache entry).
+        res = te.run_tar(x_fit[text_cols], y_fit, text_cols, is_cls, {k: (x[text_cols], y) for k, (x, y) in extra.items()},
+                         cfg, device, cache_root, dataset, fold, variant="tar_repro")
+        # In-memory relabel only (the cached tar_repro entry is untouched): the result belongs to this method.
+        res.diagnostics = {**res.diagnostics, "offset_delegated": True}
+        res.config = {**res.config, "engine_version": VARIANT_ENGINE_VERSION, "method": method,
+                      "delegated_to": "tar_repro"}
+        return res
+
+    d = te.prepare_e5_data(x_fit[text_cols], y_fit, text_cols, is_cls, cfg.n_bins)  # TAR's split, texts, labels
+    x_tr, x_va = d["x_tr"], d["x_va"]
+    frames = [x_fit] + [x for x, _ in extra.values()]
+    rows_by_col, raw_by_col = {}, {}
+    for col in text_cols:
+        rows_by_col[col] = np.concatenate([np.asarray(f.index) for f in frames])
+        raw_by_col[col] = list(itertools.chain.from_iterable(te.encoding_texts(f, col) for f in frames))
+    enc_strings = {col: [format_e5_passage(col, t) for t in raw_by_col[col]] for col in text_cols}
+    # Same strings in the same order as run_tar -> the same lower-layer cache entry as tar_repro.
+    all_strings = list(dict.fromkeys(itertools.chain(d["train_texts"], d["val_texts"], *enc_strings.values())))
+
+    struct_cfg = {"struct_cols": struct_cols, "cat_cols": [c for c in cat_cols if c in struct_cols]}
+    rows_hash = te._rows_hash(x_fit.index, *[x.index for x, _ in extra.values()])
+    key = (f"{dataset}/fold{fold}/{method}/seed{cfg.seed}/{te.config_hash(cfg, method, device)}_{rows_hash}_"
+           f"{_strings_hash(all_strings)}_{_strings_hash([json.dumps(struct_cfg, sort_keys=True)])}")
+    path = join(cache_root, key) if cache_root else None
+    if path and exists(join(path, "meta.json")):
+        print(f"  [TAR] cache hit: {key}", flush=True)
+        return te._load(path)
+
+    t0 = time.time()
+    pool = pd.Index(np.concatenate([np.asarray(x_tr.index), np.asarray(x_va.index)]))
+    x_pool = x_fit.loc[pool]
+    y_pool = y_fit.loc[pool]
+    strata = pd.concat([d["y_tr"], d["y_va"]]).loc[pool].astype(str).to_numpy()  # TAR's labels / y-bins
+    so = fit_structured_offset(x_pool, y_pool, struct_cols, struct_cfg["cat_cols"], is_cls,
+                               d["classes"] if is_cls else [], strata=strata)
+    t_struct = time.time() - t0
+    rep = len(text_cols)
+
+    train_offsets = val_offsets = None
+    if is_cls:
+        classes = d["classes"]
+        train_labels, val_labels = d["train_labels"], d["val_labels"]
+        train_offsets = np.repeat(so.log_offset(so.oof_for(x_tr.index)), rep, axis=0)
+        val_offsets = np.repeat(so.log_offset(so.oof_for(x_va.index)), rep, axis=0)
+    else:
+        y_num = pd.to_numeric(y_fit)
+        r_tr = y_num.loc[x_tr.index] - so.oof_for(x_tr.index)
+        r_va = y_num.loc[x_va.index] - so.oof_for(x_va.index)
+        lab_tr, lab_va = _residual_bins(r_tr, r_va, cfg.n_bins)
+        enc = LabelEncoder().fit(lab_tr.astype(str).to_numpy())
+        classes = enc.classes_.tolist()
+        train_labels = np.repeat(enc.transform(lab_tr.astype(str).to_numpy()), rep)
+        val_labels = np.repeat(enc.transform(lab_va.astype(str).to_numpy()), rep)
+        resid_means = r_tr.groupby(lab_tr.astype(str)).mean()
+
+    tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
+    tokens = te.TokenStore(all_strings, tokenizer, cfg.max_length)
+    te.set_seed(cfg.seed)
+    model = te.build_model(cfg, d_output=len(classes), device=device)
+    t1 = time.time()
+    source = te.make_source(model, tokens, cfg, device)
+    t_lower = time.time() - t1
+    print(f"  [TAR:{method}] fine-tuning on {len(x_tr)} rows × {rep} text cols = {len(d['train_texts'])} cells "
+          f"(val {len(x_va)} rows), d_output={len(classes)}, struct cols={len(struct_cols)}, "
+          f"path={'fast' if source.fast else 'full model'}", flush=True)
+    train_log = te.train_tar(cfg, model, source, tokens.uids(d["train_texts"]), train_labels,
+                             tokens.uids(d["val_texts"]), val_labels, device, train_offsets, val_offsets)
+    t_train = time.time() - t1 - t_lower
+
+    t2 = time.time()
+    columns = {}
+    for col in text_cols:
+        uniq, inverse = np.unique(np.array(raw_by_col[col], dtype=object), return_inverse=True)
+        uniq = uniq.tolist()
+        emb, logits = te.encode(model, source, tokens.uids([format_e5_passage(col, t) for t in uniq]), cfg, device)
+        columns[col] = te.ColumnOutputs(emb=emb, logits=logits, text_hash=te._text_hash(uniq),
+                                        row_uid=dict(zip(rows_by_col[col].tolist(), inverse.tolist())))
+    t_encode = time.time() - t2
+
+    head = {"classes": classes, "d_output": len(classes)}
+    if not is_cls:
+        head["bin_means"] = [float(resid_means[c]) for c in classes]  # head predicts the residual
+    splits = {"e5_train": np.asarray(x_tr.index), "e5_val": np.asarray(x_va.index)}
+    splits.update({k: np.asarray(x.index) for k, (x, _) in extra.items()})
+    config = {**cfg.result_dict(device), "engine_version": VARIANT_ENGINE_VERSION, "method": method,
+              "structured": {**struct_cfg, "catboost": {"iterations": 500, "depth": 6, "seed": 42}, "oof_folds": 5}}
+    result = te.TarResult(variant=method, cache_key=key, cache_hit=False, config=config, text_cols=text_cols,
+                          splits=splits, columns=columns, head=head, diagnostics={})
+    result.diagnostics = {"train": train_log, **_offset_diagnostics(result, so, y_fit, extra, x_tr, x_va, is_cls),
+                          "seconds_struct": round(t_struct, 1), "seconds_lower_cache": round(t_lower, 1),
+                          "seconds_train": round(t_train, 1), "seconds_encode": round(t_encode, 1),
+                          "seconds_total_tar": round(time.time() - t0, 1),
+                          "n_unique_texts": {c: int(len(columns[c].emb)) for c in text_cols}, "device": str(device)}
+    dg = result.diagnostics
+    print("  [TAR:%s] head %s | struct_only %s | combined %s" % (method, *[
+        ", ".join(f"{s}={v:.4f}" for s, v in dg[k].items() if v is not None)
+        for k in ("head_quality_scores", "struct_only_quality", "combined_quality")]), flush=True)
+    if path:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        te._save(result, model, path)
+    del model
+    if device.type == "cuda":
+        torch.cuda.empty_cache()
+    return result
+
+
+def _offset_diagnostics(result: te.TarResult, so: StructuredOffset, y_fit: Series, extra: dict, x_tr: DataFrame,
+                        x_va: DataFrame, is_cls: bool) -> dict:
+    """head_quality (vs the variant's own target), struct_only_quality, combined_quality and lift, per split.
+    Pool rows use OOF structured predictions; learner_val / test use the full fit (diagnostics only)."""
+    struct_pred = {"e5_train": so.oof_for(x_tr.index), "e5_val": so.oof_for(x_va.index)}
+    y_split = {"e5_train": y_fit.loc[x_tr.index], "e5_val": y_fit.loc[x_va.index]}
+    for k, (x, y) in extra.items():
+        struct_pred[k] = so.predict_full(x)
+        y_split[k] = y
+    classes = result.head["classes"]
+    head_q, struct_q, comb_q, lift = {}, {}, {}, {}
+    for split, y in y_split.items():
+        rows = np.asarray(y.index)
+        sp = struct_pred[split]
+        if is_cls:
+            # combined = softmax(head logits + log offset) per cell, averaged over the row's text cells
+            off = torch.tensor(so.log_offset(sp), dtype=torch.float32)
+            comb = []
+            for col in result.text_cols:
+                c = result.columns[col]
+                lg = torch.tensor(c.logits[[c.row_uid[int(r)] for r in rows]])
+                comb.append(torch.softmax(lg + off, dim=-1).numpy())
+            comb = np.mean(comb, axis=0)
+            head_q[split] = _metric(y, result.head_probs(rows), True, classes)
+            struct_q[split] = _metric(y, sp, True, classes)
+            comb_q[split] = _metric(y, comb, True, classes)
+        else:
+            resid_pred = result.head_probs(rows) @ np.asarray(result.head["bin_means"])
+            y_num = pd.to_numeric(y).to_numpy(dtype=float)
+            head_q[split] = _metric(y_num - sp, resid_pred, False, [])
+            struct_q[split] = _metric(y_num, sp, False, [])
+            comb_q[split] = _metric(y_num, sp + resid_pred, False, [])
+        lift[split] = None if comb_q[split] is None or struct_q[split] is None else comb_q[split] - struct_q[split]
+    return {"head_quality": {k: {"score": v} for k, v in head_q.items()}, "head_quality_scores": head_q,
+            "struct_only_quality": struct_q, "combined_quality": comb_q, "lift": lift,
+            "offset_info": {"has_features": so.has_features, "n_struct_cols": len(so.feature_cols),
+                            "top_features": so.top_features(8),
+                            "importances": {k: round(v, 3) for k, v in so.importances.items()}}}

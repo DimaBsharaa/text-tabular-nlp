@@ -30,6 +30,7 @@ Entry template:
 | E8 | 2026-10-09 | tar_repro pilot seed 42 (18 jobs): engine bias + leakage | bias −0.0036 (p 0.15; Book Price/Readability −0.018/−0.011); leakage gap +0.031 (16/18, p 0.0002) |
 | E9 | 2026-10-10 | A/A control, seed 43 vs 42 | does not pass (+0.0028, 3/6) → advance rule unchanged; seed sd per fold ≈ 0.008 |
 | P1 am. 3 / P2 | 2026-10-10 | control = mean of seeds 42+43; variant spec + predictions (docs/method_spec.md) | written before any variant result |
+| E10 | 2026-10-10 | variant (a) offset implemented + tested | jobs/pilot_offset.txt ready |
 
 ---
 
@@ -425,3 +426,21 @@ Changes to P1:
   - `prefix_offset` ≥ `offset`, largest gains where Phase 0 complementarity is large.
 - **Diagnostics recorded per job:** TAR head qualities; for offset variants struct_only_quality, combined_quality
   and lift on e5_train / e5_val / learner_val / test (spec section 5).
+
+## E10 — P2 variant (a) `offset` implemented (no results yet)   (2026-10-10; code in this entry's commit)
+- Built: `multabench/ours/structured_offset.py` (5-fold OOF CatBoost, 500 it., depth 6, seed 42, on the structured
+  columns of TAR's E5 train + val pool; full fit only for importances + diagnostics), `multabench/ours/variants.py`
+  (`run_variant`, engine `variants/1`), dispatch in `learners.py` (tar_repro branch unchanged), `--method offset`,
+  `jobs/pilot_offset.txt` (18 jobs, seed 42). Shared training loop got optional per-cell logit offsets
+  (`train_offsets` / `val_offsets`, default None = tar_repro).
+- Classification: loss on `head(h) + log(clip(p_oof, 1e-3, 1))`, offset also in the early-stopping val loss.
+  Regression: target = y − y_oof, 20 quantile bins with edges from the e5_train residuals. Embeddings / PCA / learner
+  exactly as TAR; offset never given to the learner. Same strings as tar_repro → same lower-layer cache.
+- Diagnostics in the JSON (`tar.*`): head_quality (vs the variant's target), struct_only_quality, combined_quality,
+  lift, offset_info (top features, importances).
+- Tests (CPU): OOF never uses a row's own label (memorizing test model); zero head → logits = log(offset);
+  cls + reg end to end + cache hit; offset reuses tar_repro's lower cache; no structured columns → identical to
+  tar_repro (delegated, same cache entry, same embeddings). tar_repro guards: input fingerprint (fast) and a new
+  bit-for-bit training fingerprint (tiny CPU runs, fast + full path, cls + reg) generated from a 96c1f5c checkout.
+- Tiny real-data check (CPU, 300 rows, 1 epoch): Book Price top structured features BookCategory, Genre, Ratings;
+  Product Sentiment: Product_Type. Runs end to end.

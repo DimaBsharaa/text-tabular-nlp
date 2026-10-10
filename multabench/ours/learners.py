@@ -92,10 +92,21 @@ class OursTextMixin:
         extra = {"test": self.ours_test}
         if self.ours_learner_val is not None:
             extra["learner_val"] = self.ours_learner_val
-        extra = {k: (self._ours_preprocess_like_transform(x)[text_cols], y) for k, (x, y) in extra.items()}
-        self.tar_result = run_tar(x_fit=x_train[text_cols], y_fit=y_train, text_cols=text_cols, is_cls=self.is_cls,
-                                  extra=extra, cfg=self.ours_cfg, device=self.device, cache_root=self.ours_cache_dir,
-                                  dataset=self.ours_dataset, fold=self.ours_fold, variant=self.ours_variant)
+        if self.ours_variant == "tar_repro":  # frozen path (tests/test_tar_repro_frozen.py)
+            extra = {k: (self._ours_preprocess_like_transform(x)[text_cols], y) for k, (x, y) in extra.items()}
+            self.tar_result = run_tar(x_fit=x_train[text_cols], y_fit=y_train, text_cols=text_cols, is_cls=self.is_cls,
+                                      extra=extra, cfg=self.ours_cfg, device=self.device, cache_root=self.ours_cache_dir,
+                                      dataset=self.ours_dataset, fold=self.ours_fold, variant=self.ours_variant)
+        else:  # variants also see the structured columns (docs/method_spec.md)
+            from multabench.ours.variants import run_variant
+            struct_cols = sorted((set(self.numerical_features) | set(self.categorical_features)) - set(text_cols))
+            cols = text_cols + struct_cols
+            extra = {k: (self._ours_preprocess_like_transform(x)[cols], y) for k, (x, y) in extra.items()}
+            self.tar_result = run_variant(self.ours_variant, x_fit=x_train[cols], y_fit=y_train, text_cols=text_cols,
+                                          struct_cols=struct_cols, cat_cols=sorted(self.categorical_features),
+                                          is_cls=self.is_cls, extra=extra, cfg=self.ours_cfg, device=self.device,
+                                          cache_root=self.ours_cache_dir, dataset=self.ours_dataset,
+                                          fold=self.ours_fold)
         encoders = {}
         for col in text_cols:
             # PCA exactly as upstream: fit on the embeddings of all training rows, in their order.
