@@ -35,11 +35,14 @@ TOP_K = 8
 
 
 STACK_METHOD_NAMES = {"insample_pred", "xfit_pred", "frozen_xfit_pred", "xfit_offset_pred"}  # multabench/ours/stacking.py
+EXPERT_METHOD_NAMES = {"tar_experts", "frozen_experts", "tar_experts_lex", "tar_experts_nbr", "tar_experts_lex_insample"}
 
 
 def engine_version(method: str) -> str:
     if method == "tar_repro":
         return te.ENGINE_VERSION
+    if method in EXPERT_METHOD_NAMES:
+        return "experts/1"
     return "stacking/1" if method in STACK_METHOD_NAMES else VARIANT_ENGINE_VERSION
 
 

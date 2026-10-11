@@ -26,7 +26,8 @@ sys.path.insert(0, REPO_ROOT)  # works with plain `uv sync` (no .pth file needed
 os.environ.setdefault("WANDB_MODE", "disabled")
 
 METHODS = ("tar_repro", "offset", "prefix", "prefix_offset", "context", "context_offset",
-           "insample_pred", "xfit_pred", "frozen_xfit_pred", "xfit_offset_pred")  # see docs/method_spec.md; more variants are added as they are built
+           "insample_pred", "xfit_pred", "frozen_xfit_pred", "xfit_offset_pred",
+           "tar_experts", "frozen_experts", "tar_experts_lex", "tar_experts_nbr", "tar_experts_lex_insample")  # see docs/method_spec.md; more variants are added as they are built
 DEFAULTS = {"train_examples": 10_000, "epochs": 50, "seed": 42}
 COMPANIONS = {"xfit_pred": ["frozen_xfit_pred"]}  # P3: written by the same job (shares the fold fine-tunes)
 SUFFIX = {"epochs": "ep", "train_examples": "n", "seed": "s"}

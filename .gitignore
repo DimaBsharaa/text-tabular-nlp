@@ -23,3 +23,6 @@ figures/
 
 # pytest temporary folders (see pyproject.toml)
 .pytest_tmp/
+
+# exploration outputs (scripts/explore_cheap.py)
+.explore/

@@ -23,13 +23,23 @@ from pandas import DataFrame, Series
 from sklearn.model_selection import KFold, StratifiedKFold
 
 from multabench.ours import tar_engine as te
+import hashlib
+
 from multabench.ours.variants import _metric, run_variant
 from multabench.ours.structured_offset import fit_structured_offset
 
 STACKING_ENGINE_VERSION = "stacking/1"
 K_FOLDS = 3
 SEED = 42
-STACK_METHODS = {"insample_pred", "xfit_pred", "frozen_xfit_pred", "xfit_offset_pred"}
+# P5 (PROGRESS.md): (base embeddings, experts, mode). C2 = tar_experts, C3 = frozen_experts, the rest are ablations.
+EXPERT_METHODS = {
+    "tar_experts": ("tar", ("lex", "nbr"), "oof"),
+    "frozen_experts": ("frozen", ("lex", "nbr"), "oof"),
+    "tar_experts_lex": ("tar", ("lex",), "oof"),
+    "tar_experts_nbr": ("tar", ("nbr",), "oof"),
+    "tar_experts_lex_insample": ("tar", ("lex",), "insample"),
+}
+STACK_METHODS = {"insample_pred", "xfit_pred", "frozen_xfit_pred", "xfit_offset_pred"} | set(EXPERT_METHODS)
 COMPANIONS = {"xfit_pred": ["frozen_xfit_pred"]}  # written by the same job (shared fold fine-tunes)
 
 
@@ -170,6 +180,8 @@ def run_stacking(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[s
                  cat_cols: list[str], is_cls: bool, extra: Dict[str, tuple[DataFrame, Series]], cfg: te.TarConfig,
                  device: torch.device, cache_root: Optional[str], dataset: str, fold: int) -> StackResult:
     assert method in STACK_METHODS, method
+    if method in EXPERT_METHODS:
+        return run_experts(method, x_fit, y_fit, text_cols, is_cls, extra, cfg, device, cache_root, dataset, fold)
     text_cols = sorted(text_cols)
     extra = {k: v for k, v in extra.items() if v is not None}
     pool = pd.Index(x_fit.index)
@@ -252,3 +264,109 @@ def run_stacking(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[s
     print(f"  [STACK:{method}] pred-feature quality: " +
           ", ".join(f"{k}={v:.4f}" for k, v in q.items() if v is not None), flush=True)
     return StackResult(method=method, embedding_result=emb, base_result=base, features=feats, diagnostics=diag)
+
+
+# ---------------------------------------------------------------------------------------- P5 experts
+
+def run_experts(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], is_cls: bool,
+                extra: Dict[str, tuple[DataFrame, Series]], cfg: te.TarConfig, device: torch.device,
+                cache_root: Optional[str], dataset: str, fold: int) -> StackResult:
+    """P5: base embeddings (tar_repro's full-pool fine-tune, or frozen E5) + cross-fitted expert predictions.
+    One tar_repro fine-tune per (dataset, fold), cached and shared by every tar_* method and learner; expert features
+    cached per (dataset, fold, expert, mode) and shared too."""
+    import time
+    from multabench.ours.experts import ALL_COLS, ExpertConfig, cached_expert_features, compute_expert_features
+    base_kind, experts, mode = EXPERT_METHODS[method]
+    text_cols = sorted(text_cols)
+    extra = {k: v for k, v in extra.items() if v is not None}
+    x_t, extra_t = _tar_inputs(x_fit, text_cols, extra)
+    t0 = time.time()
+    if base_kind == "tar":
+        base = te.run_tar(x_t, y_fit, text_cols, is_cls, extra_t, cfg, device, cache_root, dataset, fold,
+                          variant="tar_repro")
+    else:  # frozen_experts: the tar_repro result only for JSON diagnostics, if it is already cached
+        base = cached_tar_repro(x_t, extra_t, cfg, device, cache_root, dataset, fold)
+    t_base = time.time() - t0
+    frozen = None
+
+    def get_frozen():
+        nonlocal frozen
+        if frozen is None:
+            frozen = frozen_embeddings(x_t, extra_t, text_cols, cfg, device)
+        return frozen
+
+    pool_rows = np.asarray(x_fit.index)
+    if is_cls:
+        classes = sorted(y_fit.astype(str).unique())
+        pos = {c: i for i, c in enumerate(classes)}
+        y = y_fit.astype(str).map(pos).to_numpy()
+    else:
+        classes, y = [], pd.to_numeric(y_fit).to_numpy(dtype=float)
+    ecfg = ExpertConfig()
+    texts = {c: te.encoding_texts(x_t, c) for c in text_cols}
+    extra_texts = {k: {c: te.encoding_texts(x, c) for c in text_cols} for k, (x, _) in extra_t.items()}
+    rows_key = te._rows_hash(x_fit.index, *[x.index for x, _ in extra.values()])
+    texts_key = hashlib.sha1("\x00".join(t for c in text_cols for t in texts[c]).encode()).hexdigest()[:10]
+    t1 = time.time()
+    feats_by_split, hits = {}, {}
+    for kind in experts:
+        key = f"{dataset}/fold{fold}/{kind}_{mode}_{ecfg.key()}_{rows_key}_{texts_key}"
+
+        def compute(kind=kind):
+            embs = extra_embs = None
+            if kind == "nbr":
+                fr = get_frozen()
+                embs = {c: fr.row_embeddings(c, pool_rows) for c in text_cols}
+                extra_embs = {k: {c: fr.row_embeddings(c, np.asarray(x.index)) for c in text_cols}
+                              for k, (x, _) in extra_t.items()}
+            return compute_expert_features(texts, embs, y, is_cls, len(classes), extra_texts, extra_embs, (kind,),
+                                           mode, ecfg)
+        out, hits[kind] = cached_expert_features(cache_root, key, compute)
+        for split, d in out.items():
+            feats_by_split.setdefault(split, {}).update(d)
+    t_experts = time.time() - t1
+
+    # Per text column: its own experts; the "__all__" experts go with the first text column.
+    owner = {c: c for c in text_cols} | {ALL_COLS: text_cols[0]}
+    split_rows = {"pool": pool_rows, **{k: np.asarray(x.index) for k, (x, _) in extra.items()}}
+    features = {}
+    for col in text_cols:
+        names = sorted(f for f in feats_by_split["pool"] if owner[f.split(":", 1)[1]] == col)
+        if not names:
+            features[col] = pd.DataFrame(index=np.concatenate(list(split_rows.values())))
+            continue
+        blocks = []
+        for split, rows in split_rows.items():
+            blocks.append(pd.DataFrame(np.hstack([feats_by_split[split][f] for f in names]), index=rows))
+        features[col] = pd.concat(blocks).sort_index()
+        features[col].columns = [f"{f}#{j}" for f in names for j in range(feats_by_split["pool"][f].shape[1])]
+    emb = base if base_kind == "tar" else get_frozen()
+
+    def q(split, rows, yy):
+        if not len(rows):
+            return None
+        vals = {}
+        for f in feats_by_split["pool"]:
+            a = feats_by_split[split][f]
+            if is_cls:
+                probs = np.hstack([1 - a.sum(axis=1, keepdims=True), a]) if a.shape[1] == len(classes) - 1 else a
+                vals[f] = _metric(yy.astype(str).to_numpy(), probs, True, classes)
+            else:
+                vals[f] = _metric(pd.to_numeric(yy).to_numpy(dtype=float), a[:, 0], False, [])
+        return vals
+    quality = {"train_rows": q("pool", pool_rows, y_fit)}
+    if "test" in extra:
+        quality["test"] = q("test", np.asarray(extra["test"][0].index), extra["test"][1])
+    diag = {"engine_version": "experts/1", "method": method, "base": base_kind, "experts": list(experts),
+            "mode": mode, "expert_config": {**ecfg.__dict__}, "expert_cache_hits": hits,
+            "pred_feature_quality": {"per_expert": quality,
+                                     "gap_train_minus_test": {f: (quality["train_rows"][f] - quality["test"][f])
+                                                              if quality.get("test") and quality["train_rows"][f] is not None
+                                                              and quality["test"][f] is not None else None
+                                                              for f in quality["train_rows"]}},
+            "n_pred_features_per_col": {c: int(features[c].shape[1]) for c in text_cols},
+            "seconds": {"base": round(t_base, 1), "experts": round(t_experts, 1)}}
+    print(f"  [STACK:{method}] experts {list(experts)} ({mode}); cache hits {hits}; "
+          f"base {t_base:.0f}s, experts {t_experts:.0f}s", flush=True)
+    return StackResult(method=method, embedding_result=emb, base_result=base if base_kind == "tar" else base,
+                       features=features, diagnostics=diag)

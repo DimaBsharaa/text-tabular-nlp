@@ -10,11 +10,12 @@ sys.path.insert(0, join(dirname(dirname(abspath(__file__))), "scripts"))
 import full_report as fr  # noqa: E402
 
 
-def _write(out, run, learner, scores, gpu="NVIDIA A100-SXM4-40GB"):
+def _write(out, run, learner, scores, gpu="NVIDIA A100-SXM4-40GB"):  # noqa: E302
     for (ds, fold), s in scores.items():
         d = join(out, run, learner, ds)
         os.makedirs(d, exist_ok=True)
-        json.dump({"dataset": ds, "fold": fold, "score": s, "gpu": gpu}, open(join(d, f"fold{fold}.json"), "w"))
+        json.dump({"dataset": ds, "fold": fold, "score": s, "gpu": gpu, "runtime_s": {"total": 60.0}},
+                  open(join(d, f"fold{fold}.json"), "w"))
 
 
 def _lb(learner, offset=0.0, drop=()):
@@ -57,3 +58,17 @@ def test_holm_and_mixed_gpu_detection(tmp_path):
     _write(out, "frozen_xfit_pred", "catboost", _lb("catboost", 0.01))
     _write(out, "tar_repro", "catboost", _lb("catboost"), gpu="NVIDIA L4")
     assert not fr.full_report(out)["same_gpu_type"]
+
+
+def test_p5_report_on_synthetic_results(tmp_path):
+    import p5_report as p5
+    out = str(tmp_path)
+    rng = np.random.default_rng(0)
+    for run, off in (("tar_experts", 0.01), ("frozen_experts", 0.0), ("tar_experts_lex", 0.005),
+                     ("tar_experts_nbr", 0.004), ("tar_experts_lex_insample", -0.01)):
+        sc = {k: v + off + rng.normal(0, 0.002) for k, v in _lb("catboost").items()}
+        _write(out, run, "catboost", sc)
+    rep = p5.p5_report(out)
+    assert rep["C2"]["passes"] and rep["C2"]["n"] == 20 and not rep["C3"]["passes"]
+    assert rep["ablations"]["tar_experts_lex_insample"]["vs_tar_experts"]["mean_diff"] < 0
+    assert rep["secondary"]["tar_experts/lgbm"]["n"] == 0

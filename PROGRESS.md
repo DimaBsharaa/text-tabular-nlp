@@ -40,6 +40,8 @@ Entry template:
 | E16 | 2026-10-10 | P3 complete; decision rule | frozen_xfit_pred +0.0040 (4/6) highest → final method for the full run |
 | P4 | 2026-10-10 | C1 FROZEN (CatBoost vs leaderboard Joint TAR) + full-run plan | jobs/full_part{1,2}.txt; ≈ 20 h A100 / 34 h L4 |
 | E17 | 2026-10-11 | FULL RUN part 1 (400 jobs, A100) | **C1 fails**: CatBoost −0.0025 vs leaderboard TAR, p = 0.41; Video Games −0.056 |
+| E18 | 2026-10-12 | exploration: frozen + cheap OOF text experts (CPU) | beats LB TAR on 4 of 6 explored datasets |
+| P5 | 2026-10-12 | experts recipe + claims C2 (tar_experts) / C3 (frozen_experts) frozen | jobs/p5_{A,B}.txt; ≈ 10–14 h A100 each |
 
 ---
 
@@ -742,3 +744,65 @@ Changes to P1:
   fine-tuned embeddings matter most (Video Games) it loses clearly.**
 - Next step: Dima decides whether to run part 2 (TabPFN, pre-registered secondary; ≈ 15–20 A100-h) and how to frame
   the paper (negative result + mechanism analysis).
+
+## E18 — EXPLORATION (not pre-registered): cheap label-aware text experts on top of Joint Frozen   (2026-10-11/12, laptop CPU)
+- Harness: `scripts/explore_cheap.py` (upstream loading / splits / learner preprocessing; plain CatBoost with upstream
+  hyperparameters and its own 90/10 val split). Its frozen base reproduces the leaderboard Joint Frozen within ≈ 0.003
+  (e.g. Product Sentiment 0.9017 vs 0.8991). Experts here: word 1–2-gram TF-IDF → ridge / logistic (C = 4), and
+  k = 20 cosine-kNN target mean in frozen E5 space, 5-fold OOF, per text column.
+- Results (CatBoost, mean over folds; LB = leaderboard):
+  | dataset (folds) | frozen base | + lex | + knn | + both | LB Joint Frozen | LB Joint TAR |
+  |---|---|---|---|---|---|---|
+  | Video Games (0–2) | 0.378 | 0.402 | 0.385 | 0.424 | 0.405 | 0.460 |
+  | Product Sentiment (0–2) | 0.902 | 0.911 | 0.901 | 0.909 | 0.899 | 0.906 |
+  | Book Price (0–2) | 0.546 | 0.575 | 0.579 | 0.585 | 0.557 | 0.576 |
+  | Baby Products (0–2) | 0.880 | 0.899 | 0.889 | 0.899 | 0.883 | 0.907 |
+  | Fake Job Postings (0) | 0.901 | 0.937 | 0.937 | 0.941 | 0.893 | 0.927 |
+  | Data Scientist Salary (0) | 0.818 | 0.836 | 0.821 | 0.833 | 0.817 | 0.824 |
+- Frozen + both experts beat LB Joint TAR on Book Price, Product Sentiment, Fake Job (fold 0) and Data Scientist Salary
+  (fold 0); not on Video Games and Baby Products (where TAR's fine-tuning matters most). Gains over the frozen base
+  +0.007 … +0.046.
+- The "TAR embeddings + experts" test did not finish a fold on CPU (stopped; fine-tuning on CPU > 1 h per fold).
+  Fake Job stopped after fold 0 (timeout), Data Scientist Salary after fold 0; Book Readability and Montgomery Salaries
+  not run (stopped before any result, to freeze P5 without further peeking).
+- Caveats: hand-picked small datasets, ≤ 3 folds, a simplified harness, no pre-registration — direction only. The
+  explored datasets are 6 of the 20 P5 datasets (disclosed in P5).
+
+## P5 — Cheap cross-fitted text experts stacked on TAR / Frozen. Written 2026-10-12, BEFORE any P5 run. Do not edit.
+### Recipe (frozen; `multabench/ours/experts.py`, `stacking.run_experts`, engine `experts/1`)
+- **Experts, per text column AND on all text columns concatenated** (`"__all__"`: "col: val | col: val …"):
+  - **Lexical:** TF-IDF word 1–2-grams + char_wb 3–5-grams (sublinear_tf, min_df = 2, vocab capped at 100k each) →
+    RidgeCV (regression, alphas 0.1…100) / LogisticRegression (classification) with C ∈ {0.25, 1, 4, 16} chosen by an
+    inner 3-fold CV (mean log-likelihood) on the learner's training rows, then reused for every out-of-fold fit.
+  - **Neighbour:** k = 20 cosine neighbours in frozen E5 space, similarity-weighted (max(1 − d, 0)) mean label (reg) /
+    class distribution (cls). For `"__all__"` the row vector is the L2-normalised mean of its per-column frozen
+    embeddings (no extra encoding).
+- **Cross-fitting:** 5-fold out-of-fold on the learner's training rows (StratifiedKFold for cls when possible, KFold
+  otherwise, seed 42); learner-val and test rows get the predictions of experts fit on all training rows.
+- **Features:** cls → class probabilities for classes 1.. (binary: 1 column), reg → 1 column; appended after the
+  owning text column's 30 PCA components (`"__all__"` features go with the first text column). Expert features use
+  the target, so the bar is Joint TAR for both variants.
+- **Methods:** `tar_experts` = tar_repro's full-pool fine-tune embeddings (one fine-tune per dataset-fold, cached,
+  shared) + lexical + neighbour; `frozen_experts` = Joint Frozen embeddings + lexical + neighbour.
+  Ablations (CatBoost): `tar_experts_lex` (lexical only), `tar_experts_nbr` (neighbour only),
+  `tar_experts_lex_insample` (lexical fit and predicted on the same training rows — not cross-fitted — to show leakage).
+### Claims (frozen)
+- **C2 (primary):** CatBoost `tar_experts` vs the leaderboard Joint TAR (`ft`); per dataset the mean over folds 0–4
+  of (ours − `ft`); **two-sided Wilcoxon over the 20 datasets; pass = p < 0.05 AND mean difference > 0.**
+- **C3 (secondary):** CatBoost `frozen_experts` vs leaderboard Joint TAR (same test); also reported vs leaderboard
+  Joint Frozen for context.
+- **Secondary learners:** LightGBM, TabM for both methods vs `ft`, Holm-corrected over these 4. TabPFN not run.
+- **Also reported:** C2 vs our tar_repro (CatBoost, A100, `results_full`); ablations vs `ft` and vs tar_experts;
+  bootstrap CI, rank-biserial r, Cohen's d_z, wins; runtime (hours) per method — the cost story.
+- Analysis code written and tested before any P5 result: `scripts/p5_report.py` (`tests/test_full_report.py`).
+- Disclosure: E18 explored frozen + experts (a simpler version: word n-grams only, fixed C) on 6 of the 20 datasets
+  (Video Games, Product Sentiment, Book Price, Baby Products, Fake Job Postings, Data Scientist Salary) before this
+  freeze; "TAR + experts" was not observed on any dataset.
+### Run plan
+- 20 datasets × folds 0–4, seed 42, upstream splits / caps / learner defaults, **A100** for every job.
+- `jobs/p5_A.txt` (200 jobs): tar_experts CatBoost, then frozen_experts CatBoost — cheapest datasets first.
+  `jobs/p5_B.txt` (700 jobs): the 3 ablations (CatBoost), then LightGBM and TabM for both methods.
+- Results root `MyDrive/text-tabular-nlp/results_p5`; cache on Drive (`results_p5/_cache`, default) so the 100 TAR
+  fine-tunes (~5 GB) and the expert features are reused across blocks and sessions.
+- Estimate (A100; tar_repro CatBoost took 5.6 h in E17; experts are CPU work, ≈ 1–5 min per dataset-fold; CatBoost
+  ≈ 1–2 min per job): file A ≈ 10–14 h, file B ≈ 10–14 h. Each fits one 24 h session; re-run a file to resume.
