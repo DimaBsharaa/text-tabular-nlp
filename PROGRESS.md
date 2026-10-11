@@ -39,6 +39,7 @@ Entry template:
 | E15 | 2026-10-10 | P3 pilot, 3 of 4 variants | none passes; xfit_offset_pred +0.0035 (6/6) best; frozen_xfit_pred failed (GPU check), fixed |
 | E16 | 2026-10-10 | P3 complete; decision rule | frozen_xfit_pred +0.0040 (4/6) highest → final method for the full run |
 | P4 | 2026-10-10 | C1 FROZEN (CatBoost vs leaderboard Joint TAR) + full-run plan | jobs/full_part{1,2}.txt; ≈ 20 h A100 / 34 h L4 |
+| E17 | 2026-10-11 | FULL RUN part 1 (400 jobs, A100) | **C1 fails**: CatBoost −0.0025 vs leaderboard TAR, p = 0.41; Video Games −0.056 |
 
 ---
 
@@ -708,3 +709,36 @@ Changes to P1:
   times for TabM / TabPFN guessed): part 1 ≈ 37 T4-h → **≈ 12 h A100 / ≈ 21 h L4**; part 2 ≈ 24 T4-h →
   **≈ 8 h A100 / ≈ 13 h L4**. Each part fits a 24-hour session at the estimate; if one does not finish, run the same
   file again (resumes).
+
+## E17 — FULL RUN part 1: claim C1 does NOT pass   (2026-10-11, commit c2078f2, Colab A100-SXM4-40GB)
+- Source: `results_export_20261011_200658.zip` (AUTO_DISCONNECT export of `jobs/full_part1.txt`): 400/400 jobs —
+  tar_repro CatBoost, frozen_xfit_pred CatBoost / LightGBM / TabM, 100 each (20 datasets × folds 0–4). All at
+  c2078f2, clean tree, 0 Tracebacks, one GPU type (A100-SXM4-40GB). GPU time: tar_repro 5.6 h, frozen_xfit_pred
+  CatBoost 15.1 h, LightGBM 0.7 h, TabM 0.8 h (22.2 h total vs the ≈ 12 h estimate). Part 2 (TabPFN-v2 / v2.5) has
+  NOT been run (the second Colab tab never started). Analysis: `scripts/full_report.py` → `reports/full/c1_report.json`
+  (the pre-registered code, written and tested before any full result).
+- **PRIMARY (pre-registered C1): CatBoost frozen_xfit_pred vs leaderboard Joint TAR, n = 20: mean −0.0025,
+  95% bootstrap CI [−0.0089, +0.0017], Wilcoxon p = 0.41, rank-biserial r = −0.22, 8/20 datasets positive →
+  NO PASS.**
+- Secondary vs leaderboard `ft` (Holm over the 4): LightGBM mean −0.0068 (p 0.15, Holm 0.31); TabM +0.0021
+  (p 0.29, Holm 0.31); TabPFN-v2 / v2.5 not run (n = 0).
+- Secondary vs our tar_repro (CatBoost, A100, same folds): mean −0.0008, CI [−0.0068, +0.0033], p = 0.29.
+- tar_repro (A100) vs leaderboard `ft`: mean −0.0017, 6/20 positive (cf. pilot engine bias −0.0022, E9).
+- Per dataset (frozen_xfit_pred − leaderboard, CatBoost): largest loss **Video Games Sales −0.0555** (tar_repro
+  −0.0049); largest gains Mercari +0.0118, Fake Job Postings +0.0079, Rotten Tomatoes +0.0040, Product Sentiment
+  +0.0036; the other 15 within ±0.005.
+- Hostile review / diagnosis (exploratory, does not change C1):
+  - Video Games is not a bug: Phase 0 showed the largest TAR − Frozen gain there for CatBoost (+0.094) — the
+    fine-tuned embeddings matter most on this dataset and frozen_xfit_pred drops them. In addition the prediction
+    features fail there: their test R² is −0.36 … −3.1 per fold. Video Games sales are extremely heavy-tailed, so the
+    top quantile bin's midpoint is huge and the pre-registered "expected value over bin midpoints" feature is
+    dominated by it (bin means would be robust).
+  - Without Video Games the mean vs leaderboard is +0.0003 (7/20 positive, median −0.0009) — i.e. frozen_xfit_pred is
+    roughly on par with Joint TAR elsewhere, not better. vs tar_repro, 12/20 datasets favour frozen_xfit_pred and the
+    mean without Video Games is ≈ +0.0018 — post hoc, not a claim.
+  - Splits/metric: upstream code paths; per-dataset values use all 5 folds on both sides (no exclusions).
+- **Conclusion: C1 fails. The method (cross-fitted head predictions + frozen embeddings) removes TAR's in-sample
+  leakage and matches Joint TAR on most datasets, but it does not significantly beat it; on the dataset where
+  fine-tuned embeddings matter most (Video Games) it loses clearly.**
+- Next step: Dima decides whether to run part 2 (TabPFN, pre-registered secondary; ≈ 15–20 A100-h) and how to frame
+  the paper (negative result + mechanism analysis).
