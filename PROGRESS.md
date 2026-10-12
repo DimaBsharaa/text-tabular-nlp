@@ -861,3 +861,25 @@ Features for the learner = structured columns (upstream preprocessing)
 ### Run plan
 - `jobs/cte_full.txt`: CTE CatBoost (100), CTE LightGBM (100), then the 4 ablations (CatBoost, 400); cheapest datasets
   first. Results root `MyDrive/text-tabular-nlp/results_cte`; cache (frozen embeddings + expert features) on Drive.
+
+## E20 — CTE (P5 v2) real-data CPU smoke + parallel lexical views   (2026-10-12, laptop CPU i7-13700H 8 cores)
+- **Question:** does the frozen CTE code run end-to-end on real data, and how long will `jobs/cte_full.txt` take?
+- **Commands:** `scripts/run_experiment.py --method cte --learner catboost --dataset <D> --fold 0 --seed 42
+  --out .explore/cte_cpu --cache_dir .explore/cte_cpu/_cache --train_examples 10000` (D = Product Sentiment, Book Price).
+  These are fold-0 smoke checks of datasets already in Dima's exclusion list, NOT part of claim C2 (they are re-run on Colab).
+- **Results (fold 0, CatBoost):** Product Sentiment 0.8857 (LB `ft` 0.8740, +0.012), job 5.2 min (emb 29 s, experts 253 s);
+  Book Price R² 0.6074 (LB `ft` 0.5793, +0.028), job 17.8 min (emb 147 s, experts 885 s). Experts dominate the runtime.
+- **Change (execution only, method unchanged):** the lexical expert now fits its views (each text column + `__all__`)
+  in parallel processes (`compute_expert_features(..., n_jobs)`; CTE uses `OURS_EXPERT_JOBS`, default = CPU count).
+  Book Price re-run with 6 workers and a fresh expert cache: experts 885 s → 459 s, score identical (0.607430588359001),
+  max |Δ feature| 2.5e-12 (BLAS thread count inside workers); peak RSS 1.3 GB. Test: serial ≈ parallel (atol 1e-10),
+  parallel bit-reproducible with itself. Engine stays `cte/1` (results are the same up to float noise).
+- **Runtime estimate (crude):** about 0.03 s per (training row × text view) serially, so ≈ 38 h serial for the 100 CTE
+  dataset-folds. With parallel views it's ≈ 15–25 h on 8 laptop-class cores. Colab cores are slower per core, so ≈ 20–40 h for
+  the whole jobs file. The LightGBM block and the cte_lex / cte_nbr ablations hit the expert cache (minutes each); cte_num
+  needs no expert; cte_lex_insample refits one lexical model per view (≈ +3–6 h). Unmeasured risks: long texts
+  (Jigsaw, Wine), many-class LogisticRegression (Spotify genres).
+- **Hostile review:** the smoke rows are fold 0 of the standard split (n_train 4582 / 4491 = upstream caps), and the
+  PCA / rank-Gauss / experts fit on train rows only (tests in `tests/test_cte.py`). These are two datasets that were already
+  explored, so they are not evidence for C2.
+- **Next:** commit, run `jobs/cte_full.txt` on Colab (CPU runtime allowed for CTE jobs), then `scripts/cte_report.py`.

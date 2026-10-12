@@ -39,7 +39,8 @@ EXPERT_METHODS = {
     "tar_experts_nbr": ("tar", ("nbr",), "oof"),
     "tar_experts_lex_insample": ("tar", ("lex",), "insample"),
 }
-STACK_METHODS = {"insample_pred", "xfit_pred", "frozen_xfit_pred", "xfit_offset_pred"} | set(EXPERT_METHODS)
+from multabench.ours.cte import CTE_METHODS  # P5 v2
+STACK_METHODS = {"insample_pred", "xfit_pred", "frozen_xfit_pred", "xfit_offset_pred"} | set(EXPERT_METHODS) | set(CTE_METHODS)
 COMPANIONS = {"xfit_pred": ["frozen_xfit_pred"]}  # written by the same job (shared fold fine-tunes)
 
 
@@ -182,6 +183,9 @@ def run_stacking(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[s
     assert method in STACK_METHODS, method
     if method in EXPERT_METHODS:
         return run_experts(method, x_fit, y_fit, text_cols, is_cls, extra, cfg, device, cache_root, dataset, fold)
+    if method in CTE_METHODS:
+        from multabench.ours.cte import run_cte
+        return run_cte(method, x_fit, y_fit, text_cols, is_cls, extra, cfg, device, cache_root, dataset, fold)
     text_cols = sorted(text_cols)
     extra = {k: v for k, v in extra.items() if v is not None}
     pool = pd.Index(x_fit.index)

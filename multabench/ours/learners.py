@@ -163,8 +163,20 @@ class OursTextMixin:
         pred_cols = [f"{c}_txt_pca_{self.pca_components + j}" for c in stack.features
                      for j in range(stack.features[c].shape[1])]
         total = sum(imp.values()) or 1.0
+        groups = {"structured": 0.0, "pca": 0.0}
+        for name, v in imp.items():
+            col, sep, j = name.rpartition("_txt_pca_")
+            if not sep or col not in stack.features:
+                groups["structured"] += v
+            elif int(j) < self.pca_components:
+                groups["pca"] += v
+            else:  # appended feature: its group is the expert prefix (lex / nbr / num / ...)
+                fname = str(stack.features[col].columns[int(j) - self.pca_components])
+                g = fname.split(":", 1)[0] if ":" in fname else "pred"
+                groups[g] = groups.get(g, 0.0) + v
         return {"pred_columns": {c: round(float(imp.get(c, 0.0)), 3) for c in pred_cols},
                 "pred_share": round(sum(imp.get(c, 0.0) for c in pred_cols) / total, 4),
+                "group_share": {g: round(v / total, 4) for g, v in groups.items()},
                 "top10": sorted(((k, round(float(v), 3)) for k, v in imp.items()), key=lambda kv: -kv[1])[:10]}
 
 

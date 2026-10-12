@@ -41,6 +41,8 @@ class ExpertConfig:
     logreg_inner_folds: int = 3
     k_neighbors: int = 20
     seed: int = SEED
+    neighbour_weights: str = "similarity"  # P5 v1: max(1 - d, 0); CTE (P5 v2): "inverse_distance" = 1 / (d + 1e-6)
+    reg_target: str = "raw"                # P5 v1: raw y; CTE: "rank_gauss" (QuantileTransformer, normal output)
 
     def key(self) -> str:
         return hashlib.sha1(json.dumps([EXPERTS_VERSION, asdict(self)], sort_keys=True).encode()).hexdigest()[:10]
@@ -53,6 +55,15 @@ def expert_folds(n: int, y: np.ndarray, is_cls: bool, cfg: ExpertConfig) -> list
     else:
         sp = KFold(cfg.n_folds, shuffle=True, random_state=cfg.seed).split(np.zeros(n))
     return [(tr, te) for tr, te in sp]
+
+
+def rank_gauss(y_tr: np.ndarray, cfg: ExpertConfig) -> np.ndarray:
+    """Regression target for an expert: raw, or rank-Gaussian fit on exactly these (training) rows."""
+    if cfg.reg_target != "rank_gauss":
+        return y_tr
+    from sklearn.preprocessing import QuantileTransformer
+    qt = QuantileTransformer(n_quantiles=min(1000, len(y_tr)), output_distribution="normal", random_state=cfg.seed)
+    return qt.fit_transform(np.asarray(y_tr, dtype=float)[:, None])[:, 0]
 
 
 def _cls_output(p_full: np.ndarray, n_classes: int) -> np.ndarray:
@@ -107,6 +118,8 @@ class LexicalExpert:
 
     def fit_predict(self, tr_texts: list[str], y_tr: np.ndarray, te_texts: list[str]) -> np.ndarray:
         from sklearn.linear_model import LogisticRegression, RidgeCV
+        if not self.is_cls:
+            y_tr = rank_gauss(y_tr, self.cfg)
         Xtr, Xte = self._vectorize(tr_texts, te_texts)
         if Xtr is None:  # no usable vocabulary: constant prediction
             if self.is_cls:
@@ -134,7 +147,12 @@ class NeighbourExpert:
         dist, idx = NearestNeighbors(n_neighbors=k, metric="cosine").fit(e_tr).kneighbors(e_te)
         if exclude_self:
             dist, idx = dist[:, 1:], idx[:, 1:]
-        w = np.clip(1.0 - dist, 0.0, None) + 1e-6  # cosine similarity, non-negative
+        if self.cfg.neighbour_weights == "inverse_distance":
+            w = 1.0 / (dist + 1e-6)
+        else:
+            w = np.clip(1.0 - dist, 0.0, None) + 1e-6  # cosine similarity, non-negative
+        if not self.is_cls:
+            y_tr = rank_gauss(y_tr, self.cfg)
         w = w / w.sum(axis=1, keepdims=True)
         if self.is_cls:
             Y = np.eye(self.n_classes)[y_tr]
@@ -161,9 +179,10 @@ def _cross_fit(fit_predict: Callable, pool_inputs, y: np.ndarray, extra_inputs: 
 def compute_expert_features(texts: Dict[str, list[str]], embs: Optional[Dict[str, np.ndarray]], y: np.ndarray,
                             is_cls: bool, n_classes: int, extra_texts: Dict[str, Dict[str, list[str]]],
                             extra_embs: Optional[Dict[str, Dict[str, np.ndarray]]], experts: tuple[str, ...],
-                            mode: str, cfg: ExpertConfig) -> Dict[str, Dict[str, np.ndarray]]:
+                            mode: str, cfg: ExpertConfig, n_jobs: int = 1) -> Dict[str, Dict[str, np.ndarray]]:
     """{split: {feature_name: (n_rows, k)}} for split in {"pool", *extras}. texts / embs per text column; the
-    concatenated "__all__" view is built here. y: int class ids (cls) or floats (reg) for the pool rows."""
+    concatenated "__all__" view is built here. y: int class ids (cls) or floats (reg) for the pool rows.
+    n_jobs > 1 runs the lexical views in parallel processes (independent fits, identical results)."""
     assert mode in ("oof", "insample")
     cols = sorted(texts)
     n = len(y)
@@ -174,11 +193,19 @@ def compute_expert_features(texts: Dict[str, list[str]], embs: Optional[Dict[str
     out = {"pool": {}, **{k: {} for k in extra_texts}}
     take_list = lambda xs, idx: [xs[i] for i in idx]
     if "lex" in experts:
-        for view, tx in views_t.items():
+        def lex_view(view):
+            tx = views_t[view]
             ex = LexicalExpert(is_cls, n_classes, cfg)
             ex.choose_C(tx, y)
-            oof, ext = _cross_fit(ex.fit_predict, tx, y, {k: v[view] for k, v in extra_views_t.items()}, folds, mode,
-                                  take_list)
+            return _cross_fit(ex.fit_predict, tx, y, {k: v[view] for k, v in extra_views_t.items()}, folds, mode,
+                              take_list)
+        views = list(views_t)
+        if n_jobs > 1 and len(views) > 1:
+            from joblib import Parallel, delayed
+            res = Parallel(n_jobs=min(n_jobs, len(views)))(delayed(lex_view)(v) for v in views)
+        else:
+            res = [lex_view(v) for v in views]
+        for view, (oof, ext) in zip(views, res):
             out["pool"][f"lex:{view}"] = oof
             for k, v in ext.items():
                 out[k][f"lex:{view}"] = v

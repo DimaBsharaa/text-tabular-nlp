@@ -72,3 +72,18 @@ def test_p5_report_on_synthetic_results(tmp_path):
     assert rep["C2"]["passes"] and rep["C2"]["n"] == 20 and not rep["C3"]["passes"]
     assert rep["ablations"]["tar_experts_lex_insample"]["vs_tar_experts"]["mean_diff"] < 0
     assert rep["secondary"]["tar_experts/lgbm"]["n"] == 0
+
+
+def test_cte_report_on_synthetic_results(tmp_path):
+    import cte_report as cr
+    out = str(tmp_path)
+    rng = np.random.default_rng(0)
+    for run, off in (("cte", 0.01), ("cte_lex", 0.006), ("cte_nbr", 0.003), ("cte_num", 0.0),
+                     ("cte_lex_insample", -0.02)):
+        _write(out, run, "catboost", {k: v + off + rng.normal(0, 0.002) for k, v in _lb("catboost").items()})
+    rep = cr.cte_report(out)
+    assert rep["C2"]["n"] == 20 and rep["C2"]["passes"]
+    assert rep["C2_16"]["n"] == 16 and rep["C2_14"]["n"] == 14
+    assert "REG_TEXT_BOOK_PRICE" not in rep["C2_16"]["per_dataset"]
+    assert rep["ablations"]["cte_lex_insample"]["vs_cte"]["mean_diff"] < 0
+    assert rep["secondary"]["lgbm"]["n"] == 0
