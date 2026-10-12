@@ -3,7 +3,8 @@
 C2 primary : CatBoost cte vs leaderboard Joint TAR (`ft`), two-sided Wilcoxon over 20 datasets on fold-averaged
              differences; pass = p < 0.05 AND positive mean. Also on 16 datasets (without Book Price, Product
              Sentiment, Baby Products, Video Games) and on the strict 14 (also without Fake Job Postings and Data
-             Scientist Salary, explored at fold 0 in E18).
+             Scientist Salary, explored at fold 0 in E18). Amendment 2: held-out C2_heldout13 / C2_strict11 also
+             exclude Jigsaw, Wine and Spotify Genres (profiled at fold 0, E21).
 Secondary  : cte vs leaderboard Joint Frozen (`all`); LightGBM cte vs `ft` (Holm over the secondary learner tests);
              ablations cte_lex / cte_nbr / cte_num / cte_lex_insample (CatBoost) vs `ft` and vs cte.
 Also       : runtime per method, mean CatBoost importance share per feature group, expert OOF-vs-test gaps.
@@ -28,6 +29,10 @@ from p5_report import comparison, leaderboard_state, runtime_hours  # noqa: E402
 REPO_ROOT = dirname(dirname(abspath(__file__)))
 EXCLUDED_16 = ["REG_TEXT_BOOK_PRICE", "MUL_TEXT_PRODUCT_SENTIMENT", "REG_TEXT_BABIES_PRICES", "REG_TEXT_VIDEO_GAMES_SALES"]
 EXCLUDED_14 = EXCLUDED_16 + ["BIN_TEXT_FAKE_JOB_POSTING", "MUL_TEXT_DATA_SCIENTIST_SALARY"]
+# P5 v2 amendment 2: the held-out report also excludes the datasets profiled at fold 0 (E21)
+PROFILED = ["BIN_TEXT_JIGSAW_TOXICITY", "MUL_TEXT_WINE_REVIEW", "MUL_TEXT_SPOTIFY_GENRES"]
+EXCLUDED_HELDOUT13 = EXCLUDED_16 + PROFILED
+EXCLUDED_STRICT11 = EXCLUDED_14 + PROFILED
 ABLATIONS = ["cte_lex", "cte_nbr", "cte_num", "cte_lex_insample"]
 
 
@@ -55,6 +60,8 @@ def cte_report(out: str) -> dict:
     rep = {"C2": _with_pass(comparison(mine, ft)),
            "C2_16": _with_pass(comparison(_subset(mine, EXCLUDED_16), _subset(ft, EXCLUDED_16))),
            "C2_14": _with_pass(comparison(_subset(mine, EXCLUDED_14), _subset(ft, EXCLUDED_14))),
+           "C2_heldout13": _with_pass(comparison(_subset(mine, EXCLUDED_HELDOUT13), _subset(ft, EXCLUDED_HELDOUT13))),
+           "C2_strict11": _with_pass(comparison(_subset(mine, EXCLUDED_STRICT11), _subset(ft, EXCLUDED_STRICT11))),
            "vs_joint_frozen": comparison(mine, leaderboard_state("catboost", "all")),
            "secondary": {"lgbm": comparison(fr.ours(out, "cte", "lgbm"), leaderboard_state("lgbm", "ft"))},
            "ablations": {}, "runtime_hours": {}, "group_share_catboost": group_shares(out, "cte")}
@@ -81,7 +88,7 @@ def main() -> None:
     rep = cte_report(a.out)
     os.makedirs(a.report_dir, exist_ok=True)
     json.dump(rep, open(join(a.report_dir, "cte_report.json"), "w"), indent=1)
-    for k in ("C2", "C2_16", "C2_14", "vs_joint_frozen"):
+    for k in ("C2", "C2_heldout13", "C2_strict11", "C2_16", "C2_14", "vs_joint_frozen"):
         v = rep[k]
         print(f"{k:<16} n={v['n']} mean={v.get('mean_diff')} CI={v.get('ci95')} p={v.get('p_value')} wins={v.get('wins')}"
               + (f" -> {'PASS' if v['passes'] else 'no pass'}" if "passes" in v else ""))

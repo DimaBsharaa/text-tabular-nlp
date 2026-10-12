@@ -15,9 +15,12 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import sys
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
 from os.path import abspath, basename, dirname, exists, join
 
@@ -161,6 +164,7 @@ def run_one(args: argparse.Namespace) -> dict:
         "git": git_info(), "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"), "argv": sys.argv[1:],
         "gpu": torch.cuda.get_device_name(device) if device.type == "cuda" else "cpu",  # P4: same type per run
         "hardware": json.loads(json.dumps(get_hardware_dict(device), default=str)),
+        "learner_threads": int(os.environ.get("OURS_LEARNER_THREADS", "0") or 0) or None,  # None = learner default
         "torch": torch.__version__, "numpy": np.__version__,
     }
     if stack is not None:  # P3: engine version of this method + stacking diagnostics
@@ -229,16 +233,36 @@ def _fmt_secs(s: float) -> str:
     return f"{s:.0f}s" if s < 120 else f"{s / 60:.1f} min"
 
 
+def parallel_plan(args: argparse.Namespace, jobs: list) -> tuple[int, dict]:
+    """(number of parallel jobs, extra env for each job). "auto" = CPU cores // 2 when every job is a CPU-bound CTE
+    job, else 1 (TAR fine-tuning jobs share one GPU and must run one at a time). Each job's learner and BLAS get
+    cores // n threads so the cores are not oversubscribed."""
+    cores = os.cpu_count() or 1
+    if args.parallel_jobs == "auto":
+        n = max(1, cores // 2) if jobs and all(j[0].startswith("cte") for j in jobs) else 1
+    else:
+        n = max(1, int(args.parallel_jobs))
+    if n == 1:
+        return 1, {}
+    t = str(max(1, cores // n))
+    env = {"OURS_LEARNER_THREADS": t, "OMP_NUM_THREADS": t, "MKL_NUM_THREADS": t, "OPENBLAS_NUM_THREADS": t}
+    if "CUDA_VISIBLE_DEVICES" not in os.environ and shutil.which("nvidia-smi") and \
+            subprocess.run(["nvidia-smi", "-L"], capture_output=True).returncode == 0:
+        env["CUDA_VISIBLE_DEVICES"] = "0"  # tabstar's get_device() refuses a GPU another job already uses
+    return n, env
+
+
 def run_jobs(args: argparse.Namespace) -> int:
     jobs = read_jobs(args.jobs_file, default_seed=args.seed)
     if args.filter:  # every substring must appear in "method learner dataset fold k"
         jobs = [j for j in jobs if all(f in job_label(*j) for f in args.filter)]
         print(f"filter {args.filter}: {len(jobs)} matching jobs", flush=True)
-    n_done = n_failed = n_run = 0
+    n_done = n_failed = 0
     common = ["--out", args.out, "--cache_dir", args.cache_dir, "--train_examples", str(args.train_examples),
               "--epochs", str(args.epochs), "--micro_batch_size", str(args.micro_batch_size)]
     common += ["--no_fast"] if args.no_fast else []
     common += ["--lower_cache_dir", args.lower_cache_dir] if args.lower_cache_dir else []
+    todo = []
     for i, (method, learner, dataset, fold, seed) in enumerate(jobs, 1):
         name = run_name(method, job_args(args, seed))
         path = result_path(args.out, name, learner, dataset, fold)
@@ -249,37 +273,57 @@ def run_jobs(args: argparse.Namespace) -> int:
             print(f"{tag}: done already, skipping", flush=True)
             n_done += 1
             continue
-        if args.max_jobs is not None and n_run >= args.max_jobs:
-            print(f"--max_jobs {args.max_jobs} reached; {len(jobs) - i + 1} job(s) not started", flush=True)
-            break
-        n_run += 1
-        prune_lower_cache(args.lower_cache_dir or join(os.path.expanduser("~"), ".cache", "tar_lower_cache"),
-                          args.max_lower_cache_gb)
+        todo.append((tag, name, path, method, learner, dataset, fold, seed))
+    if args.max_jobs is not None and len(todo) > args.max_jobs:
+        print(f"--max_jobs {args.max_jobs}: {len(todo) - args.max_jobs} job(s) not started", flush=True)
+        todo = todo[:args.max_jobs]
+    n_par, env_extra = parallel_plan(args, [j[3:] for j in todo])
+    if n_par > 1:
+        print(f"running {len(todo)} job(s), {n_par} in parallel; per-job env {env_extra}", flush=True)
+    lock = threading.Lock()
+
+    def say(msg: str) -> None:
+        with lock:
+            print(msg, flush=True)
+
+    def run_job(job) -> bool:
+        tag, name, path, method, learner, dataset, fold, seed = job
+        if n_par == 1:
+            prune_lower_cache(args.lower_cache_dir or join(os.path.expanduser("~"), ".cache", "tar_lower_cache"),
+                              args.max_lower_cache_gb)
         log_path = join(args.out, "_logs", name, learner, f"{dataset}_fold{fold}.log")
         os.makedirs(dirname(log_path), exist_ok=True)
-        print(f"{tag}: running (log: {log_path})", flush=True)
+        say(f"{tag}: running (log: {log_path})")
         t0 = time.time()
         cmd = [sys.executable, abspath(__file__), "--method", method, "--learner", learner, "--dataset", dataset,
                "--fold", str(fold), "--seed", str(seed), *common] + (["--force"] if args.force else [])
         with open(log_path, "w") as log:
-            proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
+            proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1,
+                                    env={**os.environ, **env_extra})
             for line in proc.stdout:
                 log.write(line)
                 if args.stream or line.lstrip().startswith(("[TAR", "[STACK")) or "Score" in line or "Error" in line:
-                    print("    " + line.rstrip(), flush=True)
+                    say(("    " if n_par == 1 else f"    {tag} ") + line.rstrip())
             proc.wait()
         if proc.returncode == 0 and exists(path):
             r = json.load(open(path))
             lb = r["reference"].get("joint_tar")
             lb_txt = (f" | leaderboard ft {lb:.4f} | diff {r['score'] - lb:+.4f}" if lb is not None
                       else " | leaderboard ft: n/a")
-            print(f"{tag}: DONE score {r['score']:.4f}{lb_txt} | job time {_fmt_secs(time.time() - t0)}", flush=True)
-            n_done += 1
-        else:
-            tail = open(log_path).read().splitlines()[-15:]
-            print(f"{tag}: FAILED (exit {proc.returncode}) — see {log_path}; last lines:", flush=True)
-            print("\n".join("    | " + t for t in tail), flush=True)
-            n_failed += 1
+            say(f"{tag}: DONE score {r['score']:.4f}{lb_txt} | job time {_fmt_secs(time.time() - t0)}")
+            return True
+        tail = open(log_path).read().splitlines()[-15:]
+        say(f"{tag}: FAILED (exit {proc.returncode}) — see {log_path}; last lines:\n"
+            + "\n".join("    | " + t for t in tail))
+        return False
+
+    if n_par == 1:
+        ok = [run_job(j) for j in todo]
+    else:
+        with ThreadPoolExecutor(max_workers=n_par) as pool:  # threads only wait on the job subprocesses
+            ok = list(pool.map(run_job, todo))
+    n_done += sum(ok)
+    n_failed += len(ok) - sum(ok)
     print(f"jobs: {len(jobs)} | finished: {n_done} | failed: {n_failed}", flush=True)
     return 1 if n_failed else 0
 
@@ -308,6 +352,8 @@ def main() -> int:
                    help="--jobs_file: prune the oldest frozen-layer caches above this size before each job")
     p.add_argument("--force", action="store_true", help="re-run even if the result JSON exists")
     p.add_argument("--stream", action="store_true", help="--jobs_file: echo every log line, not just progress")
+    p.add_argument("--parallel_jobs", default="auto",
+                   help='--jobs_file: jobs run at once ("auto" = CPU cores // 2 if every job is CTE, else 1)')
     args = p.parse_args()
     args.cache_dir = args.cache_dir or join(args.out, "_cache")
     if args.jobs_file:

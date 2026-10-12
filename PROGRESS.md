@@ -883,3 +883,87 @@ Features for the learner = structured columns (upstream preprocessing)
   PCA / rank-Gauss / experts fit on train rows only (tests in `tests/test_cte.py`). These are two datasets that were already
   explored, so they are not evidence for C2.
 - **Next:** commit, run `jobs/cte_full.txt` on Colab (CPU runtime allowed for CTE jobs), then `scripts/cte_report.py`.
+
+## P5 v2 — Amendment 1 (2026-10-12): speed changes to CTE, engine `cte/2`. Written BEFORE any CTE full-run result.
+- **Why:** E20 estimated 20–40 h for `jobs/cte_full.txt`, too slow for a TF-IDF + linear-model method. Target: ≤ 3 h
+  for the whole CTE CatBoost block. No full-run job had been started; no CTE result other than the E20 fold-0 smoke
+  (Book Price, Product Sentiment, both on the exclusion list) has been seen.
+- **Method changes (replace the P5 v2 lexical/neighbour details; everything else unchanged):**
+  1. TF-IDF vectorizers are fit ONCE per job on the learner's training rows (target-free) and that matrix is reused for
+     every OOF fold and for val/test. word 1–2 max 50k + char_wb 3–5 max 50k (sublinear, min_df 2); the char
+     vectorizer sees each text truncated to its first 2,000 characters.
+  2. The lexical model is ONE fixed linear least-squares fit: `Ridge(alpha=1.0, solver="sparse_cg")`. Regression: on
+     the rank-Gaussian y (QuantileTransformer fit on that fit's training rows, as before). Classification: the same
+     Ridge on one-hot class indicators (one multi-output fit); output = class scores, binary 1 column (class 1),
+     multiclass C−1 columns (scores sum to 1, so C−1 loses nothing). No inner CV, no RidgeCV, no LogisticRegression.
+  3. The lexical expert runs on the concatenation of all text columns ("col: val | …") only, not per column. The
+     neighbour expert stays per column + concatenation; k = 20, inverse-distance weights, computed as one matrix
+     product of L2-normalised frozen embeddings + top-k (GPU if available, else CPU).
+  4. Execution only: independent jobs run in parallel processes (n = CPU cores // 2), each learner with
+     thread_count = cores // n, so cores are not oversubscribed.
+- **Unchanged:** structured columns, frozen E5 PCA-30 per text column (fit on train rows), numeracy features, 5-fold
+  (stratified) OOF with val/test from the fit on all training rows, the variants (cte, cte_lex, cte_nbr, cte_num,
+  cte_lex_insample, with the same meaning under the new lexical expert), claims C2 / C2_16 / C2_14, the secondaries,
+  the statistical tests, the jobs file and `scripts/cte_report.py`. Claim C2 now refers to engine `cte/2`.
+
+## E21 — Profiling CTE before/after amendment 1   (2026-10-12/13, laptop CPU i7-13700H, uncommitted code on top of ae145f4)
+- **Question:** where does a CTE job spend its time, and what does amendment 1 change?
+- **Tool:** `scripts/profile_cte.py` (wraps each stage with a timer, runs one job in-process); reports in
+  `.explore/prof_old/`, `.explore/prof_new/` (gitignored).
+- **Before (cte/1, ae145f4 snapshot, Book Price fold 0, serial, all cores):** RidgeCV 276.7 s (42 calls), TF-IDF
+  fit_transform 55.4 s (84), TF-IDF transform 9.7 s, frozen embeddings 65.7 s, CatBoost 11.4 s, sklearn kNN 1.2 s,
+  numeracy 1.5 s; job 427 s; score 0.6074 (same as E20). E20's 17.8 min was inflated by another process running
+  at the same time.
+- **After amendment 1 (cte/2, fold 0, 2 threads per job = one Colab slot):**
+
+  | dataset | emb (CPU) | experts | CatBoost | job | score | LB `ft` |
+  |---|---|---|---|---|---|---|
+  | Product Sentiment | 17 s | 2 s | small | 28 s | 0.8755 | 0.8740 |
+  | Book Price | 100 s | 8 s | 30 s | 143 s | 0.6008 | 0.5793 |
+  | Jigsaw | 316 s | 8 s | 6 s | 334 s | 0.8652 | 0.9137 |
+  | Wine | 202 s | 46 s | 738 s | 1002 s | 0.9823 | 0.9800 |
+  | Spotify Genres | 97 s | 46 s | > 45 min (stopped, no score) | — | not seen | — |
+
+- **Conclusions:** the experts are ~40× faster and no longer the bottleneck. Multiclass CatBoost with C−1 columns per
+  expert view (Wine: 216 text features) dominates. Jigsaw dropped well below TAR with the fixed alpha = 1.
+- **Next:** amendment 2 (generic rules A and B below), then re-time Wine and Jigsaw.
+
+## P5 v2 — Amendment 2 (2026-10-13): column budget + OOF alpha selection, engine `cte/3`. BEFORE any full-run result.
+- **Disclosure:** during the profiling (E20, E21) the fold-0 TEST scores of Product Sentiment, Book Price, Jigsaw
+  and Wine were seen. Spotify Genres' run was stopped before scoring (its fold-0 score was NOT seen; its runtime was).
+  The rules A and B below are generic rules, the same for every dataset, decided before the full run, prompted by a
+  runtime problem (A) and the Jigsaw drop (B). B selects only on training-row OOF predictions.
+- **A. Multiclass column budget.** For classification with C > 10, every expert view outputs the scores of the 10
+  most frequent classes among the learner's training rows (fixed order, ties by class index) + max probability +
+  entropy (12 columns) instead of C−1. Max probability / entropy are taken over all C classes (the neighbour expert
+  already gives a distribution; the Ridge scores are clipped at 0 and renormalised; uniform if all are 0). For every
+  multiclass dataset (C > 2) the neighbour expert runs on the concatenated text only (no per-column views). Binary
+  (1 column) and regression (1 column) are unchanged; 3 ≤ C ≤ 10 keeps C−1 columns.
+- **B. Lexical alpha by OOF.** For alpha in {0.3, 1, 3, 10}: the 5-fold OOF predictions on the learner's training
+  rows (the TF-IDF fitted once, reused). The alpha with the best OOF metric is chosen: AUROC for binary, macro
+  one-vs-rest AUROC of the class scores for multiclass, Spearman with y for regression; ties go to the smaller alpha.
+  The chosen alpha's OOF predictions are the feature; val/test come from the fit on all training rows with that
+  alpha. The in-sample ablation uses the same chosen alpha. Val/test rows are never used. The chosen alpha and the
+  OOF metric per alpha are logged in every result JSON.
+- **Reporting change (secondary only; C2 over 20 datasets unchanged):** the held-out report excludes every dataset
+  used in exploration/profiling: `C2_heldout13` = 20 minus Book Price, Product Sentiment, Baby Products, Video
+  Games, Jigsaw, Wine, Spotify Genres (13 datasets); `C2_strict11` also excludes Fake Job Postings and Data Scientist
+  Salary (E18). The originally pre-registered C2_16 / C2_14 are still printed for transparency.
+
+## E22 — Re-timing after amendment 2 (engine cte/3)   (2026-10-13, laptop CPU, 2 threads per job, frozen embeddings cached)
+- **Command:** `OURS_LEARNER_THREADS=2 OMP_NUM_THREADS=2 python scripts/profile_cte.py -- --method cte --learner
+  catboost --dataset <D> --fold 0 --out .explore/prof_v3 --cache_dir .explore/prof_v3/_cache` (D = Wine, Jigsaw).
+- **Wine (C = 30):** text features 216 → 124. Experts 159 s (multi-output Ridge with 30 targets × 4 alphas × 5 folds;
+  cte/2: 46 s). CatBoost 929 s (cte/2: 738 s, even with fewer columns: the multiclass CatBoost cost is driven by C and
+  upstream's 2000 iterations, not by our columns). Job 18 min. Score 0.9779 (cte/2 0.9823, LB `ft` 0.9800). Alpha 10
+  (OOF macro AUROC 0.937 / 0.947 / 0.955 / 0.962). Expert quality train-OOF vs test: lex 0.952 / 0.946, nbr 0.931 / 0.929.
+- **Jigsaw (binary):** job 30 s. Score 0.8695 (cte/2 0.8652, LB `ft` 0.9137). Alpha 3 (OOF AUROC 0.852 / 0.857 /
+  0.859 / 0.853). Lexical OOF 0.859 vs test 0.855. TF-IDF + Ridge reaches only ≈ 0.86 on toxicity, where fine-tuning
+  helps most (leaderboard TAR − Frozen = +0.117). Amendment 2B does not close this gap, and nothing was tuned on test.
+- **Hostile review:** OOF selection over 4 alphas makes the chosen alpha's OOF features slightly optimistic for
+  CatBoost (selection bias over 4 values; the train-vs-test gaps above are 0.004–0.006). Both datasets are now out of
+  the held-out report. Wall times on a laptop vary run to run (thermal), so they are ±20%.
+- **Revised estimate (A100 runtime, 12 vCPU, 6 jobs × 2 threads):** binary/regression jobs ≈ 0.5–2 min. Small
+  multiclass ≈ a few min. Wine ≈ 18 min/job. Spotify Genres unknown (CatBoost > 45 min/job at cte/2; C is large).
+  CatBoost block ≈ 10 slot-hours / 6 ≈ 2–3 h wall (Colab cores ~1.3× slower), with the Spotify tail as the risk.
+  Whole jobs file (LightGBM + 4 CatBoost ablations, which reuse the expert cache) ≈ 8–12 h.

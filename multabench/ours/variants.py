@@ -44,7 +44,7 @@ def engine_version(method: str) -> str:
     if method in EXPERT_METHOD_NAMES:
         return "experts/1"
     if method in {"cte", "cte_lex", "cte_nbr", "cte_num", "cte_lex_insample"}:  # multabench/ours/cte.py
-        return "cte/1"
+        return "cte/3"  # P5 v2 amendments 1+2 (cte/1 = original, cte/2 = amendment 1 only)
     return "stacking/1" if method in STACK_METHOD_NAMES else VARIANT_ENGINE_VERSION
 
 

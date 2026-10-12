@@ -242,7 +242,7 @@ def cached_expert_features(cache_root: Optional[str], key: str, compute: Callabl
     out = compute()
     if path:
         os.makedirs(os.path.dirname(path), exist_ok=True)
-        tmp = path + ".tmp.npz"
+        tmp = f"{path}.{os.getpid()}.tmp.npz"  # unique per process: parallel jobs may share a cache
         np.savez_compressed(tmp, **{f"{s}||{f}": a for s, d in out.items() for f, a in d.items()})
         os.replace(tmp, path)
     return out, False

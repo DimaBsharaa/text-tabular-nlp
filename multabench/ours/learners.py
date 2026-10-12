@@ -5,6 +5,7 @@ step is inherited unchanged: splits, model-agnostic preprocessing, target encodi
 """
 from __future__ import annotations
 
+import os
 from typing import Dict, Optional, Type
 
 import numpy as np
@@ -67,6 +68,21 @@ class PredColumnEncoder(CachedColumnEncoder):
 
 class OursTextMixin:
     """Mixin placed before an upstream TabularModel subclass. Call configure_ours(...) before fit()."""
+
+    def initialize_model(self):
+        """OURS_LEARNER_THREADS (set by run_experiment.py --parallel_jobs) caps the learner's CPU threads so parallel
+        jobs do not oversubscribe the cores. Upstream's CatBoost `thread_count` is a class attribute that vars()
+        never passes, so without this CatBoost uses every core."""
+        model = super().initialize_model()
+        threads = int(os.environ.get("OURS_LEARNER_THREADS", "0") or 0)
+        if threads > 0:
+            lib = type(model).__module__.split(".")[0]  # CatBoost's get_params() lists only explicitly set params
+            if lib == "catboost":
+                model.set_params(thread_count=threads)
+            elif lib == "lightgbm":
+                model.set_params(n_jobs=threads)
+            torch.set_num_threads(threads)
+        return model
 
     def configure_ours(self, variant: str, cfg: TarConfig, cache_dir: Optional[str], dataset: str, fold: int,
                        test: tuple[DataFrame, Series], probe_sets: Optional[dict] = None):

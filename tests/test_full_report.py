@@ -84,6 +84,8 @@ def test_cte_report_on_synthetic_results(tmp_path):
     rep = cr.cte_report(out)
     assert rep["C2"]["n"] == 20 and rep["C2"]["passes"]
     assert rep["C2_16"]["n"] == 16 and rep["C2_14"]["n"] == 14
+    assert rep["C2_heldout13"]["n"] == 13 and rep["C2_strict11"]["n"] == 11
+    assert "BIN_TEXT_JIGSAW_TOXICITY" not in rep["C2_heldout13"]["per_dataset"]
     assert "REG_TEXT_BOOK_PRICE" not in rep["C2_16"]["per_dataset"]
     assert rep["ablations"]["cte_lex_insample"]["vs_cte"]["mean_diff"] < 0
     assert rep["secondary"]["lgbm"]["n"] == 0
