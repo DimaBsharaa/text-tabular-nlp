@@ -42,6 +42,8 @@ Entry template:
 | E17 | 2026-10-11 | FULL RUN part 1 (400 jobs, A100) | **C1 fails**: CatBoost −0.0025 vs leaderboard TAR, p = 0.41; Video Games −0.056 |
 | E18 | 2026-10-12 | exploration: frozen + cheap OOF text experts (CPU) | beats LB TAR on 4 of 6 explored datasets |
 | P5 | 2026-10-12 | experts recipe + claims C2 (tar_experts) / C3 (frozen_experts) frozen | jobs/p5_{A,B}.txt; ≈ 10–14 h A100 each |
+| E19 | 2026-10-12 | post-freeze CPU check of P5 v1; stopped | PS: tar_experts ≈ tar_repro; frozen_experts BP f0 +0.024 vs LB TAR |
+| P5 v2 | 2026-10-12 | CTE (no fine-tuning) + claim C2 frozen; supersedes P5 v1 (never run) | jobs/cte_full.txt |
 
 ---
 
@@ -745,6 +747,8 @@ Changes to P1:
 - Next step: Dima decides whether to run part 2 (TabPFN, pre-registered secondary; ≈ 15–20 A100-h) and how to frame
   the paper (negative result + mechanism analysis).
 
+- **Summary (2026-10-12):** C1 failed; pivot to P5 = Cross-fitted Text Experts, no fine-tuning (reasons: PCA bottleneck, TAR's advantage = one honest number per text column, all our variants used the same reader E5).
+
 ## E18 — EXPLORATION (not pre-registered): cheap label-aware text experts on top of Joint Frozen   (2026-10-11/12, laptop CPU)
 - Harness: `scripts/explore_cheap.py` (upstream loading / splits / learner preprocessing; plain CatBoost with upstream
   hyperparameters and its own 90/10 val split). Its frozen base reproduces the leaderboard Joint Frozen within ≈ 0.003
@@ -806,3 +810,54 @@ Changes to P1:
   fine-tunes (~5 GB) and the expert features are reused across blocks and sessions.
 - Estimate (A100; tar_repro CatBoost took 5.6 h in E17; experts are CPU work, ≈ 1–5 min per dataset-fold; CatBoost
   ≈ 1–2 min per job): file A ≈ 10–14 h, file B ≈ 10–14 h. Each fits one 24 h session; re-run a file to resume.
+
+## E19 — Post-freeze CPU check of P5 v1 (tar_experts / frozen_experts), stopped   (2026-10-12, laptop CPU, code aaaacec)
+- Real P5 v1 code via `run_experiment.py` on CPU (`.explore/p5_cpu`; exploration only, not official results):
+  Product Sentiment folds 0–2 — tar_experts 0.8932 / 0.9335 / 0.9169 (mean 0.9145), frozen_experts 0.8955 / 0.9135 /
+  0.9259 (mean 0.9116); leaderboard Joint TAR mean 0.9055; our tar_repro (mean of seeds 42 + 43) 0.9146.
+  Book Price fold 0 — frozen_experts 0.6032 (leaderboard TAR 0.5793; our tar_repro 0.561 / 0.581); tar_experts ran out
+  of laptop RAM (7.2 GB, exit −9) and was stopped. All fine-tuning work stopped at Dima's request.
+- Reading: on Product Sentiment the experts add ≈ 0 on top of our own TAR; frozen + experts nearly matches TAR without
+  fine-tuning (25 s vs ≈ 20 min per job on CPU); on Book Price fold 0 frozen + experts is clearly above TAR.
+- Cross-fitted TAR head predictions from the C1 full run were NOT saved (fold fine-tunes lived on the Colab session's
+  local disk; JSONs keep scores/diagnostics only), so no "+ cross-fitted TAR predictions" variant is possible
+  without new fine-tuning.
+- P5 v1 (commit aaaacec: tar_experts / frozen_experts) was never run on Colab; it is superseded by P5 v2 below.
+
+## P5 v2 — "Cross-fitted Text Experts" (CTE), no fine-tuning. Written 2026-10-12, BEFORE any P5 v2 run. Do not edit.
+- Supersedes P5 v1 (aaaacec), of which no official job was ever run.
+### Method (engine `cte/1`, `multabench/ours/cte.py`)
+Features for the learner = structured columns (upstream preprocessing)
+ + frozen e5-small-v2 embeddings, PCA 30 per text column, PCA fit on the learner's training rows only
+ + per text column AND on all text columns concatenated, cross-fitted predictions of
+   1. **Lexical expert:** TF-IDF word 1–2-grams + char_wb 3–5-grams (sublinear_tf, min_df = 2, ≤ 200k features each)
+      → RidgeCV (alphas 0.1, 1, 10, 100) for regression; LogisticRegression with C ∈ {0.1, 1, 10} chosen by inner
+      3-fold CV (mean log-likelihood) on the training rows, for classification.
+   2. **Neighbour expert:** k = 20 cosine neighbours in frozen E5 space among the training rows of the other folds;
+      distance-weighted (1 / (distance + 1e-6)) mean label (regression) / class distribution (classification). For the
+      concatenated view, the row vector is the L2-normalised mean of the per-column frozen embeddings.
+ + **target-free numeracy and form features per text column:** count of numbers, first / max / min number
+   (sign-preserving log1p), count of 4-digit years 1900–2030 and max year, currency symbol present and max money
+   amount, count of percentages, chars, words, sentences, mean word length, uppercase ratio, digit ratio, punctuation
+   ratio, count of "!" and "?", unique-word ratio, is_empty.
+- Regression experts are fit on a rank-Gaussian transform of y (QuantileTransformer, normal output) fit on the rows
+  the expert is trained on only (each fold's training rows; all training rows for the full fit); the feature is the
+  prediction in that space.
+- Classification outputs: binary 1 column, multiclass C − 1 columns.
+- Cross-fitting: 5-fold OOF on the learner's training rows (stratified for classification); learner-val and test rows
+  use experts fit on all training rows. No test or val row is used to fit anything.
+- Frozen embeddings are computed once per dataset (target-free) and cached; everything else runs on CPU.
+### Claims (frozen)
+- **C2 (primary):** CatBoost CTE vs leaderboard Joint TAR (`ft`); two-sided Wilcoxon over the 20 datasets on
+  fold-averaged differences (folds 0–4); **pass = p < 0.05 AND positive mean.** Also reported on the 16 datasets not
+  in Dima's exclusion list (all except Book Price, Product Sentiment, Baby Products, Video Games) and on the strict 14
+  that also exclude Fake Job Postings and Data Scientist Salary (explored at fold 0 in E18).
+- **Secondary:** CTE vs leaderboard Joint Frozen (`all`); LightGBM CTE vs `ft` (Holm over the secondary learner tests);
+  ablations (CatBoost) lexical-only, neighbour-only, numeracy-only, lexical in-sample (NOT cross-fitted). No
+  "+ cross-fitted TAR predictions" variant (they do not exist, E19).
+- **Diagnostics per job:** each expert's quality on training rows (OOF) vs test; CatBoost importance share of each
+  feature group (structured, PCA, lexical, neighbour, numeracy); runtime.
+- Bootstrap CIs, rank-biserial r, Cohen's d_z, wins for every comparison (same code as C1).
+### Run plan
+- `jobs/cte_full.txt`: CTE CatBoost (100), CTE LightGBM (100), then the 4 ablations (CatBoost, 400); cheapest datasets
+  first. Results root `MyDrive/text-tabular-nlp/results_cte`; cache (frozen embeddings + expert features) on Drive.
