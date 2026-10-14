@@ -45,6 +45,8 @@ def engine_version(method: str) -> str:
         return "experts/1"
     if method in {"cte", "cte_lex", "cte_nbr", "cte_num", "cte_lex_insample"}:  # multabench/ours/cte.py
         return "cte/3"  # P5 v2 amendments 1+2 (cte/1 = original, cte/2 = amendment 1 only)
+    if method in {"catboost_native_text", "cte_plus_native", "cte_nb", "cte_residual"}:  # multabench/ours/p6.py
+        return "p6/2"  # P6 amendment 1 (p6/1 never run on Colab)
     return "stacking/1" if method in STACK_METHOD_NAMES else VARIANT_ENGINE_VERSION
 
 

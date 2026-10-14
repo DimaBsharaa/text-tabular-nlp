@@ -66,6 +66,21 @@ class PredColumnEncoder(CachedColumnEncoder):
         self.features = features
 
 
+class NullColumnEncoder:
+    """P6 catboost_native_text: a text column that contributes no embedding columns (upstream drops the column and
+    appends n_components = 0 columns); the learner gets the raw text through CatBoost text_features instead."""
+
+    def __init__(self, col_name: str):
+        self.col_name, self.encoder, self.n_components = col_name, self, 0
+        self.current_rows: Optional[np.ndarray] = None
+
+    def encode_texts(self, texts: list[str], device: torch.device) -> np.ndarray:
+        return np.zeros((len(texts), 0))
+
+    def transform(self, X: np.ndarray) -> np.ndarray:
+        return np.zeros((len(X), 0))
+
+
 class OursTextMixin:
     """Mixin placed before an upstream TabularModel subclass. Call configure_ours(...) before fit()."""
 
@@ -116,7 +131,32 @@ class OursTextMixin:
     def transform_preprocessor(self, x: DataFrame, y: Optional[Series]):
         for enc in self.text_transformers.values():
             enc.current_rows = np.asarray(x.index)
-        return super().transform_preprocessor(x=x, y=y)
+        x_out, y_out = super().transform_preprocessor(x=x, y=y)
+        if self._ours_native():  # P6: raw text columns for CatBoost text_features (the same strings E5 would see)
+            from multabench.ours.p6 import NATIVE_SUFFIX
+            raw = self._ours_preprocess_like_transform(x)
+            for col in sorted(self.text_features):
+                x_out[col + NATIVE_SUFFIX] = raw.loc[x_out.index, col].astype(str).fillna("").to_numpy()
+        return x_out, y_out
+
+    def _ours_native(self) -> bool:
+        from multabench.ours.p6 import P6_METHODS
+        v = getattr(self, "ours_variant", None)
+        return v in P6_METHODS and P6_METHODS[v][3]
+
+    def fit_model(self, x_train: DataFrame, y_train: Series, x_val: DataFrame, y_val: Series):
+        if not self._ours_native():
+            return super().fit_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val)
+        # P6 native text: upstream CatBoost.fit_model's call + text_features (CatBoost only)
+        from multabench.ours.p6 import NATIVE_SUFFIX, native_feature_calcers
+        assert type(self.model_).__module__.split(".")[0] == "catboost", "native text_features need CatBoost"
+        text_features = [c for c in x_train.columns if c.endswith(NATIVE_SUFFIX)]
+        self.ours_native_info = {"text_features": text_features,
+                                 "feature_calcers": native_feature_calcers(self.is_cls, self.d_output)}
+        self.model_.set_params(feature_calcers=self.ours_native_info["feature_calcers"])
+        cat_features = [i for i, c in enumerate(x_train.columns) if c in self.categorical_features]
+        self.model_.fit(x_train, y_train, eval_set=(x_val, y_val), use_best_model=True, cat_features=cat_features,
+                        text_features=text_features, logging_level="Silent")
 
     def _ours_preprocess_like_transform(self, x: DataFrame) -> DataFrame:
         """The steps transform_preprocessor applies before the text encoders (text datasets have no images)."""
@@ -133,6 +173,8 @@ class OursTextMixin:
         if self.ours_learner_val is not None:
             extra["learner_val"] = self.ours_learner_val
         extra.update(getattr(self, "ours_probe_sets", {}))  # empty except in the sensitivity probe
+        if self.ours_variant == "catboost_native_text":  # P6: no embeddings, no experts (raw text only)
+            return {col: NullColumnEncoder(col) for col in text_cols}
         if self.ours_variant == "tar_repro":  # frozen path (tests/test_tar_repro_frozen.py)
             extra = {k: (self._ours_preprocess_like_transform(x)[text_cols], y) for k, (x, y) in extra.items()}
             self.tar_result = run_tar(x_fit=x_train[text_cols], y_fit=y_train, text_cols=text_cols, is_cls=self.is_cls,
@@ -170,6 +212,15 @@ class OursTextMixin:
                                                   features=stack.features[col])
         return encoders
 
+    def native_text_info(self) -> Optional[dict]:
+        """P6: CatBoost text_features used and their share of CatBoost's feature importance."""
+        info = getattr(self, "ours_native_info", None)
+        if info is None:
+            return None
+        imp = dict(zip(self.model_.feature_names_, self.model_.get_feature_importance()))
+        total = sum(imp.values()) or 1.0
+        return {**info, "importance_share": round(sum(imp.get(c, 0.0) for c in info["text_features"]) / total, 4)}
+
     def stack_feature_importance(self) -> Optional[dict]:
         """P3 diagnostic: share of CatBoost's feature importance on the appended prediction columns."""
         stack = getattr(self, "stack_result", None)
@@ -182,7 +233,9 @@ class OursTextMixin:
         groups = {"structured": 0.0, "pca": 0.0}
         for name, v in imp.items():
             col, sep, j = name.rpartition("_txt_pca_")
-            if not sep or col not in stack.features:
+            if name.endswith("__native_text"):  # P6 raw text column (CatBoost text_features)
+                groups["native_text"] = groups.get("native_text", 0.0) + v
+            elif not sep or col not in stack.features:
                 groups["structured"] += v
             elif int(j) < self.pca_components:
                 groups["pca"] += v

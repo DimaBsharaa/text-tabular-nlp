@@ -1,0 +1,8 @@
+comparison (CatBoost CTE vs …),n,mean diff,95% CI,p,wins,passes
+"C2 — primary, all 20 datasets",20,0.0106,"[+0.0028, +0.0193]",0.0583,11,no
+"held-out 13 (pre-registered, amendment 2) — secondary",13,0.0173,"[+0.0073, +0.0282]",0.0105,9,PASS
+"strict 11 (pre-registered, amendment 2) — secondary",11,0.0139,"[+0.0035, +0.0260]",0.042,7,PASS
+16 (pre-registered) — secondary,16,0.0125,"[+0.0029, +0.0230]",0.0654,9,no
+14 (pre-registered) — secondary,14,0.0092,"[-0.0002, +0.0205]",0.217,7,no
+"vs Joint Frozen (context, weaker baseline)",20,0.031,"[+0.0201, +0.0428]",1.9e-06,20,—
+"LightGBM CTE vs Joint TAR (pre-registered secondary, Holm)",20,0.0152,"[+0.0047, +0.0263]",0.0215 (Holm 0.0215),14,PASS

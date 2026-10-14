@@ -31,7 +31,8 @@ os.environ.setdefault("WANDB_MODE", "disabled")
 METHODS = ("tar_repro", "offset", "prefix", "prefix_offset", "context", "context_offset",
            "insample_pred", "xfit_pred", "frozen_xfit_pred", "xfit_offset_pred",
            "tar_experts", "frozen_experts", "tar_experts_lex", "tar_experts_nbr", "tar_experts_lex_insample",
-           "cte", "cte_lex", "cte_nbr", "cte_num", "cte_lex_insample")  # see docs/method_spec.md; more variants are added as they are built
+           "cte", "cte_lex", "cte_nbr", "cte_num", "cte_lex_insample",
+           "catboost_native_text", "cte_plus_native", "cte_nb", "cte_residual")  # P6 (exploratory, CatBoost)  # see docs/method_spec.md; more variants are added as they are built
 DEFAULTS = {"train_examples": 10_000, "epochs": 50, "seed": 42}
 COMPANIONS = {"xfit_pred": ["frozen_xfit_pred"]}  # P3: written by the same job (shares the fold fine-tunes)
 SUFFIX = {"epochs": "ep", "train_examples": "n", "seed": "s"}
@@ -173,6 +174,8 @@ def run_one(args: argparse.Namespace) -> dict:
         out["tar"]["config"] = {**out["tar"]["config"], "engine_version": engine_version(args.method),
                                 "method": args.method, "base": "tar_repro" if stack.base_result else None}
         out["stacking"] = {**stack.diagnostics, "catboost_importance": model.stack_feature_importance()}
+    if hasattr(model, "native_text_info") and model.native_text_info() is not None:  # P6 native text variants
+        out["native_text"] = model.native_text_info()
     return out
 
 
@@ -235,11 +238,12 @@ def _fmt_secs(s: float) -> str:
 
 def parallel_plan(args: argparse.Namespace, jobs: list) -> tuple[int, dict]:
     """(number of parallel jobs, extra env for each job). "auto" = CPU cores // 2 when every job is a CPU-bound CTE
-    job, else 1 (TAR fine-tuning jobs share one GPU and must run one at a time). Each job's learner and BLAS get
+    / P6 job, else 1 (TAR fine-tuning jobs share one GPU and must run one at a time). Each job's learner and BLAS get
     cores // n threads so the cores are not oversubscribed."""
     cores = os.cpu_count() or 1
     if args.parallel_jobs == "auto":
-        n = max(1, cores // 2) if jobs and all(j[0].startswith("cte") for j in jobs) else 1
+        n = max(1, cores // 2) if jobs and all(j[0].startswith("cte") or j[0] == "catboost_native_text"
+                                               for j in jobs) else 1
     else:
         n = max(1, int(args.parallel_jobs))
     if n == 1:

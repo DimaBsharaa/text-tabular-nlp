@@ -1,0 +1,6 @@
+variant,mean diff vs Joint TAR,mean diff vs full CTE
+CTE (full),0.0106,0.0
+lexical only,-0.0,-0.0106
+neighbour only,-0.0064,-0.017
+numeracy only,-0.0108,-0.0214
+"lexical, in-sample (no cross-fitting)",-0.0345,-0.0451

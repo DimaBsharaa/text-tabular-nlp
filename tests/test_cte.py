@@ -332,3 +332,26 @@ def test_end_to_end_many_classes(tmp_path, cfg):
     assert res.diagnostics["class_columns"] == "top10+maxp+entropy" and res.diagnostics["n_classes"] == 12
     q = res.diagnostics["pred_feature_quality"]["per_expert"]["test"]
     assert set(q) == {"lex:__all__", "nbr:__all__"} and all(0 <= v <= 1 for v in q.values())
+
+
+def _encode_in_process(args):
+    root, lower = args
+    import torch as _torch
+    from multabench.ours import cte as _cte
+    from multabench.ours import tar_engine as _te
+    x, _, _ = _table(40)
+    c = _te.TarConfig(epochs=1, micro_batch_size=16, eval_batch_size=16, lower_cache_dir=lower)
+    res, stats = _cte.frozen_embeddings_cached([x], ["review"], c, _torch.device("cpu"), root, "SYNTH_PAR")
+    return stats, res.row_embeddings("review", x.index)
+
+
+def test_parallel_jobs_encode_each_text_once(tmp_path):
+    """E24's crash: parallel jobs of one dataset raced on the same caches. With the store lock exactly one process
+    encodes; the others wait and read its cache (identical embeddings)."""
+    import multiprocessing as mp
+    args = (str(tmp_path / "c"), str(tmp_path / "lower"))
+    with mp.get_context("spawn").Pool(3) as pool:
+        out = pool.map(_encode_in_process, [args] * 3)
+    encoded = sorted(s["encoded"] for s, _ in out)
+    assert encoded[0] == encoded[1] == 0 and encoded[2] > 0
+    assert all(np.array_equal(out[0][1], e) for _, e in out)

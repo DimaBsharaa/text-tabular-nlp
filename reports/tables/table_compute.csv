@@ -1,0 +1,5 @@
+step,hardware,hours (100 jobs),source
+TAR fine-tuning + encoding (our engine),"1 job at a time, whole A100",3.07,E17
+CTE frozen embeddings + experts,"6 jobs in parallel, 2 CPU threads each (A100 VM)",2.76,E24
+"whole CatBoost jobs, TAR (tar_repro)",as above,5.58,E17
+"whole CatBoost jobs, CTE",as above (CatBoost on 2 threads),19.66,E24

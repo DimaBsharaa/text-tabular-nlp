@@ -89,3 +89,22 @@ def test_cte_report_on_synthetic_results(tmp_path):
     assert "REG_TEXT_BOOK_PRICE" not in rep["C2_16"]["per_dataset"]
     assert rep["ablations"]["cte_lex_insample"]["vs_cte"]["mean_diff"] < 0
     assert rep["secondary"]["lgbm"]["n"] == 0
+
+
+def test_p6_report_on_synthetic_results(tmp_path):
+    import p6_report as pr
+    out = str(tmp_path)
+    rng = np.random.default_rng(1)
+    for run, off in (("cte", 0.01), ("catboost_native_text", -0.01), ("cte_plus_native", 0.012), ("cte_nb", 0.011),
+                     ("cte_residual", 0.009)):
+        _write(out, run, "catboost", {k: v + off + rng.normal(0, 0.002) for k, v in _lb("catboost").items()})
+    rep = pr.p6_report(out)
+    assert set(rep["all20"]) == set(pr.P6_VARIANTS) and "does not change claim C2" in rep["label"]
+    nat = rep["all20"]["catboost_native_text"]
+    assert nat["vs_leaderboard_ft"]["n"] == 20 and nat["vs_leaderboard_ft"]["mean_diff"] < 0
+    assert nat["vs_cte"]["mean_diff"] < 0 and nat["vs_cte"]["p_holm"] >= nat["vs_cte"]["p_value"]
+    assert rep["heldout13"]["cte_nb"]["vs_cte"]["n"] == 13
+    assert set(rep["C3"]) == {"cte_plus_native", "cte_nb", "cte_residual"}
+    assert rep["C3"]["cte_plus_native"]["passes"] and rep["C3"]["cte_plus_native"]["p_holm"] >= rep["C3"]["cte_plus_native"]["p_value"]
+    assert rep["C3_heldout13"]["cte_nb"]["n"] == 13 and "passes" not in rep["baseline_native_text_vs_ft"]
+    assert rep["baseline_native_text_vs_ft"]["mean_diff"] < 0

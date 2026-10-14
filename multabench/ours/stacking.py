@@ -40,7 +40,10 @@ EXPERT_METHODS = {
     "tar_experts_lex_insample": ("tar", ("lex",), "insample"),
 }
 from multabench.ours.cte import CTE_METHODS  # P5 v2
-STACK_METHODS = {"insample_pred", "xfit_pred", "frozen_xfit_pred", "xfit_offset_pred"} | set(EXPERT_METHODS) | set(CTE_METHODS)
+from multabench.ours.p6 import P6_METHODS  # P6 (exploratory); catboost_native_text has no stacked features
+P6_CTE_METHODS = {m for m, v in P6_METHODS.items() if v[0] is not None}
+STACK_METHODS = ({"insample_pred", "xfit_pred", "frozen_xfit_pred", "xfit_offset_pred"} | set(EXPERT_METHODS)
+                 | set(CTE_METHODS) | P6_CTE_METHODS)
 COMPANIONS = {"xfit_pred": ["frozen_xfit_pred"]}  # written by the same job (shared fold fine-tunes)
 
 
@@ -183,9 +186,10 @@ def run_stacking(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[s
     assert method in STACK_METHODS, method
     if method in EXPERT_METHODS:
         return run_experts(method, x_fit, y_fit, text_cols, is_cls, extra, cfg, device, cache_root, dataset, fold)
-    if method in CTE_METHODS:
+    if method in CTE_METHODS or method in P6_CTE_METHODS:
         from multabench.ours.cte import run_cte
-        return run_cte(method, x_fit, y_fit, text_cols, is_cls, extra, cfg, device, cache_root, dataset, fold)
+        return run_cte(method, x_fit, y_fit, text_cols, is_cls, extra, cfg, device, cache_root, dataset, fold,
+                       struct_cols=struct_cols, cat_cols=cat_cols)
     text_cols = sorted(text_cols)
     extra = {k: v for k, v in extra.items() if v is not None}
     pool = pd.Index(x_fit.index)

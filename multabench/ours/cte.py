@@ -10,6 +10,7 @@ Frozen embeddings are target-free and cached once per dataset (per unique cell t
 """
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import json
 import os
@@ -17,7 +18,7 @@ import re
 import time
 from dataclasses import asdict, dataclass
 from os.path import exists, join
-from typing import Dict, Optional
+from typing import Callable, Dict, Optional
 
 import numpy as np
 import pandas as pd
@@ -125,6 +126,24 @@ def _h64(texts: list[str]) -> np.ndarray:
     return te._text_hash(texts)
 
 
+@contextlib.contextmanager
+def _store_lock(path: Optional[str]):
+    """Exclusive lock (local disk) around read-encode-write of one frozen-embedding store. Parallel jobs on one machine
+    otherwise encode the same texts at once and race on tar_engine's lower-layer cache dir (E24's crash)."""
+    if not path:
+        yield
+        return
+    import fcntl
+    root = join(os.path.expanduser("~"), ".cache", "ours_locks")
+    os.makedirs(root, exist_ok=True)
+    with open(join(root, hashlib.sha1(os.path.abspath(path).encode()).hexdigest()[:16] + ".lock"), "w") as f:
+        fcntl.flock(f, fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(f, fcntl.LOCK_UN)
+
+
 def frozen_embeddings_cached(x_frames: list[DataFrame], text_cols: list[str], cfg: te.TarConfig, device: torch.device,
                              cache_root: Optional[str], dataset: str) -> tuple[te.TarResult, dict]:
     """Frozen e5 embeddings ("passage: col: val", L2-normalised mean pool) for every row of x_frames, from a per-dataset
@@ -144,28 +163,29 @@ def frozen_embeddings_cached(x_frames: list[DataFrame], text_cols: list[str], cf
         hashes = _h64(uniq)
         path = join(cache_root, "frozen_emb", dataset, cfg.model_name.replace("/", "__"),
                     hashlib.sha1(col.encode()).hexdigest()[:12] + ".npz") if cache_root else None
-        store_h, store_e = np.zeros(0, dtype=np.uint64), np.zeros((0, 384), dtype=np.float32)
-        if path and exists(path):
-            z = np.load(path)
-            store_h, store_e = z["hash"], z["emb"]
-        pos = {int(h): i for i, h in enumerate(store_h)}
-        missing = [i for i, h in enumerate(hashes) if int(h) not in pos]
-        if missing:
-            if model is None:
-                tok = AutoTokenizer.from_pretrained(cfg.model_name)
-                te.set_seed(cfg.seed)
-                model = te.build_model(cfg, d_output=2, device=device)  # fresh LoRA (B = 0) = vanilla e5
-            strings = [format_e5_passage(col, uniq[i]) for i in missing]
-            tokens = te.TokenStore(list(dict.fromkeys(strings)), tok, cfg.max_length)
-            emb_u, _ = te.encode(model, te.make_source(model, tokens, cfg, device), tokens.uids(strings), cfg, device)
-            store_h = np.concatenate([store_h, hashes[missing]])
-            store_e = np.concatenate([store_e, emb_u.astype(np.float32)])
+        with _store_lock(path):  # parallel jobs: one encodes, the others wait and then read the cache
+            store_h, store_e = np.zeros(0, dtype=np.uint64), np.zeros((0, 384), dtype=np.float32)
+            if path and exists(path):
+                z = np.load(path)
+                store_h, store_e = z["hash"], z["emb"]
             pos = {int(h): i for i, h in enumerate(store_h)}
-            if path:
-                os.makedirs(os.path.dirname(path), exist_ok=True)
-                tmp = f"{path}.{os.getpid()}.tmp.npz"  # unique per process: parallel jobs may share a cache
-                np.savez(tmp, hash=store_h, emb=store_e)
-                os.replace(tmp, path)
+            missing = [i for i, h in enumerate(hashes) if int(h) not in pos]
+            if missing:
+                if model is None:
+                    tok = AutoTokenizer.from_pretrained(cfg.model_name)
+                    te.set_seed(cfg.seed)
+                    model = te.build_model(cfg, d_output=2, device=device)  # fresh LoRA (B = 0) = vanilla e5
+                strings = [format_e5_passage(col, uniq[i]) for i in missing]
+                tokens = te.TokenStore(list(dict.fromkeys(strings)), tok, cfg.max_length)
+                emb_u, _ = te.encode(model, te.make_source(model, tokens, cfg, device), tokens.uids(strings), cfg, device)
+                store_h = np.concatenate([store_h, hashes[missing]])
+                store_e = np.concatenate([store_e, emb_u.astype(np.float32)])
+                pos = {int(h): i for i, h in enumerate(store_h)}
+                if path:
+                    os.makedirs(os.path.dirname(path), exist_ok=True)
+                    tmp = f"{path}.{os.getpid()}.tmp.npz"  # unique per process: parallel jobs may share a cache
+                    np.savez(tmp, hash=store_h, emb=store_e)
+                    os.replace(tmp, path)
         stats["encoded"] += len(missing)
         stats["cached"] += len(uniq) - len(missing)
         emb = store_e[[pos[int(h)] for h in hashes]]
@@ -210,15 +230,19 @@ def _targets(y_tr: np.ndarray, is_cls: bool, n_classes: int, c: CTEConfig) -> np
     return rank_gauss(y_tr, c.expert_config())[:, None]  # QuantileTransformer fit on exactly these rows
 
 
-def ridge_scores(X_tr, y_tr: np.ndarray, X_tes: list, is_cls: bool, n_classes: int, alpha: float,
-                 c: CTEConfig) -> list:
-    """Full scores (n, C) for classification, (n, 1) for regression, for each matrix in X_tes."""
+def ridge_fit(X_tr, Y: np.ndarray, X_tes: list, alpha: float) -> list:
+    """One multi-output least-squares fit on the target matrix Y; predictions (n, Y.shape[1]) for each of X_tes."""
     from sklearn.linear_model import Ridge
-    Y = _targets(y_tr, is_cls, n_classes, c)
     if X_tr.shape[1] == 0:  # no vocabulary: constant prediction
         return [np.tile(Y.mean(axis=0), (X.shape[0], 1)) for X in X_tes]
     m = Ridge(alpha=alpha, solver="sparse_cg").fit(X_tr, Y)
     return [np.asarray(m.predict(X)).reshape(X.shape[0], -1) for X in X_tes]
+
+
+def ridge_scores(X_tr, y_tr: np.ndarray, X_tes: list, is_cls: bool, n_classes: int, alpha: float,
+                 c: CTEConfig) -> list:
+    """Full scores (n, C) for classification, (n, 1) for regression, for each matrix in X_tes."""
+    return ridge_fit(X_tr, _targets(y_tr, is_cls, n_classes, c), X_tes, alpha)
 
 
 def top_classes(y_pool: np.ndarray, n_classes: int, c: CTEConfig) -> Optional[np.ndarray]:
@@ -273,14 +297,18 @@ def knn_topk(E_tr: np.ndarray, E_te: np.ndarray, k: int, device: torch.device, c
     return np.concatenate(dists), np.concatenate(idxs)
 
 
-def neighbour_predict(E_tr, y_tr: np.ndarray, E_te, is_cls: bool, n_classes: int, c: CTEConfig,
-                      device: torch.device) -> np.ndarray:
-    """Full scores: class distribution (n, C) for classification, (n, 1) for regression."""
+def neighbour_average(E_tr, Y: np.ndarray, E_te, c: CTEConfig, device: torch.device) -> np.ndarray:
+    """1/d-weighted average of the k nearest training rows' target vectors (rows of Y)."""
     dist, idx = knn_topk(E_tr, E_te, c.k_neighbors, device)
     w = 1.0 / (dist + 1e-6)
     w = w / w.sum(axis=1, keepdims=True)
-    Y = _targets(y_tr, is_cls, n_classes, c)
     return np.einsum("nk,nkc->nc", w, Y[idx])
+
+
+def neighbour_predict(E_tr, y_tr: np.ndarray, E_te, is_cls: bool, n_classes: int, c: CTEConfig,
+                      device: torch.device) -> np.ndarray:
+    """Full scores: class distribution (n, C) for classification, (n, 1) for regression."""
+    return neighbour_average(E_tr, _targets(y_tr, is_cls, n_classes, c), E_te, c, device)
 
 
 def _normalise(m: np.ndarray) -> np.ndarray:
@@ -290,22 +318,35 @@ def _normalise(m: np.ndarray) -> np.ndarray:
 def compute_cte_features(kind: str, texts: Dict[str, list[str]], embs: Optional[Dict[str, np.ndarray]],
                          y: np.ndarray, is_cls: bool, n_classes: int, extra_texts: Dict[str, Dict[str, list[str]]],
                          extra_embs: Optional[Dict[str, Dict[str, np.ndarray]]], mode: str, c: CTEConfig,
-                         device: torch.device, timings: dict) -> Dict[str, Dict[str, np.ndarray]]:
+                         device: torch.device, timings: dict, *, lex_fit: Optional[Callable] = None,
+                         residual=None) -> Dict[str, Dict[str, np.ndarray]]:
     """{split: {feature: (n_rows, k)}} for split in {"pool", *extras} (+ "meta" for the lexical alpha). Pool rows
     get out-of-fold predictions (mode "oof") or in-sample ones ("insample", ablation); extras come from the fit on
-    all pool rows. Only pool (= the learner's training) rows and their labels are ever fitted on or scored."""
+    all pool rows. Only pool (= the learner's training) rows and their labels are ever fitted on or scored.
+    P6 hooks (P5 / cte/3 leaves both None): lex_fit(X_tr, y_tr, X_tes, alpha) -> full scores replaces the one-hot /
+    rank-Gaussian Ridge (cte_nb); residual (p6.StructuredResidual) replaces the targets by residuals of a
+    structured-only model (cte_residual)."""
     assert mode in ("oof", "insample") and kind in ("lex", "nbr")
+    assert residual is None or (mode == "oof" and lex_fit is None)
     cols = sorted(texts)
     folds = expert_folds(len(y), y, is_cls, c.expert_config())
     top = top_classes(y, n_classes, c) if is_cls else None
     out = {"pool": {}, **{k: {} for k in extra_texts}}
     names = list(extra_texts)
-    feat = lambda P: class_features(P, is_cls, n_classes, top)
+    all_rows = np.arange(len(y))
+    if residual is None:
+        feat = lambda P: class_features(P, is_cls, n_classes, top)
+        targets = lambda tr, full: _targets(y[tr], is_cls, n_classes, c)
+        select = lambda P: oof_metric(P, y, is_cls, n_classes)
+    else:
+        feat = lambda P: residual.features(P, top)
+        targets = lambda tr, full: residual.full_targets() if full else residual.train_targets(tr)
+        select = lambda P: oof_metric(residual.offset_full() + P, y, is_cls, n_classes)
 
     def oof(fit_predict, take, pool_in):
         P = None
         for tr, te_ in folds:
-            p = fit_predict(take(pool_in, tr), y[tr], [take(pool_in, te_)])[0]
+            p = fit_predict(take(pool_in, tr), tr, [take(pool_in, te_)], False)[0]
             P = np.zeros((len(y), p.shape[1])) if P is None else P
             P[te_] = p
         return P
@@ -317,11 +358,14 @@ def compute_cte_features(kind: str, texts: Dict[str, list[str]], embs: Optional[
         timings["tfidf"] = round(time.perf_counter() - t0, 2)
         t0 = time.perf_counter()
         take = lambda a, idx: a[idx]
-        fp = {a: (lambda A, yy, Bs, a=a: ridge_scores(A, yy, Bs, is_cls, n_classes, a, c)) for a in c.ridge_alphas}
+        if lex_fit is None:
+            fp = {a: (lambda A, tr, Bs, full, a=a: ridge_fit(A, targets(tr, full), Bs, a)) for a in c.ridge_alphas}
+        else:
+            fp = {a: (lambda A, tr, Bs, full, a=a: lex_fit(A, y[tr], Bs, a)) for a in c.ridge_alphas}
         oofs = {a: oof(fp[a], take, X) for a in c.ridge_alphas}
-        metrics = [oof_metric(oofs[a], y, is_cls, n_classes) for a in c.ridge_alphas]
+        metrics = [select(oofs[a]) for a in c.ridge_alphas]
         alpha = c.ridge_alphas[int(np.argmax(metrics))]  # first maximum = the smaller alpha on ties
-        full = fp[alpha](X, y, [X_extra[k] for k in names] + ([X] if mode == "insample" else []))
+        full = fp[alpha](X, all_rows, [X_extra[k] for k in names] + ([X] if mode == "insample" else []), True)
         name = f"lex:{ALL_COLS}"
         for k, P in zip(names, full):
             out[k][name] = feat(P)
@@ -337,9 +381,9 @@ def compute_cte_features(kind: str, texts: Dict[str, list[str]], embs: Optional[
         if not (is_cls and n_classes > 2):  # amendment 2A: multiclass -> concatenation only
             views = {**{col: embs[col] for col in cols}, **views}
             extra_views = {k: {**{col: extra_embs[k][col] for col in cols}, **v} for k, v in extra_views.items()}
-        fp = lambda A, yy, Bs: [neighbour_predict(A, yy, B, is_cls, n_classes, c, device) for B in Bs]
+        fp = lambda A, tr, Bs, full: [neighbour_average(A, targets(tr, full), B, c, device) for B in Bs]
         for view, E in views.items():
-            full = fp(E, y, [extra_views[k][view] for k in names])
+            full = fp(E, all_rows, [extra_views[k][view] for k in names], True)
             for k, P in zip(names, full):
                 out[k][f"nbr:{view}"] = feat(P)
             out["pool"][f"nbr:{view}"] = feat(oof(fp, lambda a, idx: a[idx], E))
@@ -351,10 +395,18 @@ def compute_cte_features(kind: str, texts: Dict[str, list[str]], embs: Optional[
 
 def run_cte(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], is_cls: bool,
             extra: Dict[str, tuple[DataFrame, Series]], cfg: te.TarConfig, device: torch.device,
-            cache_root: Optional[str], dataset: str, fold: int):
+            cache_root: Optional[str], dataset: str, fold: int, struct_cols: Optional[list[str]] = None,
+            cat_cols: Optional[list[str]] = None):
     from multabench.ours.stacking import StackResult
     from multabench.ours.variants import _metric
-    experts, mode, use_num = CTE_METHODS[method]
+    from multabench.ours import p6
+    if method in CTE_METHODS:  # P5 (claim C2)
+        experts, mode, use_num = CTE_METHODS[method]
+        lex_kind, target_kind, version = "tfidf", "y", CTE_VERSION
+    else:  # P6 (exploratory): same CTE experts with a different lexical model or residual targets
+        base, lex_kind, target_kind, _ = p6.P6_METHODS[method]
+        experts, mode, use_num = CTE_METHODS[base]
+        version = p6.P6_VERSION
     ccfg = CTE_CONFIG
     text_cols = sorted(text_cols)
     extra = {k: v for k, v in extra.items() if v is not None}
@@ -378,8 +430,20 @@ def run_cte(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], 
     texts_key = hashlib.sha1("\x00".join(t for c in text_cols for t in texts[c]).encode()).hexdigest()[:10]
     t1 = time.time()
     feats_by_split, hits, timings = {"pool": {}, **{k: {} for k in extra}}, {}, {}
+    residual, hooks, p6_info = None, {}, {}
+    if target_kind == "residual":
+        sc = sorted(struct_cols or [])
+        residual = p6.StructuredResidual(p6.struct_frame(x_fit, sc, list(cat_cols or [])), list(cat_cols or []), y,
+                                         is_cls, len(classes), expert_folds(len(y), y, is_cls, ccfg.expert_config()),
+                                         ccfg.expert_config())
+        hooks["residual"] = residual
+        p6_info = {"struct_cols": sc, "p6_config": asdict(p6.P6_CONFIG)}
+    nb = lex_kind == "nb" and is_cls  # regression: cte_nb = cte (same cache entry)
     for kind in experts:
-        key = f"{dataset}/fold{fold}/cte_{kind}_{mode}_{ccfg.key()}_{rows_key}_{texts_key}"
+        tag = kind + ("nb" if nb and kind == "lex" else "")
+        if residual is not None:
+            tag += "res_" + p6.P6_CONFIG.key() + "_" + hashlib.sha1("|".join(residual.xs.columns).encode()).hexdigest()[:8]
+        key = f"{dataset}/fold{fold}/cte_{tag}_{mode}_{ccfg.key()}_{rows_key}_{texts_key}"
 
         def compute(kind=kind):
             embs = extra_embs = None
@@ -387,8 +451,11 @@ def run_cte(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], 
                 embs = {c: frozen.row_embeddings(c, pool_rows) for c in text_cols}
                 extra_embs = {k: {c: frozen.row_embeddings(c, np.asarray(x.index)) for c in text_cols}
                               for k, (x, _) in extra_t.items()}
+            kw = dict(hooks)
+            if nb and kind == "lex":
+                kw["lex_fit"] = lambda A, yy, Bs, a: p6.nb_ridge_scores(A, yy, Bs, len(classes), a)
             return compute_cte_features(kind, texts, embs, y, is_cls, len(classes), extra_texts, extra_embs, mode,
-                                        ccfg, device, timings)
+                                        ccfg, device, timings, **kw)
         out, hits[kind] = cached_expert_features(cache_root, key, compute)
         for split, d in out.items():
             feats_by_split.setdefault(split, {}).update(d)
@@ -441,7 +508,13 @@ def run_cte(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], 
         q["test"] = quality("test", np.asarray(extra["test"][0].index), extra["test"][1])
     gap = {f: (q["train_rows"][f] - q["test"][f]) if q.get("test") and q["train_rows"][f] is not None
            and q["test"][f] is not None else None for f in q["train_rows"]}
-    diag = {"engine_version": CTE_VERSION, "method": method, "experts": list(experts), "mode": mode,
+    if residual is not None:
+        p6_info["n_struct_fits"] = residual.n_struct_fits  # 0 when both experts came from the cache
+        if "offset" in residual._memo:
+            p6_info["struct_oof_metric"] = round(oof_metric(residual.offset_full(), y, is_cls, len(classes)), 6)
+    if method not in CTE_METHODS:
+        p6_info.update({"lexical": "nb" if nb else "tfidf", "targets": target_kind})
+    diag = {"engine_version": version, "method": method, "p6": p6_info or None, "experts": list(experts), "mode": mode,
             "numeracy": use_num, "expert_config": asdict(ccfg), "expert_timings": timings, "expert_cache_hits": hits,
             "lex_alpha": lex_alpha, "n_classes": len(classes) if is_cls else None,
             "class_columns": "top10+maxp+entropy" if top is not None else "C-1" if is_cls else "1",

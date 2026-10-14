@@ -44,6 +44,15 @@ Entry template:
 | P5 | 2026-10-12 | experts recipe + claims C2 (tar_experts) / C3 (frozen_experts) frozen | jobs/p5_{A,B}.txt; ≈ 10–14 h A100 each |
 | E19 | 2026-10-12 | post-freeze CPU check of P5 v1; stopped | PS: tar_experts ≈ tar_repro; frozen_experts BP f0 +0.024 vs LB TAR |
 | P5 v2 | 2026-10-12 | CTE (no fine-tuning) + claim C2 frozen; supersedes P5 v1 (never run) | jobs/cte_full.txt |
+| E20 | 2026-10-12 | CTE CPU smoke + parallel lexical views | PS f0 0.8857, BP f0 0.6074; est. 20–40 h |
+| P5 v2 am. 1 | 2026-10-12 | speed: TF-IDF once, fixed Ridge, concatenation-only lexical, parallel jobs (cte/2) | written before any full-run result |
+| E21 | 2026-10-13 | profiling before/after am. 1 | experts ~40× faster; multiclass CatBoost dominates; Jigsaw drop |
+| P5 v2 am. 2 | 2026-10-13 | C > 10 column budget + OOF alpha (cte/3); held-out 13 / strict 11 subsets | disclosure of fold-0 scores seen |
+| E22 | 2026-10-13 | re-timing after am. 2 | Wine 18 min/job (CatBoost); Jigsaw 0.8695 vs LB 0.9137 |
+| P6 | 2026-10-13 | exploratory CatBoost variants (native text, plus_native, nb, residual) | written before any P6 code/run |
+| E23 | 2026-10-14 | P6 runtime check (laptop) | native text 6–8 min/job, Wine > 1.8 h (stopped) |
+| E24 | 2026-10-14 | P5 v2 full run (600 jobs, A100) | **C2 fails**: +0.0106, p = 0.058; held-out 13 p = 0.0105; LightGBM p = 0.021 |
+| P6 am. 1 / C3 | 2026-10-14 | BoW only for C > 10 (p6/2); claim C3 (3 CTE variants vs LB TAR, Holm) | written before any P6 result |
 
 ---
 
@@ -967,3 +976,130 @@ Features for the learner = structured columns (upstream preprocessing)
   multiclass ≈ a few min. Wine ≈ 18 min/job. Spotify Genres unknown (CatBoost > 45 min/job at cte/2; C is large).
   CatBoost block ≈ 10 slot-hours / 6 ≈ 2–3 h wall (Colab cores ~1.3× slower), with the Spotify tail as the risk.
   Whole jobs file (LightGBM + 4 CatBoost ablations, which reuse the expert cache) ≈ 8–12 h.
+
+## P6 — Secondary / EXPLORATORY CatBoost variants. Written 2026-10-13, BEFORE any P6 code or run. Do not edit.
+- **Status:** exploratory and secondary. P6 results never replace or modify claim C2 (P5 v2, engine `cte/3`), and
+  are reported separately, labelled exploratory. Engine `p6/1`. Learner CatBoost only; 20 datasets × folds 0–4;
+  same splits, seeds (42), learner val split, leaderboard comparison and leakage rules as P5. The frozen-embedding
+  and expert caches of the CTE run are reused (same cache root), so P6 runs after `jobs/cte_full.txt`.
+- **Variants** (all four: features computed from the learner's training rows only; OOF where a label is used):
+  1. `catboost_native_text`: upstream's structured features + the raw text columns passed as CatBoost
+     `text_features` (CatBoost's default tokenizer and dictionaries: Space, Word + BiGram). Calcers: BoW + NaiveBayes
+     + BM25 for classification; BoW only for regression (CatBoost supports NaiveBayes/BM25 for classification only).
+     No embeddings, no experts. The baseline a reviewer will ask for.
+  2. `cte_plus_native`: the full CTE features (cte/3, same caches) + the same CatBoost text_features.
+  3. `cte_nb`: CTE where, for classification, the lexical expert uses NB log-count-ratio weighted TF-IDF (NBSVM,
+     Wang & Manning 2012): for each class c (binary: class 1 only), r_c = log((p/‖p‖₁)/(q/‖q‖₁)), with p = 1 + the sum
+     of the TF-IDF rows of class c and q = 1 + the sum over the other rows. Then a one-vs-rest Ridge on X·diag(r_c) with
+     target 1[y = c]. r_c is computed inside every fit from that fit's training rows only. The same alpha grid and OOF
+     selection, column layout and neighbour expert as cte/3. Regression is unchanged (= cte).
+  4. `cte_residual`: the lexical and neighbour experts are trained on the residuals of a structured-only CatBoost S
+     (structured columns only; fixed: 300 iterations, depth 6, learning rate 0.1, seed 42, categorical columns as
+     cat_features; a constant model if there are no structured columns). Regression: residual = rank-Gaussian y − S's
+     prediction (S fitted on the rank-Gaussian y). Classification: residual = one-hot(y) − softmax(S's logits), i.e.
+     the negative log-loss gradient at the offset logits (the least-squares form of an offset). **Still cross-fitted,
+     nested:** for expert fold k, S's predictions for the expert's training rows T_k are 3-fold OOF within T_k only,
+     so no label of the held-out rows H_k reaches the expert that predicts H_k. For val/test: residuals of all
+     training rows from S's 5-fold OOF (the expert folds), then the expert is fitted on all training rows. Output =
+     predicted residual: regression 1 column; binary class 1; 3–10 classes C−1; C > 10 the top-10 class residuals
+     + the max and min residual over all classes (12 columns). Alpha is chosen by the OOF metric of
+     S_OOF + predicted residual (AUROC / macro AUROC / Spearman). Numeracy features as in cte.
+- **Analysis (exploratory, `scripts/p6_report.py`):** each variant vs leaderboard Joint TAR (`ft`, CatBoost) and
+  vs our `cte` CatBoost (paired over datasets on fold-averaged scores). Two-sided Wilcoxon, Holm over the 8 tests,
+  bootstrap CI, wins. Printed on all 20 and on the held-out 13 (`C2_heldout13` list). No success threshold: this is
+  for the paper's discussion/ablation section only.
+- **Tests:** the same leakage tests as P5 (each held-out row's OOF prediction is bit-identical when that fold's labels
+  change, including through S for cte_residual; NB ratios from training rows only), determinism, an end-to-end run
+  of every variant, and a golden check that cte/3 (P5) features are unchanged (`tests/golden/cte3_features.npz`,
+  generated at f1514bc).
+
+## E23 — P6 runtime check (fold 0, laptop, 2 threads per job, 3 jobs at once)   (2026-10-14, uncommitted P6 code on f1514bc)
+- **Command:** `OURS_LEARNER_THREADS=2 python scripts/profile_cte.py -- --method <M> --learner catboost --dataset <D>
+  --fold 0 --out .explore/p6 --cache_dir .explore/p6/_cache` for the 4 P6 variants on Book Price, Product Sentiment
+  and Wine (all three already explored; excluded from the held-out report). Frozen embeddings cached from E21.
+- **Job times:** Book Price: native_text 8.1 min, plus_native 7.5 min, nb 37 s, residual 53 s. Product Sentiment:
+  6.2 min, 6.0 min, 19 s, 22 s. Wine (C = 30): `catboost_native_text` was still running after 1 h 48 min and was
+  stopped by Dima (no score). CatBoost's native text processing is ≈ 98% of a native job's time. NaiveBayes and BM25
+  are computed per class, so the cost grows with C. cte_nb / cte_residual add ≈ 10–15 s of expert time per job
+  (including the nested structured-CatBoost fits).
+- **Scores were not inspected for any decision.** The method and the calcers stay as pre-registered in P6.
+- **Execution change only:** `jobs/p6_secondary.txt` now runs cte_nb and cte_residual first, then the two native
+  blocks.
+- **Estimate (A100, 6 slots):** cte_nb + cte_residual ≈ 1–2 h together (CatBoost multiclass dominates, as in E22).
+  The native blocks are ≈ 6–8 min per job on small datasets, and multiple hours per job on Wine / Spotify. Total for the
+  native blocks is likely ≥ 1 day of runtime, unbounded until Wine / Spotify are measured.
+- **Open decision (Dima):** keep the pre-registered calcers and run the native blocks last, or amend P6 (BoW only for
+  C > 10) before any P6 result.
+
+## E24 — P5 v2 full run (CTE, engine cte/3): claim C2 does NOT pass; held-out 13 passes   (2026-10-14, Colab A100)
+- **Run:** `jobs/cte_full.txt` (600 jobs) at f1514bc (clean), A100-SXM4-40GB, 6 jobs in parallel × 2 threads,
+  RESULTS = MyDrive/text-tabular-nlp/results_cte. Exports `results_export_20261014_061322.zip` (599 jobs) +
+  `results_export_20261014_095322.zip` (all 600). One job (cte catboost Product Sentiment fold 3) crashed in the first
+  pass: two parallel jobs of the same dataset rebuilt the same lower-layer cache dir and one `rmtree`'d it under the
+  other (FileNotFoundError, `tar_engine.LowerCache.get_or_build`). It was re-run alone at the same commit/GPU/threads
+  (score 0.9086). Analysis: `python scripts/cte_report.py --out <export>/results` (identical to Colab's report);
+  `reports/cte/cte_report.json`.
+- **C2 (primary, CatBoost cte vs leaderboard `ft`, 20 datasets, fold-averaged, two-sided Wilcoxon):**
+  mean +0.0106, median +0.0044, bootstrap 95% CI [+0.0028, +0.0193], **p = 0.058**, wins 11/20, rank-biserial r 0.49,
+  d_z 0.54 → **does not pass** (pre-registered threshold p < 0.05).
+- **Other pre-registered lines:** C2_heldout13 (amendment 2) mean +0.0173, CI [+0.0073, +0.0282], **p = 0.0105**,
+  wins 9/13 → passes. C2_strict11 +0.0139, p = 0.042 → passes. C2_16 +0.0125, p = 0.065 → no. C2_14 +0.0092, p = 0.22 → no.
+  vs Joint Frozen +0.0310, p = 1.9e-6, 20/20 wins. LightGBM cte vs `ft` (secondary, Holm) +0.0152, p = 0.021 → passes.
+- **Per dataset (cte − ft):** Rotten Tomatoes +0.056, Mercari +0.045, Fake Job +0.042, DS Salary +0.030, Book
+  Readability +0.027, Zomato +0.014, Book Price +0.013, Baby +0.012, Kickstarter +0.011, Michelin +0.006, Montgomery
+  +0.003; Spotify −0.001, Wine −0.001, Vancouver −0.002, US Accidents −0.002, SCImago −0.002, Women Clothing −0.003,
+  Product Sentiment −0.004, Video Games −0.008, **Jigsaw −0.022** (0/5 folds). Wins are large; losses are mostly
+  tiny, except Jigsaw (toxicity, where fine-tuning helps most).
+- **Ablations (CatBoost, mean vs cte):** lexical-only −0.011 (≈ `ft` level), neighbour-only −0.017, numeracy-only
+  −0.021, lexical in-sample −0.045 (−0.034 vs `ft`). Cross-fitting matters: in-sample lexical predictions hurt a lot.
+  CatBoost importance share (cte): PCA 0.42, lexical 0.21, structured 0.15, neighbour 0.13, numeracy 0.09.
+- **Runtime:** CTE CatBoost block 3.4 h wall (19.7 slot-hours; the longest job 2.5 h, Spotify-sized multiclass CatBoost).
+  Whole file 13.2 h wall. Target was ≤ 3 h for the CatBoost block: slightly over.
+- **Hostile review:**
+  - *Leakage:* experts, TF-IDF, rank-Gauss and PCA are fit on the learner's training rows only. Tests
+    (`tests/test_cte.py`) show held-out rows' OOF predictions are bit-identical when their labels change. Frozen
+    embeddings are target-free. The in-sample ablation behaves as leakage would (−0.045), so the OOF version is not
+    leaking in the same way.
+  - *Split / size:* every dataset has 5 folds; n_train / n_test equal upstream's caps (10,000 / 10% ≤ 2,000), from
+    upstream's own `split_to_test`. The same splits were used for tar_repro, which reproduced the leaderboard in the pilot.
+  - *Metric:* upstream's `score_all_metrics` (AUROC / macro-OvR AUROC / R²).
+  - *Seeds:* seed 42, as the leaderboard. Single seed, so seed noise is included in the per-dataset differences.
+  - *Choices made after seeing test data:* amendments 1–2 came after fold-0 test scores of 4 datasets (disclosed).
+    Those 4 + the profiled ones are excluded from heldout13, which is where the result is strongest.
+  - *Comparator environment:* the leaderboard numbers come from the authors' environment, so part of +0.01 could be
+    environment. Against our own run of Joint Frozen the gap is large (+0.031, 20/20), but that is a weaker baseline.
+  - *Crash:* the race could only crash a job; it could not silently corrupt one. A reader opens a cache only once
+    `meta.json` exists, builds are written to a private temp dir and moved into place atomically, and the content is
+    deterministic. The affected job was re-run.
+- **Conclusion:** the primary claim C2 fails narrowly (p = 0.058 over 20; the CI excludes 0). The pre-registered
+  held-out subsets and the LightGBM secondary pass. The paper must report C2 as not significant at 0.05, and report
+  the held-out and secondary results as such, not as the primary claim.
+- **Next:** fix the parallel cache race in our code (one job per dataset builds the frozen embeddings, the others wait),
+  then P6 (exploratory). Dima to decide the P6 native-text calcer question (E23).
+
+## C2 reporting decision (Dima, 2026-10-14)
+- C2 is reported exactly as pre-registered: it does NOT pass on all 20 datasets (p = 0.058). The pre-registered
+  held-out 13 (amendment 2) and the LightGBM secondary pass. No new tests or subsets are added for P5.
+
+## P6 — Amendment 1 (2026-10-14, Dima): native-text calcers. Written BEFORE any P6 result.
+- **State of P6 at this point:** no P6 job has run on Colab. Only E23's laptop timing runs exist (fold 0 of Book
+  Price and Product Sentiment, all 4 variants; Wine `catboost_native_text` stopped). Their scores were not looked
+  at; the logs stay in `.explore/p6/` (gitignored).
+- **Change:** `catboost_native_text` and `cte_plus_native` use CatBoost feature_calcers = BoW only for
+  classification datasets with C > 10 classes (E23: NaiveBayes/BM25 are per class, multiple hours per job on
+  Wine). Binary and 3..10 classes: BoW + NaiveBayes + BM25. Regression: BoW (unchanged). The same rule for every
+  dataset. Everything else in P6 is as pre-registered. Engine `p6/2` (p6/1 = before this amendment; never run on
+  Colab).
+
+## C3 — P6 claim (pre-registered 2026-10-14, BEFORE any P6 result). C2 stays as reported; C3 never replaces it.
+- **Claim C3:** each of the 3 CTE variants (`cte_plus_native`, `cte_nb`, `cte_residual`), CatBoost, vs leaderboard
+  Joint TAR (`ft`, CatBoost). Two-sided Wilcoxon over the 20 datasets on fold-averaged differences (folds 0–4),
+  Holm-corrected over these 3 tests. **Pass (per variant) = Holm-adjusted p < 0.05 AND positive mean difference.**
+- **Also reported:** the held-out 13 (the C2_heldout13 list) for each of the 3 variants (Holm over the same 3, labelled
+  secondary). `catboost_native_text` vs `ft` is reported as a baseline, not a claim (no correction, no pass/fail). The
+  exploratory P6 comparisons (each variant vs our `cte`) stay as in the P6 pre-registration.
+- Bootstrap CIs, wins, rank-biserial r and d_z as for C1/C2. Script: `scripts/p6_report.py`.
+
+### Note on the name C3 (2026-10-14)
+- P5 v1 (superseded, never run) also defined a "C3" (frozen_experts). That claim is void. "C3" from here on means
+  the P6 claim pre-registered above; the paper should call it "C3 (P6)" or rename both consistently.
