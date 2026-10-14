@@ -101,3 +101,14 @@ each: `token_j = W_name · E5_frozen(column_name_j) + value_enc_j(x_j)`.
     (`.3g`, deciles from the pool), categoricals `name=<first 30 chars>`, missing `name=missing`. Tokens:
     `[CLS] passage: <context ≤ 80 tokens> | <col>: <val> [SEP]`, text truncated so the total is ≤ 512.
 11. **Engine versions.** Variants record `variants/1`; tar_repro keeps `tar_engine/2`.
+
+## 8. Later methods (P5 v1 → P5 v2 → P6): where the code is
+
+- **P5 v1 (LEGACY, engine `experts/1`, superseded, never run as a claim):** `multabench/ours/experts.py`
+  `LexicalExpert`, `NeighbourExpert`, `compute_expert_features` (per-column TF-IDF + RidgeCV / CV'd
+  LogisticRegression, similarity-weighted neighbours), used only by `stacking.run_experts`.
+- **P5 v2 = CTE (engine `cte/3`, claim C2):** `multabench/ours/cte.py` (see its module docstring and PROGRESS.md
+  P5 v2 + amendments 1–2). From `experts.py` it uses only the shared helpers `ExpertConfig`, `expert_folds`,
+  `rank_gauss`, `cached_expert_features`, `ALL_COLS`, `SEED`.
+- **P6 (engine `p6/2`, claim C3):** `multabench/ours/p6.py` on top of `cte.compute_cte_features` (hooks `lex_fit`,
+  `residual`); native text in `learners.OursTextMixin`.

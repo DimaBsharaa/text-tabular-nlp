@@ -67,6 +67,22 @@ MulTaBench paper text and still need a page or figure number before we cite them
   learners). TF-IDF + Ridge
   tops out at an OOF AUROC of ≈ 0.86 [E22]. Present this honestly as a limitation.
 
+### 2.2b Method details a reviewer will ask about (code review of d99be74: no leakage found)
+- **Alpha selection uses the same OOF predictions.** The lexical Ridge alpha is chosen from 4 candidates (0.3, 1,
+  3, 10) by the OOF metric on the training rows, and that alpha's OOF predictions become the feature. Choosing the
+  best of 4 on the same OOF predictions makes the feature slightly optimistic for the learner. With 4 candidates the
+  effect is negligible: the train-OOF vs test gap of the lexical expert is 0.004–0.006 (E22). Validation and test
+  rows are never used.
+- **TF-IDF is fit transductively on all training rows (label-free).** The vocabulary and IDF weights are fit once
+  per job on all of the learner's training rows, including the rows each OOF fold holds out, and never on
+  validation or test rows. TF-IDF uses no labels, so the held-out labels stay unseen. Only the Ridge models see
+  labels, and they are cross-fitted.
+- **`cte_nb` (P6) = NB-weighted TF-IDF (NBSVM-style), not binarized counts.** The naive-Bayes log-count ratio
+  r = log((p/‖p‖₁)/(q/‖q‖₁)) is computed from sums of the sublinear TF-IDF rows (p = 1 + class rows, q = 1 + other
+  rows), inside every fit from that fit's training rows only. It then scales the TF-IDF features before a
+  one-vs-rest Ridge (NB-LS). Wang & Manning (2012) used binarized counts and an SVM / logistic model with
+  interpolation; ours is a variant. Describe it as "NBSVM-style".
+
 ### 2.3 Compute — careful wording [E6, E17, E24]
 - **Do NOT write "~10× cheaper" as a measured wall-clock result against our own TAR engine.** Measured
   text-representation time over the same 100 (dataset, fold) jobs: TAR fine-tuning with our optimised engine 3.07 h

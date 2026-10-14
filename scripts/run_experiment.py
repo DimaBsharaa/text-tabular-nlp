@@ -86,9 +86,9 @@ def reference_scores(dataset: str, model_name: str, fold: int) -> dict:
     return {names[s]: float(g["test_score"].iloc[0]) for s, g in df.groupby("multimodal_state") if s in names}
 
 
-def run_one(args: argparse.Namespace) -> dict:
-    import numpy as np
-    import torch
+def fit_learner(args: argparse.Namespace):
+    """Load the dataset, make upstream's split for args.fold, configure our learner and fit it (shared by run_one and
+    scripts/train.py). Returns (model, learner_cls, x_train, y_train, x_test, y_test, t0)."""
     from tabstar.preprocessing.splits import split_to_test
     from tabstar.training.devices import get_device
 
@@ -99,8 +99,6 @@ def run_one(args: argparse.Namespace) -> dict:
     from multabench.datasets.utils import dataset_from_name
     from multabench.ours.learners import make_learner
     from multabench.ours.tar_engine import TarConfig, set_seed
-    from multabench.ours.variants import engine_version
-    from multabench.utils.hardware import get_hardware_dict
 
     t0 = time.time()
     set_seed(args.seed)
@@ -123,6 +121,18 @@ def run_one(args: argparse.Namespace) -> dict:
     model.configure_ours(variant=args.method, cfg=cfg, cache_dir=args.cache_dir, dataset=args.dataset, fold=args.fold,
                          test=(x_test, y_test))
     model.fit(x_train, y_train)
+    return model, learner_cls, x_train, y_train, x_test, y_test, t0
+
+
+def run_one(args: argparse.Namespace) -> dict:
+    import numpy as np
+    import torch
+
+    from multabench.ours.variants import engine_version
+    from multabench.utils.hardware import get_hardware_dict
+
+    model, learner_cls, x_train, y_train, x_test, y_test, t0 = fit_learner(args)
+    device = args._device
     t_fit = time.time() - t0
     metrics = model.score_all_metrics(X=x_test, y=y_test)
     runtime = time.time() - t0

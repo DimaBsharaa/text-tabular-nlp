@@ -190,6 +190,9 @@ class OursTextMixin:
                       cat_cols=sorted(self.categorical_features), is_cls=self.is_cls, extra=extra, cfg=self.ours_cfg,
                       device=self.device, cache_root=self.ours_cache_dir, dataset=self.ours_dataset, fold=self.ours_fold)
             if self.ours_variant in STACK_METHODS:
+                # kept for inference on new rows (multabench/ours/inference.py); not used by fit/score
+                self.ours_stack_inputs = {k: kw[k] for k in ("x_fit", "y_fit", "text_cols", "struct_cols", "cat_cols",
+                                                             "is_cls")}
                 self.stack_result = run_stacking(self.ours_variant, **kw)
                 self.tar_result = self.stack_result.embedding_result
             else:
@@ -260,6 +263,22 @@ def _upstream_learners() -> Dict[str, Type[TabularModel]]:
 LEARNER_NAMES = ("catboost", "lgbm", "tabm", "tabpfnv2", "tabpfnv2p5")
 
 
+_LEARNER_CLASSES: Dict[str, Type[TabularModel]] = {}
+
+
 def make_learner(name: str) -> Type[TabularModel]:
-    base = _upstream_learners()[name]
-    return type(f"Ours{base.__name__}", (OursTextMixin, base), {})
+    """Our learner class for an upstream learner name. One class per name, registered in this module as
+    Ours<UpstreamClass> so fitted models can be pickled (scripts/train.py) and loaded in a fresh process."""
+    if name not in _LEARNER_CLASSES:
+        base = _upstream_learners()[name]
+        cls = type(f"Ours{base.__name__}", (OursTextMixin, base), {"__module__": __name__})
+        globals()[cls.__name__] = _LEARNER_CLASSES[name] = cls
+    return _LEARNER_CLASSES[name]
+
+
+def __getattr__(attr: str):
+    """Unpickling a saved model looks up multabench.ours.learners.Ours<UpstreamClass>: build it on demand."""
+    for name, base in _upstream_learners().items():
+        if attr == f"Ours{base.__name__}":
+            return make_learner(name)
+    raise AttributeError(f"module {__name__!r} has no attribute {attr!r}")

@@ -7,6 +7,34 @@
 > code is theirs and is kept unmodified; our additions for the Technion 097215 NLP final project
 > (Track 1: Algorithm, text-tabular) live in `multabench/ours/`.
 
+## Our method: Cross-fitted Text Experts (CTE) — quickstart
+
+CTE adds no fine-tuning. For each text-tabular dataset, the learner (CatBoost) gets the structured columns, frozen
+e5-small-v2 PCA-30 per text column, and **cross-fitted (out-of-fold) predictions of cheap text experts**: a TF-IDF +
+Ridge lexical expert on all text columns, and a k-nearest-neighbour expert in the frozen embedding space. It also
+gets label-free numeracy features. Code: `multabench/ours/cte.py`. Pre-registration and every result:
+`PROGRESS.md`. Paper notes: `docs/paper_notes.md`.
+
+```bash
+uv sync --frozen                          # Python 3.11 env from pyproject.toml + uv.lock (or: source init.sh)
+cp .env.example .env                      # then fill in KAGGLE_USERNAME / KAGGLE_KEY yourself (datasets download)
+
+# train on one dataset + fold (any MulTaBench text dataset id) -> model.joblib + metrics.json (test score of the fold)
+.venv/bin/python scripts/train.py --dataset REG_TEXT_BOOK_PRICE --fold 0 --out_dir models/book_price_f0
+
+# predict on new rows (a CSV with the same feature columns; a target column, if present, is ignored)
+.venv/bin/python scripts/predict.py --model_dir models/book_price_f0 --csv new_rows.csv --out predictions.csv
+
+# reproduce the reports from a results folder (one JSON per method/learner/dataset/fold)
+.venv/bin/python scripts/run_experiment.py --jobs_file jobs/cte_full.txt --out results_cte   # the full run (GPU advised)
+.venv/bin/python scripts/cte_report.py --out results_cte          # claim C2 (+ subsets, LightGBM, ablations)
+.venv/bin/python scripts/p6_report.py --out results_cte           # claim C3 (P6), after jobs/p6_secondary.txt
+.venv/bin/python scripts/build_analysis_notebook.py --execute     # notebooks/project_analysis.ipynb + reports/figures
+```
+
+Colab: `notebooks/colab_run.ipynb` runs a jobs file with results on Google Drive. Tests:
+`.venv/bin/python -m pytest tests`.
+
 ---
 
 # MulTaBench

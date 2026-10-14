@@ -1,5 +1,10 @@
 """P5 (PROGRESS.md): cheap label-aware text "experts" whose out-of-fold predictions are stacked as learner features.
 
+LEGACY (P5 v1, engine experts/1; superseded by P5 v2 = multabench/ours/cte.py, never run as a claim): LexicalExpert,
+NeighbourExpert and compute_expert_features below implement P5 v1 only (used by stacking.run_experts). CTE (cte/3)
+and P6 use only the shared helpers from this module: ExpertConfig, expert_folds, rank_gauss, cached_expert_features,
+ALL_COLS and SEED.
+
 Experts, per text column AND on all text columns concatenated ("__all__"):
 - lexical:   TF-IDF word 1-2-grams + char_wb 3-5-grams (sublinear_tf, min_df=2, capped vocabularies), then RidgeCV
              (regression) or LogisticRegression whose C is chosen by an inner 3-fold CV on the training rows (cls);
@@ -73,6 +78,7 @@ def _cls_output(p_full: np.ndarray, n_classes: int) -> np.ndarray:
 # ---------------------------------------------------------------------------------------- experts
 
 class LexicalExpert:
+    """LEGACY P5 v1 (experts/1). CTE uses cte.tfidf_matrices / cte.ridge_fit instead."""
     def __init__(self, is_cls: bool, n_classes: int, cfg: ExpertConfig):
         self.is_cls, self.n_classes, self.cfg = is_cls, n_classes, cfg
         self.C = None  # chosen once on the full pool (inner CV), then reused for every out-of-fold fit
@@ -138,6 +144,7 @@ class LexicalExpert:
 
 
 class NeighbourExpert:
+    """LEGACY P5 v1 (experts/1). CTE uses cte.knn_topk / cte.neighbour_average instead."""
     def __init__(self, is_cls: bool, n_classes: int, cfg: ExpertConfig):
         self.is_cls, self.n_classes, self.cfg = is_cls, n_classes, cfg
 
@@ -180,7 +187,8 @@ def compute_expert_features(texts: Dict[str, list[str]], embs: Optional[Dict[str
                             is_cls: bool, n_classes: int, extra_texts: Dict[str, Dict[str, list[str]]],
                             extra_embs: Optional[Dict[str, Dict[str, np.ndarray]]], experts: tuple[str, ...],
                             mode: str, cfg: ExpertConfig, n_jobs: int = 1) -> Dict[str, Dict[str, np.ndarray]]:
-    """{split: {feature_name: (n_rows, k)}} for split in {"pool", *extras}. texts / embs per text column; the
+    """LEGACY P5 v1 (experts/1); CTE uses cte.compute_cte_features.
+    {split: {feature_name: (n_rows, k)}} for split in {"pool", *extras}. texts / embs per text column; the
     concatenated "__all__" view is built here. y: int class ids (cls) or floats (reg) for the pool rows.
     n_jobs > 1 runs the lexical views in parallel processes (independent fits, identical results)."""
     assert mode in ("oof", "insample")

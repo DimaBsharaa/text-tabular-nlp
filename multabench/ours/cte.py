@@ -1,12 +1,21 @@
-"""P5 v2 (PROGRESS.md, amendment 1): Cross-fitted Text Experts (CTE) — no fine-tuning. Engine cte/2.
+"""P5 v2 (PROGRESS.md, amendments 1+2): Cross-fitted Text Experts (CTE) — no fine-tuning. Engine cte/3.
 
 Learner features = structured columns + frozen e5-small-v2 PCA-30 per text column (PCA fit on training rows, in the
 learner) + cross-fitted expert predictions + target-free numeracy / form features per text column:
-  lexical expert   : on all text columns concatenated. TF-IDF (word 1-2 + char_wb 3-5, 50k each) fit ONCE on the
-                     learner's training rows (target-free), then one fixed Ridge(alpha=1, sparse_cg) per fit on the
-                     rank-Gaussian y (regression) or on one-hot class indicators (classification).
-  neighbour expert : per text column + concatenation; k=20 cosine neighbours by matrix product, 1/d weights.
-Frozen embeddings are target-free and cached once per dataset (per unique cell text).
+  lexical expert   : on all text columns concatenated ("col: val | ..."). TF-IDF (word 1-2 + char_wb 3-5, 50k
+                     vocabulary each, sublinear, min_df 2; char on the first 2,000 characters) fit ONCE per job on the
+                     learner's training rows (label-free), then Ridge(sparse_cg) on the rank-Gaussian y (regression)
+                     or on one-hot class indicators (classification). Alpha is chosen from (0.3, 1, 3, 10) by the
+                     5-fold OOF metric on the training rows (AUROC / macro OvR AUROC / Spearman); the chosen alpha's
+                     OOF predictions are the feature.
+  neighbour expert : per text column + concatenation (multiclass: concatenation only); k=20 cosine neighbours by
+                     matrix product of L2-normalised frozen embeddings, 1/d weights.
+  column budget    : regression 1 column; binary 1; 3..10 classes C-1; C > 10 the top-10 training classes' scores +
+                     max probability + entropy (12 columns).
+Pool (training) rows get 5-fold out-of-fold predictions; learner-val / test rows get predictions of experts fitted on
+all training rows. Frozen embeddings are target-free and cached once per dataset (per unique cell text).
+From experts.py, cte/3 uses only ExpertConfig (folds / rank-Gauss settings), expert_folds, rank_gauss,
+cached_expert_features (npz cache), ALL_COLS and SEED; P6 hooks: compute_cte_features(lex_fit=..., residual=...).
 """
 from __future__ import annotations
 
