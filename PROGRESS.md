@@ -58,6 +58,7 @@ Entry template:
 | E26 | 2026-10-15 | packaging: train.py / predict.py, model folder, CPU smoke | PS f0: train 36 s, predict 15 s, round trip exact |
 | P7 / E27 | 2026-10-16 | dev round (training rows only, 6 datasets) | tf_num_lsa +0.018 vs frozen (6/6); cte_probe +0.005 vs CTE (5/6) |
 | P8 | 2026-10-16 | C4 (label-free tf_num_lsa vs Joint Frozen) + C5 (cte_probe vs Joint TAR), Holm over 2; approved | jobs/p8_B.txt then jobs/p8_A.txt |
+| E28 | 2026-10-17 | P8 part B (195 jobs, A100) | **C4 passes**: +0.0129 vs Joint Frozen, 18/20, p = 1.9e-5; no environment effect (p = 0.47) |
 
 ---
 
@@ -1284,3 +1285,29 @@ Features for the learner = structured columns (upstream preprocessing)
 - **APPROVED by Dima (2026-10-16), before any P8 run or result: P8 (C4, C5, Holm over the two, the secondaries and
   the run plan above) is now binding.** Order: part B (`jobs/p8_B.txt`) first, then part A (`jobs/p8_A.txt`), in two
   separate Colab sessions.
+
+## E28 — P8 part B: claim C4 PASSES (label-free tf_num_lsa vs Joint Frozen)   (2026-10-16/17, Colab A100)
+- **Data:** `results_export_20261015_170344.zip`: `tf_num_lsa` 100/100 and `frozen0` 95/95, all at c82596a (clean),
+  A100-SXM4-40GB, 2 threads per job, no process_errors and no timeouts. Analysis script committed before the export was
+  opened (872f659): `python scripts/p8_report.py --out <export>/results` → `reports/p8/p8_report.json`.
+- **C4 (CatBoost tf_num_lsa vs leaderboard Joint Frozen, 20 datasets, two-sided Wilcoxon):** mean **+0.0129**,
+  CI [+0.0060, +0.0218], **p = 1.9e-5**, wins **18/20** → **PASSES**. The Holm-adjusted p is ≤ 3.8e-5 whatever C5
+  gives, so C4's verdict is final.
+- **Environment control (19 datasets, no Spotify):**
+  - our `frozen0` vs leaderboard Joint Frozen: **+0.0015, p = 0.47**, 9/19, so no systematic environment effect;
+  - `tf_num_lsa` vs our `frozen0`: **+0.0119, p = 3.8e-5**, 17/19, so the gain is the method's.
+- **Descriptive:** `tf_num_lsa` vs Joint TAR −0.0076 (5/20). Label-free features do not reach TAR, which is expected
+  (Jigsaw −0.108).
+- **Per dataset (vs leaderboard Joint Frozen):** only Women Clothing −0.0009 and Product Sentiment −0.0006 are below.
+  The largest gains are Video Games +0.076, Rotten Tomatoes +0.052, Babies +0.021, Book Price +0.015 and Fake Job
+  +0.015.
+- **Hostile review:**
+  - *Label-free:* numeracy, TF-IDF/LSA and PCA use no labels and are fitted on training rows only (p7 tests).
+  - *Splits:* n_train / n_test are identical to the CTE run.
+  - *Environment:* the control shows no overall effect, but **Video Games** is an outlier. Our frozen0 is +0.039 above
+    the leaderboard's Joint Frozen there, so half of that dataset's C4 gain is environment. Post-hoc robustness
+    without Video Games: +0.0096, 17/19, p = 3.8e-5 (vs our frozen: +0.0105, 16/18, p = 4.2e-4). The conclusion
+    does not depend on it.
+  - *Disclosure:* the variant was chosen on dev splits (E27), and the numeracy-vs-frozen observation was post hoc (P7).
+- **Runtime:** tf_num_lsa 19.6 slot-hours, frozen0 4.7 slot-hours (about 3.8 h wall, as estimated).
+- **Next:** part A (`jobs/p8_A.txt`, cte_probe, claim C5), approved.
