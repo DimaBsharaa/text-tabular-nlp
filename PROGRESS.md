@@ -56,6 +56,8 @@ Entry template:
 | P6 am. 2 | 2026-10-15 | native-text variants dropped (runtime); C3 = cte_nb + cte_residual, Holm over 2 | decided before any cte_plus_native result |
 | E25 | 2026-10-15 | P6 results (200 jobs) | **C3 fails**: cte_nb Holm p = 0.097, cte_residual Holm p = 0.097; held-out 13 passes both |
 | E26 | 2026-10-15 | packaging: train.py / predict.py, model folder, CPU smoke | PS f0: train 36 s, predict 15 s, round trip exact |
+| P7 / E27 | 2026-10-16 | dev round (training rows only, 6 datasets) | tf_num_lsa +0.018 vs frozen (6/6); cte_probe +0.005 vs CTE (5/6) |
+| P8 | 2026-10-16 | C4 (label-free tf_num_lsa vs Joint Frozen) + C5 (cte_probe vs Joint TAR), Holm over 2; approved | jobs/p8_B.txt then jobs/p8_A.txt |
 
 ---
 
@@ -1192,3 +1194,93 @@ Features for the learner = structured columns (upstream preprocessing)
   is one fold's model; it is not used for any claim. `uv lock --check` passes and no dependency changed.
 - **Tests:** `tests/test_train_predict.py` (folder contents, fresh-process round trip, exact feature reproduction, CSV
   mode).
+
+## P7 — Development round to improve CTE (exploration protocol; written 2026-10-16, BEFORE any P7 code or run)
+- **Goal (Dima):** improve the results with cheap methods (verbalization, extra experts, no long fine-tuning), tested
+  on a few datasets first. C2 and C3 stay as reported; anything from P7 is a new claim that must be pre-registered
+  before its full run.
+- **Post-hoc observation that motivates one direction (not a claim; computed 2026-10-16 from E24 results):** the
+  label-free ablation `cte_num` (frozen PCA + numeracy) vs leaderboard Joint Frozen: +0.0096, 19/20 wins, Wilcoxon
+  p < 1e-4. Two caveats: it was not pre-registered, and part of the gain may be our environment, not the method
+  (E1: our frozen Book Price fold 0 was 0.5602 vs the leaderboard's 0.5551). A label-free claim therefore needs our
+  own Joint Frozen run as a control.
+- **Dev protocol (test rows never used):** per dataset, fold 0's training rows only (upstream split) are split 80/20
+  (stratified for classification) into dev-train / dev-test, seeds 0 and 1. The learner (CatBoost, upstream defaults)
+  is fit on dev-train and scored on dev-test with the benchmark metric. Label-free variants are compared with our own
+  frozen baseline (`frozen0`); label-aware variants with `cte`. Expert cache keys use fold = 100 + seed, so nothing
+  mixes with real folds.
+- **Dev datasets:** Jigsaw, Kickstarter (binary), Product Sentiment (multiclass), Book Price, Baby Products, Video Games
+  (regression). These cover CTE's biggest loss (Jigsaw), a regression loss (Video Games) and wins.
+- **Candidates (engine p7/1, `multabench/ours/p7.py`):**
+  - Label-free: `frozen0` (control = our Joint Frozen); `tf_num` (+ numeracy); `tf_lsa` (+ 30 LSA components:
+    TF-IDF word + char of all text columns → TruncatedSVD, fit on training rows); `tf_row` (+ PCA-30 of a frozen e5
+    embedding of the verbalized full row "col: val | ...", text + structured); combinations.
+  - Label-aware (on top of `cte`): `cte_probe` (+ a cross-fitted linear probe: Ridge on the full 384-d frozen
+    embeddings of every text column, alpha by training-row OOF metric, the same machinery as the lexical expert);
+    `cte_rowlex` (+ a cross-fitted lexical expert on the verbalized full row: text tokens + structured tokens, i.e.
+    numeric deciles and categorical values); combinations.
+- **Budget:** each job's runtime is measured; the dev sweep stays under 1 hour of laptop CPU (rule 9). Any full run
+  needs Dima's approval with a measured estimate.
+
+## E27 — P7 dev sweep: LSA + numeracy (label-free) and the linear probe (label-aware) help; verbalized-row embedding does not   (2026-10-16, laptop CPU)
+- **Command:** `python scripts/dev_eval.py --datasets <6 dev datasets> --methods frozen0 tf_num tf_lsa tf_row
+  tf_num_lsa tf_all cte cte_probe cte_rowlex cte_lsa_row cte_probe_rowlex cte_all --seeds 0 1
+  --out .explore/dev/results.csv` (protocol in P7: dev splits of fold 0's training rows; test rows never used).
+- **Runtime: 144 jobs, 99 min of CPU.** That was **over the 1-hour rule**: the estimate (45–55 min, from Product
+  Sentiment) missed the slower CatBoost fits (Kickstarter, Video Games) and the one-time CPU encoding. Claude should
+  have stopped at 1 h. From now on, long sweeps are checked at the 1-hour mark.
+- **Results (mean over 2 seeds, difference vs baseline, per dataset: Babies / Book Price / Jigsaw / Kickstarter /
+  Product Sentiment / Video Games):**
+  - label-free vs our frozen (`frozen0`):
+    - `tf_num` +0.0088 (6/6);
+    - `tf_lsa` +0.0163 (6/6);
+    - `tf_row` +0.0007 (3/6);
+    - **`tf_num_lsa` +0.0184 (6/6: +0.026 / +0.026 / +0.003 / +0.017 / +0.016 / +0.022)**;
+    - `tf_all` +0.0121 (4/6; adding the row embedding hurts);
+    - for reference, `cte` − `frozen0` = +0.0305 (6/6).
+  - label-aware vs `cte`:
+    - **`cte_probe` +0.0049 (5/6: −0.005 / +0.006 / +0.018 / +0.004 / +0.005 / +0.001)**;
+    - `cte_rowlex` +0.0022 (4/6);
+    - `cte_lsa_row` +0.0019 (4/6);
+    - `cte_probe_rowlex` +0.0047 (5/6, Video Games −0.007);
+    - `cte_all` +0.0030 (5/6, Video Games −0.017).
+- **Conclusions:**
+  - Label-free LSA + numeracy recovers about 60% of CTE's gain over frozen without using labels.
+  - The cross-fitted linear probe on the full 384-d frozen embeddings is the one label-aware addition that helps
+    consistently, most on Jigsaw (CTE's worst dataset vs TAR), as the "PCA keeps variance, not target signal"
+    argument predicts.
+  - The verbalized-row e5 embedding does not help (frozen e5 is not trained on "col: val" rows).
+  - Dev noise is about ±0.005 per dataset, so the +0.005 probe gain is suggestive, not established.
+- **Hostile review:**
+  - Dev splits come from training rows only (the test split is discarded in `load_train_rows`), and expert caches use
+    dev fold ids (100 + seed).
+  - The 6 dev datasets are among the 20 of any later claim.
+  - All 20 datasets' test results were already seen (C2, C3), and the numeracy-vs-frozen observation was post hoc
+    (P7). Both are disclosed in the P8 proposal.
+- **Next:** P8 proposal (below), awaiting Dima's approval; measured Colab estimate from E24 job times.
+
+## P8 — PROPOSED pre-registration (2026-10-16). Becomes binding when Dima approves the run, before any P8 result.
+- **C4 (label-free; the course's criterion for methods that do not use y):** `tf_num_lsa` (CatBoost: frozen e5
+  PCA-30 per text column + numeracy features + 30 LSA components of TF-IDF word + char of all text columns; no label
+  used) vs leaderboard **Joint Frozen** (`all`, CatBoost), 20 datasets, folds 0–4, fold-averaged differences,
+  two-sided Wilcoxon. Pass = p < 0.05 and positive mean.
+  - *Environment control (secondary):* `tf_num_lsa` vs our own `frozen0` (our Joint Frozen) on the 19 datasets
+    without Spotify Genres (its CatBoost alone would add ≈ 10 slot-hours).
+  - *Descriptive:* `tf_num_lsa` vs Joint TAR.
+- **C5 (label-aware):** `cte_probe` (CTE + cross-fitted linear probe on the full frozen embeddings; alpha from
+  (0.3, 1, 3, 10) by the training-row OOF metric) vs leaderboard **Joint TAR** (`ft`, CatBoost), 20 datasets, the same
+  test. Pass = p < 0.05 and positive mean.
+  - *Secondary:* the held-out 13 (C2_heldout13 list); `cte_probe` vs our `cte` (paired).
+- **Multiplicity:** Holm over {C4, C5}. C2 and C3 stay as reported; C4 and C5 never replace them.
+- **Disclosure:** the variants were chosen on dev splits of the training rows of 6 of the 20 datasets (E27). All 20
+  datasets' test results of earlier methods were seen before this proposal; `cte_num` vs Joint Frozen was computed
+  post hoc (P7).
+- **Run plan (estimated from E24's measured job times, 6 slots × 2 threads, longest jobs first):**
+  - `jobs/p8_A.txt`: `cte_probe` × 100, ≈ 21 slot-hours, **≈ 3.6 h wall**.
+  - `jobs/p8_B.txt`: `tf_num_lsa` × 100 + `frozen0` × 95, ≈ 23 slot-hours, **≈ 3.8 h wall**.
+  - Each part needs Dima's approval (rule 9). Results root `results_cte` (the CTE caches are reused).
+- **Runner setting for P8 (execution only):** `--job_timeout_min 240` (EXTRA_ARGS on Colab). The 30-min default
+  (P6 amendment 2) would kill the Spotify jobs, which took up to 152 min in E24.
+- **APPROVED by Dima (2026-10-16), before any P8 run or result: P8 (C4, C5, Holm over the two, the secondaries and
+  the run plan above) is now binding.** Order: part B (`jobs/p8_B.txt`) first, then part A (`jobs/p8_A.txt`), in two
+  separate Colab sessions.

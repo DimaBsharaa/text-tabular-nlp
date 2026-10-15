@@ -45,6 +45,9 @@ def engine_version(method: str) -> str:
         return "experts/1"
     if method in {"cte", "cte_lex", "cte_nbr", "cte_num", "cte_lex_insample"}:  # multabench/ours/cte.py
         return "cte/3"  # P5 v2 amendments 1+2 (cte/1 = original, cte/2 = amendment 1 only)
+    from multabench.ours.p7 import P7_METHODS, P7_VERSION
+    if method in P7_METHODS:  # multabench/ours/p7.py
+        return P7_VERSION
     if method in {"catboost_native_text", "cte_plus_native", "cte_nb", "cte_residual"}:  # multabench/ours/p6.py
         from multabench.ours.p6 import P6_ENGINE
         return P6_ENGINE[method]  # p6/3 for the native-text methods (amendment 2), p6/2 for cte_nb / cte_residual

@@ -34,7 +34,9 @@ METHODS = ("tar_repro", "offset", "prefix", "prefix_offset", "context", "context
            "insample_pred", "xfit_pred", "frozen_xfit_pred", "xfit_offset_pred",
            "tar_experts", "frozen_experts", "tar_experts_lex", "tar_experts_nbr", "tar_experts_lex_insample",
            "cte", "cte_lex", "cte_nbr", "cte_num", "cte_lex_insample",
-           "catboost_native_text", "cte_plus_native", "cte_nb", "cte_residual")  # P6 (exploratory, CatBoost)  # see docs/method_spec.md; more variants are added as they are built
+           "catboost_native_text", "cte_plus_native", "cte_nb", "cte_residual",  # P6 (exploratory, CatBoost)
+           "frozen0", "tf_num", "tf_lsa", "tf_row", "tf_num_lsa", "tf_all",  # P7 label-free
+           "cte_probe", "cte_rowlex", "cte_lsa_row", "cte_probe_rowlex", "cte_all")  # P7 label-aware  # see docs/method_spec.md; more variants are added as they are built
 DEFAULTS = {"train_examples": 10_000, "epochs": 50, "seed": 42}
 COMPANIONS = {"xfit_pred": ["frozen_xfit_pred"]}  # P3: written by the same job (shares the fold fine-tunes)
 SUFFIX = {"epochs": "ep", "train_examples": "n", "seed": "s"}
@@ -270,8 +272,8 @@ def parallel_plan(args: argparse.Namespace, jobs: list) -> tuple[int, dict]:
     cores // n threads so the cores are not oversubscribed."""
     cores = os.cpu_count() or 1
     if args.parallel_jobs == "auto":
-        n = max(1, cores // 2) if jobs and all(j[0].startswith("cte") or j[0] == "catboost_native_text"
-                                               for j in jobs) else 1
+        cpu_bound = lambda m: m.startswith(("cte", "tf_")) or m in ("catboost_native_text", "frozen0")
+        n = max(1, cores // 2) if jobs and all(cpu_bound(j[0]) for j in jobs) else 1
     else:
         n = max(1, int(args.parallel_jobs))
     if n == 1:
