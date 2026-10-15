@@ -60,6 +60,7 @@ Entry template:
 | P8 | 2026-10-16 | C4 (label-free tf_num_lsa vs Joint Frozen) + C5 (cte_probe vs Joint TAR), Holm over 2; approved | jobs/p8_B.txt then jobs/p8_A.txt |
 | E28 | 2026-10-16 | P8 part B (195 jobs, A100) | **C4 passes**: +0.0129 vs Joint Frozen, 18/20, p = 1.9e-5; no environment effect (p = 0.47) |
 | E29 | 2026-10-16 | P8 part A (100 jobs, A100) | **C5 passes**: cte_probe +0.0141 vs Joint TAR, 15/20, p = 0.0023 (Holm 0.0023) |
+| P9 / E30 | 2026-10-16 | dev round 2 (partial, 31 jobs; RFF memory bug fixed) | avg / rep3 / prompt do not help; NB lexical +0.014 on Jigsaw |
 
 ---
 
@@ -1339,3 +1340,49 @@ Features for the learner = structured columns (upstream preprocessing)
 - **Conclusion:** with a cross-fitted linear probe on the full frozen embeddings added to CTE, the label-aware method
   significantly beats Joint TAR (C5), and the label-free variant significantly beats Joint Frozen (C4). Both without
   fine-tuning.
+
+## P9 — Development round 2 on top of cte_probe (exploration protocol; written 2026-10-16, BEFORE any P9 code or run)
+- **Goal (Dima):** fewer datasets below Joint TAR than C5's 15/20, with more interesting method ideas. C1–C5 stay as
+  reported; any P9 result is a new claim that must be pre-registered before its full run. Honest framing: 4 of C5's 5
+  losses are −0.001 to −0.002 (within seed noise); the real gap is Jigsaw (−0.015).
+- **Protocol:** as P7 (dev splits of fold 0's training rows, seeds 0 and 1, test rows never used), on the 6 P7 dev
+  datasets. The baseline is `p9_base`, a re-implementation of `cte_probe` inside the new module; a test checks that it
+  reproduces cte_probe's features.
+- **Candidates (engine p9/1, `multabench/ours/p9.py`):**
+  1. `p9_avg`: **consistent cross-fitting.** Val/test predictions of every label-aware expert are the average of the 5
+     fold models (the same models that made the training rows' OOF predictions), not a refit on all training rows.
+     This removes the train/test strength mismatch of the stacked features.
+  2. `p9_rep3`: **repeated cross-fitting.** OOF predictions averaged over 3 fold splits (fold seeds 42, 43, 44).
+  3. `p9_prompt`: **task-aware prompting of the frozen encoder.** Each cell is also encoded as
+     "passage: predict <target name> | <col>: <val>" (the target's name, never its values), with a cross-fitted
+     probe and kNN on that view.
+  4. `p9_rff`: **nonlinear probe.** Random Fourier features (RBF kernel approximation, 2,048 features, gamma from the
+     training rows' median distance) of the frozen embeddings → cross-fitted Ridge.
+  5. `p9_nb`: NB-weighted lexical expert (as cte_nb) for classification, plus the probe.
+- **Budget:** each job is measured; the sweep is sized to stay under 1 hour of laptop CPU, checked at the 1-hour
+  mark (rule 9).
+
+## E30 — P9 dev round 2 (partial): consistent / repeated cross-fitting and task prompting do not help; NB lexical helps Jigsaw   (2026-10-16, laptop CPU)
+- **Commands:** `scripts/dev_eval.py ... --methods p9_base p9_avg p9_rep3 p9_prompt p9_rff p9_nb --seeds 0 1` with a hard
+  `timeout 3600`, then `--methods p9_base p9_nb p9_rff` with `timeout 2400`. Results: `.explore/dev/results_p9.csv`
+  (copied to `reports/dev/p9_dev_results.csv`).
+- **Both runs hit their hard stops (60 + 40 min); 31 jobs finished.**
+  - Run 1: CPU encoding of the prompted texts was far slower than estimated.
+  - Run 2: **a bug** in the RFF kernel-width heuristic built an (n, n, d) array (≈ 9 GB for Kickstarter's 3 text
+    columns on a 7.5 GB laptop) and swapped for the whole run. Fixed with a memory-light distance computation;
+    `tests/test_p9.py::test_rff_gamma_memory_light`, peak ≈ 25 MB.
+- **Sanity:** `p9_base` reproduces `cte_probe` exactly (synthetic test to 1e-9; real data PS seed 0: 0.9017 = cte_probe's
+  0.9017 in E27).
+- **Results vs p9_base (= cte_probe), dev splits of training rows; 3 datasets finished (Book Price, Jigsaw, PS):**
+  - `p9_avg` (consistent cross-fitting) −0.0023 (0/3): averaged fold models for val/test are worse than a refit on
+    all rows, so the slightly stronger test-time experts help CatBoost more than the train/test mismatch hurts.
+  - `p9_rep3` −0.0006 (Book Price −0.010).
+  - `p9_prompt` (target name in the e5 passage) +0.0010 (Jigsaw +0.006, Book Price −0.007), and expensive.
+  - `p9_rff` +0.0019 (2 datasets only).
+  - `p9_nb` +0.0056 on classification (Jigsaw +0.0135, Kickstarter −0.0015, PS +0.0013). Regression is identical to
+    p9_base by construction.
+- **Hostile review / caveats:**
+  - Only 3 of the 6 dev datasets finished (2 seeds for some pairs), so this is weak evidence.
+  - NB's Jigsaw benefit was also visible in C3's **test** results (cte_nb, E25), so choosing NB now is informed by
+    test data. This must be disclosed if it is ever claimed.
+- **Next:** Dima to decide. No further runs without approval (≈ 1 h 40 min of CPU used in this round).

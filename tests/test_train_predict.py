@@ -40,8 +40,10 @@ def test_model_folder_and_metrics(trained):
     out, m = trained
     assert FOLDER_FILES <= {p.name for p in out.iterdir()}
     meta = json.load(open(out / "meta.json"))
-    assert meta["format"] == "cte_model/1" and meta["engine_version"] == "cte/3" and meta["alpha"] in (0.3, 1.0, 3.0, 10.0)
-    assert m["method"] == "cte" and 0 <= m["score"] <= 1 and m["n_train"] == 300 and m["leaderboard_same_fold"]
+    assert meta["format"] == "cte_model/1" and meta["method"] == "cte_probe" and meta["engine_version"] == "p7/1"
+    assert meta["alpha"] in (0.3, 1.0, 3.0, 10.0) and meta["probe_alpha"] in (0.3, 1.0, 3.0, 10.0)
+    assert (out / "probe.joblib").exists()
+    assert m["method"] == "cte_probe" and 0 <= m["score"] <= 1 and m["n_train"] == 300 and m["leaderboard_same_fold"]
 
 
 def test_round_trip_predict_matches_fit_time(trained, tmp_path):
@@ -59,12 +61,13 @@ def test_round_trip_predict_matches_fit_time(trained, tmp_path):
     assert np.allclose(pred.to_numpy(), ref.to_numpy(), atol=1e-6)
 
 
-def test_packaged_featurizer_reproduces_fit_time_features():
-    """The saved full-pool experts give the test rows exactly the CTE features run_cte gave them at fit time."""
+@pytest.mark.parametrize("method", ["cte", "cte_probe"])
+def test_packaged_featurizer_reproduces_fit_time_features(method):
+    """The saved full-pool experts give the test rows exactly the features run_cte / run_p7 gave them at fit time."""
     import run_experiment as rx
     from multabench.ours import tar_engine as te
     from multabench.ours.cte_model import CTEFeaturizer
-    args = argparse.Namespace(dataset=DATASET, fold=0, method="cte", learner="catboost", seed=42, train_examples=300,
+    args = argparse.Namespace(dataset=DATASET, fold=0, method=method, learner="catboost", seed=42, train_examples=300,
                               epochs=50, no_fast=False, micro_batch_size=256, lower_cache_dir=None, cache_dir=None)
     try:
         model, _, _, _, x_test, _, _ = rx.fit_learner(args)

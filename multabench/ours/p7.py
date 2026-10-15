@@ -40,7 +40,10 @@ P7_METHODS = {  # method -> (start from cte?, extra groups)
     "cte_lsa_row": (True, ("lsa", "row")),
     "cte_probe_rowlex": (True, ("probe", "rowlex")),
     "cte_all": (True, ("probe", "rowlex", "lsa", "row")),
+    "frozen0_query": (False, ()),           # P9 "query:" prefix (label-free): our Joint Frozen with e5's feature prefix
+    "tf_num_lsa_query": (False, ("num", "lsa")),
 }
+QUERY_METHODS = {"frozen0_query", "tf_num_lsa_query"}
 N_COMPONENTS = 30
 SEED = 42
 
@@ -138,7 +141,8 @@ def run_p7(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], s
         diag["cte"] = {k: base.diagnostics.get(k) for k in ("lex_alpha", "expert_cache_hits", "seconds")}
     else:
         frozen, stats = cte.frozen_embeddings_cached([x[text_cols] for x in splits.values()], text_cols, cfg, device,
-                                                     cache_root, dataset)
+                                                     cache_root, dataset,
+                                                     prefix="query: " if method in QUERY_METHODS else "passage: ")
         features = {c: DataFrame(index=all_rows) for c in text_cols}
         diag["frozen_embedding_cache"] = stats
     diag["seconds"]["base"] = round(time.time() - t0, 1)

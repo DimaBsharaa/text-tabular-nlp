@@ -1,4 +1,5 @@
-"""Train our method (CTE + CatBoost, engine cte/3) end to end and save a model folder. No fine-tuning.
+"""Train our method (default: cte_probe = CTE + cross-fitted linear probe, + CatBoost; claim C5) end to end and save
+a model folder. No fine-tuning. `--method cte` gives plain CTE (claim C2).
 
 MulTaBench dataset + fold (same loading, split and code as the benchmark runs, scripts/run_experiment.py):
     python scripts/train.py --dataset REG_TEXT_BOOK_PRICE --fold 0 --out_dir models/book_price_f0
@@ -62,7 +63,7 @@ def fit_csv(a, args):
     model = make_learner("catboost")(problem_type=problem, device=device, verbose=False, tune_e5=False,
                                      pca_components=30, no_pca=False)
     cfg = TarConfig(seed=args.seed, eval_batch_size=256 if device.type == "cuda" else 16)
-    model.configure_ours(variant="cte", cfg=cfg, cache_dir=args.cache_dir, dataset=args.dataset, fold=args.fold,
+    model.configure_ours(variant=args.method, cfg=cfg, cache_dir=args.cache_dir, dataset=args.dataset, fold=args.fold,
                          test=(x_test, y_test))
     model.fit(x_train, y_train)
     return model, type(model), x_train, y_train, x_test, y_test, t0
@@ -79,6 +80,7 @@ def main(argv=None) -> dict:
     src.add_argument("--csv", help="a CSV file with feature columns and a target column")
     p.add_argument("--target", help="--csv: name of the target column")
     p.add_argument("--task", default="auto", choices=("auto", "binary", "multiclass", "regression"))
+    p.add_argument("--method", default="cte_probe", choices=("cte_probe", "cte"))
     p.add_argument("--fold", type=int, default=0, help="which of the 5 benchmark splits (test rows) to hold out")
     p.add_argument("--out_dir", required=True)
     p.add_argument("--cache_dir", default=None, help="frozen-embedding / expert cache (default <out_dir>/_cache)")
@@ -89,7 +91,7 @@ def main(argv=None) -> dict:
         p.error("--csv needs --target")
     os.makedirs(a.out_dir, exist_ok=True)
     name = a.dataset or "CSV_" + splitext(basename(a.csv))[0]
-    args = argparse.Namespace(dataset=name, fold=a.fold, method="cte", learner="catboost", seed=a.seed,
+    args = argparse.Namespace(dataset=name, fold=a.fold, method=a.method, learner="catboost", seed=a.seed,
                               train_examples=a.train_examples, epochs=rx.DEFAULTS["epochs"], no_fast=False,
                               micro_batch_size=256, lower_cache_dir=None,
                               cache_dir=a.cache_dir or join(a.out_dir, "_cache"))
@@ -99,7 +101,7 @@ def main(argv=None) -> dict:
     fit_time_pred = np.asarray(model.predict(x_test))
     ref = rx.reference_scores(a.dataset, learner_cls.MODEL_NAME, a.fold) if a.dataset else {}
     feature_columns = [str(c) for c in x_train.columns]
-    out = {"source": a.dataset or a.csv, "target": a.target, "fold": a.fold, "method": "cte", "learner": "catboost",
+    out = {"source": a.dataset or a.csv, "target": a.target, "fold": a.fold, "method": a.method, "learner": "catboost",
            "task": "classification" if model.is_cls else "regression", "score": float(metrics.score),
            "metric": "AUROC (binary) / macro one-vs-rest AUROC (multiclass) / R2 (regression)",
            "metrics": json.loads(json.dumps(asdict(metrics), default=float)), "leaderboard_same_fold": ref,
@@ -115,7 +117,7 @@ def main(argv=None) -> dict:
         pd.DataFrame({"prediction": fit_time_pred}).to_csv(join(a.out_dir, "test_predictions.csv"), index=False)
     out["seconds_total"] = round(time.time() - t0, 1)
     json.dump(out, open(join(a.out_dir, "metrics.json"), "w"), indent=1)
-    print(f"cte catboost {out['source']} fold {a.fold}: score {out['score']:.4f}"
+    print(f"{a.method} catboost {out['source']} fold {a.fold}: score {out['score']:.4f}"
           + (f" (leaderboard Joint TAR {ref['joint_tar']:.4f})" if ref.get("joint_tar") is not None else "")
           + f" | {out['seconds_total']:.0f} s -> {a.out_dir}")
     return out

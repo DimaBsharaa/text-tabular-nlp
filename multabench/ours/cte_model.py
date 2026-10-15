@@ -10,6 +10,7 @@ Model folder:
   meta.json         task, classes, text columns, raw feature columns, chosen alpha, encoder config, versions
   vectorizers.joblib TF-IDF vectorizers (word 1-2, char_wb 3-5) of the lexical expert
   ridge.joblib      the lexical Ridge (or the constant prediction if there was no vocabulary)
+  probe.joblib      (cte_probe) the linear probe: Ridge on the full frozen embeddings of all text columns
   knn_index.npz     per neighbour view: L2-normalised training-row embeddings + training targets
   pca.joblib        the fitted PCA-30 per text column
   catboost.cbm      the fitted CatBoost model
@@ -37,9 +38,11 @@ FORMAT_VERSION = "cte_model/1"
 class CTEFeaturizer:
     """The full-pool CTE experts (method `cte`, engine cte/3) of one fitted learner."""
 
-    def __init__(self, text_cols, is_cls, classes, top, alpha, vectorizers, ridge, ridge_const, knn, c=cte.CTE_CONFIG):
+    def __init__(self, text_cols, is_cls, classes, top, alpha, vectorizers, ridge, ridge_const, knn, c=cte.CTE_CONFIG,
+                 probe=None, probe_alpha=None):
         self.text_cols, self.is_cls, self.classes, self.top, self.alpha = text_cols, is_cls, classes, top, alpha
         self.vectorizers, self.ridge, self.ridge_const, self.knn, self.c = vectorizers, ridge, ridge_const, knn, c
+        self.probe, self.probe_alpha = probe, probe_alpha  # cte_probe only
 
     @property
     def n_classes(self) -> int:
@@ -48,7 +51,7 @@ class CTEFeaturizer:
     # ------------------------------------------------------------------ fit (mirrors cte.run_cte / compute_cte_features)
     @classmethod
     def from_learner(cls, model) -> "CTEFeaturizer":
-        assert model.ours_variant == "cte", "packaging is implemented for our final method `cte`"
+        assert model.ours_variant in ("cte", "cte_probe"), "packaging is implemented for `cte` and `cte_probe`"
         from scipy.sparse import csr_matrix, hstack
         from sklearn.feature_extraction.text import TfidfVectorizer
         from sklearn.linear_model import Ridge
@@ -63,7 +66,8 @@ class CTEFeaturizer:
             classes, y = [], pd.to_numeric(y_fit).to_numpy(dtype=float)
         n_classes = len(classes) if model.is_cls else 1
         top = cte.top_classes(y, n_classes, c) if model.is_cls else None
-        alpha = float(model.stack_result.diagnostics["lex_alpha"]["chosen"])
+        diag = model.stack_result.diagnostics
+        alpha = float((diag["cte"] if model.ours_variant == "cte_probe" else diag)["lex_alpha"]["chosen"])
         x_t = inp["x_fit"][text_cols]
         texts = {col: te.encoding_texts(x_t, col) for col in text_cols}
         pool = _concat(texts, text_cols)
@@ -85,7 +89,12 @@ class CTEFeaturizer:
         if not (model.is_cls and n_classes > 2):  # amendment 2A: multiclass -> concatenation only
             views = {**{col: embs[col] for col in text_cols}, **views}
         knn = {view: (np.asarray(E, dtype=np.float32), np.asarray(Y, dtype=np.float64)) for view, E in views.items()}
-        return cls(text_cols, model.is_cls, classes, top, alpha, vectorizers, ridge, ridge_const, knn, c)
+        probe = probe_alpha = None
+        if model.ours_variant == "cte_probe":  # the all-training-rows fit p7.xfit_linear uses for val/test rows
+            probe_alpha = float(diag["probe"]["alpha"])
+            probe = Ridge(alpha=probe_alpha, solver="sparse_cg").fit(np.hstack([embs[col] for col in text_cols]), Y)
+        return cls(text_cols, model.is_cls, classes, top, alpha, vectorizers, ridge, ridge_const, knn, c, probe,
+                   probe_alpha)
 
     # ------------------------------------------------------------------ transform
     def transform(self, texts: Dict[str, list[str]], embs: Dict[str, np.ndarray], index,
@@ -107,6 +116,9 @@ class CTEFeaturizer:
             out[f"nbr:{view}"] = feat(cte.neighbour_average(E, Y, new_views[view], c, device))
         for col in self.text_cols:
             out[f"num:{col}"] = cte.numeracy_matrix(texts[col])
+        if self.probe is not None:
+            Pp = np.asarray(self.probe.predict(np.hstack([embs[col] for col in self.text_cols]))).reshape(n, -1)
+            out[f"probe:{ALL_COLS}"] = feat(Pp)
         owner = {col: col for col in self.text_cols} | {ALL_COLS: self.text_cols[0]}
         frames = {}
         for col in self.text_cols:
@@ -126,7 +138,9 @@ class CTEFeaturizer:
         joblib.dump({"ridge": self.ridge, "const": self.ridge_const}, join(folder, "ridge.joblib"), compress=3)
         np.savez_compressed(join(folder, "knn_index.npz"), **{f"{v}|E": E for v, (E, _) in self.knn.items()},
                             **{f"{v}|Y": Y for v, (_, Y) in self.knn.items()})
-        return {"text_cols": self.text_cols, "is_cls": self.is_cls, "classes": self.classes,
+        if self.probe is not None:
+            joblib.dump(self.probe, join(folder, "probe.joblib"), compress=3)
+        return {"text_cols": self.text_cols, "is_cls": self.is_cls, "classes": self.classes, "probe_alpha": self.probe_alpha,
                 "top": None if self.top is None else [int(t) for t in self.top], "alpha": self.alpha,
                 "knn_views": list(self.knn)}
 
@@ -137,8 +151,10 @@ class CTEFeaturizer:
         z = np.load(join(folder, "knn_index.npz"))
         knn = {v: (z[f"{v}|E"], z[f"{v}|Y"]) for v in meta["knn_views"]}
         top = None if meta["top"] is None else np.asarray(meta["top"])
+        probe = joblib.load(join(folder, "probe.joblib")) if meta.get("probe_alpha") is not None else None
         return cls(meta["text_cols"], meta["is_cls"], meta["classes"], top, meta["alpha"],
-                   joblib.load(join(folder, "vectorizers.joblib")), r["ridge"], r["const"], knn)
+                   joblib.load(join(folder, "vectorizers.joblib")), r["ridge"], r["const"], knn, probe=probe,
+                   probe_alpha=meta.get("probe_alpha"))
 
 
 def _analyzers(c):
@@ -157,12 +173,14 @@ def _concat(texts: Dict[str, list[str]], cols: list[str]) -> list[str]:
 # ---------------------------------------------------------------------------------------- whole model folder
 
 def save_model(model, folder: str, extra_meta: Optional[dict] = None) -> None:
-    """Writes the model folder for a fitted `cte` learner (the learner object is stripped of heavy, row-bound parts)."""
+    """Writes the model folder for a fitted `cte` / `cte_probe` learner (the learner object is stripped of heavy, row-bound parts)."""
     import dataclasses
     import joblib
     os.makedirs(folder, exist_ok=True)
     fz = CTEFeaturizer.from_learner(model)
-    meta = {"format": FORMAT_VERSION, "method": "cte", "engine_version": cte.CTE_VERSION, **fz.save(folder),
+    from multabench.ours.variants import engine_version
+    meta = {"format": FORMAT_VERSION, "method": model.ours_variant, "engine_version": engine_version(model.ours_variant),
+            **fz.save(folder),
             "encoder": {k: v for k, v in dataclasses.asdict(model.ours_cfg).items() if k != "lower_cache_dir"},
             **(extra_meta or {})}
     joblib.dump({col: enc.encoder.pca for col, enc in model.text_transformers.items()}, join(folder, "pca.joblib"))

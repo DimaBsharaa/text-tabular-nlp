@@ -154,8 +154,9 @@ def _store_lock(path: Optional[str]):
 
 
 def frozen_embeddings_cached(x_frames: list[DataFrame], text_cols: list[str], cfg: te.TarConfig, device: torch.device,
-                             cache_root: Optional[str], dataset: str) -> tuple[te.TarResult, dict]:
-    """Frozen e5 embeddings ("passage: col: val", L2-normalised mean pool) for every row of x_frames, from a per-dataset
+                             cache_root: Optional[str], dataset: str,
+                             prefix: str = "passage: ") -> tuple[te.TarResult, dict]:
+    """Frozen e5 embeddings ("<prefix>col: val", default "passage: col: val" as upstream; L2-normalised mean pool) for every row of x_frames, from a per-dataset
     cache of unique cell texts (target-free, so shared by all folds / learners / variants); missing texts are encoded
     and added. Numerically the encoder of stacking.frozen_embeddings (= upstream's frozen encoder, tests)."""
     from transformers import AutoTokenizer
@@ -170,7 +171,8 @@ def frozen_embeddings_cached(x_frames: list[DataFrame], text_cols: list[str], cf
         uniq, inverse = np.unique(np.array(raw, dtype=object), return_inverse=True)
         uniq = uniq.tolist()
         hashes = _h64(uniq)
-        path = join(cache_root, "frozen_emb", dataset, cfg.model_name.replace("/", "__"),
+        sub = "" if prefix == "passage: " else hashlib.sha1(prefix.encode()).hexdigest()[:8]  # other prefixes: own store
+        path = join(cache_root, "frozen_emb", dataset, cfg.model_name.replace("/", "__"), *([sub] if sub else []),
                     hashlib.sha1(col.encode()).hexdigest()[:12] + ".npz") if cache_root else None
         with _store_lock(path):  # parallel jobs: one encodes, the others wait and then read the cache
             store_h, store_e = np.zeros(0, dtype=np.uint64), np.zeros((0, 384), dtype=np.float32)
@@ -184,7 +186,8 @@ def frozen_embeddings_cached(x_frames: list[DataFrame], text_cols: list[str], cf
                     tok = AutoTokenizer.from_pretrained(cfg.model_name)
                     te.set_seed(cfg.seed)
                     model = te.build_model(cfg, d_output=2, device=device)  # fresh LoRA (B = 0) = vanilla e5
-                strings = [format_e5_passage(col, uniq[i]) for i in missing]
+                strings = [format_e5_passage(col, uniq[i]) if prefix == "passage: " else f"{prefix}{col}: {uniq[i]}"
+                           for i in missing]
                 tokens = te.TokenStore(list(dict.fromkeys(strings)), tok, cfg.max_length)
                 emb_u, _ = te.encode(model, te.make_source(model, tokens, cfg, device), tokens.uids(strings), cfg, device)
                 store_h = np.concatenate([store_h, hashes[missing]])
