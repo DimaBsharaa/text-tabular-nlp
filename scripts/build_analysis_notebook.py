@@ -301,28 +301,59 @@ comp = pd.DataFrame([
 comp.to_csv(R("tables", "table_compute.csv"), index=False)
 comp"""),
 
-    md("""## 7. P6 — Claim C3: variants of CTE (pre-registered 2026-10-14)
+    md("""## 7. P6 — Claim C3: two variants of CTE (pre-registered 2026-10-14, amended 2026-10-15)
 
-Four CatBoost variants, run after CTE: CatBoost's own text features (a baseline a reviewer will ask for), CTE plus
-those text features, CTE with a naive-Bayes-weighted lexical expert (NBSVM), and CTE whose experts learn what a
-structured-only model gets wrong (residuals). **Claim C3**: each of the three CTE variants vs leaderboard Joint TAR,
-Holm-corrected over the three; pass = adjusted p < 0.05 and positive mean. C3 never replaces C2. The cell below shows
-the results once `reports/p6/p6_report.json` exists."""),
+Two CatBoost variants of CTE, each changing one thing:
+- **`cte_nb`**: for classification, the lexical expert weights each TF-IDF feature by how much more often it appears in
+  one class than in the others (naive-Bayes log-count ratio, NBSVM-style), then fits a Ridge per class. Regression is
+  unchanged.
+- **`cte_residual`**: the experts no longer learn the label. They learn **what a structured-only CatBoost gets wrong**
+  (its residuals), so the text only has to explain what the table cannot. It is still cross-fitted, nested, so no
+  row's label reaches its own prediction.
+
+**Claim C3** (amendment 2): each vs leaderboard Joint TAR, Holm-corrected over the two; pass = adjusted p < 0.05 and a
+positive mean. C3 never replaces C2. Two further variants that use CatBoost's own text features (`catboost_native_text`,
+`cte_plus_native`) were **dropped for runtime** (Jigsaw ran 5 h 20 min without finishing a fold). Their 29 finished jobs
+appear below only as a descriptive side table."""),
     code("""p6 = R("p6", "p6_report.json")
-if not exists(p6):
-    display(Markdown("**P6 has not run yet** — re-run this notebook after `scripts/p6_report.py` has written `reports/p6/p6_report.json`."))
+r6 = json.load(open(p6)) if exists(p6) else None
+if r6 is None:
+    display(Markdown("**P6 results not in the repo yet** — run `scripts/p6_report.py` on the export, then re-run this notebook."))
 else:
-    r6 = json.load(open(p6))
     rows = []
-    for k in ("C3", "C3_heldout13"):
+    for k, lab_ in (("C3", "C3 — all 20 datasets"), ("C3_heldout13", "held-out 13 (secondary)")):
         for v, c in r6[k].items():
-            rows.append({"set": k, "variant": v, "n": c["n"], "mean diff": round(c["mean_diff"], 4) if c["mean_diff"] is not None else None,
-                         "p": fmt_p(c["p_value"]), "p (Holm)": fmt_p(c["p_holm"]), "wins": c["wins"],
+            rows.append({"set": lab_, "variant": v, "n": c["n"], "mean diff vs Joint TAR": round(c["mean_diff"], 4),
+                         "95% CI": f"[{c['ci95'][0]:+.4f}, {c['ci95'][1]:+.4f}]", "p": fmt_p(c["p_value"]),
+                         "p (Holm, 2 tests)": fmt_p(c["p_holm"]), "wins": c["wins"],
                          "passes": "PASS" if c["passes"] else "no"})
-    b = r6["baseline_native_text_vs_ft"]
-    rows.append({"set": "baseline", "variant": "catboost_native_text", "n": b["n"], "mean diff": b["mean_diff"],
-                 "p": fmt_p(b["p_value"]), "p (Holm)": "—", "wins": b["wins"], "passes": "— (baseline)"})
-    display(pd.DataFrame(rows))"""),
+    for v, d in r6["all20"].items():
+        c = d["vs_cte"]
+        rows.append({"set": "exploratory: vs our CTE", "variant": v, "n": c["n"], "mean diff vs Joint TAR": None,
+                     "95% CI": f"[{c['ci95'][0]:+.4f}, {c['ci95'][1]:+.4f}]", "p": fmt_p(c["p_value"]),
+                     "p (Holm, 2 tests)": "—", "wins": c["wins"], "passes": f"mean vs CTE {c['mean_diff']:+.4f}"})
+    table_c3 = pd.DataFrame(rows)
+    table_c3.to_csv(R("tables", "table_c3.csv"), index=False)
+    display(table_c3)"""),
+    code("""if r6 is not None:
+    fig, axes = plt.subplots(1, 2, figsize=(9.6, 4.6), sharey=False)
+    for ax, v in zip(axes, ("cte_nb", "cte_residual")):
+        d = pd.Series(r6["C3"][v]["per_dataset"])
+        diverging_bars(ax, [short(k) for k in d.index], list(d.values), xlabel=f"{v} − leaderboard Joint TAR")
+        ax.set_title(v)
+    fig.suptitle("C3 per dataset (CatBoost, mean of 5 folds)", fontweight="bold", fontsize=10)
+    fig.tight_layout()
+    save(fig, "fig5_c3_per_dataset"); plt.show()"""),
+    code("""if r6 is not None:
+    nat = pd.DataFrame(r6["native_text_partial"])
+    if len(nat):
+        side = (nat.assign(diff=nat.score - nat.lb_joint_tar, calcers=nat.feature_calcers.map(lambda c: "+".join(c or [])))
+                   .groupby("dataset").agg(folds=("fold", "count"), score=("score", "mean"), joint_tar=("lb_joint_tar", "mean"),
+                                           diff=("diff", "mean"), calcers=("calcers", "first")).round(4))
+        side.index = side.index.map(short)
+        side.to_csv(R("tables", "table_native_text_partial.csv"))
+        display(Markdown(f"**catboost_native_text — dropped, partial ({len(nat)} finished jobs), descriptive only; no test, no claim.**"))
+        display(side)"""),
 
     md("""## 8. Summary for the paper
 
@@ -335,7 +366,7 @@ else:
 - **Limitation** — Jigsaw (toxicity) is where fine-tuning still wins (−0.022).
 - **Compute** — no fine-tuning and no GPU training; comparable text-step time to our optimised TAR engine, roughly an
   order of magnitude below TAR as implemented upstream (extrapolated from E6).
-- **C3 (P6)** — pending.
+- **C3 (P6)** — see Section 7 (cte_nb, cte_residual; Holm over 2).
 
 Figures are saved to `reports/figures/` (PDF for the paper, PNG for slides) and tables to `reports/tables/`."""),
 ]

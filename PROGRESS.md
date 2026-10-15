@@ -53,6 +53,8 @@ Entry template:
 | E23 | 2026-10-14 | P6 runtime check (laptop) | native text 6–8 min/job, Wine > 1.8 h (stopped) |
 | E24 | 2026-10-14 | P5 v2 full run (600 jobs, A100) | **C2 fails**: +0.0106, p = 0.058; held-out 13 p = 0.0105; LightGBM p = 0.021 |
 | P6 am. 1 / C3 | 2026-10-14 | BoW only for C > 10 (p6/2); claim C3 (3 CTE variants vs LB TAR, Holm) | written before any P6 result |
+| P6 am. 2 | 2026-10-15 | native-text variants dropped (runtime); C3 = cte_nb + cte_residual, Holm over 2 | decided before any cte_plus_native result |
+| E25 | 2026-10-15 | P6 results (200 jobs) | **C3 fails**: cte_nb Holm p = 0.097, cte_residual Holm p = 0.097; held-out 13 passes both |
 
 ---
 
@@ -1103,3 +1105,73 @@ Features for the learner = structured columns (upstream preprocessing)
 ### Note on the name C3 (2026-10-14)
 - P5 v1 (superseded, never run) also defined a "C3" (frozen_experts). That claim is void. "C3" from here on means
   the P6 claim pre-registered above; the paper should call it "C3 (P6)" or rename both consistently.
+
+## P6 — Amendment 2 (2026-10-15, Dima): native-text variants dropped for runtime; C3 over cte_nb + cte_residual
+- **Why (runtime only):** on the Colab P6 run (A100 VM, 6 parallel jobs × 2 threads), CatBoost native
+  `text_features` on **Jigsaw ran 5 h 20 min with 0/5 folds done**. **Women Clothing took ≈ 58 min per fold** (BoW +
+  NaiveBayes + BM25 on long texts). Decided before any `cte_plus_native` result existed.
+- **Change:** `catboost_native_text` and `cte_plus_native` are **dropped from the experiments**. No native-text job is
+  re-run. The code keeps two harmless changes, which affect no reported number:
+  - `native_feature_calcers` = BoW only for every task (engine p6/3 for the two native methods);
+  - a 30-min per-job timeout in the parallel runner (`--job_timeout_min`, logged in
+    `<out>/_logs/process_errors.jsonl`, not retried, reported as missing).
+- **C3 (amended):** `cte_nb` and `cte_residual` (CatBoost) each vs leaderboard Joint TAR, two-sided Wilcoxon over the
+  20 datasets on fold-averaged differences, **Holm over these 2 tests**. Pass = Holm-adjusted p < 0.05 and positive
+  mean. Both are complete (100/100 jobs each). The held-out 13 is reported for each (secondary). C2 stays as reported;
+  C3 never replaces it.
+- **Disclosure:** reducing the Holm family from 3 to 2 tests makes the correction less conservative. The reason is
+  the dropped variants' runtime, not results. The `cte_nb` / `cte_residual` results already existed on Drive when
+  this was decided. Claude had not seen them; the Colab progress output prints each job's DONE line.
+- **The 29 finished `catboost_native_text` jobs** are reported only as a partial, descriptive side table (per-dataset
+  scores vs Joint TAR, no test, no claim). They mix calcer configurations: BoW only for regression and C > 10;
+  BoW + NaiveBayes + BM25 for the classification ones that finished.
+- **Engine bookkeeping:** `cte_nb` / `cte_residual` stay p6/2 (unchanged code), so finished results stay valid. The
+  `cte_residual` cache key is unchanged (9280a862b6). A runner bug was fixed: results without a `tar` block
+  (catboost_native_text) were treated as stale on every restart because the engine was read only from
+  `tar.config`; it is now read from the top-level `engine_version`.
+
+## Working rule (Dima, 2026-10-15)
+- Every new job must come with a **measured** runtime estimate. Nothing over **1 hour total** runs without Dima's
+  approval.
+
+## E25 — P6 results: claim C3 does NOT pass (cte_nb, cte_residual); held-out 13 passes for both   (2026-10-15)
+- **Data:** export `results_export (3).zip` (2026-10-15) of MyDrive/text-tabular-nlp/results_cte, made with no new
+  runs. `cte_nb` 100/100 and `cte_residual` 100/100, all at d99be74 (clean), A100-SXM4-40GB, 2 threads per job.
+  `catboost_native_text` 29/100 (dropped, amendment 2), `cte_plus_native` 0/100. No `process_errors` and no stray
+  renamed results. Analysis: `python scripts/p6_report.py --out <export>/results` → `reports/p6/p6_report.json`.
+- **C3 (CatBoost vs leaderboard Joint TAR, 20 datasets, two-sided Wilcoxon, Holm over 2):**
+  - `cte_nb`: mean **+0.0112**, CI [+0.0038, +0.0196], p = 0.048, **Holm p = 0.097**, wins 11/20 → **does not pass**.
+  - `cte_residual`: mean **+0.0102**, CI [+0.0023, +0.0189], p = 0.064, **Holm p = 0.097**, wins 12/20 → **does not pass**.
+- **Held-out 13 (secondary, Holm over 2):** `cte_nb` +0.0173, Holm p = 0.021 → passes; `cte_residual` +0.0153,
+  Holm p = 0.048 → passes.
+- **Exploratory (vs our CTE, paired):**
+  - `cte_nb` +0.0005, p = 0.53. It differs only on classification: Jigsaw +0.009, Product Sentiment +0.002, US
+    Accidents +0.001, the rest ±0.001.
+  - `cte_residual` −0.0004, p = 0.024 (wins 5/20): many small losses (Montgomery −0.007, Zomato −0.007, Vancouver
+    −0.006, Product Sentiment −0.005), one large gain (Video Games +0.032, where TAR − Frozen is +0.094).
+  - Neither variant improves on CTE overall.
+- **Native-text side table (partial, descriptive only; `reports/tables/table_native_text_partial.csv` via the
+  notebook):** 29 jobs on 6 datasets. Mean vs Joint TAR: Product Sentiment −0.025, Women Clothing −0.032 (4 folds),
+  Wine −0.009, Baby +0.005, Vancouver −0.053, Video Games −0.410 (R²). Mean job time: Wine 237 min (BoW only), Women
+  Clothing 55 min, the rest 7–15 min.
+- **Hostile review:**
+  - *Provenance / splits:* one commit, clean, one GPU type; n_train / n_test per dataset identical across cte,
+    cte_nb and cte_residual.
+  - *Bookkeeping:* for regression, `cte_nb` is defined as `cte`, and the scores are identical on 47/50 folds. The 3
+    exceptions (Zomato folds 0, 2, 3: −0.0007, +0.0015, +0.0013) have identical expert features (cache hits, the same
+    lexical test quality to 6 digits) but **different frozen embeddings**. In the CTE run those folds ran in parallel
+    on the pre-lock code and each encoded the texts itself; the shared store kept the last writer's copy, which
+    `cte_nb` then read. The same string encoded in a different GPU fp16 batch gives slightly different vectors.
+    → Reproducibility caveat: CTE scores are reproducible to about ±0.0015 per fold across encodings. This is not
+    leakage and has no direction. The lock (d99be74) now makes every job of a dataset use one stored encoding.
+  - *Ties:* the `cte_nb` vs `cte` comparison has 10 regression datasets with (near) zero difference; Wilcoxon drops
+    zeros, so that p-value rests on the 10 classification datasets.
+  - *Leakage:* NB ratios inside every fit (tests); `cte_residual` nested cross-fitting (bit-identity tests on
+    fold-0 label changes, including through S). The structured model's OOF quality is plausible per dataset
+    (Spearman / AUROC 0.32–0.98; for example Montgomery 0.98, where structure dominates).
+  - *Selection:* the C3 family was reduced from 3 to 2 for runtime (amendment 2, disclosed). With the original 3
+    tests, Holm p would be ≥ 0.097 for both, so the conclusion does not change.
+- **Runtime:** `cte_nb` 20.4 slot-hours, `cte_residual` 26.5 slot-hours (A100 VM, 6 parallel slots).
+- **Conclusion:** neither variant beats Joint TAR on all 20 at the pre-registered level. Both reproduce the held-out
+  13 result. They do not improve on CTE: NB weighting helps a little only on Jigsaw, and residual targets help only
+  where structure is weak relative to text (Video Games). C2 and C3 are reported as pre-registered.

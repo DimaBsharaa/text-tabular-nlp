@@ -97,15 +97,28 @@ MulTaBench paper text and still need a page or figure number before we cite them
 - Wall time of the full CTE run (600 jobs, A100 VM, 6 parallel jobs): 13.2 h; the CTE CatBoost block took 3.4 h.
   Multiclass CatBoost itself dominates (Spotify ~2.5 h per job), the same for every method.
 
-### 2.4 Claim C3 (P6) — pre-registered 2026-10-14, results pending
-- Naming: P5 v1 also had a "C3" (frozen_experts), never run and superseded by P5 v2. In the paper, call
-  this one "C3 (P6)" or rename it consistently.
-- cte_plus_native, cte_nb and cte_residual (CatBoost) each vs Joint TAR; Holm over the 3; pass = adjusted
-  p < 0.05 and positive mean. Also the held-out 13. `catboost_native_text` is reported as a baseline, not a claim.
-- C3 never replaces C2. Report both.
+### 2.4 Claim C3 (P6) — pre-registered 2026-10-14, amended 2026-10-15 — **does not pass** [E25]
+- Naming: P5 v1 also had a "C3" (frozen_experts), never run and superseded by P5 v2. In the paper, call this one
+  "C3 (P6)" or rename it consistently.
+- Amendment 2: the native-text variants (`catboost_native_text`, `cte_plus_native`) were dropped for runtime
+  (Jigsaw 5 h 20 min with 0/5 folds; Women Clothing ≈ 58 min per fold). C3 = `cte_nb` and `cte_residual`, Holm over 2.
+  Disclose that the family shrank from 3 to 2; with 3 tests the conclusion is the same.
+- `cte_nb`: +0.0112, Holm p = 0.097; `cte_residual`: +0.0102, Holm p = 0.097. Neither passes. Held-out 13
+  (secondary): both pass (Holm p = 0.021 and 0.048).
+- Neither improves on CTE (vs CTE: +0.0005 and −0.0004). NB weighting helps only on Jigsaw (+0.009 vs CTE).
+  Residual targets help only on Video Games (+0.032 vs CTE). A useful negative result: the simple CTE is already
+  close to what these cheap refinements can reach.
+- The 29 finished native-text jobs: a descriptive side table only (all below Joint TAR except Baby Products; Video
+  Games −0.41 R²; Wine 237 min per job even with BoW only).
+
+### 2.5 Reproducibility caveat [E25]
+- The same text encoded by frozen e5 on the GPU in a different fp16 batch gives slightly different vectors. In one
+  case (Zomato, 3 folds) this moved CatBoost scores by up to ±0.0015. Report CTE numbers as reproducible to about
+  ±0.0015 per fold across re-encodings. Since d99be74 every job of a dataset reads one stored encoding.
 
 ## 3. Things not to claim
 - That CTE "significantly beats Joint TAR" on all 20 datasets (C2: p = 0.058).
 - That PCA is the whole problem (their Fig. 6).
 - A measured 10× wall-clock saving against our own TAR engine (§2.3).
 - Anything from the held-out subset as if it were the primary test.
+- That cte_nb / cte_residual improve on CTE, or that C3 passes.

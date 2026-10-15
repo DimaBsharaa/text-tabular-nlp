@@ -1,0 +1,7 @@
+set,variant,n,mean diff vs Joint TAR,95% CI,p,"p (Holm, 2 tests)",wins,passes
+C3 — all 20 datasets,cte_nb,20,0.0112,"[+0.0038, +0.0196]",0.0484,0.0969,11,no
+C3 — all 20 datasets,cte_residual,20,0.0102,"[+0.0023, +0.0189]",0.0637,0.0969,12,no
+held-out 13 (secondary),cte_nb,13,0.0173,"[+0.0074, +0.0281]",0.0105,0.021,9,PASS
+held-out 13 (secondary),cte_residual,13,0.0153,"[+0.0050, +0.0267]",0.0479,0.0479,9,PASS
+exploratory: vs our CTE,cte_nb,20,,"[-0.0001, +0.0016]",0.534,—,5,mean vs CTE +0.0005
+exploratory: vs our CTE,cte_residual,20,,"[-0.0030, +0.0035]",0.024,—,5,mean vs CTE -0.0004

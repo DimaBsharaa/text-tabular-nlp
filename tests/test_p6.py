@@ -172,7 +172,7 @@ def test_every_p6_variant_end_to_end(tmp_path, method, task):
     names = list(model.model_.feature_names_)
     native = [c for c in names if c.endswith(p6.NATIVE_SUFFIX)]
     pca = [c for c in names if "_txt_pca_" in c]
-    assert engine_version(method) == "p6/2"
+    assert engine_version(method) == p6.P6_ENGINE[method]
     if p6.P6_METHODS[method][3]:  # native text variants
         assert sorted(native) == [c + p6.NATIVE_SUFFIX for c in sorted(model.text_features)] and native  # upstream's text cols
         info = model.native_text_info()
@@ -184,7 +184,7 @@ def test_every_p6_variant_end_to_end(tmp_path, method, task):
     else:
         assert len(pca) > 30 * len(model.text_features)  # PCA-30 per text column + expert / numeracy columns
         d = model.stack_result.diagnostics
-        assert d["engine_version"] == "p6/2" and d["p6"]["targets"] == ("residual" if method == "cte_residual" else "y")
+        assert d["engine_version"] == p6.P6_ENGINE[method] and d["p6"]["targets"] == ("residual" if method == "cte_residual" else "y")
         if method == "cte_residual":
             assert "price" in d["p6"]["struct_cols"] and d["p6"]["n_struct_fits"] > 0
             assert not set(d["p6"]["struct_cols"]) & set(model.text_features)
@@ -211,8 +211,9 @@ def test_cte_plus_native_reuses_cte_expert_cache(tmp_path):
 
 
 def test_native_calcers_amendment():
-    """P6 amendment 1: BoW only for C > 10; BoW + NaiveBayes + BM25 for binary / up to 10 classes; regression BoW."""
-    assert p6.native_feature_calcers(True, 2) == ["BoW", "NaiveBayes", "BM25"]
-    assert p6.native_feature_calcers(True, 10) == ["BoW", "NaiveBayes", "BM25"]
-    assert p6.native_feature_calcers(True, 11) == ["BoW"] and p6.native_feature_calcers(True, 30) == ["BoW"]
-    assert p6.native_feature_calcers(False, 1) == ["BoW"]
+    """P6 amendment 2: BoW only for every task (binary, multiclass of any size, regression)."""
+    for is_cls, c in ((True, 2), (True, 3), (True, 10), (True, 11), (True, 30), (False, 1)):
+        assert p6.native_feature_calcers(is_cls, c) == ["BoW"]
+    assert p6.P6_ENGINE == {"catboost_native_text": "p6/3", "cte_plus_native": "p6/3", "cte_nb": "p6/2",
+                            "cte_residual": "p6/2"}
+    assert p6.P6_CONFIG.key() == "9280a862b6"  # cte_residual's cache key did not change with amendment 2

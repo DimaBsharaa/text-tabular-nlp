@@ -65,3 +65,5 @@ D. Ordinal/soft-label loss for regression instead of 20-bin CE.
    `tests/golden/tar_repro_96c1f5c.json` (generated from a 96c1f5c checkout). Every result JSON records `engine_version`.
 8. **Secrets & teaching.** Secrets live only in `.env` (gitignored) / Colab Secrets; never print or commit them.
    W&B is disabled (`WANDB_MODE=disabled`). Explain things simply — Dima is learning.
+9. **Runtime approval.** Every new job comes with a measured runtime estimate; nothing over 1 hour total runs
+   without Dima's approval (2026-10-15).

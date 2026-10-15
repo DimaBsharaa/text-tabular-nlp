@@ -16,6 +16,7 @@ import argparse
 import json
 import os
 import shutil
+import signal
 import subprocess
 import sys
 import threading
@@ -23,6 +24,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
 from os.path import abspath, basename, dirname, exists, join
+from typing import Optional
 
 REPO_ROOT = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, REPO_ROOT)  # works with plain `uv sync` (no .pth file needed)
@@ -52,14 +54,30 @@ def existing_result_ok(path: str) -> bool:
         return False
     from multabench.ours.variants import engine_version  # lazy: keeps this module importable without torch
     r = json.load(open(path))
-    engine = ((r.get("tar") or {}).get("config") or {}).get("engine_version")
+    # top-level engine_version is in every result; tar.config (older results) as a fallback. catboost_native_text has
+    # no tar block, so reading only tar.config made its finished results look stale (re-run on every restart).
+    engine = r.get("engine_version") or ((r.get("tar") or {}).get("config") or {}).get("engine_version")
     ENGINE_VERSION = engine_version(r.get("method", "tar_repro"))
     if engine == ENGINE_VERSION:
+        return True
+    if same_config_as_current(r, engine, ENGINE_VERSION):
         return True
     old = path[:-len(".json")] + f".{str(engine).replace('/', '-')}.json"
     os.replace(path, old)
     print(f"  result made by engine {engine} (current {ENGINE_VERSION}) kept as {old}; job will re-run", flush=True)
     return False
+
+
+def same_config_as_current(r: dict, engine: Optional[str], current: str) -> bool:
+    """P6 amendment 2 (p6/2 -> p6/3) changed only the CatBoost text calcers of the native-text methods, to BoW only.
+    A p6/2 native-text result that already used BoW only (regression; C > 10 classes under amendment 1) has exactly
+    the p6/3 configuration, so it stays valid. NaiveBayes / BM25 results re-run."""
+    return (r.get("method") in ("catboost_native_text", "cte_plus_native") and engine == "p6/2" and current == "p6/3"
+            and ((r.get("native_text") or {}).get("feature_calcers")) == ["BoW"])
+
+
+def timeout_marker(path: str) -> str:
+    return path[:-len(".json")] + ".timeout.json"
 
 
 def result_path(out: str, name: str, learner: str, dataset: str, fold: int) -> str:
@@ -271,7 +289,7 @@ def run_jobs(args: argparse.Namespace) -> int:
     if args.filter:  # every substring must appear in "method learner dataset fold k"
         jobs = [j for j in jobs if all(f in job_label(*j) for f in args.filter)]
         print(f"filter {args.filter}: {len(jobs)} matching jobs", flush=True)
-    n_done = n_failed = 0
+    n_done = n_failed = n_timeout = 0
     common = ["--out", args.out, "--cache_dir", args.cache_dir, "--train_examples", str(args.train_examples),
               "--epochs", str(args.epochs), "--micro_batch_size", str(args.micro_batch_size)]
     common += ["--no_fast"] if args.no_fast else []
@@ -287,6 +305,10 @@ def run_jobs(args: argparse.Namespace) -> int:
             print(f"{tag}: done already, skipping", flush=True)
             n_done += 1
             continue
+        if exists(timeout_marker(path)) and not args.retry_timeouts:
+            print(f"{tag}: timed out before ({timeout_marker(path)}), not retried -> missing", flush=True)
+            n_timeout += 1
+            continue
         todo.append((tag, name, path, method, learner, dataset, fold, seed))
     if args.max_jobs is not None and len(todo) > args.max_jobs:
         print(f"--max_jobs {args.max_jobs}: {len(todo) - args.max_jobs} job(s) not started", flush=True)
@@ -294,13 +316,28 @@ def run_jobs(args: argparse.Namespace) -> int:
     n_par, env_extra = parallel_plan(args, [j[3:] for j in todo])
     if n_par > 1:
         print(f"running {len(todo)} job(s), {n_par} in parallel; per-job env {env_extra}", flush=True)
+    timeout_s = args.job_timeout_min * 60 if (n_par > 1 and args.job_timeout_min) else None
+    if timeout_s:
+        print(f"per-job wall-clock timeout {args.job_timeout_min} min (timed-out jobs are logged, not retried)", flush=True)
     lock = threading.Lock()
+    errors_path = join(args.out, "_logs", "process_errors.jsonl")
+
+    def log_error(job, status: str, returncode, seconds: float, log_path: str) -> None:
+        tag, name, path, method, learner, dataset, fold, seed = job
+        rec = {"time": time.strftime("%Y-%m-%d %H:%M:%S"), "status": status, "method": method, "learner": learner,
+               "dataset": dataset, "fold": fold, "seed": seed, "returncode": returncode,
+               "seconds": round(seconds, 1), "log": log_path}
+        with lock:
+            os.makedirs(dirname(errors_path), exist_ok=True)
+            with open(errors_path, "a") as f:
+                f.write(json.dumps(rec) + "\n")
+        return rec
 
     def say(msg: str) -> None:
         with lock:
             print(msg, flush=True)
 
-    def run_job(job) -> bool:
+    def run_job(job) -> str:
         tag, name, path, method, learner, dataset, fold, seed = job
         if n_par == 1:
             prune_lower_cache(args.lower_cache_dir or join(os.path.expanduser("~"), ".cache", "tar_lower_cache"),
@@ -313,32 +350,55 @@ def run_jobs(args: argparse.Namespace) -> int:
                "--fold", str(fold), "--seed", str(seed), *common] + (["--force"] if args.force else [])
         with open(log_path, "w") as log:
             proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1,
-                                    env={**os.environ, **env_extra})
+                                    env={**os.environ, **env_extra}, start_new_session=True)
+            timed_out = threading.Event()
+
+            def kill():  # the whole process group: the job and anything it started
+                timed_out.set()
+                try:
+                    os.killpg(proc.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+            timer = threading.Timer(timeout_s, kill) if timeout_s else None
+            if timer:
+                timer.daemon = True
+                timer.start()
             for line in proc.stdout:
                 log.write(line)
                 if args.stream or line.lstrip().startswith(("[TAR", "[STACK")) or "Score" in line or "Error" in line:
                     say(("    " if n_par == 1 else f"    {tag} ") + line.rstrip())
             proc.wait()
+            if timer:
+                timer.cancel()
+        if timed_out.is_set():
+            rec = log_error(job, "timeout", proc.returncode, time.time() - t0, log_path)
+            os.makedirs(dirname(path), exist_ok=True)  # a job killed early never created its result dir
+            json.dump(rec, open(timeout_marker(path), "w"), indent=1)
+            say(f"{tag}: TIMEOUT after {_fmt_secs(time.time() - t0)} (limit {args.job_timeout_min} min) -> missing, "
+                f"not retried; logged in {errors_path}")
+            return "timeout"
         if proc.returncode == 0 and exists(path):
             r = json.load(open(path))
             lb = r["reference"].get("joint_tar")
             lb_txt = (f" | leaderboard ft {lb:.4f} | diff {r['score'] - lb:+.4f}" if lb is not None
                       else " | leaderboard ft: n/a")
             say(f"{tag}: DONE score {r['score']:.4f}{lb_txt} | job time {_fmt_secs(time.time() - t0)}")
-            return True
+            return "done"
+        log_error(job, "failed", proc.returncode, time.time() - t0, log_path)
         tail = open(log_path).read().splitlines()[-15:]
         say(f"{tag}: FAILED (exit {proc.returncode}) — see {log_path}; last lines:\n"
             + "\n".join("    | " + t for t in tail))
-        return False
+        return "failed"
 
     if n_par == 1:
-        ok = [run_job(j) for j in todo]
+        status = [run_job(j) for j in todo]
     else:
         with ThreadPoolExecutor(max_workers=n_par) as pool:  # threads only wait on the job subprocesses
-            ok = list(pool.map(run_job, todo))
-    n_done += sum(ok)
-    n_failed += len(ok) - sum(ok)
-    print(f"jobs: {len(jobs)} | finished: {n_done} | failed: {n_failed}", flush=True)
+            status = list(pool.map(run_job, todo))
+    n_done += status.count("done")
+    n_failed += status.count("failed")
+    n_timeout += status.count("timeout")
+    print(f"jobs: {len(jobs)} | finished: {n_done} | failed: {n_failed} | timed out (missing): {n_timeout}", flush=True)
     return 1 if n_failed else 0
 
 
@@ -366,6 +426,10 @@ def main() -> int:
                    help="--jobs_file: prune the oldest frozen-layer caches above this size before each job")
     p.add_argument("--force", action="store_true", help="re-run even if the result JSON exists")
     p.add_argument("--stream", action="store_true", help="--jobs_file: echo every log line, not just progress")
+    p.add_argument("--job_timeout_min", type=float, default=30.0,
+                   help="--jobs_file, parallel mode: kill a job after this many minutes (0 = none); logged as timeout in "
+                        "<out>/_logs/process_errors.jsonl, not retried, reported as missing (P6 amendment 2)")
+    p.add_argument("--retry_timeouts", action="store_true", help="--jobs_file: re-run jobs that timed out before")
     p.add_argument("--parallel_jobs", default="auto",
                    help='--jobs_file: jobs run at once ("auto" = CPU cores // 2 if every job is CTE, else 1)')
     args = p.parse_args()

@@ -1,0 +1,7 @@
+dataset,folds,score,joint_tar,diff,calcers
+Product Sentiment,5,0.8887,0.9138,-0.025,BoW+NaiveBayes+BM25
+Wine Review,5,0.9721,0.9815,-0.0094,BoW
+Women Clothing Review,4,0.8775,0.9096,-0.0321,BoW+NaiveBayes+BM25
+Babies Prices,5,0.8984,0.8931,0.0052,BoW
+Vancouver Salaries,5,0.7344,0.7877,-0.0534,BoW
+Video Games Sales,5,0.0087,0.4187,-0.41,BoW

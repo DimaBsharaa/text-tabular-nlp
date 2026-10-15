@@ -415,7 +415,7 @@ def run_cte(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], 
     else:  # P6 (exploratory): same CTE experts with a different lexical model or residual targets
         base, lex_kind, target_kind, _ = p6.P6_METHODS[method]
         experts, mode, use_num = CTE_METHODS[base]
-        version = p6.P6_VERSION
+        version = p6.P6_ENGINE[method]
     ccfg = CTE_CONFIG
     text_cols = sorted(text_cols)
     extra = {k: v for k, v in extra.items() if v is not None}

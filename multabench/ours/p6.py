@@ -1,4 +1,4 @@
-"""P6 (PROGRESS.md, + amendment 1; claim C3): secondary CatBoost variants on top of CTE (cte/3). Engine p6/2.
+"""P6 (PROGRESS.md, + amendments 1-2; claim C3): secondary CatBoost variants on top of CTE (cte/3). Engines p6/2-p6/3.
 
 catboost_native_text : structured features + raw text columns as CatBoost text_features (no embeddings, no experts).
 cte_plus_native      : CTE features (same caches as cte) + the same CatBoost text_features.
@@ -21,7 +21,12 @@ from pandas import DataFrame
 
 from multabench.ours.experts import ExpertConfig, SEED, expert_folds, rank_gauss
 
-P6_VERSION = "p6/2"  # p6/1 = before P6 amendment 1 (never run on Colab)
+P6_VERSION = "p6/3"  # latest P6 engine (amendment 2); per-method versions in P6_ENGINE
+P6_ENGINE = {  # p6/1: before amendment 1 (never run); p6/2: amendment 1; p6/3: amendment 2 (BoW only, native methods)
+    "catboost_native_text": "p6/3", "cte_plus_native": "p6/3",  # changed by amendment 2
+    "cte_nb": "p6/2", "cte_residual": "p6/2",  # untouched by amendment 2 (no native text): finished results stay valid
+}
+P6_CONFIG_KEY_VERSION = "p6/2"  # fixed: part of cte_residual's expert-cache key (amendment 2 does not change it)
 P6_METHODS = {  # method -> (CTE base method whose experts/mode/numeracy it uses, lexical kind, targets, native text)
     "catboost_native_text": (None, None, None, True),
     "cte_plus_native": ("cte", "tfidf", "y", True),
@@ -32,9 +37,9 @@ NATIVE_SUFFIX = "__native_text"  # raw text column name the learner adds for Cat
 
 
 def native_feature_calcers(is_cls: bool, n_classes: int) -> list[str]:
-    """CatBoost supports NaiveBayes and BM25 for classification only; regression gets BoW (tested). P6 amendment 1:
-    BoW only for C > 10 classes (NaiveBayes / BM25 are computed per class: hours per job on Wine, E23)."""
-    return ["BoW", "NaiveBayes", "BM25"] if is_cls and n_classes <= 10 else ["BoW"]
+    """P6 amendment 2: BoW only, for every task (NaiveBayes / BM25 took hours per job on long texts: Jigsaw 5 h 20 min
+    with 0/5 folds, Women Clothing ~58 min per fold). Amendment 1 (BoW only for C > 10) is subsumed."""
+    return ["BoW"]
 
 
 @dataclass(frozen=True)
@@ -47,7 +52,7 @@ class P6Config:
     seed: int = SEED
 
     def key(self) -> str:
-        return hashlib.sha1(json.dumps([P6_VERSION, asdict(self)], sort_keys=True).encode()).hexdigest()[:10]
+        return hashlib.sha1(json.dumps([P6_CONFIG_KEY_VERSION, asdict(self)], sort_keys=True).encode()).hexdigest()[:10]
 
 
 P6_CONFIG = P6Config()
