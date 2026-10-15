@@ -104,3 +104,23 @@ def test_p6_report_on_synthetic_results(tmp_path):
     assert not res["passes"] and res["mean_diff"] < 0
     assert rep["C3_heldout13"]["cte_nb"]["n"] == 13 and rep["native_text_partial"] == []
     assert set(rep["all20"]) == {"cte_nb", "cte_residual"} and rep["all20"]["cte_nb"]["vs_cte"]["n"] == 20
+
+
+def test_p8_report_on_synthetic_results(tmp_path):
+    import p8_report as pr
+    out = str(tmp_path)
+    rng = np.random.default_rng(2)
+    from p5_report import leaderboard_state
+    lb_all = {(r.dataset, r.fold): r.score for r in leaderboard_state("catboost", "all").itertuples()}
+    assert len(lb_all) == 100
+    for run, off in (("tf_num_lsa", 0.02), ("frozen0", 0.0)):
+        _write(out, run, "catboost", {k: v + off + rng.normal(0, 0.001) for k, v in lb_all.items()})
+    rep = pr.p8_report(out)
+    assert rep["C4"]["n"] == 20 and rep["C4"]["passes"] and rep["C4"]["p_holm"] == rep["C4"]["p_value"]
+    assert rep["C5"]["status"] == "pending" and rep["C5"]["passes"] is None and "note" in rep
+    assert rep["C4_env_control_vs_our_frozen0"]["n"] == 19 and rep["env_frozen0_vs_leaderboard_frozen"]["n"] == 19
+    for run, off in (("cte_probe", -0.002), ("cte", 0.0)):
+        _write(out, run, "catboost", {k: v + off + rng.normal(0, 0.001) for k, v in _lb("catboost").items()})
+    rep = pr.p8_report(out)
+    assert rep["C5"]["n"] == 20 and not rep["C5"]["passes"] and rep["C4"]["p_holm"] >= rep["C4"]["p_value"]
+    assert rep["C5_heldout13"]["n"] == 13 and rep["C5_vs_our_cte"]["n"] == 20
