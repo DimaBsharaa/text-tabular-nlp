@@ -1,0 +1,8 @@
+comparison,n,mean diff,95% CI,p,p (Holm),wins,passes
+C4 — tf_num_lsa vs Joint Frozen (label-free claim),20,0.0129,"[+0.0060, +0.0218]",1.9e-05,3.8e-05,18,PASS
+C5 — cte_probe vs Joint TAR (label-aware claim),20,0.0141,"[+0.0066, +0.0222]",0.00233,0.00233,15,PASS
+C5 on the held-out 13 (secondary),13,0.0184,"[+0.0083, +0.0294]",0.00464,—,10,—
+cte_probe vs our CTE (secondary),20,0.0035,"[+0.0013, +0.0063]",7.1e-04,—,17,—
+"tf_num_lsa vs our own Joint Frozen (environment control, 19)",19,0.0119,"[+0.0064, +0.0187]",3.8e-05,—,17,—
+"our Joint Frozen vs leaderboard Joint Frozen (environment, 19)",19,0.0015,"[-0.0011, +0.0059]",0.465,—,9,—
+tf_num_lsa vs Joint TAR (descriptive),20,-0.0076,"[-0.0205, +0.0019]",0.0328,—,5,—

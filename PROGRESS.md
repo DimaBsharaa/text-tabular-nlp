@@ -58,7 +58,8 @@ Entry template:
 | E26 | 2026-10-15 | packaging: train.py / predict.py, model folder, CPU smoke | PS f0: train 36 s, predict 15 s, round trip exact |
 | P7 / E27 | 2026-10-16 | dev round (training rows only, 6 datasets) | tf_num_lsa +0.018 vs frozen (6/6); cte_probe +0.005 vs CTE (5/6) |
 | P8 | 2026-10-16 | C4 (label-free tf_num_lsa vs Joint Frozen) + C5 (cte_probe vs Joint TAR), Holm over 2; approved | jobs/p8_B.txt then jobs/p8_A.txt |
-| E28 | 2026-10-17 | P8 part B (195 jobs, A100) | **C4 passes**: +0.0129 vs Joint Frozen, 18/20, p = 1.9e-5; no environment effect (p = 0.47) |
+| E28 | 2026-10-16 | P8 part B (195 jobs, A100) | **C4 passes**: +0.0129 vs Joint Frozen, 18/20, p = 1.9e-5; no environment effect (p = 0.47) |
+| E29 | 2026-10-16 | P8 part A (100 jobs, A100) | **C5 passes**: cte_probe +0.0141 vs Joint TAR, 15/20, p = 0.0023 (Holm 0.0023) |
 
 ---
 
@@ -1311,3 +1312,30 @@ Features for the learner = structured columns (upstream preprocessing)
   - *Disclosure:* the variant was chosen on dev splits (E27), and the numeracy-vs-frozen observation was post hoc (P7).
 - **Runtime:** tf_num_lsa 19.6 slot-hours, frozen0 4.7 slot-hours (about 3.8 h wall, as estimated).
 - **Next:** part A (`jobs/p8_A.txt`, cte_probe, claim C5), approved.
+
+## E29 — P8 part A: claim C5 PASSES (cte_probe vs Joint TAR); final P8 verdict: C4 and C5 both pass   (2026-10-16, Colab A100)
+- **Data:** `results_export_20261015_214925.zip`: `cte_probe` 100/100 at 96082de (clean), A100-SXM4-40GB, 2 threads
+  per job, no process_errors and no timeouts. Every job reused the cached CTE experts (cache hits), so the CTE part is
+  bit-for-bit C2's. Analysis: `scripts/p8_report.py` (committed before any P8 result, 872f659).
+- **C5 (CatBoost cte_probe vs leaderboard Joint TAR, 20 datasets, two-sided Wilcoxon):** mean **+0.0141**, CI
+  [+0.0066, +0.0222], **p = 0.0023**, wins **15/20** → **PASSES**.
+- **Holm over {C4, C5}:** C4 p_holm = 3.8e-5, C5 p_holm = 0.0023 → **both pass**.
+- **Secondary:**
+  - held-out 13: +0.0184, p = 0.0046, 10/13;
+  - `cte_probe` vs our `cte`: +0.0035, p = 0.0007, 17/20 (the probe adds a small, consistent gain; the largest are
+    Video Games +0.025, Product Sentiment +0.010, Book Price +0.010, Jigsaw +0.008).
+- **Per dataset vs TAR:** below TAR only on Jigsaw −0.015 (was −0.022 for CTE), SCImago −0.002, Women Clothing −0.001,
+  Wine −0.001 and US Accidents −0.001. Spotify ±0.000.
+- **Hostile review:**
+  - *Leakage:* the probe is cross-fitted (bit-identity test in tests/test_p7.py), and its alpha is chosen by the
+    training-row OOF metric (alphas spread over the grid: 0.3 ×21, 1 ×29, 3 ×24, 10 ×26).
+  - *Splits:* n_train / n_test identical to CTE.
+  - *Environment:* Video Games' leaderboard comparison is inflated (our frozen0 is +0.039 above the leaderboard's
+    frozen, E28). Post hoc: C5 without Video Games +0.0140, 14/19, p = 0.0046; C5 minus each dataset's environment
+    offset +0.0127, p = 0.015. The verdict does not depend on it.
+  - *Selection:* the probe was chosen on dev splits of the training rows of 6 datasets (E27). All 20 datasets' test
+    results of earlier methods were known (disclosed in P8). C2 (p = 0.058) and C3 stay reported as they are.
+- **Runtime:** 19.7 slot-hours (≈ 3.6 h wall, as estimated).
+- **Conclusion:** with a cross-fitted linear probe on the full frozen embeddings added to CTE, the label-aware method
+  significantly beats Joint TAR (C5), and the label-free variant significantly beats Joint Frozen (C4). Both without
+  fine-tuning.

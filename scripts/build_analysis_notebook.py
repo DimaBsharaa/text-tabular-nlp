@@ -176,7 +176,7 @@ diverging_bars(ax, [short(k) for k in d.index], list(d.values), xlabel="ours −
 ax.set_title("C1: cross-fitted frozen-encoder predictions do not beat TAR")
 save(fig, "fig1_c1_per_dataset"); plt.show()"""),
 
-    md("""## 5. P5 — Claim C2: Cross-fitted Text Experts (CTE), our final method (E20–E24)
+    md("""## 5. P5 — Claim C2: Cross-fitted Text Experts (CTE), the base of our final method (E20–E24)
 
 **The idea.** Keep the frozen encoder (no fine-tuning at all), and give the tabular learner a few extra columns per
 dataset that already *answer the question*: for each row, what do cheap text models predict for its label?
@@ -355,18 +355,63 @@ else:
         display(Markdown(f"**catboost_native_text — dropped, partial ({len(nat)} finished jobs), descriptive only; no test, no claim.**"))
         display(side)"""),
 
-    md("""## 8. Summary for the paper
+    md("""## 8. P8 — Claims C4 and C5: both pass (pre-registered 2026-10-16)
 
-- **C1 (P4)** — cross-fitted frozen-encoder predictions: does not beat Joint TAR (E17).
-- **C2 (P5, CTE)** — the primary claim **does not pass** on all 20 datasets (mean +0.0106, CI [+0.003, +0.019],
-  p = 0.058). The pre-registered secondary tests pass: held-out 13 (+0.0173, p = 0.0105) and LightGBM (+0.0152,
-  p = 0.021, Holm). CTE beats Joint Frozen on all 20 datasets.
-- **Mechanism** — cross-fitting is essential (in-sample lexical: −0.045 vs CTE); lexical, neighbour and numeracy
-  experts are complementary; the experts carry ≈ 40% of CatBoost's importance.
-- **Limitation** — Jigsaw (toxicity) is where fine-tuning still wins (−0.022).
-- **Compute** — no fine-tuning and no GPU training; comparable text-step time to our optimised TAR engine, roughly an
-  order of magnitude below TAR as implemented upstream (extrapolated from E6).
-- **C3 (P6)** — see Section 7 (cte_nb, cte_residual; Holm over 2).
+A development round (P7) on dev splits of the **training rows** of 6 datasets (test rows never used) picked two
+additions, which were then pre-registered and run once on all 20 datasets × 5 folds:
+
+- **`tf_num_lsa` (label-free)**: frozen PCA + numeracy features + 30 LSA components (TF-IDF → SVD) of the text. No label is
+  used to build the text features, so the course criterion is to beat **Joint Frozen**. → **claim C4**.
+- **`cte_probe` (label-aware)**: CTE + a cross-fitted **linear probe** on the full 384-d frozen embeddings (PCA-30 keeps
+  variance, not target signal; the probe hands the learner an out-of-fold E[y | embedding]). It must beat **Joint TAR**.
+  → **claim C5**.
+
+Holm correction over the two claims. An **environment control** (our own Joint Frozen, `frozen0`) checks that our setup
+does not score higher than the leaderboard's by itself."""),
+    code("""r8 = json.load(open(R("p8", "p8_report.json"))) if exists(R("p8", "p8_report.json")) else None
+if r8 is None:
+    display(Markdown("**P8 results not in the repo yet.**"))
+else:
+    lab8 = {"C4": "C4 — tf_num_lsa vs Joint Frozen (label-free claim)", "C5": "C5 — cte_probe vs Joint TAR (label-aware claim)",
+            "C5_heldout13": "C5 on the held-out 13 (secondary)", "C5_vs_our_cte": "cte_probe vs our CTE (secondary)",
+            "C4_env_control_vs_our_frozen0": "tf_num_lsa vs our own Joint Frozen (environment control, 19)",
+            "env_frozen0_vs_leaderboard_frozen": "our Joint Frozen vs leaderboard Joint Frozen (environment, 19)",
+            "C4_descriptive_vs_joint_tar": "tf_num_lsa vs Joint TAR (descriptive)"}
+    rows = [{"comparison": name, "n": r8[k]["n"], "mean diff": round(r8[k]["mean_diff"], 4),
+             "95% CI": f"[{r8[k]['ci95'][0]:+.4f}, {r8[k]['ci95'][1]:+.4f}]", "p": fmt_p(r8[k]["p_value"]),
+             "p (Holm)": fmt_p(r8[k].get("p_holm")) if k in ("C4", "C5") else "—", "wins": r8[k]["wins"],
+             "passes": ("PASS" if r8[k]["passes"] else "no") if k in ("C4", "C5") else "—"} for k, name in lab8.items()]
+    table_p8 = pd.DataFrame(rows)
+    table_p8.to_csv(R("tables", "table_p8.csv"), index=False)
+    display(table_p8)"""),
+    code("""if r8 is not None:
+    fig, axes = plt.subplots(1, 2, figsize=(9.8, 4.8))
+    for ax, k, xl, title in ((axes[0], "C4", "tf_num_lsa − leaderboard Joint Frozen", "C4 (label-free): 18/20 above Joint Frozen"),
+                              (axes[1], "C5", "cte_probe − leaderboard Joint TAR", "C5 (label-aware): 15/20 above Joint TAR")):
+        d = pd.Series(r8[k]["per_dataset"])
+        diverging_bars(ax, [short(i) for i in d.index], list(d.values), xlabel=xl)
+        ax.set_title(title)
+    fig.tight_layout()
+    save(fig, "fig6_c4_c5_per_dataset"); plt.show()"""),
+    md("""**Reading the results.** Both claims pass. The label-free features alone beat Joint Frozen on 18 of 20 datasets
+(p = 2e-5), and the environment control shows that our setup and the leaderboard's agree on Joint Frozen (+0.0015,
+p = 0.47), so the gain is the method's. The probe lifts CTE by a small but consistent +0.0035 (17/20) and turns the
+narrow C2 miss (p = 0.058) into a clear pass for `cte_probe` vs Joint TAR (+0.0141, 15/20, p = 0.0023). One caveat:
+on Video Games our own Joint Frozen is +0.039 above the leaderboard's. Post-hoc checks without that dataset, or after
+subtracting each dataset's environment offset, keep both claims significant (PROGRESS.md E28, E29)."""),
+
+    md("""## 9. Summary for the paper
+
+- **Final method, CTE + probe (`cte_probe`, label-aware)** — **C5 passes**: +0.0141 vs Joint TAR, 15/20 datasets,
+  p = 0.0023 (Holm), no fine-tuning. Held-out 13: +0.0184 (p = 0.0046).
+- **Label-free variant (`tf_num_lsa`)** — **C4 passes**: +0.0129 vs Joint Frozen, 18/20, p = 2e-5 (Holm 4e-5).
+- **Earlier claims, reported as pre-registered** — C1 (P4) does not pass. C2 (plain CTE, p = 0.058) narrowly does
+  not pass on all 20. C3 (NB / residual variants) does not pass.
+- **Mechanism** — cross-fitting is essential (in-sample lexical: −0.045 vs CTE). Lexical, neighbour, numeracy and
+  probe experts are complementary.
+- **Limitation** — Jigsaw (toxicity) is still below TAR (−0.015), where fine-tuning helps most.
+- **Compute** — no fine-tuning and no GPU training. Comparable text-step time to our optimised TAR engine, roughly
+  an order of magnitude below TAR as implemented upstream (extrapolated from E6).
 
 Figures are saved to `reports/figures/` (PDF for the paper, PNG for slides) and tables to `reports/tables/`."""),
 ]

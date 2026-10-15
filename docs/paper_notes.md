@@ -39,6 +39,24 @@ MulTaBench paper text and still need a page or figure number before we cite them
 
 ## 2. Our results (exact pre-registered labels)
 
+### 2.0 Final results — P8 (pre-registered and approved 2026-10-16 before any P8 result) [E27–E29]
+- **C5 (main, label-aware): `cte_probe` = CTE + a cross-fitted linear probe on the full 384-d frozen embeddings, vs
+  Joint TAR:** +0.0141, CI [+0.0066, +0.0222], **p = 0.0023 (Holm 0.0023)**, 15/20 → **passes**. Held-out 13:
+  +0.0184 (p = 0.0046). The probe adds +0.0035 over CTE (17/20, p = 0.0007).
+- **C4 (label-free): `tf_num_lsa` = frozen PCA + numeracy + 30 LSA components, vs Joint Frozen:** +0.0129,
+  CI [+0.0060, +0.0218], **p = 1.9e-5 (Holm 3.8e-5)**, 18/20 → **passes**. This is the course criterion for methods
+  that do not use y.
+- **Environment control:** our Joint Frozen vs the leaderboard's: +0.0015, p = 0.47 (19 datasets). The exception is
+  Video Games, +0.039: say so. Post hoc, both claims stay significant without Video Games or after subtracting the
+  per-dataset environment offset.
+- **How the additions were chosen:** dev splits of the training rows of 6 datasets (test rows never used), then one
+  pre-registered full run. Disclose that earlier methods' test results on all 20 datasets were known.
+- **Story for the paper:**
+  - PCA keeps variance, not target signal. Give the learner the target signal directly as cross-fitted predictions:
+    lexical, neighbour and linear probe.
+  - Label-free, frozen dense embeddings also miss lexical and numeric detail; LSA and numeracy restore it.
+  - Earlier claims (C1, C2, C3) are reported as pre-registered: they are the development path.
+
 ### 2.1 Claim C2 (P5 v2, CTE, engine cte/3) — **not significant on all 20 datasets** [E24]
 - CatBoost CTE vs leaderboard Joint TAR, 20 datasets, fold-averaged, two-sided Wilcoxon:
   mean **+0.0106**, median +0.0044, bootstrap 95% CI [+0.0028, +0.0193], **p = 0.058**, wins 11/20,
@@ -117,7 +135,7 @@ MulTaBench paper text and still need a page or figure number before we cite them
   ±0.0015 per fold across re-encodings. Since d99be74 every job of a dataset reads one stored encoding.
 
 ## 3. Things not to claim
-- That CTE "significantly beats Joint TAR" on all 20 datasets (C2: p = 0.058).
+- That plain CTE "significantly beats Joint TAR" on all 20 datasets (C2: p = 0.058). `cte_probe` does (C5).
 - That PCA is the whole problem (their Fig. 6).
 - A measured 10× wall-clock saving against our own TAR engine (§2.3).
 - Anything from the held-out subset as if it were the primary test.
