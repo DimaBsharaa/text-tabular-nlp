@@ -55,6 +55,7 @@ Entry template:
 | P6 am. 1 / C3 | 2026-10-14 | BoW only for C > 10 (p6/2); claim C3 (3 CTE variants vs LB TAR, Holm) | written before any P6 result |
 | P6 am. 2 | 2026-10-15 | native-text variants dropped (runtime); C3 = cte_nb + cte_residual, Holm over 2 | decided before any cte_plus_native result |
 | E25 | 2026-10-15 | P6 results (200 jobs) | **C3 fails**: cte_nb Holm p = 0.097, cte_residual Holm p = 0.097; held-out 13 passes both |
+| E26 | 2026-10-15 | packaging: train.py / predict.py, model folder, CPU smoke | PS f0: train 36 s, predict 15 s, round trip exact |
 
 ---
 
@@ -1175,3 +1176,19 @@ Features for the learner = structured columns (upstream preprocessing)
 - **Conclusion:** neither variant beats Joint TAR on all 20 at the pre-registered level. Both reproduce the held-out
   13 result. They do not improve on CTE: NB weighting helps a little only on Jigsaw, and residual targets help only
   where structure is weak relative to text (Video Games). C2 and C3 are reported as pre-registered.
+
+## E26 — Packaging: train.py / predict.py with a saved model folder; CPU smoke run   (2026-10-15, laptop CPU)
+- **What:** `scripts/train.py` (MulTaBench dataset + fold, or `--csv` + `--target`) → model folder
+  (`multabench/ours/cte_model.py`: TF-IDF vectorizers, Ridge with the chosen alpha, kNN index, PCA, CatBoost, upstream
+  preprocessing state, meta.json) + metrics.json + test_rows.csv / test_predictions.csv. `scripts/predict.py`: model
+  folder + CSV → predictions, nothing re-fitted. The full-pool experts are refitted once after training and are exactly
+  the fit run_cte uses for test rows. The test reproduces the fit-time test-row features to 1e-9.
+- **Command:** `python scripts/train.py --dataset MUL_TEXT_PRODUCT_SENTIMENT --fold 0 --out_dir .explore/smoke_ps`, then
+  `python scripts/predict.py --model_dir .explore/smoke_ps --csv .explore/smoke_ps/test_rows.csv --out ...`.
+- **Result:** train 36 s wall (fresh cache, CPU embeddings included), max RSS 1.25 GB; score 0.8859 (A100 run of the
+  same fold: 0.8873; LB Joint TAR 0.8740). Predict 15 s wall for 509 rows. Round-trip predictions equal the fit-time
+  predictions exactly (max |Δ| 0.0). Folder ≈ 8 MB.
+- **Hostile review:** the CPU vs A100 difference (−0.0014) is the fp16 re-encoding effect from E25. The packaged model
+  is one fold's model; it is not used for any claim. `uv lock --check` passes and no dependency changed.
+- **Tests:** `tests/test_train_predict.py` (folder contents, fresh-process round trip, exact feature reproduction, CSV
+  mode).

@@ -7,33 +7,61 @@
 > code is theirs and is kept unmodified; our additions for the Technion 097215 NLP final project
 > (Track 1: Algorithm, text-tabular) live in `multabench/ours/`.
 
-## Our method: Cross-fitted Text Experts (CTE) — quickstart
+## Our method (CTE): Cross-fitted Text Experts
 
-CTE adds no fine-tuning. For each text-tabular dataset, the learner (CatBoost) gets the structured columns, frozen
-e5-small-v2 PCA-30 per text column, and **cross-fitted (out-of-fold) predictions of cheap text experts**: a TF-IDF +
-Ridge lexical expert on all text columns, and a k-nearest-neighbour expert in the frozen embedding space. It also
-gets label-free numeracy features. Code: `multabench/ours/cte.py`. Pre-registration and every result:
-`PROGRESS.md`. Paper notes: `docs/paper_notes.md`.
+CTE needs no fine-tuning. For a text-tabular table, CatBoost gets:
+- the structured columns;
+- frozen e5-small-v2 embeddings (PCA-30 per text column);
+- **cross-fitted (out-of-fold) predictions of cheap text experts**: a TF-IDF + Ridge lexical expert on all text columns,
+  and a k-nearest-neighbour expert in the frozen embedding space;
+- label-free numeracy features.
+
+Code: [`multabench/ours/cte.py`](multabench/ours/cte.py); packaged model: [`multabench/ours/cte_model.py`](multabench/ours/cte_model.py).
+Every pre-registered claim, amendment and result: [`PROGRESS.md`](PROGRESS.md). All results, figures and tables:
+[`notebooks/project_analysis.ipynb`](notebooks/project_analysis.ipynb). Notes for the paper: [`docs/paper_notes.md`](docs/paper_notes.md).
+
+### Install, train, predict
 
 ```bash
-uv sync --frozen                          # Python 3.11 env from pyproject.toml + uv.lock (or: source init.sh)
-cp .env.example .env                      # then fill in KAGGLE_USERNAME / KAGGLE_KEY yourself (datasets download)
+uv sync --frozen        # Python 3.11 env from pyproject.toml + uv.lock (pinned); or: source init.sh
+cp .env.example .env    # fill in KAGGLE_USERNAME / KAGGLE_KEY yourself (needed to download MulTaBench datasets)
 
-# train on one dataset + fold (any MulTaBench text dataset id) -> model.joblib + metrics.json (test score of the fold)
-.venv/bin/python scripts/train.py --dataset REG_TEXT_BOOK_PRICE --fold 0 --out_dir models/book_price_f0
+# train on a MulTaBench dataset + fold (the benchmark's split) ...
+.venv/bin/python scripts/train.py --dataset MUL_TEXT_PRODUCT_SENTIMENT --fold 0 --out_dir models/ps_f0
+# ... or on any CSV with a target column (same protocol: 10% test, capped at 2,000; train capped at 10,000)
+.venv/bin/python scripts/train.py --csv my_table.csv --target price --out_dir models/my_table
 
-# predict on new rows (a CSV with the same feature columns; a target column, if present, is ignored)
-.venv/bin/python scripts/predict.py --model_dir models/book_price_f0 --csv new_rows.csv --out predictions.csv
-
-# reproduce the reports from a results folder (one JSON per method/learner/dataset/fold)
-.venv/bin/python scripts/run_experiment.py --jobs_file jobs/cte_full.txt --out results_cte   # the full run (GPU advised)
-.venv/bin/python scripts/cte_report.py --out results_cte          # claim C2 (+ subsets, LightGBM, ablations)
-.venv/bin/python scripts/p6_report.py --out results_cte           # claim C3 (P6), after jobs/p6_secondary.txt
-.venv/bin/python scripts/build_analysis_notebook.py --execute     # notebooks/project_analysis.ipynb + reports/figures
+# predict on new rows (a CSV with the training feature columns; other columns are ignored)
+.venv/bin/python scripts/predict.py --model_dir models/ps_f0 --csv models/ps_f0/test_rows.csv --out predictions.csv
 ```
 
-Colab: `notebooks/colab_run.ipynb` runs a jobs file with results on Google Drive. Tests:
-`.venv/bin/python -m pytest tests`.
+`train.py` writes a model folder:
+- the fitted parts: TF-IDF vectorizers, Ridge, kNN index, PCA, CatBoost, the upstream preprocessing state, `meta.json`;
+- `metrics.json`: the test-split score, plus the leaderboard's Joint TAR / Frozen for the same fold;
+- `test_rows.csv` + `test_predictions.csv`.
+
+`predict.py` re-fits nothing. Measured on a laptop CPU (i7-13700H, no GPU), Product Sentiment fold 0 (4,582 training
+rows): training **36 s**, predicting the 509 test rows **15 s**, model folder ≈ 8 MB.
+
+### Reproduce every table and figure from the exported results
+
+The full runs ran on Colab ([`notebooks/colab_run.ipynb`](notebooks/colab_run.ipynb), jobs files in `jobs/`). Each
+export zip holds one JSON per (method, learner, dataset, fold) under `results/`. Unzip each export into its own folder,
+then:
+
+```bash
+.venv/bin/python scripts/phase0_diagnostics.py                       # reports/phase0/  (leaderboard CSVs only)
+.venv/bin/python scripts/pilot_report.py --out <pilot export>/results --variant <run> ...  # reports/pilot/ (P1-P3)
+.venv/bin/python scripts/full_report.py --out <E17 export>/results    # reports/full/c1_report.json  (claim C1)
+.venv/bin/python scripts/cte_report.py  --out <E24 export>/results    # reports/cte/cte_report.json  (claim C2)
+.venv/bin/python scripts/p6_report.py   --out <E25 export>/results    # reports/p6/p6_report.json    (claim C3)
+.venv/bin/python scripts/collect_fold_scores.py --export <E17 export>/results --export <E24 export>/results \
+    --export <E25 export>/results --out reports/tables/fold_scores.csv
+.venv/bin/python scripts/build_analysis_notebook.py --execute        # notebook + reports/figures/ + reports/tables/
+```
+
+All the `reports/` outputs are committed, so the last command alone rebuilds the notebook, figures and tables.
+Tests: `.venv/bin/python -m pytest tests`.
 
 ---
 

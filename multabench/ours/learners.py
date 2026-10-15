@@ -190,7 +190,7 @@ class OursTextMixin:
                       cat_cols=sorted(self.categorical_features), is_cls=self.is_cls, extra=extra, cfg=self.ours_cfg,
                       device=self.device, cache_root=self.ours_cache_dir, dataset=self.ours_dataset, fold=self.ours_fold)
             if self.ours_variant in STACK_METHODS:
-                # kept for inference on new rows (multabench/ours/inference.py); not used by fit/score
+                # kept to package the model (multabench/ours/cte_model.py); not used by fit/score
                 self.ours_stack_inputs = {k: kw[k] for k in ("x_fit", "y_fit", "text_cols", "struct_cols", "cat_cols",
                                                              "is_cls")}
                 self.stack_result = run_stacking(self.ours_variant, **kw)

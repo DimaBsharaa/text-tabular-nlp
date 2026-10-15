@@ -1,10 +1,11 @@
-"""Predict with a model saved by scripts/train.py on new rows from a CSV (same feature columns as the dataset).
+"""Predict with a model folder saved by scripts/train.py on new rows from a CSV.
 
     python scripts/predict.py --model_dir models/book_price_f0 --csv new_rows.csv --out predictions.csv
 
-Output: the input rows' predictions (regression: column "prediction"; classification: one "proba_<class>" column
-per class), in the input order. A target column in the CSV, if present, is ignored (never read by the model).
-New rows get CTE features exactly like test rows (multabench/ours/inference.py); nothing is re-fitted on them.
+The CSV needs the training feature columns (listed in <model_dir>/meta.json); extra columns, such as the target, are
+ignored. Output, in the input order: regression -> column "prediction"; classification -> one "proba_<class>" column
+per class. Nothing is re-fitted: the saved TF-IDF vectorizers, Ridge, kNN index, PCA and CatBoost are applied
+(multabench/ours/cte_model.py). The frozen e5-small-v2 encoder is loaded from Hugging Face.
 """
 from __future__ import annotations
 
@@ -12,6 +13,7 @@ import argparse
 import json
 import os
 import sys
+import time
 from os.path import abspath, dirname, join
 
 REPO_ROOT = dirname(dirname(abspath(__file__)))
@@ -20,24 +22,25 @@ os.environ.setdefault("WANDB_MODE", "disabled")
 
 
 def main(argv=None):
-    import joblib
     import pandas as pd
-    from multabench.ours.inference import predict_new
+    import torch
+    from multabench.ours.cte_model import predict_folder
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--model_dir", required=True)
     p.add_argument("--csv", required=True)
     p.add_argument("--out", required=True)
-    p.add_argument("--cache_dir", default=None, help="optional frozen-embedding cache (e.g. the one used in training)")
+    p.add_argument("--device", default="auto", choices=("auto", "cpu", "cuda"))
     a = p.parse_args(argv)
-    model = joblib.load(join(a.model_dir, "model.joblib"))
-    cols = json.load(open(join(a.model_dir, "metrics.json")))["feature_columns"]
+    t0 = time.time()
+    cols = json.load(open(join(a.model_dir, "meta.json")))["feature_columns"]
     x = pd.read_csv(a.csv)
     missing = [c for c in cols if c not in x.columns]
     if missing:
         raise SystemExit(f"CSV is missing feature columns: {missing}")
-    pred = predict_new(model, x[cols], cache_dir=a.cache_dir)
+    device = torch.device("cuda" if a.device == "cuda" or (a.device == "auto" and torch.cuda.is_available()) else "cpu")
+    pred = predict_folder(a.model_dir, x, device)
     pred.to_csv(a.out, index=False)
-    print(f"{len(pred)} predictions -> {a.out}")
+    print(f"{len(pred)} predictions -> {a.out} ({time.time() - t0:.0f} s)")
     return pred
 
 

@@ -1,0 +1,209 @@
+"""Packaged CTE model (scripts/train.py saves it, scripts/predict.py loads it): the fitted parts of our method, so new
+rows are featurised without re-fitting anything.
+
+After the learner is trained, the CTE experts are fitted once on ALL training rows (the pool): exactly the fit that
+run_cte uses for learner-val / test rows. That is, the TF-IDF vectorizers, the Ridge with the alpha chosen by the
+training-row OOF metric, and the kNN index (pool embeddings + targets per view). New rows get these predictions, plus
+numeracy features, laid out in the same feature columns as in training. Then the fitted PCA and CatBoost are applied.
+
+Model folder:
+  meta.json         task, classes, text columns, raw feature columns, chosen alpha, encoder config, versions
+  vectorizers.joblib TF-IDF vectorizers (word 1-2, char_wb 3-5) of the lexical expert
+  ridge.joblib      the lexical Ridge (or the constant prediction if there was no vocabulary)
+  knn_index.npz     per neighbour view: L2-normalised training-row embeddings + training targets
+  pca.joblib        the fitted PCA-30 per text column
+  catboost.cbm      the fitted CatBoost model
+  learner.joblib    upstream preprocessing state (dates, feature types, label encoder), heavy parts removed
+"""
+from __future__ import annotations
+
+import json
+import os
+from os.path import join
+from typing import Dict, Optional
+
+import numpy as np
+import pandas as pd
+import torch
+from pandas import DataFrame
+
+from multabench.ours import cte
+from multabench.ours import tar_engine as te
+from multabench.ours.experts import ALL_COLS
+
+FORMAT_VERSION = "cte_model/1"
+
+
+class CTEFeaturizer:
+    """The full-pool CTE experts (method `cte`, engine cte/3) of one fitted learner."""
+
+    def __init__(self, text_cols, is_cls, classes, top, alpha, vectorizers, ridge, ridge_const, knn, c=cte.CTE_CONFIG):
+        self.text_cols, self.is_cls, self.classes, self.top, self.alpha = text_cols, is_cls, classes, top, alpha
+        self.vectorizers, self.ridge, self.ridge_const, self.knn, self.c = vectorizers, ridge, ridge_const, knn, c
+
+    @property
+    def n_classes(self) -> int:
+        return len(self.classes) if self.is_cls else 1
+
+    # ------------------------------------------------------------------ fit (mirrors cte.run_cte / compute_cte_features)
+    @classmethod
+    def from_learner(cls, model) -> "CTEFeaturizer":
+        assert model.ours_variant == "cte", "packaging is implemented for our final method `cte`"
+        from scipy.sparse import csr_matrix, hstack
+        from sklearn.feature_extraction.text import TfidfVectorizer
+        from sklearn.linear_model import Ridge
+        c = cte.CTE_CONFIG
+        inp = model.ours_stack_inputs
+        text_cols = sorted(inp["text_cols"])
+        y_fit = inp["y_fit"]
+        if model.is_cls:
+            classes = sorted(y_fit.astype(str).unique())
+            y = y_fit.astype(str).map({k: i for i, k in enumerate(classes)}).to_numpy()
+        else:
+            classes, y = [], pd.to_numeric(y_fit).to_numpy(dtype=float)
+        n_classes = len(classes) if model.is_cls else 1
+        top = cte.top_classes(y, n_classes, c) if model.is_cls else None
+        alpha = float(model.stack_result.diagnostics["lex_alpha"]["chosen"])
+        x_t = inp["x_fit"][text_cols]
+        texts = {col: te.encoding_texts(x_t, col) for col in text_cols}
+        pool = _concat(texts, text_cols)
+        vectorizers, mats = [], []
+        for kw, cut in _analyzers(c):
+            v = TfidfVectorizer(sublinear_tf=True, min_df=c.min_df, dtype=np.float32, **kw)
+            try:
+                mats.append(v.fit_transform(_prep(pool, cut, c)))
+            except ValueError:  # empty vocabulary -> analyzer skipped (as in cte.tfidf_matrices)
+                continue
+            vectorizers.append((v, cut))
+        X = hstack(mats).tocsr() if mats else csr_matrix((len(pool), 0), dtype=np.float32)
+        Y = cte._targets(y, model.is_cls, n_classes, c)  # one-hot / rank-Gaussian of ALL training rows
+        ridge, ridge_const = (None, Y.mean(axis=0)) if X.shape[1] == 0 else (
+            Ridge(alpha=alpha, solver="sparse_cg").fit(X, Y), None)
+        rows = np.asarray(inp["x_fit"].index)
+        embs = {col: model.tar_result.row_embeddings(col, rows) for col in text_cols}
+        views = {ALL_COLS: cte._normalise(np.mean([embs[col] for col in text_cols], axis=0))}
+        if not (model.is_cls and n_classes > 2):  # amendment 2A: multiclass -> concatenation only
+            views = {**{col: embs[col] for col in text_cols}, **views}
+        knn = {view: (np.asarray(E, dtype=np.float32), np.asarray(Y, dtype=np.float64)) for view, E in views.items()}
+        return cls(text_cols, model.is_cls, classes, top, alpha, vectorizers, ridge, ridge_const, knn, c)
+
+    # ------------------------------------------------------------------ transform
+    def transform(self, texts: Dict[str, list[str]], embs: Dict[str, np.ndarray], index,
+                  device: torch.device = torch.device("cpu")) -> Dict[str, DataFrame]:
+        """Feature frames per text column for new rows (same names / order as run_cte's features)."""
+        from scipy.sparse import csr_matrix, hstack
+        n, c = len(index), self.c
+        feat = lambda P: cte.class_features(P, self.is_cls, self.n_classes, self.top)
+        out: Dict[str, np.ndarray] = {}
+        new = _concat(texts, self.text_cols)
+        mats = [v.transform(_prep(new, cut, c)) for v, cut in self.vectorizers]
+        X = hstack(mats).tocsr() if mats else csr_matrix((n, 0), dtype=np.float32)
+        P = (np.tile(self.ridge_const, (n, 1)) if self.ridge is None
+             else np.asarray(self.ridge.predict(X)).reshape(n, -1))
+        out[f"lex:{ALL_COLS}"] = feat(P)
+        new_views = {ALL_COLS: cte._normalise(np.mean([embs[col] for col in self.text_cols], axis=0))}
+        new_views.update({col: embs[col] for col in self.text_cols})
+        for view, (E, Y) in self.knn.items():
+            out[f"nbr:{view}"] = feat(cte.neighbour_average(E, Y, new_views[view], c, device))
+        for col in self.text_cols:
+            out[f"num:{col}"] = cte.numeracy_matrix(texts[col])
+        owner = {col: col for col in self.text_cols} | {ALL_COLS: self.text_cols[0]}
+        frames = {}
+        for col in self.text_cols:
+            names = sorted(f for f in out if owner[f.split(":", 1)[1]] == col)
+            if not names:
+                frames[col] = DataFrame(index=index)
+                continue
+            frames[col] = DataFrame(np.hstack([out[f] for f in names]), index=index)
+            frames[col].columns = [f"{f}#{cte.NUMERACY_NAMES[j] if f.startswith('num:') else j}" for f in names
+                                   for j in range(out[f].shape[1])]
+        return frames
+
+    # ------------------------------------------------------------------ save / load
+    def save(self, folder: str) -> dict:
+        import joblib
+        joblib.dump(self.vectorizers, join(folder, "vectorizers.joblib"), compress=3)
+        joblib.dump({"ridge": self.ridge, "const": self.ridge_const}, join(folder, "ridge.joblib"), compress=3)
+        np.savez_compressed(join(folder, "knn_index.npz"), **{f"{v}|E": E for v, (E, _) in self.knn.items()},
+                            **{f"{v}|Y": Y for v, (_, Y) in self.knn.items()})
+        return {"text_cols": self.text_cols, "is_cls": self.is_cls, "classes": self.classes,
+                "top": None if self.top is None else [int(t) for t in self.top], "alpha": self.alpha,
+                "knn_views": list(self.knn)}
+
+    @classmethod
+    def load(cls, folder: str, meta: dict) -> "CTEFeaturizer":
+        import joblib
+        r = joblib.load(join(folder, "ridge.joblib"))
+        z = np.load(join(folder, "knn_index.npz"))
+        knn = {v: (z[f"{v}|E"], z[f"{v}|Y"]) for v in meta["knn_views"]}
+        top = None if meta["top"] is None else np.asarray(meta["top"])
+        return cls(meta["text_cols"], meta["is_cls"], meta["classes"], top, meta["alpha"],
+                   joblib.load(join(folder, "vectorizers.joblib")), r["ridge"], r["const"], knn)
+
+
+def _analyzers(c):
+    return ((dict(analyzer="word", ngram_range=c.word_ngrams, max_features=c.max_word_features), False),
+            (dict(analyzer="char_wb", ngram_range=c.char_ngrams, max_features=c.max_char_features), True))
+
+
+def _prep(xs: list[str], cut: bool, c) -> list[str]:
+    return [t[:c.char_max_chars] for t in xs] if cut else list(xs)
+
+
+def _concat(texts: Dict[str, list[str]], cols: list[str]) -> list[str]:
+    return [" | ".join(f"{col}: {texts[col][i]}" for col in cols) for i in range(len(texts[cols[0]]))]
+
+
+# ---------------------------------------------------------------------------------------- whole model folder
+
+def save_model(model, folder: str, extra_meta: Optional[dict] = None) -> None:
+    """Writes the model folder for a fitted `cte` learner (the learner object is stripped of heavy, row-bound parts)."""
+    import dataclasses
+    import joblib
+    os.makedirs(folder, exist_ok=True)
+    fz = CTEFeaturizer.from_learner(model)
+    meta = {"format": FORMAT_VERSION, "method": "cte", "engine_version": cte.CTE_VERSION, **fz.save(folder),
+            "encoder": {k: v for k, v in dataclasses.asdict(model.ours_cfg).items() if k != "lower_cache_dir"},
+            **(extra_meta or {})}
+    joblib.dump({col: enc.encoder.pca for col, enc in model.text_transformers.items()}, join(folder, "pca.joblib"))
+    model.model_.save_model(join(folder, "catboost.cbm"))
+    keep = {}
+    for attr in ("model_", "text_transformers", "tar_result", "stack_result", "ours_stack_inputs", "ours_test",
+                 "ours_learner_val", "ours_probe_sets"):
+        keep[attr] = getattr(model, attr, None)
+        setattr(model, attr, None)
+    try:
+        joblib.dump(model, join(folder, "learner.joblib"), compress=3)
+    finally:
+        for attr, v in keep.items():
+            setattr(model, attr, v)
+    json.dump(meta, open(join(folder, "meta.json"), "w"), indent=1)
+
+
+def predict_folder(folder: str, x_new: DataFrame, device: Optional[torch.device] = None) -> DataFrame:
+    """Predictions for raw new rows (the training feature columns) from a saved model folder."""
+    import joblib
+    from catboost import CatBoostClassifier, CatBoostRegressor
+    from multabench.ours.learners import PredColumnEncoder
+    device = device or torch.device("cpu")
+    meta = json.load(open(join(folder, "meta.json")))
+    fz = CTEFeaturizer.load(folder, meta)
+    model = joblib.load(join(folder, "learner.joblib"))
+    model.model_ = (CatBoostClassifier if meta["is_cls"] else CatBoostRegressor)().load_model(join(folder, "catboost.cbm"))
+    pca = joblib.load(join(folder, "pca.joblib"))
+    x = x_new[meta["feature_columns"]].copy()
+    x.index = pd.RangeIndex(len(x))
+    pre = model._ours_preprocess_like_transform(x)[fz.text_cols]
+    cfg = te.TarConfig(**meta["encoder"])
+    emb, _ = cte.frozen_embeddings_cached([pre], fz.text_cols, cfg, device, None, "predict")
+    texts = {col: te.encoding_texts(pre, col) for col in fz.text_cols}
+    feats = fz.transform(texts, {col: emb.row_embeddings(col, x.index) for col in fz.text_cols}, x.index, device)
+    model.text_transformers = {col: PredColumnEncoder(result=emb, col_name=col, encoder=pca[col], features=feats[col])
+                               for col in fz.text_cols}  # sorted, as in training (column order)
+    model.tar_result = emb
+    pred = np.asarray(model.predict(x))
+    if not meta["is_cls"]:
+        return DataFrame({"prediction": pred}, index=x_new.index)
+    labels = [str(k) for k in model.target_transformer.classes_]
+    probs = np.column_stack([1 - pred, pred]) if pred.ndim == 1 else pred
+    return DataFrame(probs, columns=[f"proba_{k}" for k in labels], index=x_new.index)
