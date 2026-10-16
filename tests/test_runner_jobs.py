@@ -77,3 +77,12 @@ def test_parallel_timeout_logged_not_retried(tmp_path, monkeypatch):
 def test_timeout_only_in_parallel_mode():
     args = argparse.Namespace(parallel_jobs="1")
     assert rx.parallel_plan(args, [("tar_repro", "catboost", "D", 0, 42)]) == (1, {})
+
+
+def test_auto_parallel_for_every_p8_p10_jobs_file(monkeypatch):
+    """Every CPU-bound jobs file must run in parallel ('frozen0_query' was missed once: 28 h instead of 4.6 h)."""
+    monkeypatch.setattr(rx.os, "cpu_count", lambda: 12)
+    monkeypatch.setattr(rx.shutil, "which", lambda _: None)
+    root = dirname(dirname(abspath(__file__)))
+    for f in ("jobs/p8_A.txt", "jobs/p8_B.txt", "jobs/p10.txt", "jobs/cte_full.txt"):
+        assert rx.parallel_plan(argparse.Namespace(parallel_jobs="auto"), rx.read_jobs(join(root, f)))[0] == 6, f

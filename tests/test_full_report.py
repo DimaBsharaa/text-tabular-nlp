@@ -124,3 +124,19 @@ def test_p8_report_on_synthetic_results(tmp_path):
     rep = pr.p8_report(out)
     assert rep["C5"]["n"] == 20 and not rep["C5"]["passes"] and rep["C4"]["p_holm"] >= rep["C4"]["p_value"]
     assert rep["C5_heldout13"]["n"] == 13 and rep["C5_vs_our_cte"]["n"] == 20
+
+
+def test_p10_report_on_synthetic_results(tmp_path):
+    import p10_report as pr
+    from p5_report import leaderboard_state
+    out = str(tmp_path)
+    rng = np.random.default_rng(5)
+    lb_all = {(r.dataset, r.fold): r.score for r in leaderboard_state("catboost", "all").itertuples()}
+    for run, off in (("p9_query", 0.02), ("cte_probe", 0.012)):
+        _write(out, run, "catboost", {k: v + off + rng.normal(0, 0.001) for k, v in _lb("catboost").items()})
+    for run, off in (("frozen0_query", 0.01), ("frozen0", 0.0)):
+        _write(out, run, "catboost", {k: v + off + rng.normal(0, 0.001) for k, v in lb_all.items()})
+    rep = pr.p10_report(out)
+    assert rep["C6"]["n"] == 20 and rep["C6"]["passes"] and rep["C6_vs_our_cte_probe"]["mean_diff"] > 0
+    assert rep["C6_heldout13"]["n"] == 13 and rep["frozen_query_vs_lb_frozen"]["n"] == 19
+    assert rep["frozen_query_vs_our_frozen0"]["mean_diff"] > 0

@@ -61,6 +61,7 @@ Entry template:
 | E28 | 2026-10-16 | P8 part B (195 jobs, A100) | **C4 passes**: +0.0129 vs Joint Frozen, 18/20, p = 1.9e-5; no environment effect (p = 0.47) |
 | E29 | 2026-10-16 | P8 part A (100 jobs, A100) | **C5 passes**: cte_probe +0.0141 vs Joint TAR, 15/20, p = 0.0023 (Holm 0.0023) |
 | P9 / E30 | 2026-10-16 | dev round 2 (partial, 31 jobs; RFF memory bug fixed) | avg / rep3 / prompt do not help; NB lexical +0.014 on Jigsaw |
+| E31 / P10 | 2026-10-16 | e5 "query:" prefix (dev) + C6 proposal | cte_probe + query: +0.0085 vs cte_probe, 6/6 dev datasets (Jigsaw +0.017) |
 
 ---
 
@@ -1386,3 +1387,37 @@ Features for the learner = structured columns (upstream preprocessing)
   - NB's Jigsaw benefit was also visible in C3's **test** results (cte_nb, E25), so choosing NB now is informed by
     test data. This must be disclosed if it is ever claimed.
 - **Next:** Dima to decide. No further runs without approval (≈ 1 h 40 min of CPU used in this round).
+
+## E31 — e5 "query:" prefix (dev): cte_probe + "query:" improves on cte_probe on 6/6 dev datasets   (2026-10-16, laptop CPU)
+- **Idea:** MulTaBench encodes cells as "passage: col: val". The e5 model card says to use "query: " when embeddings
+  are used *as features* (linear probing, clustering), which is what Joint Frozen, our PCA and our probe do. The
+  change is one word, label-free, and keeps the same frozen model.
+- **Commands:** `scripts/dev_eval.py --methods frozen0 frozen0_query tf_num_lsa tf_num_lsa_query p9_base p9_query
+  --seeds 0 1` on the 6 P7 dev datasets (Product Sentiment run first, then the other 5 under `timeout 3300`; finished,
+  72 jobs, 39 min of job time plus CPU encoding, within the cap). Results: `reports/dev/p9_query_dev_results.csv`.
+- **Results (mean over 2 seeds; Babies / Book / Jigsaw / Kickstarter / PS / Video Games):**
+  - **`p9_query` − `p9_base` (= cte_probe): +0.0085, 6/6** (+0.001 / +0.004 / **+0.017** / +0.007 / +0.008 / +0.014);
+  - `frozen0_query` − `frozen0`: +0.0075, 3/6 (−0.003 / −0.002 / +0.026 / +0.015 / +0.020 / −0.010; classification
+    gains, regression mixed);
+  - `tf_num_lsa_query` − `tf_num_lsa`: +0.0041, 4/6.
+- **Hostile review:**
+  - The prefix is label-free, so there is no new leakage path (the store is separate; tests in test_p9.py).
+  - The dev noise is about ±0.005 per dataset, but 6/6 consistent with a mean of +0.0085 is the strongest dev signal of
+    any candidate so far.
+  - The selection-on-the-same-20-datasets caveat from P8 applies.
+- **Next:** P10 proposal (below), awaiting Dima's approval.
+
+## P10 — PROPOSED pre-registration (2026-10-16). Binding when Dima approves the run, before any P10 result.
+- **C6:** `p9_query` (= cte_probe with every frozen e5 embedding computed with the "query: " prefix: the PCA, the
+  neighbour expert and the probe; the lexical expert and numeracy are unchanged) vs leaderboard **Joint TAR** (`ft`,
+  CatBoost), 20 datasets, folds 0–4, fold-averaged differences, two-sided Wilcoxon. Pass = p < 0.05 and positive
+  mean. A single new claim, tested at α = 0.05; C1–C5 stay as reported.
+- **Secondary:** `p9_query` vs our `cte_probe` (paired, 20); held-out 13 vs Joint TAR.
+- **Descriptive (label-free headline):** `frozen0_query` (Joint Frozen with the e5 "query:" prefix, nothing else) vs
+  leaderboard Joint Frozen, vs our `frozen0`, and vs Joint TAR, on the 19 datasets without Spotify.
+- **Disclosure:** the prefix idea and variant were chosen on dev splits of the training rows of 6 of the 20 datasets
+  (E31). Test results of earlier methods on all 20 were known. This is the sixth pre-registered claim of the project.
+- **Run plan (from measured E24 / E29 job times, 6 slots × 2 threads, longest first):** `jobs/p10.txt` = `p9_query`
+  × 100 + `frozen0_query` × 95, ≈ 28 slot-hours, **≈ 4.6 h wall** on A100 (main claim alone ≈ 3.7 h);
+  `--job_timeout_min 240`; results root `results_cte`. New "query:" embeddings are encoded once per dataset on the
+  GPU (the lock serialises parallel jobs of one dataset).

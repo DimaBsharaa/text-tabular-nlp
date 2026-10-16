@@ -274,7 +274,7 @@ def parallel_plan(args: argparse.Namespace, jobs: list) -> tuple[int, dict]:
     cores // n threads so the cores are not oversubscribed."""
     cores = os.cpu_count() or 1
     if args.parallel_jobs == "auto":
-        cpu_bound = lambda m: m.startswith(("cte", "tf_", "p9_")) or m in ("catboost_native_text", "frozen0")
+        cpu_bound = lambda m: m.startswith(("cte", "tf_", "p9_", "frozen0")) or m == "catboost_native_text"
         n = max(1, cores // 2) if jobs and all(cpu_bound(j[0]) for j in jobs) else 1
     else:
         n = max(1, int(args.parallel_jobs))
