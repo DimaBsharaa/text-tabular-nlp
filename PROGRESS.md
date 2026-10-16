@@ -62,6 +62,7 @@ Entry template:
 | E29 | 2026-10-16 | P8 part A (100 jobs, A100) | **C5 passes**: cte_probe +0.0141 vs Joint TAR, 15/20, p = 0.0023 (Holm 0.0023) |
 | P9 / E30 | 2026-10-16 | dev round 2 (partial, 31 jobs; RFF memory bug fixed) | avg / rep3 / prompt do not help; NB lexical +0.014 on Jigsaw |
 | E31 / P10 | 2026-10-16 | e5 "query:" prefix (dev) + C6 proposal | cte_probe + query: +0.0085 vs cte_probe, 6/6 dev datasets (Jigsaw +0.017) |
+| E32 | 2026-10-16 | P10 full run (195 jobs) | C6 passes vs TAR (+0.0124, p = 0.015) but **no gain over cte_probe** (−0.0017, 7/20); helps binary cls, hurts regression |
 
 ---
 
@@ -1421,3 +1422,29 @@ Features for the learner = structured columns (upstream preprocessing)
   × 100 + `frozen0_query` × 95, ≈ 28 slot-hours, **≈ 4.6 h wall** on A100 (main claim alone ≈ 3.7 h);
   `--job_timeout_min 240`; results root `results_cte`. New "query:" embeddings are encoded once per dataset on the
   GPU (the lock serialises parallel jobs of one dataset).
+
+## E32 — P10: the e5 "query:" prefix does not improve cte_probe; C6 passes vs TAR but is no better than C5   (2026-10-16, Colab A100)
+- **Approval:** Dima ran `jobs/p10.txt` after the P10 proposal (no explicit "approve" message; treated as approved by
+  running). The run used d5d75d7 (clean), the commit containing the P10 pre-registration and `scripts/p10_report.py`.
+- **Data:** `results_export_20261016_132905.zip`: `p9_query` 100/100, `frozen0_query` 95/95, A100-SXM4-40GB, 2 threads per job,
+  no process_errors and no timeouts. (Dima's message named the older part-A zip; the new zip was found in Downloads
+  and verified by content.)
+- **C6 (p9_query vs leaderboard Joint TAR, 20 datasets):** +0.0124, CI [+0.0048, +0.0209], p = 0.015, 14/20 →
+  **passes**, but it is weaker than C5 (cte_probe: +0.0141, p = 0.0023, 15/20).
+- **Secondary:**
+  - `p9_query` vs our `cte_probe`: **−0.0017**, CI [−0.0051, +0.0006], p = 0.43, 7/20 → **no improvement**;
+  - held-out 13: +0.0183, p = 0.006.
+- **Descriptive (19 datasets):** Joint Frozen + "query:" vs our frozen0 +0.0002 (p = 0.37); vs leaderboard Joint Frozen
+  +0.0017 (p = 0.47); vs Joint TAR −0.0196.
+- **Analysis:**
+  - The prefix helps **binary classification** (vs cte_probe +0.0030: Jigsaw +0.006, Kickstarter +0.002, Fake Job
+    +0.001; frozen alone: Jigsaw +0.018) and hurts **regression** (−0.0040: Video Games −0.029, Babies −0.009; frozen
+    alone: Video Games −0.043). Multiclass is about 0 (−0.0005).
+  - **The dev result did not replicate even on the dev datasets** (their test folds: −0.0048 mean; Video Games dev
+    +0.014 vs test −0.029). Two dev splits of one fold's training rows were noisier than the assumed ±0.005, so E31's
+    "6/6" over-stated the evidence. Lesson: future dev rounds need more folds or seeds before a full run.
+- **Hostile review:** one commit, clean tree, one GPU type; analysis script fixed before the run. The `p9_base` ≡
+  `cte_probe` equivalence (tests) means the p9_query − cte_probe comparison isolates the prefix.
+- **Conclusion:** **C5 (cte_probe) remains the final method.** C6 is reported as pre-registered (passes vs TAR) with
+  the negative secondary result. The task-type dependence of the e5 prefix is an analysis finding for the paper.
+  Choosing the prefix per task type now would be selected on test results, so it is future work only.
