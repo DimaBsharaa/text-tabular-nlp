@@ -84,5 +84,5 @@ def test_auto_parallel_for_every_p8_p10_jobs_file(monkeypatch):
     monkeypatch.setattr(rx.os, "cpu_count", lambda: 12)
     monkeypatch.setattr(rx.shutil, "which", lambda _: None)
     root = dirname(dirname(abspath(__file__)))
-    for f in ("jobs/p8_A.txt", "jobs/p8_B.txt", "jobs/p10.txt", "jobs/cte_full.txt"):
+    for f in ("jobs/p8_A.txt", "jobs/p8_B.txt", "jobs/p10.txt", "jobs/p11.txt", "jobs/cte_full.txt"):
         assert rx.parallel_plan(argparse.Namespace(parallel_jobs="auto"), rx.read_jobs(join(root, f)))[0] == 6, f

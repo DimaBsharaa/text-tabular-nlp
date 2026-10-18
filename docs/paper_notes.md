@@ -4,6 +4,16 @@ Working notes for writing the NeurIPS-format paper. Every number below comes fro
 or from the MulTaBench paper (arXiv 2605.10616, tag `paper_version`). Items marked **[check]** come from the
 MulTaBench paper text and still need a page or figure number before we cite them.
 
+### 0. Framing after external review (2026-10-19), which supersedes the stronger wording below
+- **Do not claim "two flaws in TAR" as proven causes.** The PCA bottleneck and TAR's in-sample gap (+0.031, E8) are
+  *motivation*. Their Fig. 6 shows TAR beats Frozen at 15/30/60 PCA components. C1 (cross-fitted TAR predictions as a
+  feature) failed, so "PCA discards the target signal" is not what drives our win.
+- **What the evidence supports:** cheap, complementary and *honest* (cross-fitted) experts. The lexical expert
+  alone reaches about Joint TAR's level (−0.0000); all experts together beat it. The headline mechanism evidence is
+  the no-cross-fitting ablation (−0.045 vs CTE).
+- **Multiple testing:** state the Holm correction over all pre-registered tests (C5 → 0.014, C4 → 1e-4; both pass) and
+  the confirmation on 36 untouched datasets (P11, if run).
+
 ## 1. Relation to the MulTaBench paper
 
 ### 1.1 Our TAR reproduction matches their Appendix A (footnote on weight decay)

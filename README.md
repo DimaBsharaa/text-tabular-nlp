@@ -7,18 +7,43 @@
 > code is theirs and is kept unmodified; our additions for the Technion 097215 NLP final project
 > (Track 1: Algorithm, text-tabular) live in `multabench/ours/`.
 
-## Our method (CTE): Cross-fitted Text Experts
+## Our method: CTE + probe (`cte_probe`), Cross-fitted Text Experts
 
-CTE needs no fine-tuning. For a text-tabular table, CatBoost gets:
+**Final method:** `cte_probe` (claim **C5**: +0.0141 vs leaderboard Joint TAR, 15/20 datasets, Wilcoxon p = 0.0023;
+p = 0.014 after Holm over all 7 pre-registered tests). **No fine-tuning:** a frozen e5-small-v2 encoder, so **no
+weights are uploaded to Hugging Face** (nothing is trained but the per-dataset experts and learner, which `train.py`
+fits in seconds to minutes). The encoder is the public `intfloat/e5-small-v2`.
+
+For a text-tabular table, CatBoost gets:
 - the structured columns;
-- frozen e5-small-v2 embeddings (PCA-30 per text column);
-- **cross-fitted (out-of-fold) predictions of cheap text experts**: a TF-IDF + Ridge lexical expert on all text columns,
-  and a k-nearest-neighbour expert in the frozen embedding space;
+- frozen e5 PCA-30 per text column;
+- **cross-fitted (out-of-fold) predictions of cheap text experts**: TF-IDF + Ridge on all text columns, kNN in the
+  frozen embedding space, and a linear probe on the full 384-d embeddings;
 - label-free numeracy features.
 
-Code: [`multabench/ours/cte.py`](multabench/ours/cte.py); packaged model: [`multabench/ours/cte_model.py`](multabench/ours/cte_model.py).
-Every pre-registered claim, amendment and result: [`PROGRESS.md`](PROGRESS.md). All results, figures and tables:
-[`notebooks/project_analysis.ipynb`](notebooks/project_analysis.ipynb). Notes for the paper: [`docs/paper_notes.md`](docs/paper_notes.md).
+Every training row's expert features come from experts that never saw its label.
+
+**One command** (train + evaluate on a MulTaBench dataset, or `--csv my.csv --target y` for any table):
+```bash
+uv sync --frozen && .venv/bin/python scripts/train.py --dataset MUL_TEXT_PRODUCT_SENTIMENT --fold 0 --out_dir models/ps
+```
+
+Code:
+- final method: [`multabench/ours/p7.py`](multabench/ours/p7.py) (`cte_probe`) on top of
+  [`multabench/ours/cte.py`](multabench/ours/cte.py);
+- packaged model: [`multabench/ours/cte_model.py`](multabench/ours/cte_model.py);
+- label-free variant `tf_num_lsa` (claim C4, vs Joint Frozen): also in `p7.py`.
+
+**Development path, kept for transparency, not needed to use the method:**
+- `tar_engine.py` / `variants.py` (P1–P2, our TAR re-implementation and fine-tuning variants);
+- `stacking.py` (P3, C1);
+- `experts.py` (P5 v1 legacy);
+- `p6.py` (C3);
+- `p9.py` (P9 / C6).
+
+Every claim, amendment and result is in [`PROGRESS.md`](PROGRESS.md). Results, figures and tables:
+[`notebooks/project_analysis.ipynb`](notebooks/project_analysis.ipynb). Paper notes:
+[`docs/paper_notes.md`](docs/paper_notes.md).
 
 ### Install, train, predict
 

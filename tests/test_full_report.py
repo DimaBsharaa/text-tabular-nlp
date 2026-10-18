@@ -140,3 +140,19 @@ def test_p10_report_on_synthetic_results(tmp_path):
     assert rep["C6"]["n"] == 20 and rep["C6"]["passes"] and rep["C6_vs_our_cte_probe"]["mean_diff"] > 0
     assert rep["C6_heldout13"]["n"] == 13 and rep["frozen_query_vs_lb_frozen"]["n"] == 19
     assert rep["frozen_query_vs_our_frozen0"]["mean_diff"] > 0
+
+
+def test_p11_report_on_synthetic_results(tmp_path):
+    import p11_report as pr
+    out = str(tmp_path)
+    rng = np.random.default_rng(6)
+    src = {(r.dataset, r.fold): r.score for r in pr.source_leaderboard("catboost", "all").itertuples()}
+    assert len({d for d, _ in src}) == 36 and len(src) == 180
+    partial = {k: v + 0.01 + rng.normal(0, 0.001) for k, v in src.items() if not (k[0].startswith("REG_TEXT_FOOD_BEER") and k[1] == 4)}
+    _write(out, "cte_probe", "catboost", partial)
+    _write(out, "cte_probe", "lgbm", {k: v + 0.01 + rng.normal(0, 0.001) for k, v in _lb("lgbm").items()})
+    rep = pr.p11_report(out)
+    assert rep["n_datasets_complete"] == 35 and rep["missing"] == ["REG_TEXT_FOOD_BEER_RATINGS"]
+    assert rep["C7a_vs_joint_frozen"]["n"] == 35 and rep["C7a_vs_joint_frozen"]["passes"]
+    assert rep["C8_lgbm_vs_joint_tar"]["n"] == 20 and rep["C8_lgbm_vs_joint_tar"]["passes"]
+    assert rep["holm_all_preregistered"]["C5"] >= 0.002325

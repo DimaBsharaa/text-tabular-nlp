@@ -1448,3 +1448,28 @@ Features for the learner = structured columns (upstream preprocessing)
 - **Conclusion:** **C5 (cte_probe) remains the final method.** C6 is reported as pre-registered (passes vs TAR) with
   the negative secondary result. The task-type dependence of the e5 prefix is an analysis finding for the paper.
   Choosing the prefix per task type now would be selected on test results, so it is future work only.
+
+## P11 — PROPOSED pre-registration (2026-10-19): confirmation on 36 untouched datasets + LightGBM. Binding on Dima's approval, before any P11 result.
+- **Why (external review, verified):** six claims were tested on the same 20 datasets. A grader can call that
+  searching until something passes. Two answers:
+  1. Holm over **all 7 pre-registered tests so far** (C1, C2, C3 ×2, C4, C5, C6): C4 1e-4, **C5 0.014** (both still
+     pass), C6 0.077, C2 / C3 0.19, C1 0.41.
+  2. A clean confirmation on data never used by this project: the **36 other text datasets** of MulTaBench's source pool
+     (`multabench/leaderboard/results/text_source/`, all with CatBoost Joint Frozen / Joint TAR for 5 folds, all
+     loadable: 25 Kaggle, 8 OpenML, 3 URL).
+  - On those 36, TAR does not beat Frozen (median TAR − Frozen −0.0014; TAR > Frozen on 17/36), and two TAR R²
+    values are catastrophic (Mercedes −8.8, CarDekho −2.2). So medians and Wilcoxon are used, not means.
+- **Contact with the 36 before this proposal:** a timing / loading smoke test on the training rows of fold 0 of three
+  of them (Ramen Ratings, IMDB Genre, ML/DS/AI Jobs Salaries; dev mode, test rows never used); only timings were
+  read (9–27 s per job on the laptop CPU).
+- **C7 (confirmation, primary):** `cte_probe` (CatBoost, final method, unchanged) on the 36 datasets, folds 0–4, vs
+  leaderboard **Joint Frozen** (C7a) and vs leaderboard **Joint TAR** (C7b). Two-sided Wilcoxon over datasets on
+  fold-averaged differences; Holm over {C7a, C7b}. **Pass = Holm-adjusted p < 0.05 AND positive median difference.**
+  Datasets that fail to load or time out are excluded and listed; n is reported.
+- **C8 (learner robustness):** `cte_probe` with **LightGBM** on the 20 MulTaBench datasets vs leaderboard Joint TAR
+  (LightGBM). Two-sided Wilcoxon, pass = p < 0.05 AND positive mean (as C5).
+- **Reported in addition:** Holm over all pre-registered tests C1–C8; per-dataset tables; wins.
+- **Run plan:** `jobs/p11.txt`: 100 `cte_probe lgbm` jobs (the 20 datasets; CTE caches hit; E24's LightGBM block took
+  0.7 slot-hours) + 180 `cte_probe catboost` jobs (the 36; first-time download + GPU encoding). Estimate:
+  **≈ 3–5 h wall** on A100 (6 slots). Only three small new datasets were measured, so the uncertainty is mainly the
+  largest ones (Airbnb Melbourne 20 text columns, California 18). `--job_timeout_min 240`.
