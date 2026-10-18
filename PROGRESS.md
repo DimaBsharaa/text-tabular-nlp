@@ -1473,3 +1473,25 @@ Features for the learner = structured columns (upstream preprocessing)
   0.7 slot-hours) + 180 `cte_probe catboost` jobs (the 36; first-time download + GPU encoding). Estimate:
   **≈ 3–5 h wall** on A100 (6 slots). Only three small new datasets were measured, so the uncertainty is mainly the
   largest ones (Airbnb Melbourne 20 text columns, California 18). `--job_timeout_min 240`.
+
+## P11 decision (Dima, 2026-10-19)
+- Run only **C8** now (`JOB_FILTER = ["cte_probe lgbm"]`). The 36-dataset confirmation (C7) is held back: it is the
+  project's only clean holdout and is used **once**, on the final method. If P12 produces a new candidate, C7 is
+  amended *before running* to include it next to cte_probe.
+
+## P12 — Development round 3 (CPU, approved by Dima for up to 6 h; written 2026-10-19 BEFORE any P12 code or run)
+- **Lesson from P10:** two dev splits of one fold over-stated a gain (Video Games dev +0.014 → test −0.029). Stronger
+  protocol: **9 datasets × 6 dev splits** (the training rows of folds 0, 1, 2 × seeds 0, 1; 80/20 dev-train/dev-test;
+  test rows never used). Datasets: the 6 P7 dev sets + Women Clothing, Vancouver, Montgomery (CTE was weak or below TAR
+  there). Wine / Spotify are excluded (laptop CatBoost too slow).
+- **Candidates vs `p9_base` (= cte_probe):**
+  1. `p9_percol`: per-column lexical experts in addition to the all-columns one (VAERS lesson: column grouping matters).
+  2. `p9_k10`: 10-fold cross-fitting for every expert.
+  3. `p9_maxpool`: a second probe and kNN on max-pooled frozen e5 token states (mean pooling dilutes rare decisive
+     words).
+  4. `p9_tok`: TabSTAR-style target tokens: cosine similarity of each text's frozen embedding to frozen embeddings of
+     the class names ("<target>: <class>"; label names only; classification only).
+- **Decision rule (fixed now):** a candidate advances only if its mean over the 54 dataset-splits is > +0.002 vs
+  p9_base AND it is better on ≥ 6 of 9 datasets (mean over each dataset's 6 splits). Advancing candidates are combined
+  in a stage-2 check, then pre-registered with cte_probe for the C7 confirmation (36 datasets) and a full run on the 20.
+- Hard cap: `timeout` 6 h in total.

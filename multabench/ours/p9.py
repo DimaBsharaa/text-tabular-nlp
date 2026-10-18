@@ -38,6 +38,10 @@ class P9Spec:
     rff: bool = False
     nb: bool = False
     query: bool = False  # e5 "query: " prefix (e5 model card: use it for embeddings as features / linear probing)
+    percol: bool = False  # P12: per-column lexical experts in addition to the all-columns one
+    k10: bool = False     # P12: 10-fold cross-fitting for every expert
+    maxpool: bool = False  # P12: probe + kNN on max-pooled frozen e5 token states
+    tok: bool = False     # P12: TabSTAR-style target tokens (similarity to frozen embeddings of the class names)
 
 
 P9_METHODS = {
@@ -49,6 +53,10 @@ P9_METHODS = {
     "p9_rff": P9Spec(rff=True),
     "p9_nb": P9Spec(nb=True),
     "p9_query": P9Spec(query=True),
+    "p9_percol": P9Spec(percol=True),
+    "p9_k10": P9Spec(k10=True),
+    "p9_maxpool": P9Spec(maxpool=True),
+    "p9_tok": P9Spec(tok=True),
 }
 RFF_COMPONENTS = 2048
 SEED = 42
@@ -112,6 +120,8 @@ def run_p9(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], s
            device: torch.device, cache_root: Optional[str], dataset: str, fold: int):
     from multabench.ours.stacking import StackResult
     spec, c = P9_METHODS[method], cte.CTE_CONFIG
+    if spec.k10:
+        c = dataclasses.replace(c, n_folds=10)
     text_cols = sorted(text_cols)
     extra = {k: v for k, v in extra.items() if v is not None}
     splits = {"pool": x_fit, **{k: x for k, (x, _) in extra.items()}}
@@ -151,6 +161,14 @@ def run_p9(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], s
     oof, ext, diag["lex"] = linear_expert(X, Xe, y, is_cls, n_classes, c, spec, nb_fit)
     put(f"lex:{ALL_COLS}", text_cols[0], oof, ext)
     diag["seconds"]["lex"] = round(time.time() - t1, 1)
+
+    if spec.percol and len(text_cols) > 1:  # P12: one lexical expert per text column too
+        t1 = time.time()
+        for col in text_cols:
+            Xc, Xce = cte.tfidf_matrices(texts["pool"][col], {k: texts[k][col] for k in other}, c)
+            oof, ext, diag[f"lex_{col}"] = linear_expert(Xc, Xce, y, is_cls, n_classes, c, spec)
+            put(f"lex:{col}", col, oof, ext)
+        diag["seconds"]["percol"] = round(time.time() - t1, 1)
 
     # neighbour expert per view (multiclass: concatenation only), as cte
     t1 = time.time()
@@ -203,6 +221,26 @@ def run_p9(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], s
         diag["prompt_embedding_cache"] = pst
         diag["seconds"]["prompt"] = round(time.time() - t1, 1)
 
+    if spec.maxpool:  # P12: max-pooled token states of the same frozen e5 ("passage: col: val")
+        t1 = time.time()
+        M = maxpool_embeddings({k: x[text_cols] for k, x in splits.items()}, text_cols, cfg, device, cache_root, dataset)
+        Mcat = {k: np.hstack([M[k][col] for col in text_cols]) for k in splits}
+        oof, ext, diag["mprobe"] = linear_expert(Mcat["pool"], {k: Mcat[k] for k in other}, y, is_cls, n_classes, c, spec)
+        put(f"mprobe:{ALL_COLS}", text_cols[0], oof, ext)
+        mall = {k: cte._normalise(np.mean([M[k][col] for col in text_cols], axis=0)) for k in splits}
+        oof, ext = knn_expert(mall["pool"], {k: mall[k] for k in other}, y, is_cls, n_classes, c, spec, device)
+        put(f"mnbr:{ALL_COLS}", text_cols[0], oof, ext)
+        diag["seconds"]["maxpool"] = round(time.time() - t1, 1)
+
+    if spec.tok and is_cls:  # P12: TabSTAR-style target tokens: label NAMES only, no row labels
+        target = str(y_fit.name or "target")
+        cres, _ = cte.frozen_embeddings_cached([DataFrame({target: classes}, index=pd.RangeIndex(len(classes)))], [target],
+                                              cfg, device, cache_root, f"{dataset}__tok")
+        CE = cres.row_embeddings(target, np.arange(len(classes)))
+        keep = top if top is not None else np.arange(n_classes)
+        arrs = {k: (cte._normalise(np.mean([E[k][col] for col in text_cols], axis=0)) @ CE.T)[:, keep] for k in splits}
+        new[f"tok:{ALL_COLS}"] = (text_cols[0], arrs, list(range(len(keep))))
+
     for col in text_cols:  # numeracy (label-free), as cte
         new[f"num:{col}"] = (col, {k: cte.numeracy_matrix(texts[k][col]) for k in splits}, list(cte.NUMERACY_NAMES))
 
@@ -214,3 +252,50 @@ def run_p9(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], s
         features[owner] = pd.concat([features[owner], block.loc[all_rows]], axis=1)
     print(f"  [STACK:{method}] p9 {dataclasses.asdict(spec)}; seconds {diag['seconds']}", flush=True)
     return StackResult(method=method, embedding_result=frozen, base_result=None, features=features, diagnostics=diag)
+
+
+def maxpool_embeddings(frames: Dict[str, DataFrame], text_cols: list[str], cfg: te.TarConfig, device: torch.device,
+                       cache_root: Optional[str], dataset: str) -> Dict[str, Dict[str, np.ndarray]]:
+    """Max over (unpadded) last-layer token states of the frozen e5, L2-normalised, for "passage: col: val" (the same
+    input strings as the mean-pooled embeddings). Cached per dataset and column by text hash. Label-free."""
+    import hashlib
+    import os
+    from os.path import exists, join
+    from transformers import AutoModel, AutoTokenizer
+    from multabench.e5.constants import format_e5_passage
+    tok = model = None
+    out = {k: {} for k in frames}
+    for col in text_cols:
+        texts = {k: te.encoding_texts(f, col) for k, f in frames.items()}
+        uniq = sorted({t for v in texts.values() for t in v})
+        hashes = te._text_hash(uniq)
+        path = (join(cache_root, "frozen_maxpool", dataset, hashlib.sha1(col.encode()).hexdigest()[:12] + ".npz")
+                if cache_root else None)
+        store = {}
+        if path and exists(path):
+            z = np.load(path)
+            store = dict(zip(z["hash"].tolist(), z["emb"]))
+        missing = [i for i, h in enumerate(hashes) if int(h) not in store]
+        if missing:
+            if model is None:
+                tok = AutoTokenizer.from_pretrained(cfg.model_name)
+                model = AutoModel.from_pretrained(cfg.model_name).to(device).eval()
+            strings = [format_e5_passage(col, uniq[i]) for i in missing]
+            embs = []
+            with torch.no_grad():
+                for s0 in range(0, len(strings), 64):
+                    b = tok(strings[s0:s0 + 64], padding=True, truncation=True, max_length=cfg.max_length,
+                            return_tensors="pt").to(device)
+                    h = model(**b).last_hidden_state.masked_fill(~b["attention_mask"].bool()[..., None], -1e4)
+                    embs.append(torch.nn.functional.normalize(h.max(dim=1).values, dim=1).cpu().numpy())
+            for i, e in zip(missing, np.concatenate(embs)):
+                store[int(hashes[i])] = e.astype(np.float32)
+            if path:
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+                tmp = f"{path}.{os.getpid()}.tmp.npz"
+                np.savez(tmp, hash=np.array(list(store), dtype=np.uint64), emb=np.stack(list(store.values())))
+                os.replace(tmp, path)
+        pos = {t: store[int(h)] for t, h in zip(uniq, hashes)}
+        for k, v in texts.items():
+            out[k][col] = np.stack([pos[t] for t in v])
+    return out
