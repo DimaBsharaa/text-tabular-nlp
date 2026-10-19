@@ -1,0 +1,78 @@
+\documentclass{article}
+
+% preprint: shows the author and removes the review line numbers (course submission, not double-blind review)
+\usepackage[preprint]{neurips_2026}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+
+% marks every number or sentence that waits for a pending run; none may remain in the submitted PDF
+\newcommand{\pending}[1]{\textcolor{red}{[PENDING: #1]}}
+
+\title{Target-Aware Text Features Without Fine-Tuning:\\Cross-Fitted Text Experts for Text-Tabular Learning}
+
+\author{%
+  Dima Bshara \\
+  NLP Course 097215, Spring 2026 \\
+  Technion -- Israel Institute of Technology \\
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  % Written last. Scope the claim exactly: same learner, text features swapped; list the learners and datasets.
+  \pending{abstract, written after C7 (36 held-out datasets) and C10 (LightGBM, TabM) are in}
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+% Problem, context, what the project achieves (course 4.1.2).
+\pending{introduction}
+
+\section{Related work}
+\label{sec:related}
+% MulTaBench \citep{arazi2026multabench}, TabSTAR / TAR \citep{arazi2025tabstar}, e5 \citep{wang2022e5}, LoRA
+% \citep{hu2022lora}, the learners \citep{prokhorenkova2018catboost,ke2017lightgbm,gorishniy2024tabm,
+% hollmann2025tabpfnv2,grinsztajn2025tabpfn25}, stacking / cross-fitting \citep{wolpert1992stacked,breiman1996stacked,
+% chernozhukov2018dml}, layer-wise probing \citep{tenney2019bert}.
+\pending{related work}
+
+\section{Method}
+\label{sec:method}
+% Figure 1 (to draw), experts, cross-fitting, depth probes, what is label-aware (course clarification).
+\pending{method}
+
+\section{Results}
+\label{sec:results}
+% Setup, baselines, statistics (pre-registration, Holm), main table, cross-learner table, ablations, depth profile.
+\pending{results}
+
+\section{Conclusion}
+\label{sec:conclusion}
+% Outcomes, limitations (Jigsaw, TabPFN-2.5, single seed, Video Games environment offset, reuse of the 20 datasets),
+% future work (e.g. our curated VAERS adverse-event dataset as a new text-tabular test bed).
+\pending{conclusion}
+
+{\small
+\bibliographystyle{plainnat}
+\bibliography{references}
+}
+
+\appendix
+\section{Result tables}
+% Course rule: appendices are restricted to result tables / metrics.
+\pending{appendix tables}
+
+\end{document}

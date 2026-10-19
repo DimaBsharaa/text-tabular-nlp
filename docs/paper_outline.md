@@ -44,6 +44,10 @@ fine-tuning) improves over Joint TAR **with the same learner**. State the readin
   training); single seed; environment offset on Video Games; reuse of the 20 datasets during development, mitigated
   by pre-registration and the 36-dataset confirmation.
 
+- Future work (Dima, 2026-10-20): test the method on a newly curated text-tabular dataset, our VAERS adverse-event
+  reports (Track 2 work: free-text symptom excerpts + structured report fields, binary "serious" target). Describe it
+  in words. The VAERS repository is private, so do not link it unless it is made public.
+
 ## Appendix (tables only, per the PDF)
 - Per-dataset scores for every learner run; the full claim table with p-values and Holm; the 36-dataset table.
 
