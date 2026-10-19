@@ -63,6 +63,7 @@ Entry template:
 | P9 / E30 | 2026-10-16 | dev round 2 (partial, 31 jobs; RFF memory bug fixed) | avg / rep3 / prompt do not help; NB lexical +0.014 on Jigsaw |
 | E31 / P10 | 2026-10-16 | e5 "query:" prefix (dev) + C6 proposal | cte_probe + query: +0.0085 vs cte_probe, 6/6 dev datasets (Jigsaw +0.017) |
 | E32 | 2026-10-16 | P10 full run (195 jobs) | C6 passes vs TAR (+0.0124, p = 0.015) but **no gain over cte_probe** (−0.0017, 7/20); helps binary cls, hurts regression |
+| P11 / P12 / E33 | 2026-10-19 | holdout plan (36 datasets) + dev round 3 (270 jobs, 9 datasets × 6 splits) | none of 4 refinements advances; cte_probe final |
 
 ---
 
@@ -1495,3 +1496,19 @@ Features for the learner = structured columns (upstream preprocessing)
   p9_base AND it is better on ≥ 6 of 9 datasets (mean over each dataset's 6 splits). Advancing candidates are combined
   in a stage-2 check, then pre-registered with cte_probe for the C7 confirmation (36 datasets) and a full run on the 20.
 - Hard cap: `timeout` 6 h in total.
+
+## E33 — P12 dev round 3: none of the four candidates advances; cte_probe stays the final method   (2026-10-19/20, laptop CPU)
+- **Run:** 9 datasets × folds 0–2 (training rows only) × seeds 0, 1 × 5 methods = 270 jobs, 4.2 job-hours (01:25–05:37),
+  within the approved 6-hour cap, no errors. `python scripts/p12_summary.py reports/dev/p12_dev_results.csv`.
+- **Results vs p9_base (= cte_probe), 54 dataset-splits; decision rule (fixed in P12) = mean > +0.002 AND better on
+  ≥ 6/9 datasets:**
+  - `p9_percol` −0.0009, 4/9 (Book Price +0.010, Jigsaw +0.005, Vancouver +0.005, Video Games −0.026) → no.
+  - `p9_k10` −0.0004, 4/9 → no.
+  - `p9_maxpool` −0.0013, 2/9 → no.
+  - `p9_tok` +0.0003, 2/9 (Product Sentiment +0.007, Kickstarter −0.004; regression identical by construction) → no.
+- **Conclusion:** across three dev rounds (P7, P9, P12), 13 cheap refinements were tested against cte_probe or CTE.
+  Only the probe (P7) survived into a full run. cte_probe sits at the ceiling of this family of cheap,
+  cross-fitted experts. This is reported in the paper as a design-space ablation; it also answers "did you keep
+  searching until something passed?" (no: refinements were rejected by fixed rules on training rows only).
+- **Next:** cte_probe is final. Run the held-back confirmation C7 on the 36 untouched datasets (P11), unchanged, after
+  Dima's approval; C8 (LightGBM) as decided.
