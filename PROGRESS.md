@@ -1751,3 +1751,16 @@ Features for the learner = structured columns (upstream preprocessing)
     12-layer encodes on the GPU and 12 layer probes per job; E37 on the laptop: about +2 min per job).
   - `jobs/p14_B.txt` (C7: 2 × 36 × 3 = 216 jobs), estimated **≈ 5–6 h**.
   - Both use `results_cte`, `--job_timeout_min 240`, and the download lock (E35).
+
+## Course clarification (forum, Eilam Shapira, 2026-10-06; brought in by Dima on 2026-10-19)
+- **Question (another student):** frozen E5, no fine-tuning and no target values, but the target column's *name* is
+  embedded to build interaction features. Is that target-aware (compare with Joint TAR) or not (compare with Joint
+  Frozen)?
+- **Answer:** "No. If you don't use the target value of specific examples, it is not a target-aware representation."
+- **Implications:**
+  - C4 (`tf_num_lsa`: no target values) is correctly judged against Joint Frozen → C4 meets the official label-free
+    criterion.
+  - CTE, cte_probe and depth probes train their experts on training rows' target values (cross-fitted) → target-aware
+    → judged against Joint TAR (C2, C5, C8, C9) — as pre-registered.
+  - The dev ideas that use only the target's name (p9_prompt, p9_tok, the "query:" prefix) would count as label-free;
+    none is in the final method.

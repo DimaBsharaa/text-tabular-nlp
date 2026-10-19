@@ -14,6 +14,11 @@ MulTaBench paper text and still need a page or figure number before we cite them
 - **Multiple testing:** state the Holm correction over all pre-registered tests (C5 → 0.014, C4 → 1e-4; both pass) and
   the confirmation on 36 untouched datasets (P11, if run).
 
+### 0b. Which baseline applies (official course clarification, forum, Eilam Shapira, 2026-10-06)
+- "If you don't use the target value of specific examples, it is not a target-aware representation." Cite this to
+  justify comparing C4 (no target values) with Joint Frozen, and C5 / C8 / C9 (experts trained on training-row target
+  values, cross-fitted) with Joint TAR.
+
 ## 1. Relation to the MulTaBench paper
 
 ### 1.1 Our TAR reproduction matches their Appendix A (footnote on weight decay)
