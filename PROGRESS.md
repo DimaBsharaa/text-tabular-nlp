@@ -65,6 +65,8 @@ Entry template:
 | E32 | 2026-10-16 | P10 full run (195 jobs) | C6 passes vs TAR (+0.0124, p = 0.015) but **no gain over cte_probe** (−0.0017, 7/20); helps binary cls, hurts regression |
 | P11 / P12 / E33 | 2026-10-19 | holdout plan (36 datasets) + dev round 3 (270 jobs, 9 datasets × 6 splits) | none of 4 refinements advances; cte_probe final |
 | E35 / E36 | 2026-10-19 | C8: cte_probe LightGBM (100 jobs; download race fixed) | **C8 passes**: +0.0167 vs Joint TAR, 14/20, p = 0.011 (global Holm 0.064) |
+| Cowork / P13 / E37 | 2026-10-19 | depth probes (Cowork) merged; head-to-head on the P12 protocol | **cte_depth_top3 advances**: +0.0033 vs cte_probe, 7/9 datasets |
+| P14 | 2026-10-19 | final pre-registration: C9 (depth on the 20) + C7 amended (36 untouched, both methods, folds 0–2) | jobs/p14_A.txt, jobs/p14_B.txt |
 
 ---
 
@@ -1718,3 +1720,34 @@ Features for the learner = structured columns (upstream preprocessing)
   correction". C5 remains the primary result under every correction.
 - **Conclusion:** the method's gain over TAR is not CatBoost-specific (also +0.0152 for plain CTE with LightGBM, C2
   secondary).
+
+## E37 — P13 head-to-head: Cowork's depth probes ADVANCE under the P12 rule; `cte_depth_top3` selected   (2026-10-19, laptop CPU)
+- **Run:** `cte_depth_top3`, `cte_depth_sl` on the P12 splits (9 datasets × folds 0–2 × seeds 0, 1; training rows only), 108
+  jobs, all folds finished within the 3 h cap (the laptop slept once mid-run; the job timings include that pause).
+  Compared with the P12 `p9_base` rows. Results: `reports/dev/p13_dev_results.csv`.
+- **vs cte_probe (54 splits):**
+  - **`cte_depth_top3` +0.0033, better on 7/9 datasets** (Jigsaw +0.0075, PS +0.0069, Kickstarter +0.0064, Book
+    +0.0045, Video Games +0.0045, Women Clothing +0.0006, Montgomery +0.0003; Vancouver −0.0008, Babies −0.0001) →
+    **advances**;
+  - `cte_depth_sl` +0.0029, 6/9 → advances.
+  - The P13 tie-break (top3 unless sl is higher by more than 0.002) selects **`cte_depth_top3`**.
+- **Caveats:** dev gains of +0.003 are small. P10 showed dev can over-promise, but this protocol is 9 datasets × 6
+  splits (P10's was 6 × 2), and the gain is spread over 7 datasets, not one.
+- **Next:** P14 pre-registration (below).
+
+## P14 — Final pre-registration (2026-10-19, before any P14 run). Approved by Dima's standing instruction ("I approve whatever you think is right").
+- **C9 (20 MulTaBench datasets):** `cte_depth_top3` (CatBoost) vs leaderboard Joint TAR, folds 0–4, fold-averaged,
+  two-sided Wilcoxon; pass = p < 0.05 AND positive mean. Secondary: `cte_depth_top3` vs our `cte_probe` (paired, 20).
+- **Final method rule (fixed now):** the final method is `cte_depth_top3` if C9 passes AND its paired mean vs
+  `cte_probe` on the 20 is > 0; otherwise `cte_probe`.
+- **C7, amended (36 untouched datasets, the one-shot confirmation):** both `cte_probe` and `cte_depth_top3`
+  (CatBoost), **folds 0–2** (amended from 0–4 to fit the runtime; decided before any C7 run), each vs leaderboard
+  Joint Frozen and vs Joint TAR, fold-averaged over 3 folds: 4 tests, **Holm over the 4**; pass = Holm p < 0.05 AND
+  positive median. Datasets that fail to load or time out are listed and excluded. The final method's two tests are
+  the primary C7 result.
+- **Global correction (reported):** Holm over all pre-registered tests C1–C9.
+- **Run plan:**
+  - `jobs/p14_A.txt` (C9: 100 jobs on the 20, longest first), estimated **≈ 4–4.5 h** (cte_probe's 3.6 h + the
+    12-layer encodes on the GPU and 12 layer probes per job; E37 on the laptop: about +2 min per job).
+  - `jobs/p14_B.txt` (C7: 2 × 36 × 3 = 216 jobs), estimated **≈ 5–6 h**.
+  - Both use `results_cte`, `--job_timeout_min 240`, and the download lock (E35).

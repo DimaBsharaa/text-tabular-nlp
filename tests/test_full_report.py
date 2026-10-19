@@ -156,3 +156,21 @@ def test_p11_report_on_synthetic_results(tmp_path):
     assert rep["C7a_vs_joint_frozen"]["n"] == 35 and rep["C7a_vs_joint_frozen"]["passes"]
     assert rep["C8_lgbm_vs_joint_tar"]["n"] == 20 and rep["C8_lgbm_vs_joint_tar"]["passes"]
     assert rep["holm_all_preregistered"]["C5"] >= 0.002325
+
+
+def test_p14_report_on_synthetic_results(tmp_path):
+    import p14_report as pr
+    from p11_report import source_leaderboard
+    out = str(tmp_path)
+    rng = np.random.default_rng(7)
+    _write(out, "cte_depth_top3", "catboost", {k: v + 0.02 + rng.normal(0, 0.001) for k, v in _lb("catboost").items()})
+    _write(out, "cte_probe", "catboost", {k: v + 0.015 + rng.normal(0, 0.001) for k, v in _lb("catboost").items()})
+    rep = pr.p14_report(out)
+    assert rep["C9"]["passes"] and rep["final_method"] == "cte_depth_top3" and rep["C7"]["cte_probe|vs_joint_frozen"]["n"] == 0
+    src = {(r.dataset, r.fold): r.score for r in source_leaderboard("catboost", "all").itertuples() if r.fold in (0, 1, 2)}
+    for m, off in (("cte_depth_top3", 0.01), ("cte_probe", 0.008)):
+        _write(out, m, "catboost", {k: v + off + rng.normal(0, 0.001) for k, v in src.items()})
+    rep = pr.p14_report(out)
+    c = rep["C7"]["cte_depth_top3|vs_joint_frozen"]
+    assert c["n"] == 36 and c["passes"] and c["p_holm"] >= c["p_value"]
+    assert len(rep["C7"]) == 4 and "C9" in rep["holm_all_preregistered"]
