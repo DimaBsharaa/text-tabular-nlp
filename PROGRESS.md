@@ -1764,3 +1764,16 @@ Features for the learner = structured columns (upstream preprocessing)
     → judged against Joint TAR (C2, C5, C8, C9) — as pre-registered.
   - The dev ideas that use only the target's name (p9_prompt, p9_tok, the "query:" prefix) would count as label-free;
     none is in the final method.
+
+## Course clarifications (forum, Eilam Shapira, 2026-08-08; brought in by Dima on 2026-10-19)
+- **Image datasets:** not needed for the algorithm track. We evaluate on the 20 text datasets only, as before.
+- **Task types:** an algorithm may target only classification or only regression (checking the other is advised). **The
+  grade is based on the whole project, especially in the algorithm track, not on success or failure on specific
+  datasets.** We cover both task types on all 20 datasets.
+- **Label-free vs label-aware:** "two completely different tasks with completely different solutions; choose one
+  approach."
+  - **Consequence for the write-up:** the submitted approach is the **label-aware** one (CTE + probe, possibly
+    + depth probes; judged against Joint TAR: C5 / C9, with C8 and C7 as support).
+  - The label-free result (C4) is presented as an **analysis inside that story** (the label-free features alone
+    already beat Joint Frozen; the cross-fitted label-aware experts lift the method above TAR), not as a second
+    submitted method.

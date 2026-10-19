@@ -19,6 +19,13 @@ MulTaBench paper text and still need a page or figure number before we cite them
   justify comparing C4 (no target values) with Joint Frozen, and C5 / C8 / C9 (experts trained on training-row target
   values, cross-fitted) with Joint TAR.
 
+### 0c. One approach (course forum, 2026-08-08)
+- Label-free and label-aware are "two completely different tasks; choose one". The paper presents ONE method, the
+  label-aware CTE + probe (C5, or C9 if depth probes win), against Joint TAR.
+- Use C4 as an analysis: "the label-free part alone beats Joint Frozen (p = 2e-5); the cross-fitted label-aware experts
+  are what lift the method above TAR". Never present C4 as a second method.
+- The grade is on the whole project, not on individual datasets: emphasise the idea, rigour and analysis.
+
 ## 1. Relation to the MulTaBench paper
 
 ### 1.1 Our TAR reproduction matches their Appendix A (footnote on weight decay)
