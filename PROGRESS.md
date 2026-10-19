@@ -67,6 +67,7 @@ Entry template:
 | E35 / E36 | 2026-10-19 | C8: cte_probe LightGBM (100 jobs; download race fixed) | **C8 passes**: +0.0167 vs Joint TAR, 14/20, p = 0.011 (global Holm 0.064) |
 | Cowork / P13 / E37 | 2026-10-19 | depth probes (Cowork) merged; head-to-head on the P12 protocol | **cte_depth_top3 advances**: +0.0033 vs cte_probe, 7/9 datasets |
 | P14 | 2026-10-19 | final pre-registration: C9 (depth on the 20) + C7 amended (36 untouched, both methods, folds 0–2) | jobs/p14_A.txt, jobs/p14_B.txt |
+| E38 | 2026-10-19 | P14 part A: depth probes on the 20 (100 jobs) | **C9 passes**: +0.0161 vs Joint TAR, 14/20, p = 0.0023; final method = cte_depth_top3 |
 
 ---
 
@@ -1777,3 +1778,19 @@ Features for the learner = structured columns (upstream preprocessing)
   - The label-free result (C4) is presented as an **analysis inside that story** (the label-free features alone
     already beat Joint Frozen; the cross-fitted label-aware experts lift the method above TAR), not as a second
     submitted method.
+
+## E38 — P14 part A: C9 PASSES; by the pre-registered rule the final method is `cte_depth_top3` (depth probes)   (2026-10-19, Colab A100)
+- **Data:** `results_export_20261019_200252.zip`: `cte_depth_top3` 100/100 at 0728696 (clean), A100-SXM4-40GB, 2 threads per job,
+  no process_errors and no timeouts. Analysis: `scripts/p14_report.py` (committed before the run) → `reports/p14/`.
+- **C9 (cte_depth_top3 vs leaderboard Joint TAR, CatBoost, 20 datasets):** mean **+0.0161**, median +0.0112, **p =
+  0.0023**, wins **14/20** → **passes**.
+- **vs our cte_probe (paired):** +0.0020, median +0.0002, 11/20, p = 0.22 → positive mean → **final method =
+  cte_depth_top3** (P14 rule).
+- **Hostile review:**
+  - The improvement over cte_probe is small and not significant. Most of it comes from Video Games (+0.024; its
+    leaderboard comparison is environment-inflated, E28) and Jigsaw (+0.007); without Video Games it is about +0.0008.
+    Claim "at least as good as cte_probe, best on Jigsaw", not "better".
+  - Losses vs TAR: Jigsaw −0.0078 (was −0.0147 with cte_probe), US Accidents −0.0014, Wine −0.0012, Women Clothing
+    −0.0006, SCImago −0.0004, Spotify −0.0001.
+  - One commit, one GPU type, and the analysis was fixed before the run.
+- **Next:** part B (C7, 36 untouched datasets, both methods, folds 0–2): the one-shot confirmation.
