@@ -38,7 +38,8 @@ METHODS = ("tar_repro", "offset", "prefix", "prefix_offset", "context", "context
            "frozen0", "tf_num", "tf_lsa", "tf_row", "tf_num_lsa", "tf_all",  # P7 label-free
            "cte_probe", "cte_rowlex", "cte_lsa_row", "cte_probe_rowlex", "cte_all",  # P7 label-aware
            "p9_base", "p9_avg", "p9_rep3", "p9_rep3_avg", "p9_prompt", "p9_rff", "p9_nb", "p9_query", "p9_percol", "p9_k10", "p9_maxpool", "p9_tok",  # P9 / P12
-           "frozen0_query", "tf_num_lsa_query")  # see docs/method_spec.md; more variants are added as they are built
+           "frozen0_query", "tf_num_lsa_query",
+           "cte_depth", "cte_depth_mm", "cte_depth_top3", "cte_depth_sl")  # P13 depth probes (Cowork); see docs/method_spec.md
 DEFAULTS = {"train_examples": 10_000, "epochs": 50, "seed": 42}
 COMPANIONS = {"xfit_pred": ["frozen_xfit_pred"]}  # P3: written by the same job (shares the fold fine-tunes)
 SUFFIX = {"epochs": "ep", "train_examples": "n", "seed": "s"}

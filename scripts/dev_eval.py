@@ -33,8 +33,15 @@ def load_train_rows(dataset: str, fold: int, train_examples: int = 10_000):
     return ds, x_train, y_train  # the test split is discarded here on purpose
 
 
-def dev_split(x, y, is_cls: bool, seed: int, frac: float = 0.2):
-    from sklearn.model_selection import train_test_split
+def dev_split(x, y, is_cls: bool, seed: int, frac: float = 0.2, cv: int = 0):
+    """seed-th dev split of the training rows: a random 80/20 split (P7), or with cv=K the seed-th fold of a K-fold
+    partition (P11: every training row is dev-test exactly once over the K splits, so the K scores are less noisy)."""
+    from sklearn.model_selection import KFold, StratifiedKFold, train_test_split
+    if cv:
+        strat = is_cls and y.astype(str).value_counts().min() >= cv
+        kf = (StratifiedKFold if strat else KFold)(n_splits=cv, shuffle=True, random_state=0)
+        tr, te_ = list(kf.split(x, y.astype(str) if strat else None))[seed]
+        return x.iloc[tr], x.iloc[te_], y.iloc[tr], y.iloc[te_]
     try:
         return train_test_split(x, y, test_size=frac, random_state=seed, stratify=y if is_cls else None)
     except ValueError:  # a class too rare to stratify
@@ -53,18 +60,21 @@ def main(argv=None) -> None:
     p.add_argument("--fold", type=int, default=0)
     p.add_argument("--out", required=True)
     p.add_argument("--cache_dir", required=True)
+    p.add_argument("--cv", type=int, default=0, help="K > 0: dev split = the seed-th fold of a K-fold partition "
+                                                     "of the training rows (seeds 0..K-1)")
     a = p.parse_args(argv)
     done = set()
     if os.path.exists(a.out):
         d = pd.read_csv(a.out)
-        done = set(zip(d.dataset, d.fold, d.seed, d.method))
+        cv_col = d.cv if "cv" in d else [0] * len(d)  # P7 CSVs have no cv column: random 80/20 splits
+        done = set(zip(d.dataset, d.fold, d.seed, d.method, cv_col))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     for dataset in a.datasets:
         ds, x_train, y_train = load_train_rows(dataset, a.fold)
         for seed in a.seeds:
-            x_tr, x_te, y_tr, y_te = dev_split(x_train, y_train, ds.is_cls, seed)
+            x_tr, x_te, y_tr, y_te = dev_split(x_train, y_train, ds.is_cls, seed, cv=a.cv)
             for method in a.methods:
-                if (dataset, a.fold, seed, method) in done:
+                if (dataset, a.fold, seed, method, a.cv) in done:
                     continue
                 t0 = time.time()
                 set_seed(42)
@@ -72,13 +82,16 @@ def main(argv=None) -> None:
                                                  pca_components=30, no_pca=False)
                 cfg = TarConfig(seed=42, eval_batch_size=256 if device.type == "cuda" else 16)
                 model.configure_ours(variant=method, cfg=cfg, cache_dir=a.cache_dir, dataset=dataset,
-                                     fold=100 * (a.fold + 1) + seed, test=(x_te, y_te))  # dev cache keys only
+                                     fold=100 * (a.fold + 1) + (50 if a.cv else 0) + seed,  # dev cache keys only
+                                     test=(x_te, y_te))
                 model.fit(x_tr, y_tr)
                 score = float(model.score_all_metrics(X=x_te, y=y_te).score)
                 stack = getattr(model, "stack_result", None)
-                row = {"dataset": dataset, "fold": a.fold, "seed": seed, "method": method, "score": score,
+                row = {"dataset": dataset, "fold": a.fold, "seed": seed, "cv": a.cv, "method": method, "score": score,
                        "n_dev_train": len(y_tr), "n_dev_test": len(y_te), "seconds": round(time.time() - t0, 1),
-                       "importance": None if stack is None else str(model.stack_feature_importance()["group_share"])}
+                       "importance": None if stack is None else str(model.stack_feature_importance()["group_share"]),
+                       "depth_layer_oof": None if stack is None or "depth" not in stack.diagnostics
+                       else str(stack.diagnostics["depth"]["layer_oof_metric"])}
                 pd.DataFrame([row]).to_csv(a.out, mode="a", header=not os.path.exists(a.out), index=False)
                 print(f"{dataset} seed {seed} {method:<18} {score:.4f}  ({row['seconds']:.0f} s)", flush=True)
 

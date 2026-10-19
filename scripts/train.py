@@ -80,7 +80,8 @@ def main(argv=None) -> dict:
     src.add_argument("--csv", help="a CSV file with feature columns and a target column")
     p.add_argument("--target", help="--csv: name of the target column")
     p.add_argument("--task", default="auto", choices=("auto", "binary", "multiclass", "regression"))
-    p.add_argument("--method", default="cte_probe", choices=("cte_probe", "cte"))
+    p.add_argument("--method", default="cte_probe", choices=("cte_probe", "cte", "cte_depth", "cte_depth_mm",
+                                                             "cte_depth_top3", "cte_depth_sl"))
     p.add_argument("--fold", type=int, default=0, help="which of the 5 benchmark splits (test rows) to hold out")
     p.add_argument("--out_dir", required=True)
     p.add_argument("--cache_dir", default=None, help="frozen-embedding / expert cache (default <out_dir>/_cache)")

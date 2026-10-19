@@ -45,6 +45,9 @@ def engine_version(method: str) -> str:
         return "experts/1"
     if method in {"cte", "cte_lex", "cte_nbr", "cte_num", "cte_lex_insample"}:  # multabench/ours/cte.py
         return "cte/3"  # P5 v2 amendments 1+2 (cte/1 = original, cte/2 = amendment 1 only)
+    from multabench.ours.depth import DEPTH_METHODS, DEPTH_VERSION
+    if method in DEPTH_METHODS:  # multabench/ours/depth.py (P11)
+        return DEPTH_VERSION
     from multabench.ours.p9 import P9_METHODS, P9_VERSION
     if method in P9_METHODS:  # multabench/ours/p9.py
         return P9_VERSION

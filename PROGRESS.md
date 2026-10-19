@@ -1512,3 +1512,183 @@ Features for the learner = structured columns (upstream preprocessing)
   searching until something passed?" (no: refinements were rejected by fixed rules on training rows only).
 - **Next:** cte_probe is final. Run the held-back confirmation C7 on the 36 untouched datasets (P11), unchanged, after
   Dima's approval; C8 (LightGBM) as decided.
+
+---
+
+## Imported: Cowork session work on "depth probes" (2026-10-19), appended verbatim, IDs renamed
+- **Source:** `p11_depth_probes.zip` (Downloads, 2026-10-19 09:23), made by a separate Claude Cowork session from this
+  repo. Its code is merged in this commit: `multabench/ours/depth.py`, `tests/test_depth.py`,
+  `scripts/depth_profile.py`, `scripts/depth_figures.py`, and small registrations in `stacking.py`, `variants.py`,
+  `cte_model.py`, `dev_eval.py`, `train.py`, `run_experiment.py`. Its PROGRESS / README / paper-notes copies were based
+  on an older commit (540cbd9) and were **not** copied over ours. Their added lab-notebook text follows unchanged.
+- **ID collisions renamed:** their P11 → **P11-cw**, E33 → **E33-cw**, E34 → **E34-cw**, P12 (proposal, with claims
+  "C7/C8") → **P12-cw (not adopted)**. Our P11 / P12 / E33 / C7 / C8 keep their meaning. Their jobs files and
+  `p12_report.py` are not imported; any run of depth probes is pre-registered under our numbering.
+- **Verification here:** their tests on an overlay of our current code: 124 passed, 1 skipped (including both golden
+  tests, which had failed on the Cowork machine with float noise ≤ 2e-4).
+
+| P11 / E33 | 2026-10-19 | depth probes (every layer of frozen e5): expert-level profile, training rows only | best depth varies (Jigsaw L3, PS L9, prices L12); top-3 layers beat the final-layer probe on 4/4 |
+| E34 | 2026-10-19 | P11 dev sweep, CatBoost, 5-fold dev splits 0–2 of fold 0's training rows, 6 datasets | vs cte_probe: stack −0.0044 (Video Games −0.047), top3 +0.0030 (6/6), **sl +0.0061 (5/6) → selected**; final code: sl +0.0034, top3 +0.0029 |
+| P12 | 2026-10-19 | PROPOSED: C7 cte_depth_sl vs Joint TAR (20) + C8 on the 36 untouched datasets, Holm over 2 | jobs/p12_A.txt, jobs/p12_B.txt (+ secondary C, A2) |
+
+## [Cowork] P11-cw — Depth probes: development round on top of cte_probe (Claude, 2026-10-19; exploration protocol)
+- **Goal (Dima, 2026-10-18):** a more creative, well-motivated method that closes the remaining gap to Joint TAR
+  (Jigsaw −0.015) without gradient training. C1–C6 stay as reported; anything from P11 is a new claim that must be
+  pre-registered (P12) before its full run.
+- **Idea — "depth probes".** Joint TAR adapts the top 3 of e5-small-v2's 12 layers and reads the final layer; our
+  cte_probe also reads only the final layer. Probing studies find that task information often peaks in intermediate
+  layers, and the final layer of a contrastive sentence encoder is shaped for retrieval similarity. So: read a
+  cross-fitted linear probe out of **every** layer of the frozen encoder and let the training rows decide which depths
+  carry the target signal. Spec: `multabench/ours/depth.py` (engine `depth/1`), docstring = the method.
+  - Per layer l = 1..12 and text column: masked mean pool of layer l's token states for "passage: col: val" (the
+    string Joint Frozen encodes), standardised per dimension on the learner's training rows (label-free),
+    / sqrt(384) per column block.
+  - Depth expert l: cte_probe's machinery (`p7.xfit_linear`): 5-fold OOF on training rows, refit on all training rows
+    for val/test; alpha grid (1, 3, 10, 30, 100, 300) chosen by the training-row OOF metric (the cte grid 0.3–10 hit
+    its upper edge on almost every layer of the first dataset profiled, Product Sentiment).
+  - Aggregation (the candidates): `stack` (each layer's prediction is a learner feature: 12 columns for regression /
+    binary), `top3` (one column: mean of the 3 layers with the best training-row OOF metric), `sl` (one column:
+    Breiman's stacked regression — NNLS with intercept over the 12 layer predictions, itself cross-fitted with fold
+    seed 43). Multiclass always uses `top3` (bounded column count).
+  - Methods = cte_probe (unchanged, same caches) + the depth columns: `cte_depth` (stack), `cte_depth_top3`,
+    `cte_depth_sl`, `cte_depth_mm` (stack with mean+max pooling; profiled only).
+- **Environment:** Claude's cloud workspace (2 CPUs, no GPU), `uv sync --frozen` env, e5-small-v2 from Hugging Face,
+  MulTaBench datasets from the Hugging Face mirror `multabench/core-text-*` (data.parquet → data.csv; a dev-only shim
+  replaces `kagglehub.dataset_download`, not committed). Check: Product Sentiment fold 0 gives the same split sizes
+  (4,582 / 509) and our Joint Frozen 0.8825 (leaderboard 0.8826; Dima's Colab frozen0 0.8771 — CPU fp32 vs GPU fp16
+  encoding).
+- **Dev protocol (stricter than P7, after E32's lesson):** fold 0's training rows only (test rows never loaded into
+  any fit), split by a **5-fold partition** (`scripts/dev_eval.py --cv 5`, splits 0–2: every split's dev-test is a
+  disjoint 20%), CatBoost upstream defaults, benchmark metric. Paired difference vs `cte_probe` on the same split.
+  Dev cache keys use fold = 150 + split. Datasets: the 6 P7 dev datasets (Jigsaw, Kickstarter, Product Sentiment,
+  Book Price, Baby Products, Video Games).
+- **Chronology (disclosed):** the expert-level profile (E33) ran first (4 datasets). The CatBoost sweep (E34) ran
+  `cte_probe`, `cte_depth` (stack) and `cte_depth_top3` on all 6 datasets. The `sl` aggregation was added **after**
+  seeing the stack's failure on Video Games in E34 (4 of 6 datasets finished at that time) and before any `sl` result.
+  The selection rule below was written after the Book Price results of `cte_depth` / `cte_depth_top3` were known, and
+  before any Kickstarter depth result and any `sl` result.
+- **Selection rule (see chronology):** among
+  {`cte_depth_top3`, `cte_depth_sl`} (the 12-column stack is excluded after its Video Games failure), the variant with
+  the higher mean dev difference vs `cte_probe` over the 6 datasets becomes the P12 candidate, if that mean is
+  positive and the variant is ahead on at least 4 of 6 datasets; otherwise no P12 depth claim.
+
+## [Cowork] E33-cw — Depth profile (expert level, training rows only): intermediate layers carry more target signal than the final embedding   (2026-10-19, Claude cloud CPU, uncommitted on 540cbd9)
+- **Question:** before any learner run — how much target signal does a cross-fitted linear probe read from each layer
+  of the frozen e5, compared with cte_probe's final-layer probe?
+- **Command:** `scripts/depth_profile.py --datasets MUL_TEXT_PRODUCT_SENTIMENT BIN_TEXT_JIGSAW_TOXICITY
+  REG_TEXT_VIDEO_GAMES_SALES REG_TEXT_BABIES_PRICES ...` (fold 0, the learner's training rows as captured from our
+  learner's text step; 5-fold OOF metric = CTE's selection metric). Stopped after 4 datasets (CPU time); Kickstarter and
+  Book Price were covered by E34 instead.
+- **Result (OOF AUROC / Spearman on training rows; mean pooling unless noted):**
+
+  | dataset | lexical | final-layer probe (cte_probe) | best single layer | top-3 layers mean | meanmax top-3 |
+  |---|---|---|---|---|---|
+  | Product Sentiment | 0.732 | 0.787 | L9 0.803 | 0.805 | 0.812 |
+  | Jigsaw | 0.859 | 0.866 | **L3** 0.877 | **0.885** | 0.879 |
+  | Video Games | 0.589 | 0.553 | L10 0.562 | 0.567 | 0.574 |
+  | Baby Products | 0.927 | 0.853 | L12 0.861 | 0.866 | 0.882 |
+
+  - The best depth differs by dataset: toxicity peaks low (L3–L4, word-level cues), sentiment mid (L7–L9), prices at
+    the top (L12). Fig: `scripts/depth_figures.py --profile ...` (fig7_depth_profile).
+  - Combining layers beats every single layer (top-3 mean > best layer on 4/4).
+  - Mean+max pooling is not consistently better (worse on Jigsaw), and doubles storage → not pursued.
+  - The cte alpha grid (0.3–10) hit its upper edge on almost every layer of Product Sentiment → depth grid
+    (1, 3, 10, 30, 100, 300); afterwards the chosen alphas are interior.
+- **Hostile review:** training rows only (the profile never loads test rows); the top-3 OOF metric is optimistic
+  (layers chosen on the same OOF metric) and is used only as a screen, not as a result.
+- **Next:** E34, CatBoost dev sweep.
+
+## [Cowork] E34-cw — P11 dev sweep (CatBoost): depth probes improve cte_probe on the dev splits; `sl` selected by the P11 rule   (2026-10-19, Claude cloud CPU, uncommitted on 540cbd9)
+- **Command:** `scripts/dev_eval.py --datasets <6 P11 dev datasets> --methods cte_probe cte_depth cte_depth_top3
+  --cv 5 --seeds 0 1 2`, then `--methods cte_depth_sl` (same splits; per-layer probes from the cache). 72 jobs, about
+  2 h 10 min of CPU, mostly the one-time CPU encoding of Book Price and Kickstarter.
+- **Result (difference vs `cte_probe` on the same dev split, mean of splits 0–2; datasets: Jigsaw / Kickstarter /
+  Product Sentiment / Baby Products / Book Price / Video Games):**
+
+  | variant | per dataset | mean | median | datasets ahead | splits ahead |
+  |---|---|---|---|---|---|
+  | `cte_depth` (12-column stack) | +0.0104 / +0.0050 / +0.0019 / +0.0006 / +0.0028 / **−0.0472** | −0.0044 | +0.0023 | 5/6 | 12/18 |
+  | `cte_depth_top3` | +0.0077 / +0.0062 / +0.0019 / +0.0007 / +0.0003 / +0.0011 | +0.0030 | +0.0015 | **6/6** | **14/18** |
+  | `cte_depth_sl` (NNLS stack) | +0.0029 / +0.0024 / +0.0019 / −0.0041 / +0.0013 / +0.0321 | **+0.0061** | **+0.0022** | 5/6 | 10/18 |
+
+  (Product Sentiment is multiclass, so all three variants use top-3 there and are identical.)
+- **Selection (P11 rule, written before any `sl` and any Kickstarter depth result):** `cte_depth_sl` has the higher
+  mean (+0.0061 vs +0.0030; final code below: +0.0034 vs +0.0029) and is ahead on 5/6 ≥ 4 datasets →
+  **`cte_depth_sl` is the P12 candidate.**
+  `cte_depth_top3` is the more consistent variant (6/6, 14/18, and the larger Jigsaw gain) and is kept as a
+  pre-registered secondary (aggregation ablation), not as a second claim.
+- **Two fixes after E34 (code review), then the rule re-applied to the final code:**
+  - The NNLS stack's regression target was the rank-Gaussian transform fitted on *all* training rows; inside its
+    cross-fitting the held-out rows' labels therefore shaped the training target's scale (rank only, tiny). Now the
+    target is fitted on each fold's own rows, as the experts do (`stacked_layers(targets=...)`).
+  - Multiclass depth probes now use an exact eigen-form solver for all one-hot targets at once (`xfit_linear_eig`;
+    same folds, alpha rule and columns; tests/test_depth.py checks it against p7.xfit_linear). Reason: runtime —
+    sparse_cg solves each target separately (Spotify: 114 targets × 432 fits per job ≈ 1 h of CPU).
+  - Re-run of the affected cells with the final code (Product Sentiment; the 3 regression datasets for `sl`; binary
+    `sl` is unchanged by construction): **`sl` +0.0034 (median +0.0027, 5/6 datasets, 12/18 splits; Jigsaw +0.0029 /
+    Kickstarter +0.0024 / PS +0.0017 / Babies −0.0051 / Book Price +0.0041 / Video Games +0.0144)** vs **`top3`
+    +0.0029 (median +0.0014, 6/6, 14/18)**. The rule still selects `cte_depth_sl`. Final-code dev rows:
+    `reports/dev/p11_dev_results_final.csv` (E34's first pass: `reports/dev/p11_dev_results.csv`).
+- **Hostile review:**
+  - Dev splits come from fold 0's training rows only; expert, probe and layer-state caches use dev fold ids
+    (150 + split); layer states are label-free and shared.
+  - `sl`'s mean is driven by Video Games (+0.070 / −0.010 / +0.036 R² across splits) — the dataset whose dev result did
+    not replicate in E32. The median (+0.0022 vs +0.0015) and the dataset count also favour `sl`, but the split count
+    favours `top3`. This is weak dev evidence either way; the claim is decided by P12's test, not here.
+  - The 6 dev datasets are among the 20 of C7, and the test results of C1–C6 on all 20 were known (as in P8/P10).
+  - Environment: CPU fp32 encoding here vs GPU fp16 on Colab; differences of this size do not change the comparisons
+    (all variants share the same base features, checked by tests/test_depth.py).
+- **Code:** `multabench/ours/depth.py` (engine depth/1); wired into `stacking.run_stacking`, `variants.engine_version`,
+  `scripts/run_experiment.py`; packaging (`cte_model.py`: depth Ridges + standardisation + NNLS weights, `train.py
+  --method cte_depth_sl`, `predict.py`); `scripts/dev_eval.py --cv`; `scripts/depth_profile.py`;
+  `scripts/depth_figures.py`; `scripts/p12_report.py`; tests `tests/test_depth.py` (cte_depth = cte_probe + depth
+  columns bit-identically; every variant × binary / multiclass / regression; standardisation from training rows only;
+  OOF never sees its own label; NNLS cross-fitting; final layer = Joint Frozen's encoder; pooling ignores padding;
+  cache reuse; packaged featurizer reproduces fit-time features; CSV-mode train → predict round trip).
+- **Next:** P12 proposal (below), awaiting Dima's approval.
+
+## [Cowork] P12-cw — PROPOSED (NOT adopted; see P13) pre-registration (2026-10-19). Binding when Dima approves the run, before any P12 result.
+- **C7 (label-aware, main):** `cte_depth_sl` (= cte_probe + one cross-fitted NNLS combination of the 12 depth probes of
+  the frozen e5; `multabench/ours/depth.py`, engine depth/1) vs leaderboard **Joint TAR** (`ft`, CatBoost),
+  20 datasets, folds 0–4, fold-averaged differences, two-sided Wilcoxon. Pass = Holm-adjusted p < 0.05 and positive
+  mean.
+- **C8 (external confirmation, never-touched data):** `cte_depth_sl` (CatBoost) vs leaderboard **Joint TAR** (`ft`,
+  CatBoost) on the **36 text datasets released alongside MulTaBench** (`multabench/leaderboard/results/text_source/`),
+  folds 0–2, fold-averaged differences, two-sided Wilcoxon. None of these datasets has been loaded, profiled or scored
+  by this project. Datasets that fail to load (credentials, competition rules, timeouts) are excluded and listed, never
+  imputed. Their scores are reported separately and never pooled with the 20 (MulTaBench README).
+- **Multiplicity:** Holm over {C7, C8}. C1–C6 stay as reported. Disclosure (secondary): the report also gives Holm
+  over every pre-registered primary test of the project (C1, C2, C3 × 2, C4, C5, C6, C7, C8 = 9 tests; C1–C6 p-values
+  from their committed reports). Before P12: C4 p_holm ≈ 1.3e-4 and C5 ≈ 0.014 over the 7 earlier tests (both still pass).
+- **Secondary (reported regardless of outcome):** `cte_depth_sl` vs our `cte_probe` (paired, 20); win / tie / loss vs
+  Joint TAR per dataset (paired t over the 5 folds, p < 0.05); vs Joint Frozen; `cte_depth_top3` vs Joint TAR and vs
+  `cte_depth_sl` (part A2, aggregation ablation); LightGBM: `cte_depth_sl` and `cte_probe` vs leaderboard LightGBM
+  Joint TAR (part C, Holm over the 2); the per-dataset depth profile and NNLS layer weights (figure).
+- **Disclosure:** the depth idea, the alpha grid and the aggregation were chosen on dev splits of the training rows of
+  6 of the 20 datasets (E33, E34) by Claude; test results of earlier methods on all 20 were known. C8 is the
+  protection against that: its datasets were never touched.
+- **Run plan (estimates from E29's measured cte_probe times + E34's measured depth overhead; A100, 6 slots × 2
+  threads, longest first, `--job_timeout_min 240`):**
+  - `jobs/p12_A.txt` (C7): `cte_depth_sl` × 100, ≈ 24 slot-hours, **≈ 4–4.5 h wall**; results root `results_cte`
+    (reuses the CTE caches). New: one GPU pass per dataset for the layer states (cached), 12 small probes per job.
+  - `jobs/p12_B.txt` (C8): `cte_depth_sl` × 108 (36 datasets × folds 0–2), fresh caches, **≈ 4–5 h wall**; results
+    root `results_ext`. Needs the Kaggle key (and OpenML / URL access) on Colab.
+  - `jobs/p12_C.txt` (secondary): LightGBM `cte_depth_sl` + `cte_probe` × 100 each, ≈ 2–3 h wall.
+  - `jobs/p12_A2.txt` (secondary): `cte_depth_top3` × 100, probes cached by part A, ≈ 3.5 h wall.
+  - Order: A, then B (C7 and C8 decide the claims), then C and A2 if time allows. Each part needs Dima's approval.
+- **Analysis:** `python scripts/p12_report.py --out <results_cte> --out_ext <results_ext>` → `reports/p12/p12_report.json`
+  (written before any P12 result). Figure: `python scripts/depth_figures.py --results <results_cte>`.
+
+## P13 — Head-to-head of depth probes vs cte_probe under the P12 protocol (written 2026-10-19/20 BEFORE any P13 run; Dima: "I approve whatever you think is right")
+- **Why:** the Cowork dev evidence (E34-cw: 6 datasets, fold 0 only, +0.003, leaning on Video Games) is weaker than
+  our P12 protocol, which rejected four candidates. The fair test is the same protocol and the same pass rule.
+- **Protocol:** exactly P12 (9 datasets; training rows of folds 0, 1, 2; seeds 0, 1; random 80/20 dev splits; test rows
+  never used). The baseline is P12's `p9_base` rows (= cte_probe's features, tested), with identical splits.
+- **Candidates:** `cte_depth_top3` and `cte_depth_sl` (Cowork's definitions, unchanged).
+- **Rule (fixed now, as P12):** a candidate advances iff its mean over the 54 dataset-splits is > +0.002 vs p9_base AND
+  it is better on ≥ 6 of 9 datasets. If both advance, `cte_depth_top3` is preferred (no second-level stacker, so no
+  second-order label path), unless `sl`'s mean is higher by more than 0.002.
+- **If one advances:** a new pre-registration (full run on the 20, plus the 36-dataset confirmation of both cte_probe
+  and the depth method), then Dima's approval for the Colab runs. **If none advances:** cte_probe stays final, and
+  the depth profile (E33-cw) is reported as an analysis.
+- **Budget:** ≤ 3 h of laptop CPU (hard cap), within Dima's standing approval.

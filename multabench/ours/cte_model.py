@@ -12,6 +12,7 @@ Model folder:
   ridge.joblib      the lexical Ridge (or the constant prediction if there was no vocabulary)
   probe.joblib      (cte_probe) the linear probe: Ridge on the full frozen embeddings of all text columns
   knn_index.npz     per neighbour view: L2-normalised training-row embeddings + training targets
+  depth.joblib      (cte_depth*) per used layer: the training-row standardisation and the all-rows Ridge
   pca.joblib        the fitted PCA-30 per text column
   catboost.cbm      the fitted CatBoost model
   learner.joblib    upstream preprocessing state (dates, feature types, label encoder), heavy parts removed
@@ -39,10 +40,11 @@ class CTEFeaturizer:
     """The full-pool CTE experts (method `cte`, engine cte/3) of one fitted learner."""
 
     def __init__(self, text_cols, is_cls, classes, top, alpha, vectorizers, ridge, ridge_const, knn, c=cte.CTE_CONFIG,
-                 probe=None, probe_alpha=None):
+                 probe=None, probe_alpha=None, depth=None):
         self.text_cols, self.is_cls, self.classes, self.top, self.alpha = text_cols, is_cls, classes, top, alpha
         self.vectorizers, self.ridge, self.ridge_const, self.knn, self.c = vectorizers, ridge, ridge_const, knn, c
-        self.probe, self.probe_alpha = probe, probe_alpha  # cte_probe only
+        self.probe, self.probe_alpha = probe, probe_alpha  # cte_probe (and cte_depth*, which contain it)
+        self.depth = depth  # cte_depth*: {pooling, aggregate, top_k, layers, stats {layer: {col: (mu, sd)}}, ridges}
 
     @property
     def n_classes(self) -> int:
@@ -51,7 +53,9 @@ class CTEFeaturizer:
     # ------------------------------------------------------------------ fit (mirrors cte.run_cte / compute_cte_features)
     @classmethod
     def from_learner(cls, model) -> "CTEFeaturizer":
-        assert model.ours_variant in ("cte", "cte_probe"), "packaging is implemented for `cte` and `cte_probe`"
+        from multabench.ours.depth import DEPTH_METHODS
+        assert model.ours_variant in ("cte", "cte_probe", *DEPTH_METHODS), \
+            "packaging is implemented for `cte`, `cte_probe` and the depth methods"
         from scipy.sparse import csr_matrix, hstack
         from sklearn.feature_extraction.text import TfidfVectorizer
         from sklearn.linear_model import Ridge
@@ -67,7 +71,7 @@ class CTEFeaturizer:
         n_classes = len(classes) if model.is_cls else 1
         top = cte.top_classes(y, n_classes, c) if model.is_cls else None
         diag = model.stack_result.diagnostics
-        alpha = float((diag["cte"] if model.ours_variant == "cte_probe" else diag)["lex_alpha"]["chosen"])
+        alpha = float((diag["cte"] if "cte" in diag else diag)["lex_alpha"]["chosen"])  # cte_probe / depth: nested
         x_t = inp["x_fit"][text_cols]
         texts = {col: te.encoding_texts(x_t, col) for col in text_cols}
         pool = _concat(texts, text_cols)
@@ -90,11 +94,14 @@ class CTEFeaturizer:
             views = {**{col: embs[col] for col in text_cols}, **views}
         knn = {view: (np.asarray(E, dtype=np.float32), np.asarray(Y, dtype=np.float64)) for view, E in views.items()}
         probe = probe_alpha = None
-        if model.ours_variant == "cte_probe":  # the all-training-rows fit p7.xfit_linear uses for val/test rows
+        if model.ours_variant != "cte":  # the all-training-rows fit p7.xfit_linear uses for val/test rows
             probe_alpha = float(diag["probe"]["alpha"])
             probe = Ridge(alpha=probe_alpha, solver="sparse_cg").fit(np.hstack([embs[col] for col in text_cols]), Y)
+        depth_fit = None
+        if model.ours_variant in DEPTH_METHODS:
+            depth_fit = _fit_depth(model, inp, text_cols, rows, y, n_classes)
         return cls(text_cols, model.is_cls, classes, top, alpha, vectorizers, ridge, ridge_const, knn, c, probe,
-                   probe_alpha)
+                   probe_alpha, depth_fit)
 
     # ------------------------------------------------------------------ transform
     def transform(self, texts: Dict[str, list[str]], embs: Dict[str, np.ndarray], index,
@@ -119,10 +126,31 @@ class CTEFeaturizer:
         if self.probe is not None:
             Pp = np.asarray(self.probe.predict(np.hstack([embs[col] for col in self.text_cols]))).reshape(n, -1)
             out[f"probe:{ALL_COLS}"] = feat(Pp)
+        depth_names = []
+        if self.depth is not None:  # same names and order as depth.run_depth (appended after the base features)
+            from multabench.ours import depth as dp
+            d = self.depth
+            states = dp.layer_states_cached([DataFrame({col: texts[col] for col in self.text_cols}, index=index)],
+                                            self.text_cols, d["cfg"], device, None, "predict", d["pooling"])
+            P = {l: np.asarray(d["ridges"][l].predict(dp.layer_matrix(states, self.text_cols, np.asarray(index), l - 1,
+                                                                      d["stats"][l])[0])).reshape(n, -1)
+                 for l in d["layers"]}
+            if d["aggregate"] == "stack":
+                depth_names = [f"depth{l:02d}:{ALL_COLS}" for l in d["layers"]]
+                for l, name in zip(d["layers"], depth_names):
+                    out[name] = feat(P[l])
+            elif d["aggregate"] == "sl":  # NNLS over the layers' (binary: class-1 / regression) predictions
+                depth_names = [f"depthsl:{ALL_COLS}"]
+                Pl = np.hstack([feat(P[l]) for l in d["layers"]])
+                out[depth_names[0]] = (Pl @ np.asarray(d["sl_weights"]) + d["sl_intercept"])[:, None]
+            else:
+                depth_names = [f"depthtop{d['top_k']}:{ALL_COLS}"]
+                out[depth_names[0]] = np.mean([feat(P[l]) for l in d["layers"]], axis=0)
         owner = {col: col for col in self.text_cols} | {ALL_COLS: self.text_cols[0]}
         frames = {}
         for col in self.text_cols:
-            names = sorted(f for f in out if owner[f.split(":", 1)[1]] == col)
+            names = sorted(f for f in out if owner[f.split(":", 1)[1]] == col and f not in depth_names)
+            names += [f for f in depth_names if owner[f.split(":", 1)[1]] == col]
             if not names:
                 frames[col] = DataFrame(index=index)
                 continue
@@ -140,9 +168,13 @@ class CTEFeaturizer:
                             **{f"{v}|Y": Y for v, (_, Y) in self.knn.items()})
         if self.probe is not None:
             joblib.dump(self.probe, join(folder, "probe.joblib"), compress=3)
+        if self.depth is not None:
+            joblib.dump({k: v for k, v in self.depth.items() if k != "cfg"}, join(folder, "depth.joblib"), compress=3)
         return {"text_cols": self.text_cols, "is_cls": self.is_cls, "classes": self.classes, "probe_alpha": self.probe_alpha,
                 "top": None if self.top is None else [int(t) for t in self.top], "alpha": self.alpha,
-                "knn_views": list(self.knn)}
+                "knn_views": list(self.knn),
+                "depth": None if self.depth is None else {k: self.depth[k] for k in ("pooling", "aggregate", "top_k")}
+                | {"layers": [int(l) for l in self.depth["layers"]]}}
 
     @classmethod
     def load(cls, folder: str, meta: dict) -> "CTEFeaturizer":
@@ -152,9 +184,34 @@ class CTEFeaturizer:
         knn = {v: (z[f"{v}|E"], z[f"{v}|Y"]) for v in meta["knn_views"]}
         top = None if meta["top"] is None else np.asarray(meta["top"])
         probe = joblib.load(join(folder, "probe.joblib")) if meta.get("probe_alpha") is not None else None
+        depth_fit = None
+        if meta.get("depth"):
+            depth_fit = joblib.load(join(folder, "depth.joblib"))
+            depth_fit["cfg"] = te.TarConfig(**meta["encoder"])
         return cls(meta["text_cols"], meta["is_cls"], meta["classes"], top, meta["alpha"],
                    joblib.load(join(folder, "vectorizers.joblib")), r["ridge"], r["const"], knn, probe=probe,
-                   probe_alpha=meta.get("probe_alpha"))
+                   probe_alpha=meta.get("probe_alpha"), depth=depth_fit)
+
+
+def _fit_depth(model, inp, text_cols, rows, y, n_classes) -> dict:
+    """The depth experts' all-training-rows fits that depth.run_depth used for val/test rows: per used layer, the
+    training-row standardisation and Ridge(alpha chosen by that layer's training-row OOF metric)."""
+    from sklearn.linear_model import Ridge
+    from multabench.ours import depth as dp
+    spec = dp.DEPTH_METHODS[model.ours_variant]
+    dd = model.stack_result.diagnostics["depth"]
+    layers = dd["ranked_layers"][:spec.top_k] if dd["aggregate"] == "top3" else dd["layers"]
+    states = dp.layer_states_cached([inp["x_fit"][text_cols]], text_cols, model.ours_cfg, model.device,
+                                    model.ours_cache_dir, model.ours_dataset, spec.pooling)
+    Y = cte._targets(y, model.is_cls, n_classes, spec.cte_config())
+    stats, ridges = {}, {}
+    solver = "cholesky" if dd.get("solver") == "eig" else "sparse_cg"  # eig = exact closed form, like cholesky
+    for l in layers:
+        X, stats[l] = dp.layer_matrix(states, text_cols, rows, l - 1)
+        ridges[l] = Ridge(alpha=float(dd["layer_alpha"][l]), solver=solver).fit(X, Y)
+    return {"pooling": spec.pooling, "aggregate": dd["aggregate"], "top_k": spec.top_k, "layers": [int(l) for l in layers],
+            "stats": stats, "ridges": ridges, "cfg": model.ours_cfg, "sl_weights": dd.get("sl_weights"),
+            "sl_intercept": dd.get("sl_intercept")}
 
 
 def _analyzers(c):
@@ -173,7 +230,8 @@ def _concat(texts: Dict[str, list[str]], cols: list[str]) -> list[str]:
 # ---------------------------------------------------------------------------------------- whole model folder
 
 def save_model(model, folder: str, extra_meta: Optional[dict] = None) -> None:
-    """Writes the model folder for a fitted `cte` / `cte_probe` learner (the learner object is stripped of heavy, row-bound parts)."""
+    """Writes the model folder for a fitted `cte` / `cte_probe` / `cte_depth*` learner (the learner object is stripped of
+    heavy, row-bound parts)."""
     import dataclasses
     import joblib
     os.makedirs(folder, exist_ok=True)
