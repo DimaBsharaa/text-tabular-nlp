@@ -68,6 +68,7 @@ Entry template:
 | Cowork / P13 / E37 | 2026-10-19 | depth probes (Cowork) merged; head-to-head on the P12 protocol | **cte_depth_top3 advances**: +0.0033 vs cte_probe, 7/9 datasets |
 | P14 | 2026-10-19 | final pre-registration: C9 (depth on the 20) + C7 amended (36 untouched, both methods, folds 0–2) | jobs/p14_A.txt, jobs/p14_B.txt |
 | E38 | 2026-10-19 | P14 part A: depth probes on the 20 (100 jobs) | **C9 passes**: +0.0161 vs Joint TAR, 14/20, p = 0.0023; final method = cte_depth_top3 |
+| P15 | 2026-10-19 | C10: final method with LightGBM + TabM ("≥ 3 of 5 learners", original C1 draft) | jobs/p15.txt, ~1–1.5 h, after p14_B |
 
 ---
 
@@ -1794,3 +1795,23 @@ Features for the learner = structured columns (upstream preprocessing)
     −0.0006, SCImago −0.0004, Spotify −0.0001.
   - One commit, one GPU type, and the analysis was fixed before the run.
 - **Next:** part B (C7, 36 untouched datasets, both methods, folds 0–2): the one-shot confirmation.
+
+## P15 — Learner robustness of the final method (written 2026-10-19, BEFORE any P15 run; Dima: "I approve whatever you think is right")
+- **Why (Cowork review, verified):** the PDF says "outperform the Joint TAR baseline" without naming a learner.
+  - In MulTaBench, Joint TAR is a feature construction reported with each learner. Our comparison (same learner,
+    text features swapped) is the natural reading, and every result so far is valid under it.
+  - Our first C1 draft (line 93) asked for significance on **≥ 3 of 5 learners**. P4 (2026-10-10) narrowed the
+    primary test to CatBoost for compute reasons (documented, lines 704–712), and later claims kept that. Only C8
+    (cte_probe + LightGBM) added a second learner, and the final method (`cte_depth_top3`) has only CatBoost (C9).
+- **C10 (final method, more learners):** `cte_depth_top3` with **LightGBM** and with **TabM**, each vs the leaderboard
+  Joint TAR of the **same learner**, 20 datasets, folds 0–4, two-sided Wilcoxon, Holm over the 2. Pass = Holm
+  p < 0.05 AND positive mean. Together with C9 (CatBoost) this tests the original "≥ 3 of 5 learners" criterion:
+  **met iff C9 and both C10 tests pass.**
+- **Not run:** TabPFN-v2 / TabPFN-2.5 (license token and much more GPU time; their leaderboard Joint TAR lacks Spotify
+  and Wine). Added only if the course forum says all 5 learners are required.
+- **Reported in addition:** the cross-learner table (our CatBoost vs every learner's Joint TAR), and Holm over all
+  pre-registered tests.
+- **Run plan:** `jobs/p15.txt`: `cte_depth_top3` LightGBM × 100 then TabM × 100, `results_cte` (layer / expert caches
+  from part A hit), `--job_timeout_min 240`. Estimated ≈ 1–1.5 h wall (measured: cte_probe LightGBM 1.5 slot-hours,
+  frozen_xfit_pred TabM 0.8 slot-hours). Run **after** P14 part B finishes (one VM on `results_cte` at a time: the
+  locks are per machine).

@@ -174,3 +174,16 @@ def test_p14_report_on_synthetic_results(tmp_path):
     c = rep["C7"]["cte_depth_top3|vs_joint_frozen"]
     assert c["n"] == 36 and c["passes"] and c["p_holm"] >= c["p_value"]
     assert len(rep["C7"]) == 4 and "C9" in rep["holm_all_preregistered"]
+
+
+def test_p15_report_on_synthetic_results(tmp_path):
+    import p15_report as pr
+    out = str(tmp_path)
+    rng = np.random.default_rng(8)
+    _write(out, "cte_depth_top3", "lgbm", {k: v + 0.015 + rng.normal(0, 0.001) for k, v in _lb("lgbm").items()})
+    rep = pr.p15_report(out)
+    assert rep["C10"]["lgbm"]["n"] == 20 and rep["C10"]["tabm"]["n"] == 0 and rep["three_of_five"] is None
+    _write(out, "cte_depth_top3", "tabm", {k: v + 0.012 + rng.normal(0, 0.001) for k, v in _lb("tabm").items()})
+    rep = pr.p15_report(out)
+    assert rep["C10"]["lgbm"]["passes"] and rep["C10"]["tabm"]["passes"] and rep["three_of_five"] is True
+    assert "C10_tabm" in rep["holm_all_preregistered"]
