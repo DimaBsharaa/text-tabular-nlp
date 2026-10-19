@@ -64,6 +64,7 @@ Entry template:
 | E31 / P10 | 2026-10-16 | e5 "query:" prefix (dev) + C6 proposal | cte_probe + query: +0.0085 vs cte_probe, 6/6 dev datasets (Jigsaw +0.017) |
 | E32 | 2026-10-16 | P10 full run (195 jobs) | C6 passes vs TAR (+0.0124, p = 0.015) but **no gain over cte_probe** (−0.0017, 7/20); helps binary cls, hurts regression |
 | P11 / P12 / E33 | 2026-10-19 | holdout plan (36 datasets) + dev round 3 (270 jobs, 9 datasets × 6 splits) | none of 4 refinements advances; cte_probe final |
+| E35 / E36 | 2026-10-19 | C8: cte_probe LightGBM (100 jobs; download race fixed) | **C8 passes**: +0.0167 vs Joint TAR, 14/20, p = 0.011 (global Holm 0.064) |
 
 ---
 
@@ -1704,3 +1705,16 @@ Features for the learner = structured columns (upstream preprocessing)
   also used by `dev_eval.py`; test in `tests/test_runner_jobs.py`. This matters most for the 36-dataset run, where
   every dataset is downloaded fresh.
 - **Next:** re-run `jobs/p11.txt` with `JOB_FILTER = ["cte_probe lgbm"]`. Only the 4 missing jobs run; then the C8 analysis.
+
+## E36 — C8 PASSES: cte_probe with LightGBM beats leaderboard Joint TAR (LightGBM)   (2026-10-19, Colab A100)
+- **Data:** `results_export_20261019_114551.zip`: 100/100 `cte_probe lgbm` (96 at aff5dab + the 4 re-run at 2f4d148,
+  which differs only by the download lock), clean, A100, 2 threads per job. Analysis: `scripts/p11_report.py` (C7 part
+  empty, held back as planned).
+- **C8:** mean **+0.0167**, median +0.0092, CI [+0.0064, +0.0276], **p = 0.011**, wins **14/20** → **passes** its
+  pre-registered test (p < 0.05, positive mean).
+- **Losses:** Video Games −0.024, Jigsaw −0.022, US Accidents −0.004, Wine −0.003, SCImago −0.001, Women Clothing −0.001.
+- **Holm over all 9 pre-registered tests (C1, C2, C3 ×2, C4, C5, C6, C8 + C7 pending):** C4 0.00015, **C5 0.016
+  (passes)**, C8 0.064, C6 0.077, C2 / C3 0.19, C1 0.41. Report C8 as "passes its own test; not under the global
+  correction". C5 remains the primary result under every correction.
+- **Conclusion:** the method's gain over TAR is not CatBoost-specific (also +0.0152 for plain CTE with LightGBM, C2
+  secondary).
