@@ -86,3 +86,20 @@ def test_auto_parallel_for_every_p8_p10_jobs_file(monkeypatch):
     root = dirname(dirname(abspath(__file__)))
     for f in ("jobs/p8_A.txt", "jobs/p8_B.txt", "jobs/p10.txt", "jobs/p11.txt", "jobs/cte_full.txt"):
         assert rx.parallel_plan(argparse.Namespace(parallel_jobs="auto"), rx.read_jobs(join(root, f)))[0] == 6, f
+
+
+def test_dataset_lock_serialises_parallel_loads(tmp_path):
+    """E35: parallel jobs of one dataset must not read a half-downloaded file. Two threads: the second waits."""
+    import threading
+    import time
+    order = []
+
+    def job(i):
+        with rx.dataset_lock("SYNTH_LOCK_TEST"):
+            order.append(("in", i))
+            time.sleep(0.3)
+            order.append(("out", i))
+    ts = [threading.Thread(target=job, args=(i,)) for i in range(2)]
+    [t.start() for t in ts]
+    [t.join() for t in ts]
+    assert order[0][0] == "in" and order[1][0] == "out" and order[2][0] == "in" and order[3][0] == "out"

@@ -26,8 +26,10 @@ def load_train_rows(dataset: str, fold: int, train_examples: int = 10_000):
     from multabench.datasets.downloading import download_dataset
     from multabench.datasets.multimodal import MultimodalState
     from multabench.datasets.utils import dataset_from_name
-    ds = download_dataset(dataset_id=dataset_from_name(name=dataset), multimodal_state=MultimodalState.ALL,
-                          target_override=None)
+    from run_experiment import dataset_lock
+    with dataset_lock(dataset):
+        ds = download_dataset(dataset_id=dataset_from_name(name=dataset), multimodal_state=MultimodalState.ALL,
+                              target_override=None)
     x, y = subsample_dataset(x=ds.x, y=ds.y, is_cls=ds.is_cls, train_examples=train_examples, fold=fold)
     x_train, _, y_train, _ = split_to_test(x=x, y=y, is_cls=ds.is_cls, fold=fold, train_examples=train_examples)
     return ds, x_train, y_train  # the test split is discarded here on purpose

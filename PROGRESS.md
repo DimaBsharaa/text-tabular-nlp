@@ -1692,3 +1692,15 @@ Features for the learner = structured columns (upstream preprocessing)
   and the depth method), then Dima's approval for the Colab runs. **If none advances:** cte_probe stays final, and
   the depth profile (E33-cw) is reported as an analysis.
 - **Budget:** ≤ 3 h of laptop CPU (hard cap), within Dima's standing approval.
+
+## E35 — C8 run (cte_probe LightGBM, 20 datasets): 96/100 jobs; 4 failed in data loading (download race), fixed   (2026-10-19, Colab A100)
+- **Data:** `results_export_20261019_084905.zip`: 96 `cte_probe lgbm` results at aff5dab (clean), A100, 2 threads per job;
+  about 30 min wall.
+- **Failures:** 4 jobs (Spotify folds 1–3, Women Clothing fold 1) failed after ~10 s with "Input contains NaN" inside
+  upstream's `split_to_test`, i.e. NaN labels while loading. Those folds started together on a fresh Colab VM, and
+  several processes downloaded the same dataset into the same cache at once. The same jobs had succeeded with CatBoost.
+  **No result was affected:** a failed job writes no result.
+- **Fix:** `run_experiment.dataset_lock` (local file lock around download + load; one job downloads, the others wait),
+  also used by `dev_eval.py`; test in `tests/test_runner_jobs.py`. This matters most for the 36-dataset run, where
+  every dataset is downloaded fresh.
+- **Next:** re-run `jobs/p11.txt` with `JOB_FILTER = ["cte_probe lgbm"]`. Only the 4 missing jobs run; then the C8 analysis.

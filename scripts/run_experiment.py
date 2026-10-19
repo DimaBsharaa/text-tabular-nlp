@@ -13,6 +13,7 @@ Fine-tuned TAR outputs are cached in <cache_dir> (default <out>/_cache) and shar
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import os
 import shutil
@@ -109,6 +110,21 @@ def reference_scores(dataset: str, model_name: str, fold: int) -> dict:
     return {names[s]: float(g["test_score"].iloc[0]) for s, g in df.groupby("multimodal_state") if s in names}
 
 
+@contextlib.contextmanager
+def dataset_lock(name: str):
+    """Exclusive local lock around a dataset's download + load. Parallel jobs of the same dataset otherwise download
+    into the same cache at once, and a job can read a half-written file (E35: NaN labels in upstream's split)."""
+    import fcntl
+    root = join(os.path.expanduser("~"), ".cache", "ours_locks")
+    os.makedirs(root, exist_ok=True)
+    with open(join(root, f"dataset_{name}.lock"), "w") as f:
+        fcntl.flock(f, fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(f, fcntl.LOCK_UN)
+
+
 def fit_learner(args: argparse.Namespace):
     """Load the dataset, make upstream's split for args.fold, configure our learner and fit it (shared by run_one and
     scripts/train.py). Returns (model, learner_cls, x_train, y_train, x_test, y_test, t0)."""
@@ -131,7 +147,8 @@ def fit_learner(args: argparse.Namespace):
     args._device = device
     dataset_id = dataset_from_name(name=args.dataset)
     # Same loading / subsampling / test split as upstream evaluate_on_loaded_dataset with multimodal_state=ft.
-    dataset = download_dataset(dataset_id=dataset_id, multimodal_state=MultimodalState.ALL, target_override=None)
+    with dataset_lock(args.dataset):  # parallel jobs of one dataset: one downloads, the others wait (C8: NaN labels)
+        dataset = download_dataset(dataset_id=dataset_id, multimodal_state=MultimodalState.ALL, target_override=None)
     x, y = subsample_dataset(x=dataset.x, y=dataset.y, is_cls=dataset.is_cls, train_examples=args.train_examples, fold=args.fold)
     x_train, x_test, y_train, y_test = split_to_test(x=x, y=y, is_cls=dataset.is_cls, fold=args.fold,
                                                      train_examples=args.train_examples)
