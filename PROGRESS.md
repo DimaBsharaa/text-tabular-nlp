@@ -72,6 +72,7 @@ Entry template:
 | P15 | 2026-10-19 | C10: final method with LightGBM + TabM ("≥ 3 of 5 learners", original C1 draft) | jobs/p15.txt, ~1–1.5 h, after p14_B |
 | E40 | 2026-10-20 | trust checks: independent recomputation + label-shuffle leakage test | both pass (C5 / C8 / C9 reproduced exactly; shuffled labels → chance) |
 | E41–E43 | 2026-10-20 | P15: final method with LightGBM + TabM (TabM NaN bug fixed) | **C10 passes**: LightGBM +0.0193 (p = 0.0056), TabM +0.0161 (16/20, p = 0.0007) → 3 of 5 learners |
+| P16 / E44 | 2026-10-21 | C11 (TabPFN-v2 / TabPFN-2.5) pre-registration + timing run (6 jobs) | v2 works (3/3); 2.5 blocked by the Prior Labs license check; full run ≈ 4.5–6 h, awaits approval |
 
 ---
 
@@ -1922,3 +1923,25 @@ Features for the learner = structured columns (upstream preprocessing)
   - Both with `EXTRA_ARGS = ["--job_timeout_min", "240", "--parallel_jobs", "2"]` (TabPFN holds the training set in
     GPU memory; 6 parallel jobs could exhaust the A100), `results_cte`, Colab Secret `TABPFN_TOKEN` for v2.5.
   - The full-run estimate follows from the timing jobs, before the full run starts.
+
+## E44 — P16 timing run (jobs/p16_timing.txt, 6 jobs): TabPFN-v2 works, TabPFN-2.5 blocked by its license check   (2026-10-21, Colab A100)
+- **Commit:** a469515. `EXTRA_ARGS = ["--job_timeout_min", "240", "--parallel_jobs", "2"]`, results_cte. 8 min wall.
+- **TabPFN-v2, fold 0 (3/3 done):** Mercari 0.5115 vs LB ft 0.4368 (+0.075, 6.2 min); Rotten Tomatoes 0.6093 vs 0.5623
+  (+0.047, 7.7 min); Product Sentiment 0.8931 vs 0.9180 (−0.025, 47 s). Three folds of three datasets: no conclusion
+  drawn, C11 is decided only by the full run.
+- **TabPFN-2.5 (0/3):** all three failed before training with `TabPFNLicenseError` (tabpfn 7.1.1 checks the Prior Labs
+  account for the **TabPFN-2.5** license via `TABPFN_TOKEN`; either the token is missing or invalid in this runtime, or
+  that version's license is not accepted on the account). Not a code bug: the features were already built
+  (cache hits) when the model download was refused. Fix is on Dima's side (accept the 2.5 license on ux.priorlabs.ai,
+  put the API key in the Colab Secret `TABPFN_TOKEN`).
+- **Where the time goes:** the TabPFN-v2 jobs rebuilt the experts and depth probes (cache miss; Rotten Tomatoes depth
+  probes 301 s). Expected: TabPFN has no learner validation split, so its training rows differ from the CatBoost /
+  LightGBM / TabM runs and their caches do not apply. The TabPFN-2.5 jobs then hit the TabPFN-v2 caches (experts 0–4 s,
+  probes 0 s), so both TabPFN learners see **identical features** and any difference between them is the learner.
+  TabPFN-v2 fit + predict itself ≈ 1.5 min at 10,000 rows.
+- **Full-run estimate (jobs/p16.txt, 180 jobs, 2 parallel):** the cold TabPFN-v2 jobs scale like the first (cold) P14
+  CatBoost depth run (738 job-min on these 18 datasets) × 0.5–0.6 (ratio measured on Rotten Tomatoes / Mercari) ≈
+  370–450 job-min → **3–4 h wall**; the 90 TabPFN-2.5 jobs reuse the features, ≈ 1–3 min each → **1–2 h wall**.
+  **Total ≈ 4.5–6 h wall** on an A100: over the 1 h limit, so it needs Dima's approval (rule 9).
+- **Next:** Dima fixes the TabPFN-2.5 license; a one-cell check confirms it (token valid + license accepted) before
+  the full run is approved and started.
