@@ -71,6 +71,7 @@ Entry template:
 | E39 | 2026-10-20 | P14 part B: 36 untouched datasets (216 jobs) | **C7 fails** after Holm (medians +0.003, raw p ≈ 0.02, Holm 0.067); C5 / C9 still pass globally |
 | P15 | 2026-10-19 | C10: final method with LightGBM + TabM ("≥ 3 of 5 learners", original C1 draft) | jobs/p15.txt, ~1–1.5 h, after p14_B |
 | E40 | 2026-10-20 | trust checks: independent recomputation + label-shuffle leakage test | both pass (C5 / C8 / C9 reproduced exactly; shuffled labels → chance) |
+| E41–E43 | 2026-10-20 | P15: final method with LightGBM + TabM (TabM NaN bug fixed) | **C10 passes**: LightGBM +0.0193 (p = 0.0056), TabM +0.0161 (16/20, p = 0.0007) → 3 of 5 learners |
 
 ---
 
@@ -1888,3 +1889,20 @@ Features for the learner = structured columns (upstream preprocessing)
   `scripts/check_recompute.py` (no project code) and `scripts/p15_report.py`.
 - **C10's verdict waits for TabM** (Holm over LightGBM + TabM, as pre-registered). TabM re-run after the E41 fix:
   `jobs/p15.txt`, `JOB_FILTER = ["tabm"]`, commit ≥ 74554c5.
+
+## E43 — P15 complete: C10 PASSES; the final method beats same-learner Joint TAR with CatBoost, LightGBM and TabM ("≥ 3 of 5")   (2026-10-20, Colab A100)
+- **Data:** `results_export_20261020_193057.zip` (automatic export): `cte_depth_top3 tabm` 100/100 at 41b7f4f (contains the
+  E41 fix), clean, A100, no failures; LightGBM 100/100 at 78ff6e1 (E42). About 30 min wall for TabM.
+- **C10 (vs the same learner's leaderboard Joint TAR, Holm over 2):**
+  - LightGBM +0.0193, 14/20, p = 0.0056 (Holm 0.0056) → passes;
+  - **TabM +0.0161, median +0.0095, 16/20, p = 0.0007** (Holm 0.0014) → passes.
+  - Together with C9 (CatBoost +0.0161, 14/20, p = 0.0023): **the "≥ 3 of 5 learners" criterion (original C1 draft) is met.**
+  - `scripts/check_recompute.py` (no project code) gives the same numbers for all three learners.
+- **Holm over all 16 pre-registered tests (C1–C10, C3 ×2, C7 ×4):** C4 0.0003, **C10-TabM 0.010, C5 0.030, C9 0.030**
+  (pass); C10-LightGBM 0.061, C8 0.11, C6 / C7 ≥ 0.14, others ≥ 0.24.
+- **Cross-learner (descriptive), our CatBoost vs other learners' Joint TAR:** LightGBM +0.030 (p < 1e-4), TabPFN-v2
+  +0.029 (p = 0.018), TabM +0.008 (p = 0.058), TabPFN-2.5 +0.005 (p = 0.55, a tie).
+- **Not tested:** our features with TabPFN-v2 / TabPFN-2.5 as the learner.
+- **Statement for the paper:** "Replacing Joint TAR's fine-tuned text features with ours, with the learner held fixed,
+  improves AUROC / R² significantly for 3 of the 5 MulTaBench learners (CatBoost, LightGBM, TabM); the TabPFN learners
+  were not evaluated."

@@ -41,38 +41,46 @@
    "passes": true
   },
   "tabm": {
-   "n": 0,
-   "mean_diff": null,
-   "median_diff": null,
-   "wins": 0,
-   "excluded_datasets": [
-    "BIN_TEXT_FAKE_JOB_POSTING",
-    "BIN_TEXT_JIGSAW_TOXICITY",
-    "BIN_TEXT_KICKSTARTER_FUNDING",
-    "MUL_TEXT_DATA_SCIENTIST_SALARY",
-    "MUL_TEXT_MICHELIN_RESTAURANTS",
-    "MUL_TEXT_PRODUCT_SENTIMENT",
-    "MUL_TEXT_SPOTIFY_GENRES",
-    "MUL_TEXT_US_ACCIDENTS",
-    "MUL_TEXT_WINE_REVIEW",
-    "MUL_TEXT_WOMEN_CLOTHING_REVIEW",
-    "REG_TEXT_BABIES_PRICES",
-    "REG_TEXT_BOOK_PRICE",
-    "REG_TEXT_BOOK_READABILITY",
-    "REG_TEXT_MERCARI_MARKETPLACE",
-    "REG_TEXT_MONTGOMERY_SALARIES",
-    "REG_TEXT_ROTTEN_TOMATOES",
-    "REG_TEXT_SCIMAGOJR_IMPACT",
-    "REG_TEXT_VANCOUVER_SALARIES",
-    "REG_TEXT_VIDEO_GAMES_SALES",
-    "REG_TEXT_ZOMATO_RESTAURANTS"
+   "n": 20,
+   "mean_diff": 0.016076040405725668,
+   "median_diff": 0.009537515724985856,
+   "wins": 16,
+   "ci95": [
+    0.008262547077298694,
+    0.024435812840096428
    ],
-   "per_dataset": {},
-   "p_holm": null,
-   "passes": null
+   "wilcoxon_W": 20.0,
+   "p_value": 0.0007076263427734375,
+   "rank_biserial_r": 0.8095238095238095,
+   "cohens_dz": 0.8461182355183812,
+   "excluded_datasets": [],
+   "per_dataset": {
+    "BIN_TEXT_FAKE_JOB_POSTING": 0.02949,
+    "BIN_TEXT_JIGSAW_TOXICITY": -0.01207,
+    "BIN_TEXT_KICKSTARTER_FUNDING": 0.01216,
+    "MUL_TEXT_DATA_SCIENTIST_SALARY": 0.02859,
+    "MUL_TEXT_MICHELIN_RESTAURANTS": 0.00692,
+    "MUL_TEXT_PRODUCT_SENTIMENT": 0.0038,
+    "MUL_TEXT_SPOTIFY_GENRES": 0.00122,
+    "MUL_TEXT_US_ACCIDENTS": 0.00043,
+    "MUL_TEXT_WINE_REVIEW": -0.00039,
+    "MUL_TEXT_WOMEN_CLOTHING_REVIEW": 0.00068,
+    "REG_TEXT_BABIES_PRICES": 0.02094,
+    "REG_TEXT_BOOK_PRICE": 0.0471,
+    "REG_TEXT_BOOK_READABILITY": 0.0371,
+    "REG_TEXT_MERCARI_MARKETPLACE": 0.04616,
+    "REG_TEXT_MONTGOMERY_SALARIES": 0.00204,
+    "REG_TEXT_ROTTEN_TOMATOES": 0.04817,
+    "REG_TEXT_SCIMAGOJR_IMPACT": -0.0007,
+    "REG_TEXT_VANCOUVER_SALARIES": -0.00071,
+    "REG_TEXT_VIDEO_GAMES_SALES": 0.03561,
+    "REG_TEXT_ZOMATO_RESTAURANTS": 0.01499
+   },
+   "p_holm": 0.001415252685546875,
+   "passes": true
   }
  },
- "three_of_five": null,
+ "three_of_five": true,
  "cross_learner_catboost_vs": {
   "catboost": {
    "n": 20,
@@ -446,7 +454,8 @@
   }
  },
  "holm_all_preregistered": {
-  "C4": 0.000191,
+  "C4": 0.00021,
+  "C10_tabm": 0.007076,
   "C5": 0.020925,
   "C9": 0.020925,
   "C10_lgbm": 0.039066,
