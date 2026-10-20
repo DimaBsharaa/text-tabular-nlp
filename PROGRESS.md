@@ -1879,3 +1879,12 @@ Features for the learner = structured columns (upstream preprocessing)
   `tests/test_p7.py::test_median_filling_for_tabm_only`. Golden tests pass.
 - **Next:** export with cell 9 → analyse the LightGBM half of C10; re-run `jobs/p15.txt` with `JOB_FILTER = ["tabm"]`
   (only the 100 failed jobs run; ≈ 30–60 min).
+
+## E42 — P15, LightGBM half: cte_depth_top3 + LightGBM beats LightGBM Joint TAR (+0.0193, 14/20, p = 0.0056)   (2026-10-20)
+- **Data:** `p15_depth.zip` (a quick export of `results_cte/cte_depth_top3/` made in a Colab cell; the full cell-9 export
+  was too slow and was interrupted): `cte_depth_top3 lgbm` 100/100 at 78ff6e1 (clean), A100. CatBoost files from part A
+  / B are included unchanged.
+- **Result:** mean +0.0193, median +0.0137, 14/20 wins, Wilcoxon p = 0.0056. Same numbers from
+  `scripts/check_recompute.py` (no project code) and `scripts/p15_report.py`.
+- **C10's verdict waits for TabM** (Holm over LightGBM + TabM, as pre-registered). TabM re-run after the E41 fix:
+  `jobs/p15.txt`, `JOB_FILTER = ["tabm"]`, commit ≥ 74554c5.
