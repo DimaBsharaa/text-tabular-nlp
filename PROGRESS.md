@@ -68,6 +68,7 @@ Entry template:
 | Cowork / P13 / E37 | 2026-10-19 | depth probes (Cowork) merged; head-to-head on the P12 protocol | **cte_depth_top3 advances**: +0.0033 vs cte_probe, 7/9 datasets |
 | P14 | 2026-10-19 | final pre-registration: C9 (depth on the 20) + C7 amended (36 untouched, both methods, folds 0–2) | jobs/p14_A.txt, jobs/p14_B.txt |
 | E38 | 2026-10-19 | P14 part A: depth probes on the 20 (100 jobs) | **C9 passes**: +0.0161 vs Joint TAR, 14/20, p = 0.0023; final method = cte_depth_top3 |
+| E39 | 2026-10-20 | P14 part B: 36 untouched datasets (216 jobs) | **C7 fails** after Holm (medians +0.003, raw p ≈ 0.02, Holm 0.067); C5 / C9 still pass globally |
 | P15 | 2026-10-19 | C10: final method with LightGBM + TabM ("≥ 3 of 5 learners", original C1 draft) | jobs/p15.txt, ~1–1.5 h, after p14_B |
 
 ---
@@ -1815,3 +1816,34 @@ Features for the learner = structured columns (upstream preprocessing)
   from part A hit), `--job_timeout_min 240`. Estimated ≈ 1–1.5 h wall (measured: cte_probe LightGBM 1.5 slot-hours,
   frozen_xfit_pred TabM 0.8 slot-hours). Run **after** P14 part B finishes (one VM on `results_cte` at a time: the
   locks are per machine).
+
+## E39 — P14 part B: claim C7 does NOT pass (36 untouched datasets); positive medians, nominal p ≈ 0.02, not after Holm   (2026-10-20, Colab A100)
+- **Data:** `results_export_20261020_030742.zip`: 216/216 jobs (`cte_probe` + `cte_depth_top3`, CatBoost, 36 text_source
+  datasets × folds 0–2) at febfedf (clean; the method code is identical to 80f41fb, only notes / jobs / report scripts
+  changed in between). A100, all 36 datasets downloaded, no process_errors and no timeouts. Analysis:
+  `scripts/p14_report.py` (committed before the run).
+- **C7 (fold-averaged over folds 0–2 on both sides; Holm over 4; pass = Holm p < 0.05 AND positive median):**
+  - cte_probe vs Joint Frozen: median **+0.0026**, 25/36, p = 0.019, **Holm 0.067**;
+  - cte_probe vs Joint TAR: median **+0.0033**, 23/36, p = 0.025, **Holm 0.067**;
+  - cte_depth_top3 vs Joint TAR: median **+0.0027**, 24/36, p = 0.017, **Holm 0.067**;
+  - cte_depth_top3 vs Joint Frozen: median +0.0007, 21/36, p = 0.28, Holm 0.28.
+  - → **None passes.**
+- **Means are not interpretable here** (pre-registered as medians for this reason): Mercedes (R²) has extreme
+  test-set outliers for every method. Leaderboard CatBoost: Frozen fold 0 −1.07, TAR fold 2 −47.2. Ours: cte_probe
+  fold 0 −0.32; cte_depth_top3 folds 0 / 2 −4.29 / −6.39. CarDekho: depth −0.10 vs cte_probe (folds 1–2).
+- **Hostile review:**
+  - Same commit, one GPU type, all 36 complete.
+  - These datasets failed MulTaBench curation, and TAR itself does not beat Frozen on them (median −0.0014).
+  - The effect is small but in the same direction as on the 20; it is individually nominal (three of four
+    p < 0.05) and does not survive the pre-registered correction.
+  - Depth probes are less robust than cte_probe on heavy-tailed regression targets (Mercedes, CarDekho): a
+    limitation, reported as such.
+- **Holm over all pre-registered tests (now including C7):** C4 0.0002, **C5 0.028, C9 0.028 (both still pass)**, C8 0.11,
+  C6 / C7 ≈ 0.14, others ≥ 0.15.
+- **Conclusion:**
+  - The 20-dataset claims stand (C5, C9 pass even under the global correction).
+  - The confirmation on 36 out-of-curation datasets is suggestive but not significant after correction.
+  - Final method stays `cte_depth_top3` by the P14 rule, with the robustness caveat. cte_probe is the more robust variant
+    out of distribution.
+  - The paper reports C7 exactly so.
+- **Next:** P15 (LightGBM, TabM).
