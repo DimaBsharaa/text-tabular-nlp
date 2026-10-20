@@ -1945,3 +1945,7 @@ Features for the learner = structured columns (upstream preprocessing)
   **Total ≈ 4.5–6 h wall** on an A100: over the 1 h limit, so it needs Dima's approval (rule 9).
 - **Next:** Dima fixes the TabPFN-2.5 license; a one-cell check confirms it (token valid + license accepted) before
   the full run is approved and started.
+- **Approval (2026-10-21):** Dima approved the full P16 run overnight, both TabPFN learners ("I want to run both"),
+  at the E44 estimate of ≈ 4.5–6 h wall. The account shows the TabPFN-2.5 license as accepted, so the failure was the
+  key reaching the job (secret missing or wrong). The 90 TabPFN-v2 jobs come first in jobs/p16.txt. If the key is still
+  wrong, only the TabPFN-2.5 jobs fail (fast, logged); they rerun after the key is fixed, and finished jobs are skipped.
