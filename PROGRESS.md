@@ -1865,3 +1865,17 @@ Features for the learner = structured columns (upstream preprocessing)
     ~2,000 rows).
   - → With noise labels the method falls to chance: no path carries label information around the cross-fitting.
 - **Conclusion:** the reported numbers are what the code computes, and the method shows no sign of leakage.
+
+## E41 — P15 run 1: LightGBM 100/100 done; all 100 TabM jobs failed (our bug: NaN in appended columns), fixed   (2026-10-20, Colab A100)
+- **Cell 7 summary:** `jobs: 200 | finished: 100 | failed: 100`. Every `cte_depth_top3 tabm` job failed with pytabkit's
+  "NaN values in continuous columns are currently not allowed!". The AUTO_DISCONNECT export did not produce a zip
+  (Dima saw none on Drive); the results are on Drive and will be exported with cell 9.
+- **Cause:** our numeracy features are NaN by design where undefined (e.g. no number in a text). CatBoost / LightGBM /
+  TabPFN accept NaN. Upstream fills NaN with the training-row median only for its own numerical columns when a learner
+  sets `USE_MEDIAN_FILLING` (TabM: True), and our appended columns bypassed that.
+- **Fix (learners.py):** for learners with `USE_MEDIAN_FILLING`, the appended feature columns get upstream's own rule:
+  the median over the learner's training rows (label-free; 0 only for an all-NaN column). CatBoost / LightGBM
+  features are unchanged (flag False), so no earlier result is affected. Test:
+  `tests/test_p7.py::test_median_filling_for_tabm_only`. Golden tests pass.
+- **Next:** export with cell 9 → analyse the LightGBM half of C10; re-run `jobs/p15.txt` with `JOB_FILTER = ["tabm"]`
+  (only the 100 failed jobs run; ≈ 30–60 min).

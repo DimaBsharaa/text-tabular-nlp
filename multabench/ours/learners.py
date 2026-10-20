@@ -211,8 +211,14 @@ class OursTextMixin:
             if stack is None:
                 encoders[col] = CachedColumnEncoder(result=self.tar_result, col_name=col, encoder=pca)
             else:  # P3: the head's prediction features are appended after this column's PCA components
-                encoders[col] = PredColumnEncoder(result=self.tar_result, col_name=col, encoder=pca,
-                                                  features=stack.features[col])
+                feats = stack.features[col]
+                if self.USE_MEDIAN_FILLING and feats.shape[1]:
+                    # E41: learners that need complete inputs (TabM) get upstream's own rule for numerical columns,
+                    # the training-row median (label-free), also for our appended columns (numeracy has NaN by
+                    # design). CatBoost / LightGBM / TabPFN keep NaN, as before.
+                    med = feats.loc[np.asarray(x_train.index)].median()
+                    feats = feats.fillna(med).fillna(0.0)  # 0 only if a column is all-NaN on the training rows
+                encoders[col] = PredColumnEncoder(result=self.tar_result, col_name=col, encoder=pca, features=feats)
         return encoders
 
     def native_text_info(self) -> Optional[dict]:

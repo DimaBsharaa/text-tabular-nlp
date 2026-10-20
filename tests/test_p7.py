@@ -93,3 +93,25 @@ def test_cte3_golden_still_holds():
     ref = np.load(g.OUT)
     new = g.all_features()
     assert all(np.array_equal(new[k], ref[k]) for k in ref.files)
+
+
+def test_median_filling_for_tabm_only(tmp_path, cfg):
+    """E41: TabM (USE_MEDIAN_FILLING) gets the training-row median for NaN in our appended columns; CatBoost keeps NaN."""
+    from multabench.datasets.objects import SupervisedTask
+    from multabench.ours.learners import make_learner
+    x, y = _table(n=300, task="reg")
+    x["review"] = [t if i % 3 else "no digits here at all" for i, t in enumerate(x["review"])]  # numeracy NaN rows
+    for name, expect_nan in (("catboost", True), ("tabm", False)):
+        m = make_learner(name)(problem_type=SupervisedTask.REGRESSION, device=CPU, tune_e5=False)
+        m.configure_ours(variant="cte_probe", cfg=cfg, cache_dir=str(tmp_path / "c"), dataset="SYNTH", fold=0,
+                         test=(x.iloc[260:], y.iloc[260:]))
+        m.fit(x.iloc[:260], y.iloc[:260])
+        f = m.text_transformers["review"].features
+        assert bool(f.isna().to_numpy().any()) == expect_nan, name
+        if not expect_nan:  # the filled value is the median over the learner's training rows (no val / test rows)
+            raw = m.stack_result.features["review"]
+            col = raw.columns[raw.isna().any()][0]
+            train_rows = m.ours_stack_inputs["x_fit"].index
+            filled = f.loc[raw[col].isna(), col].unique()
+            assert len(filled) == 1 and np.isclose(filled[0], raw.loc[train_rows, col].median())
+        assert np.isfinite(m.score_all_metrics(X=x.iloc[260:], y=y.iloc[260:]).score)
