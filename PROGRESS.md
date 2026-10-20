@@ -1906,3 +1906,19 @@ Features for the learner = structured columns (upstream preprocessing)
 - **Statement for the paper:** "Replacing Joint TAR's fine-tuned text features with ours, with the learner held fixed,
   improves AUROC / R² significantly for 3 of the 5 MulTaBench learners (CatBoost, LightGBM, TabM); the TabPFN learners
   were not evaluated."
+
+## P16 — The two TabPFN learners (written 2026-10-20, BEFORE any P16 run; Dima: "yes, let's do them")
+- **C11:** `cte_depth_top3` with **TabPFN-v2** and with **TabPFN-2.5** as the learner, each vs the leaderboard Joint TAR of
+  the same learner. **18 datasets** (the leaderboard has no TabPFN baseline for Spotify Genres and Wine Review; the
+  upstream reason is too many classes), folds 0–4, two-sided Wilcoxon, Holm over the 2. Pass = Holm p < 0.05 AND
+  positive mean. With C9 + C10, **all 5 learners are covered**; the paper reports N of 5 whatever the outcome.
+- **Upstream settings unchanged:** TabPFN has no learner validation split (`USE_VAL_SPLIT = False`), accepts NaN, and
+  runs with `ignore_pretraining_limits=True` (upstream's own setting; our feature count can exceed v2's 500-column
+  pretraining limit, as upstream allows).
+- **Run plan:**
+  1. `jobs/p16_timing.txt` (6 jobs: both learners × Product Sentiment / Rotten Tomatoes / Mercari, fold 0) to measure
+     the cost.
+  2. `jobs/p16.txt` (180 jobs; the 6 timing jobs are skipped as done).
+  - Both with `EXTRA_ARGS = ["--job_timeout_min", "240", "--parallel_jobs", "2"]` (TabPFN holds the training set in
+    GPU memory; 6 parallel jobs could exhaust the A100), `results_cte`, Colab Secret `TABPFN_TOKEN` for v2.5.
+  - The full-run estimate follows from the timing jobs, before the full run starts.

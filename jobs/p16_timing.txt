@@ -1,0 +1,8 @@
+# P16 timing (6 jobs, also part of jobs/p16.txt): both TabPFN learners x 3 datasets, fold 0.
+# Results root: MyDrive/text-tabular-nlp/results_cte. EXTRA_ARGS = ['--job_timeout_min', '240', '--parallel_jobs', '2'].
+cte_depth_top3 tabpfnv2 REG_TEXT_ROTTEN_TOMATOES 0
+cte_depth_top3 tabpfnv2 REG_TEXT_MERCARI_MARKETPLACE 0
+cte_depth_top3 tabpfnv2 MUL_TEXT_PRODUCT_SENTIMENT 0
+cte_depth_top3 tabpfnv2p5 REG_TEXT_ROTTEN_TOMATOES 0
+cte_depth_top3 tabpfnv2p5 REG_TEXT_MERCARI_MARKETPLACE 0
+cte_depth_top3 tabpfnv2p5 MUL_TEXT_PRODUCT_SENTIMENT 0

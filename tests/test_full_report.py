@@ -187,3 +187,14 @@ def test_p15_report_on_synthetic_results(tmp_path):
     rep = pr.p15_report(out)
     assert rep["C10"]["lgbm"]["passes"] and rep["C10"]["tabm"]["passes"] and rep["three_of_five"] is True
     assert "C10_tabm" in rep["holm_all_preregistered"]
+
+
+def test_p16_report_on_synthetic_results(tmp_path):
+    import p16_report as pr
+    out = str(tmp_path)
+    rng = np.random.default_rng(9)
+    for learner, off in (("tabpfnv2", 0.02), ("tabpfnv2p5", -0.001)):
+        _write(out, "cte_depth_top3", learner, {k: v + off + rng.normal(0, 0.002) for k, v in _lb(learner).items()})
+    rep = pr.p16_report(out)
+    assert rep["C11"]["tabpfnv2"]["n"] == 18 and rep["C11"]["tabpfnv2"]["passes"]
+    assert rep["C11"]["tabpfnv2p5"]["passes"] is False and rep["learners_passing"] == 4
