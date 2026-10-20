@@ -70,6 +70,7 @@ Entry template:
 | E38 | 2026-10-19 | P14 part A: depth probes on the 20 (100 jobs) | **C9 passes**: +0.0161 vs Joint TAR, 14/20, p = 0.0023; final method = cte_depth_top3 |
 | E39 | 2026-10-20 | P14 part B: 36 untouched datasets (216 jobs) | **C7 fails** after Holm (medians +0.003, raw p ≈ 0.02, Holm 0.067); C5 / C9 still pass globally |
 | P15 | 2026-10-19 | C10: final method with LightGBM + TabM ("≥ 3 of 5 learners", original C1 draft) | jobs/p15.txt, ~1–1.5 h, after p14_B |
+| E40 | 2026-10-20 | trust checks: independent recomputation + label-shuffle leakage test | both pass (C5 / C8 / C9 reproduced exactly; shuffled labels → chance) |
 
 ---
 
@@ -1847,3 +1848,20 @@ Features for the learner = structured columns (upstream preprocessing)
     out of distribution.
   - The paper reports C7 exactly so.
 - **Next:** P15 (LightGBM, TabM).
+
+## E40 — Trust checks: independent recomputation and label-shuffle leakage test, both pass   (2026-10-20, laptop CPU)
+- **Why:** Dima asked for checks that do not depend on trusting the project's code.
+- **1. Independent recomputation** (`scripts/check_recompute.py`: json + pandas + scipy only, no project code; raw result
+  JSONs vs the official leaderboard CSVs):
+  - cte_depth_top3 / CatBoost: +0.0161, 14/20, p = 0.0023 (= C9);
+  - cte_probe / CatBoost: +0.0141, 15/20, p = 0.0023 (= C5);
+  - cte_probe / LightGBM: +0.0167, 14/20, p = 0.0107 (= C8).
+  - → Identical to `reports/*.json`.
+- **2. Label-shuffle test** (`scripts/check_label_shuffle.py`; dev split of fold 0's training rows; training labels
+  permuted, dev-test labels true; `reports/checks/label_shuffle.csv`):
+  - Product Sentiment: true 0.907 → shuffled 0.486;
+  - Book Price R²: 0.564 → −0.008;
+  - Kickstarter: 0.763 → 0.533. Re-run with 3 more permutations: 0.507, 0.522, 0.500 (mean of 4 = 0.515, within chance for
+    ~2,000 rows).
+  - → With noise labels the method falls to chance: no path carries label information around the cross-fitting.
+- **Conclusion:** the reported numbers are what the code computes, and the method shows no sign of leakage.
