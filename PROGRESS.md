@@ -75,6 +75,7 @@ Entry template:
 | P16 / E44 | 2026-10-21 | C11 (TabPFN-v2 / TabPFN-2.5) pre-registration + timing run (6 jobs) | v2 works (3/3); 2.5 blocked by the Prior Labs license check; full run ≈ 4.5–6 h, awaits approval |
 | E45 | 2026-10-21 | P16 full run (178/180; 2 TabPFN-2.5 GPU out-of-memory) | TabPFN-v2 +0.0294, 14/18, p = 0.0040; TabPFN-2.5 provisional +0.0216, 14/17, p = 0.0017; re-run the 2 alone |
 | E46 | 2026-10-21 | P16 complete (2 OOM jobs re-run alone; 180/180) | **C11 passes**: TabPFN-v2 +0.0294 (p = 0.0040), TabPFN-2.5 +0.0204 (15/18, p = 0.0013) → **all 5 learners**; 4 of 5 survive Holm over all 17 tests |
+| E47 | 2026-10-21 | check: upstream at homework release (599bd6a, 27.7) vs `paper_version` | identical splits / metrics / preprocessing / baseline CSVs for the 20; 2 of the 36 C7 loaders differ |
 
 ---
 
@@ -2002,3 +2003,21 @@ Features for the learner = structured columns (upstream preprocessing)
   TabPFN-2.5: the 18 datasets with a TabPFN baseline); 4 of the 5 also survive Holm correction over all 17 tests we
   pre-registered."
 - **Next:** paper (main result table across 5 learners, per-dataset appendix tables), README results section.
+
+## E47 — Check: release-day upstream (27.7) vs the `paper_version` tag we use   (2026-10-21, no run)
+- **Question (Dima):** the course says to use MulTaBench as of the homework release (2026-07-27); we use tag
+  `paper_version` (3bb9507, 2026-09-19). Does anything that affects our comparison differ?
+- **Evidence:** the last upstream commit on or before 27.7 is 599bd6a (2026-07-26).
+  `git diff --stat 599bd6a paper_version` over `baselines/training/` (splits, metrics), `baselines/preprocessing/`,
+  `benchmark.py` and `leaderboard/results/text/` (the 20 datasets' baseline CSVs) is **empty**. The only differences are
+  in `datasets/`: new "MulTaBench-Full" dataset entries (added, not used by us), and two loader changes, Financial
+  Consumer Complaint (sampled to 100,000 rows) and Melbourne Airbnb (3 more image-URL columns dropped). Both are
+  among the 36 C7 datasets, **not the main 20**.
+- **Conclusion:** for the 20 datasets (C5, C8–C11) the two versions are identical in splits, metrics, preprocessing
+  and baseline numbers. For C7 (secondary, failed after Holm), 2 of 36 loaders differ from the 27.7 version; disclose
+  in the paper's appendix.
+- **Leakage path re-checked:** test rows enter our feature builder (`learners.py::_ours_fit_text_encoders`,
+  `extra["test"]`) for two things only: (1) their features, computed by experts and probes fit on training rows
+  (frozen e5 encoding and TF-IDF transform are label-free); (2) the logged diagnostic `quality("test", ...)`
+  (`cte.py:500-522`), computed after the features and never fed back. Empirical check: E40's label-shuffle test kept
+  the true test labels in the same path and fell to chance (Kickstarter 0.50–0.53).
