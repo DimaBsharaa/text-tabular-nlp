@@ -4,7 +4,7 @@ rows are featurised without re-fitting anything.
 After the learner is trained, the CTE experts are fitted once on ALL training rows (the pool): exactly the fit that
 run_cte uses for learner-val / test rows. That is, the TF-IDF vectorizers, the Ridge with the alpha chosen by the
 training-row OOF metric, and the kNN index (pool embeddings + targets per view). New rows get these predictions, plus
-numeracy features, laid out in the same feature columns as in training. Then the fitted PCA and CatBoost are applied.
+numeracy features, laid out in the same feature columns as in training. Then the fitted PCA and learner are applied.
 
 Model folder:
   meta.json         task, classes, text columns, raw feature columns, chosen alpha, encoder config, versions
@@ -14,8 +14,14 @@ Model folder:
   knn_index.npz     per neighbour view: L2-normalised training-row embeddings + training targets
   depth.joblib      (cte_depth*) per used layer: the training-row standardisation and the all-rows Ridge
   pca.joblib        the fitted PCA-30 per text column
-  catboost.cbm      the fitted CatBoost model
+  the fitted learner, in its own format (meta.json "learner_format"; folders without it are CatBoost):
+    catboost.cbm                  CatBoost (native format)
+    learner_model.tabpfn_fit      TabPFN-v2 / TabPFN-2.5 (tabpfn's save_fitted_tabpfn_model: fitted state without the
+                                  foundation-model weights, which are downloaded again on load)
+    learner_model.joblib          LightGBM, TabM
   learner.joblib    upstream preprocessing state (dates, feature types, label encoder), heavy parts removed
+  For learners with upstream's median filling (TabM), meta.json "fill_medians" holds the training-row medians of our
+  appended columns, applied to new rows exactly as in training (learners.py, E41).
 """
 from __future__ import annotations
 
@@ -34,6 +40,24 @@ from multabench.ours import tar_engine as te
 from multabench.ours.experts import ALL_COLS
 
 FORMAT_VERSION = "cte_model/1"
+
+
+def _learner_format(learner_model) -> str:
+    lib = type(learner_model).__module__.split(".")[0]
+    return {"catboost": "catboost", "tabpfn": "tabpfn"}.get(lib, "joblib")
+
+
+def _fill_medians(model) -> Optional[dict]:
+    """The training-row medians learners.py fills our appended columns with (USE_MEDIAN_FILLING learners only)."""
+    if not getattr(model, "USE_MEDIAN_FILLING", False):
+        return None
+    rows = np.asarray(model.ours_stack_inputs["x_fit"].index)  # the learner's training rows, as in learners.py
+    out = {}
+    for col, feats in model.stack_result.features.items():
+        if feats.shape[1]:
+            med = feats.loc[rows].median()
+            out[col] = {"columns": [str(c) for c in med.index], "values": [None if pd.isna(v) else float(v) for v in med]}
+    return out
 
 
 class CTEFeaturizer:
@@ -242,7 +266,15 @@ def save_model(model, folder: str, extra_meta: Optional[dict] = None) -> None:
             "encoder": {k: v for k, v in dataclasses.asdict(model.ours_cfg).items() if k != "lower_cache_dir"},
             **(extra_meta or {})}
     joblib.dump({col: enc.encoder.pca for col, enc in model.text_transformers.items()}, join(folder, "pca.joblib"))
-    model.model_.save_model(join(folder, "catboost.cbm"))
+    meta["learner_format"] = _learner_format(model.model_)
+    meta["fill_medians"] = _fill_medians(model)
+    if meta["learner_format"] == "catboost":
+        model.model_.save_model(join(folder, "catboost.cbm"))
+    elif meta["learner_format"] == "tabpfn":
+        from tabpfn.model_loading import save_fitted_tabpfn_model
+        save_fitted_tabpfn_model(model.model_, join(folder, "learner_model.tabpfn_fit"))
+    else:
+        joblib.dump(model.model_, join(folder, "learner_model.joblib"), compress=3)
     keep = {}
     for attr in ("model_", "text_transformers", "tar_result", "stack_result", "ours_stack_inputs", "ours_test",
                  "ours_learner_val", "ours_probe_sets"):
@@ -265,7 +297,15 @@ def predict_folder(folder: str, x_new: DataFrame, device: Optional[torch.device]
     meta = json.load(open(join(folder, "meta.json")))
     fz = CTEFeaturizer.load(folder, meta)
     model = joblib.load(join(folder, "learner.joblib"))
-    model.model_ = (CatBoostClassifier if meta["is_cls"] else CatBoostRegressor)().load_model(join(folder, "catboost.cbm"))
+    fmt = meta.get("learner_format", "catboost")
+    if fmt == "catboost":
+        model.model_ = (CatBoostClassifier if meta["is_cls"] else CatBoostRegressor)().load_model(
+            join(folder, "catboost.cbm"))
+    elif fmt == "tabpfn":
+        from tabpfn.model_loading import load_fitted_tabpfn_model
+        model.model_ = load_fitted_tabpfn_model(join(folder, "learner_model.tabpfn_fit"), device=device)
+    else:
+        model.model_ = joblib.load(join(folder, "learner_model.joblib"))
     pca = joblib.load(join(folder, "pca.joblib"))
     x = x_new[meta["feature_columns"]].copy()
     x.index = pd.RangeIndex(len(x))
@@ -274,6 +314,10 @@ def predict_folder(folder: str, x_new: DataFrame, device: Optional[torch.device]
     emb, _ = cte.frozen_embeddings_cached([pre], fz.text_cols, cfg, device, None, "predict")
     texts = {col: te.encoding_texts(pre, col) for col in fz.text_cols}
     feats = fz.transform(texts, {col: emb.row_embeddings(col, x.index) for col in fz.text_cols}, x.index, device)
+    for col, med in (meta.get("fill_medians") or {}).items():  # TabM: the training-row medians, as in learners.py
+        assert [str(c) for c in feats[col].columns] == med["columns"], col
+        values = pd.Series([np.nan if v is None else v for v in med["values"]], index=feats[col].columns, dtype=float)
+        feats[col] = feats[col].fillna(values).fillna(0.0)
     model.text_transformers = {col: PredColumnEncoder(result=emb, col_name=col, encoder=pca[col], features=feats[col])
                                for col in fz.text_cols}  # sorted, as in training (column order)
     model.tar_result = emb

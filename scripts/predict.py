@@ -4,8 +4,9 @@
 
 The CSV needs the training feature columns (listed in <model_dir>/meta.json); extra columns, such as the target, are
 ignored. Output, in the input order: regression -> column "prediction"; classification -> one "proba_<class>" column
-per class. Nothing is re-fitted: the saved TF-IDF vectorizers, Ridge, kNN index, PCA and CatBoost are applied
-(multabench/ours/cte_model.py). The frozen e5-small-v2 encoder is loaded from Hugging Face.
+per class. Nothing is re-fitted: the saved TF-IDF vectorizers, Ridge, kNN index, probes, PCA and learner (any of the 5,
+whichever train.py used) are applied (multabench/ours/cte_model.py). The frozen e5-small-v2 encoder is loaded from
+Hugging Face; a TabPFN folder also downloads the TabPFN weights again (TabPFN-2.5: TABPFN_TOKEN needed).
 """
 from __future__ import annotations
 
