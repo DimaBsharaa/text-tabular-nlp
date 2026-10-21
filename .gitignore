@@ -26,3 +26,6 @@ figures/
 
 # exploration outputs (scripts/explore_cheap.py)
 .explore/
+
+# result charts shown in the README and notebook 02
+!results/figures/

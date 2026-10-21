@@ -24,7 +24,7 @@ from multabench.baselines.training.metrics import calculate_metric
 from multabench.e5.constants import format_e5_passage
 from multabench.preprocessing.discretize import discretize_numerical
 from multabench.ours import tar_engine as te
-from multabench.ours.structured_offset import StructuredOffset, fit_structured_offset
+from multabench.ours.archive.structured_offset import StructuredOffset, fit_structured_offset
 
 VARIANT_ENGINE_VERSION = "variants/1"
 OFFSET_METHODS = {"offset", "prefix_offset", "context_offset"}
@@ -48,14 +48,14 @@ def engine_version(method: str) -> str:
     from multabench.ours.depth import DEPTH_METHODS, DEPTH_VERSION
     if method in DEPTH_METHODS:  # multabench/ours/depth.py (P11)
         return DEPTH_VERSION
-    from multabench.ours.p9 import P9_METHODS, P9_VERSION
+    from multabench.ours.archive.p9 import P9_METHODS, P9_VERSION
     if method in P9_METHODS:  # multabench/ours/p9.py
         return P9_VERSION
     from multabench.ours.p7 import P7_METHODS, P7_VERSION
     if method in P7_METHODS:  # multabench/ours/p7.py
         return P7_VERSION
     if method in {"catboost_native_text", "cte_plus_native", "cte_nb", "cte_residual"}:  # multabench/ours/p6.py
-        from multabench.ours.p6 import P6_ENGINE
+        from multabench.ours.archive.p6 import P6_ENGINE
         return P6_ENGINE[method]  # p6/3 for the native-text methods (amendment 2), p6/2 for cte_nb / cte_residual
     return "stacking/1" if method in STACK_METHOD_NAMES else VARIANT_ENGINE_VERSION
 
@@ -168,7 +168,7 @@ def run_variant(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[st
 
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
     if uses_context:  # spec 4: "passage: {context} | {col}: {val}" with capped context (new lower-layer cache)
-        from multabench.ours.context_text import ContextTokenStore, Verbalizer
+        from multabench.ours.archive.context_text import ContextTokenStore, Verbalizer
         verb = Verbalizer(so.top_features(TOP_K), struct_cfg["cat_cols"], x_pool)
         part = lambda t: t[len("passage: "):]  # TAR's training cell text without the prefix
         ctx_tr = np.repeat(verb.contexts(x_fit.loc[x_tr.index]), rep).tolist()  # x_tr/x_va hold text cols only
@@ -189,7 +189,7 @@ def run_variant(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[st
 
     # ---- inputs: which cells, through which source
     if uses_prefix:
-        from multabench.ours.feature_tokens import (FeatureSpec, FeatureTokenizer, PrefixSource, RowFeatures,
+        from multabench.ours.archive.feature_tokens import (FeatureSpec, FeatureTokenizer, PrefixSource, RowFeatures,
                                                     frozen_name_vectors)
         assert cfg.fast, "prefix variants need the fast (cached frozen layers) path"
         cache = te.LowerCache.get_or_build(model, tokens, cfg, device)

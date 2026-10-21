@@ -133,14 +133,14 @@ class OursTextMixin:
             enc.current_rows = np.asarray(x.index)
         x_out, y_out = super().transform_preprocessor(x=x, y=y)
         if self._ours_native():  # P6: raw text columns for CatBoost text_features (the same strings E5 would see)
-            from multabench.ours.p6 import NATIVE_SUFFIX
+            from multabench.ours.archive.p6 import NATIVE_SUFFIX
             raw = self._ours_preprocess_like_transform(x)
             for col in sorted(self.text_features):
                 x_out[col + NATIVE_SUFFIX] = raw.loc[x_out.index, col].astype(str).fillna("").to_numpy()
         return x_out, y_out
 
     def _ours_native(self) -> bool:
-        from multabench.ours.p6 import P6_METHODS
+        from multabench.ours.archive.p6 import P6_METHODS
         v = getattr(self, "ours_variant", None)
         return v in P6_METHODS and P6_METHODS[v][3]
 
@@ -148,7 +148,7 @@ class OursTextMixin:
         if not self._ours_native():
             return super().fit_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val)
         # P6 native text: upstream CatBoost.fit_model's call + text_features (CatBoost only)
-        from multabench.ours.p6 import NATIVE_SUFFIX, native_feature_calcers
+        from multabench.ours.archive.p6 import NATIVE_SUFFIX, native_feature_calcers
         assert type(self.model_).__module__.split(".")[0] == "catboost", "native text_features need CatBoost"
         text_features = [c for c in x_train.columns if c.endswith(NATIVE_SUFFIX)]
         self.ours_native_info = {"text_features": text_features,

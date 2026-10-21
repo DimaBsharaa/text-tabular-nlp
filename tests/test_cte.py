@@ -355,3 +355,16 @@ def test_parallel_jobs_encode_each_text_once(tmp_path):
     encoded = sorted(s["encoded"] for s, _ in out)
     assert encoded[0] == encoded[1] == 0 and encoded[2] > 0
     assert all(np.array_equal(out[0][1], e) for _, e in out)
+
+
+def test_cte3_features_unchanged_golden():
+    """P5's code path (cte/3) must reproduce the features generated at f1514bc, bit for bit."""
+    import sys
+    from os.path import abspath, dirname, join
+    sys.path.insert(0, join(dirname(abspath(__file__)), "golden"))
+    import make_cte3_golden as g
+    ref = np.load(g.OUT)
+    new = g.all_features()
+    assert set(new) == set(ref.files)
+    for k in ref.files:
+        assert np.array_equal(new[k], ref[k]), k

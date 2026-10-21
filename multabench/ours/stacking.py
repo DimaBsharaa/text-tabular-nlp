@@ -26,7 +26,7 @@ from multabench.ours import tar_engine as te
 import hashlib
 
 from multabench.ours.variants import _metric, run_variant
-from multabench.ours.structured_offset import fit_structured_offset
+from multabench.ours.archive.structured_offset import fit_structured_offset
 
 STACKING_ENGINE_VERSION = "stacking/1"
 K_FOLDS = 3
@@ -40,10 +40,10 @@ EXPERT_METHODS = {
     "tar_experts_lex_insample": ("tar", ("lex",), "insample"),
 }
 from multabench.ours.cte import CTE_METHODS  # P5 v2
-from multabench.ours.p6 import P6_METHODS  # P6 (exploratory); catboost_native_text has no stacked features
+from multabench.ours.archive.p6 import P6_METHODS  # P6 (exploratory); catboost_native_text has no stacked features
 P6_CTE_METHODS = {m for m, v in P6_METHODS.items() if v[0] is not None}
 from multabench.ours.p7 import P7_METHODS  # P7 development round (exploratory until pre-registered)
-from multabench.ours.p9 import P9_METHODS  # P9 development round 2
+from multabench.ours.archive.p9 import P9_METHODS  # P9 development round 2
 from multabench.ours.depth import DEPTH_METHODS  # P11 depth probes (cte_probe + every-layer probes)
 STACK_METHODS = ({"insample_pred", "xfit_pred", "frozen_xfit_pred", "xfit_offset_pred"} | set(EXPERT_METHODS)
                  | set(CTE_METHODS) | P6_CTE_METHODS | set(P7_METHODS) | set(P9_METHODS) | set(DEPTH_METHODS))
@@ -194,7 +194,7 @@ def run_stacking(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[s
         return run_depth(method, x_fit, y_fit, text_cols, struct_cols, cat_cols, is_cls, extra, cfg, device, cache_root,
                          dataset, fold)
     if method in P9_METHODS:
-        from multabench.ours.p9 import run_p9
+        from multabench.ours.archive.p9 import run_p9
         return run_p9(method, x_fit, y_fit, text_cols, struct_cols, cat_cols, is_cls, extra, cfg, device, cache_root,
                       dataset, fold)
     if method in P7_METHODS:

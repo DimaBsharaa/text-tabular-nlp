@@ -411,11 +411,12 @@ def run_cte(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], 
             cat_cols: Optional[list[str]] = None):
     from multabench.ours.stacking import StackResult
     from multabench.ours.variants import _metric
-    from multabench.ours import p6
+    p6 = None  # earlier version (claim C3); imported only on its own branch
     if method in CTE_METHODS:  # P5 (claim C2)
         experts, mode, use_num = CTE_METHODS[method]
         lex_kind, target_kind, version = "tfidf", "y", CTE_VERSION
     else:  # P6 (exploratory): same CTE experts with a different lexical model or residual targets
+        from multabench.ours.archive import p6
         base, lex_kind, target_kind, _ = p6.P6_METHODS[method]
         experts, mode, use_num = CTE_METHODS[base]
         version = p6.P6_ENGINE[method]

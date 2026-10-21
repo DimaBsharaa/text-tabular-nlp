@@ -7,6 +7,7 @@ from os.path import abspath, dirname, join
 import numpy as np
 
 sys.path.insert(0, join(dirname(dirname(abspath(__file__))), "scripts"))
+sys.path.insert(1, join(dirname(dirname(abspath(__file__))), "archive", "scripts"))  # reports of earlier claims
 import full_report as fr  # noqa: E402
 
 
