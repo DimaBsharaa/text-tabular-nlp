@@ -56,7 +56,7 @@ Each one measured on the benchmark, while studying it or while developing the me
    features look better than they will on new rows: TAR's prediction head scores +0.031 higher on its own training
    rows than on test rows (16 of 18 runs, p = 0.0002). The learner trusts them too much.
 2. **PCA does not look at the target.** 384 → 30 dimensions keeps the directions in which the texts vary most, not
-   necessarily the ones that predict the target. This is a motivation rather than the cause of Joint TAR's gain (the
+   necessarily the ones that predict the target. This is a motivation, not a measured cause of Joint TAR's shortfall (the
    MulTaBench paper's Figure 6 finds Joint TAR ahead of Joint Frozen at 15, 30 and 60 components alike); a probe on the full 384
    dimensions adds +0.0035 on top of the experts (CatBoost, 20 datasets).
 3. **Only the last layer is read.** The layer from which a linear probe best predicts the target varies from layer 2 to

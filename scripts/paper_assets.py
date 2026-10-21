@@ -221,33 +221,33 @@ def figures(summ: pd.DataFrame, hm: pd.DataFrame) -> None:
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    plt.rcParams.update({"font.family": "serif", "font.size": 7, "axes.spines.top": False,
+    # sized to their printed width in the paper (5.5 in text width: panel (a) 40%, panel (b) 58%), so fonts print as set
+    plt.rcParams.update({"font.family": "serif", "font.size": 7.5, "axes.spines.top": False,
                          "axes.spines.right": False, "pdf.fonttype": 42})
     orange, grey = "#d95f02", "#555555"
     # (a) gain per learner with 95% CI
-    fig, ax = plt.subplots(figsize=(3.15, 1.55))
+    fig, ax = plt.subplots(figsize=(2.15, 1.9))
     y = np.arange(len(LEARNERS))
     ax.errorbar(summ.mean_gain, y, xerr=[summ.mean_gain - summ.ci95_low, summ.ci95_high - summ.mean_gain],
                 fmt="o", color=orange, ms=4, capsize=2.5, lw=1)
     for yi, (g, w, n) in enumerate(zip(summ.mean_gain, summ.wins, summ.datasets)):
-        ax.text(summ.ci95_high.iloc[yi] + 0.0015, yi, f"+{g:.3f}  ({int(w)}/{int(n)} won)", va="center", fontsize=6.3,
-                color=grey)
+        ax.text(summ.ci95_high.iloc[yi] + 0.002, yi, f"+{g:.3f}", va="center", fontsize=7.5, color=grey)
     ax.axvline(0, color="k", lw=0.7)
-    ax.set_yticks(y, LEARNERS); ax.invert_yaxis(); ax.set_xlim(-0.004, 0.088)
-    ax.set_xlabel("ours $-$ Joint TAR, mean over datasets (95% CI)")
-    fig.tight_layout(pad=0.3); fig.savefig(join(FIGS, "fig_gains.pdf")); plt.close(fig)
+    ax.set_yticks(y, LEARNERS); ax.invert_yaxis(); ax.set_xlim(-0.004, 0.074)
+    ax.set_xticks([0, 0.02, 0.04]); ax.set_xlabel("ours $-$ Joint TAR (95% CI)")
+    fig.tight_layout(pad=0.3); fig.savefig(join(FIGS, "fig_gains.pdf"), bbox_inches="tight", pad_inches=0.02); plt.close(fig)
     # (b) depth profile heatmap
     best = hm.idxmax(axis=1)
     hm = hm.loc[best.sort_values(kind="stable").index]
     lim = 0.03
-    fig, ax = plt.subplots(figsize=(3.15, 2.3))
+    fig, ax = plt.subplots(figsize=(3.15, 2.32))
     im = ax.imshow(hm.clip(-lim, lim), cmap="PuOr_r", vmin=-lim, vmax=lim, aspect="auto")
     ax.scatter(hm.idxmax(axis=1).to_numpy() - 1, range(len(hm)), s=6, color="k")
-    ax.set_xticks(range(12), range(1, 13)); ax.set_yticks(range(len(hm)), [name(d) for d in hm.index], fontsize=5.2)
-    ax.set_xlabel("layer of frozen e5-small-v2"); ax.tick_params(length=1.5)
+    ax.set_xticks(range(12), range(1, 13)); ax.set_yticks(range(len(hm)), [name(d) for d in hm.index], fontsize=6.3)
+    ax.set_xlabel("layer of frozen e5-small-v2"); ax.tick_params(length=1.5, labelsize=6.5)
     cb = fig.colorbar(im, ax=ax, shrink=0.75, pad=0.02)
-    cb.set_label("vs. final-layer probe", fontsize=6); cb.ax.tick_params(labelsize=5.5)
-    fig.tight_layout(pad=0.3); fig.savefig(join(FIGS, "fig_depth.pdf")); plt.close(fig)
+    cb.set_label("vs. final-layer probe", fontsize=7); cb.ax.tick_params(labelsize=6.5)
+    fig.tight_layout(pad=0.3); fig.savefig(join(FIGS, "fig_depth.pdf"), bbox_inches="tight", pad_inches=0.02); plt.close(fig)
 
 
 if __name__ == "__main__":
