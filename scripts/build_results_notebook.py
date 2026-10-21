@@ -292,7 +292,31 @@ fig.tight_layout(); fig.savefig(join(FIG, "fig5_depth_profile.png"), dpi=200); p
 """)
 
 md("""
-## 8. Beyond the 20: 36 further text datasets
+## 8. Cost of building the text features
+
+Joint TAR fine-tunes e5 on a GPU; our method builds its features on the CPU. Both timed on the same Colab A100
+machine, per (dataset, fold) (`scripts/compute_cost.py`). Joint TAR's time is our fast re-implementation of its
+fine-tuning, about 11× faster per epoch than upstream's own code; our time is a run in which every expert and probe
+was built from scratch.
+""")
+
+code("""
+cc = pd.read_csv(R("results", "compute_cost.csv"))
+ct = cc.groupby("dataset")[["tar_seconds", "ours_seconds"]].mean().div(60).rename(
+    columns={"tar_seconds": "Joint TAR fine-tuning, GPU (min)", "ours_seconds": "ours, CPU (min)"})
+ct.index = ct.index.map(NAME)
+display(ct.sort_values("ours, CPU (min)").round(2))
+print(f"median per job: Joint TAR {cc.tar_seconds.median() / 60:.1f} min (GPU), ours {cc.ours_seconds.median() / 60:.1f} min (CPU)")
+""")
+
+md("""
+**Reading.** Our method is not faster than an optimised fine-tuning: about 2× its time per job, on a CPU instead of a
+GPU. What it saves is the GPU. It also builds features once per (dataset, fold) for all learners that share the same
+training rows, whereas upstream's Joint TAR fine-tunes again inside every learner's run.
+""")
+
+md("""
+## 9. Beyond the 20: 36 further text datasets
 
 To check that the method was not tuned to the 20 benchmark datasets, it was run once (CatBoost, folds 0–2) on 36
 further text datasets that have MulTaBench baselines (`multabench/leaderboard/results/text_source/`) and were never
@@ -317,7 +341,7 @@ print(f"mean {c7['mean_diff']:+.4f}; without the two heavy-tailed car-price data
 """)
 
 md("""
-## 9. Trust checks
+## 10. Trust checks
 
 - **Label shuffle.** The whole method retrained with the training labels randomly permuted (true test labels kept,
   development split of training rows). If any label information reached the features by another path, the score would
@@ -336,7 +360,7 @@ pd.read_csv(R("reports", "checks", "label_shuffle.csv")).round(4)
 """)
 
 md("""
-## 10. Summary
+## 11. Summary
 
 1. **Better than Joint TAR with every learner.** The mean gain is +0.016 to +0.029 (AUROC / R²). Measured from Joint
    Frozen, our method adds 1.8× (CatBoost, LightGBM) to 3.2× (TabPFN-2.5) what fine-tuning adds, without fine-tuning.
@@ -356,7 +380,9 @@ md("""
    instead of ±0.000), and 0.045 below the full set of cross-fitted experts.
 9. **On 36 further datasets** the gain is positive but small (median +0.003, 24 of 36 won); significant on its own
    (p = 0.017), not after the 17-test correction.
-10. **No leakage path found**: with shuffled training labels the method falls to chance (AUROC 0.50–0.53, R² −0.01).
+10. **No GPU needed, but not faster**: building our features takes about 2.7 min per job on a CPU, against 1.3 min for
+    an optimised GPU fine-tuning of Joint TAR.
+11. **No leakage path found**: with shuffled training labels the method falls to chance (AUROC 0.50–0.53, R² −0.01).
 """)
 
 

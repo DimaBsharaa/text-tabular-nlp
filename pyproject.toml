@@ -1,7 +1,7 @@
 [project]
 name = "text-tabular-nlp"
 version = "0.1.0"
-description = "Technion 097215 NLP final project: text-tabular prediction on MulTaBench (built on MulTaBench @ paper_version)"
+description = "Cross-fitted Text Experts: target-aware text features for text-tabular learning without fine-tuning (built on MulTaBench @ paper_version)"
 readme = "README.md"
 requires-python = "==3.11.*"
 # Direct dependencies = upstream requirements.in (sap-rpt-oss pinned to the commit upstream's requirements.txt resolved).

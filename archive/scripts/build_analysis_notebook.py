@@ -24,7 +24,7 @@ md, code = new_markdown_cell, new_code_cell
 CELLS = [
     md("""# Project analysis: what we tried, what worked, what did not
 
-Technion 097215 NLP final project (Track 1), Dima Bshara. Text-tabular prediction on the 20 text datasets of MulTaBench
+Dima Bshara. Text-tabular prediction on the 20 text datasets of MulTaBench
 (AUROC for classification, R² for regression), compared with the official leaderboard.
 
 This notebook collects **every result of the project (P1–P6)** in one place, in plain English, and produces the
@@ -365,7 +365,7 @@ A development round (P7) on dev splits of the **training rows** of 6 datasets (t
 additions, which were then pre-registered and run once on all 20 datasets × 5 folds:
 
 - **`tf_num_lsa` (label-free)**: frozen PCA + numeracy features + 30 LSA components (TF-IDF → SVD) of the text. No label is
-  used to build the text features, so the course criterion is to beat **Joint Frozen**. → **claim C4**.
+  used to build the text features, so the criterion is to beat **Joint Frozen**. → **claim C4**.
 - **`cte_probe` (label-aware)**: CTE + a cross-fitted **linear probe** on the full 384-d frozen embeddings (PCA-30 keeps
   variance, not target signal; the probe hands the learner an out-of-fold E[y | embedding]). It must beat **Joint TAR**.
   → **claim C5**.

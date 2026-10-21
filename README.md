@@ -47,18 +47,20 @@ with the e5-small-v2 encoder, the 384-dimensional embedding is reduced to 30 dim
 
 ## The problem with fine-tuning the encoder
 
-Measured on the benchmark before designing the method:
+Each one measured on the benchmark, while studying it or while developing the method:
 
 1. **Over-trust.** The encoder is fine-tuned on the training rows and then embeds those same rows, so their text
    features look better than they will on new rows: TAR's prediction head scores +0.031 higher on its own training
    rows than on test rows (16 of 18 runs, p = 0.0002). The learner trusts them too much.
 2. **PCA ignores the target.** 384 → 30 dimensions keeps the directions in which the texts vary most, not the ones that
-   predict the target.
+   predict the target: a probe on the full 384 dimensions adds +0.0035 on top of the experts (CatBoost, 20 datasets).
 3. **Only the last layer is read.** How far into the encoder the target signal is strongest depends on the task:
    toxicity peaks at layer 3, sentiment at layer 9, prices at layers 10–12 of 12.
 4. **Exact words and numbers get blurred.** A sentence embedding smooths over the specific tokens ("Riesling",
-   "$45", "2015") that often carry the signal.
-5. **Cost.** A GPU fine-tuning run for every dataset, fold and learner.
+   "$45", "2015") that often carry the signal: a plain TF-IDF model of the words, cross-fitted, already matches Joint
+   TAR on its own (±0.000).
+5. **A GPU for every run.** Upstream fine-tunes the encoder again inside every learner's run: for every dataset,
+   fold and learner.
 
 ## The method
 
@@ -82,7 +84,7 @@ The learner receives everything Joint Frozen gives it, plus a few columns that a
 the text**, each from a different view: the exact words (lexical expert), similar rows (neighbour expert), the whole
 final-layer embedding (probe) and the best inner layers (depth probes). Each answers one problem above: cross-fitting
 (1), the probe on all 384 dimensions (2), the depth probes (3), the lexical expert and numeracy features (4), and no
-fine-tuning at all (5).
+fine-tuning, so no GPU (5).
 
 **Cross-fitting** is what makes this work. The training rows are split into 5 parts; each part's expert predictions
 come from experts trained on the other 4, so no training row's feature was computed with its own label, exactly as
@@ -147,6 +149,8 @@ a probe on the full embedding, then probes on the inner layers, took it clearly 
   correcting for the number of tests.
 - **The 20 datasets were seen during development.** Ideas were compared on splits of the training rows only and each
   final claim was specified before its run, but the method was chosen on these datasets.
+- **Not faster.** Building our features on a CPU takes about 2.7 minutes per job, against 1.3 minutes for an
+  optimised GPU fine-tuning of Joint TAR on the same machine; the method saves the GPU, not time.
 - **One seed** (42) per run, as in the published baselines.
 
 ## Repository layout

@@ -75,7 +75,25 @@ leaderboard's Joint TAR and Joint Frozen scores for the same learner and fold), 
 
 ### Choosing the learner
 
-TIMES_TABLE
+`--learner` picks the model that makes the final prediction from our features. Measured end to end (`train.py`
+from scratch, including the e5 encoding, then `predict.py`) on Product Sentiment fold 0 (4,582 training rows, one text
+column) on a laptop CPU (Intel i7-13700H, no GPU), and per job on a Colab A100 machine during the benchmark runs:
+
+| `--learner` | Laptop CPU: train | Laptop CPU: predict 509 rows | Colab A100: median job (max) over the benchmark | Needs |
+|---|---:|---:|---:|---|
+| `catboost` (default) | 3.4 min | 19 s | 7.1 min (2.9 h) | – |
+| `lgbm` | 3.6 min | 19 s | 0.9 min (10 min) | – |
+| `tabm` | 8.2 min | 31 s | 0.8 min (7 min) | – |
+| `tabpfnv2` | > 12 min (stopped) | – | 3.3 min (12 min) | a GPU in practice |
+| `tabpfnv2p5` | > 12 min (stopped) | – | 0.5 min (2 min) | a GPU in practice; `TABPFN_TOKEN` |
+
+- The A100 times are as run: the LightGBM, TabM and TabPFN-2.5 jobs reused features already built by an earlier
+  learner for the same dataset and fold, so for a single new run expect the CatBoost / TabPFN-v2 times plus the
+  learner's own fit. CatBoost's maximum is Spotify Genres, 114 classes: CatBoost's multiclass fit dominates there.
+- TabPFN warns that it is not meant for CPU use on more than about 1,000 rows; on this laptop both versions passed
+  12 minutes, so use a GPU for them.
+- Building the features themselves takes about 2.7 minutes per job on the A100 machine's CPU (median over 90 jobs);
+  see notebook 02, section 8.
 
 ## Run the benchmark evaluation
 

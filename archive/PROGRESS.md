@@ -14,6 +14,10 @@ Entry template:
 - Next step:
 ```
 
+> **Note (2026-10-21).** For publication, 13 lines that described the administrative context of the project (where
+> clarifications came from, release dates, who asked) were reworded. No number, result, claim, decision or date of
+> an entry was changed.
+
 ## Ledger (one line per entry; details below)
 | entry | date | what | key number |
 |---|---|---|---|
@@ -75,13 +79,13 @@ Entry template:
 | P16 / E44 | 2026-10-21 | C11 (TabPFN-v2 / TabPFN-2.5) pre-registration + timing run (6 jobs) | v2 works (3/3); 2.5 blocked by the Prior Labs license check; full run ≈ 4.5–6 h, awaits approval |
 | E45 | 2026-10-21 | P16 full run (178/180; 2 TabPFN-2.5 GPU out-of-memory) | TabPFN-v2 +0.0294, 14/18, p = 0.0040; TabPFN-2.5 provisional +0.0216, 14/17, p = 0.0017; re-run the 2 alone |
 | E46 | 2026-10-21 | P16 complete (2 OOM jobs re-run alone; 180/180) | **C11 passes**: TabPFN-v2 +0.0294 (p = 0.0040), TabPFN-2.5 +0.0204 (15/18, p = 0.0013) → **all 5 learners**; 4 of 5 survive Holm over all 17 tests |
-| E47 | 2026-10-21 | check: upstream at homework release (599bd6a, 27.7) vs `paper_version` | identical splits / metrics / preprocessing / baseline CSVs for the 20; 2 of the 36 C7 loaders differ |
+| E47 | 2026-10-21 | check: upstream of 26 July 2026 (599bd6a) vs `paper_version` | identical splits / metrics / preprocessing / baseline CSVs for the 20; 2 of the 36 C7 loaders differ |
 
 ---
 
 ## Pre-registration
 
-### Claim C1 — DRAFT (not yet frozen; confirm the test with the course forum, then mark FROZEN + date)
+### Claim C1 — DRAFT (not yet frozen; confirm the test externally, then mark FROZEN + date)
 - **Method:** our method (TBD — chosen from candidates A–D in CLAUDE.md; name it here when frozen).
 - **Baselines (draft revised 2026-10-09):** the claim is tested against BOTH
   1. **primary — the official leaderboard Joint TAR**: `multimodal_state=ft` rows in
@@ -723,7 +727,7 @@ Changes to P1:
   datasets, seed 42), Wilcoxon W and p, matched-pairs rank-biserial r, Cohen's d_z, wins. A dataset enters a
   comparison only if all 5 folds exist on both sides (excluded datasets are listed). Implemented and tested before any
   full-run result: `scripts/full_report.py` (`tests/test_full_report.py`).
-- **Forum:** no answer yet; if the course forum prescribes a different test, it is added here as an amendment
+- **External check:** no answer yet; if a different test is prescribed, it is added here as an amendment
   BEFORE full-run results exist.
 ### Run plan
 - Datasets: the 20 MulTaBench text datasets; folds 0–4; seed 42; upstream splits / caps; upstream learner defaults.
@@ -1278,7 +1282,7 @@ Features for the learner = structured columns (upstream preprocessing)
 - **Next:** P8 proposal (below), awaiting Dima's approval; measured Colab estimate from E24 job times.
 
 ## P8 — PROPOSED pre-registration (2026-10-16). Becomes binding when Dima approves the run, before any P8 result.
-- **C4 (label-free; the course's criterion for methods that do not use y):** `tf_num_lsa` (CatBoost: frozen e5
+- **C4 (label-free; the criterion for methods that do not use y: beat Joint Frozen):** `tf_num_lsa` (CatBoost: frozen e5
   PCA-30 per text column + numeracy features + 30 LSA components of TF-IDF word + char of all text columns; no label
   used) vs leaderboard **Joint Frozen** (`all`, CatBoost), 20 datasets, folds 0–4, fold-averaged differences,
   two-sided Wilcoxon. Pass = p < 0.05 and positive mean.
@@ -1463,7 +1467,7 @@ Features for the learner = structured columns (upstream preprocessing)
   Choosing the prefix per task type now would be selected on test results, so it is future work only.
 
 ## P11 — PROPOSED pre-registration (2026-10-19): confirmation on 36 untouched datasets + LightGBM. Binding on Dima's approval, before any P11 result.
-- **Why (external review, verified):** six claims were tested on the same 20 datasets. A grader can call that
+- **Why (external review, verified):** six claims were tested on the same 20 datasets. A reviewer can call that
   searching until something passes. Two answers:
   1. Holm over **all 7 pre-registered tests so far** (C1, C2, C3 ×2, C4, C5, C6): C4 1e-4, **C5 0.014** (both still
      pass), C6 0.077, C2 / C3 0.19, C1 0.41.
@@ -1761,8 +1765,8 @@ Features for the learner = structured columns (upstream preprocessing)
   - `jobs/p14_B.txt` (C7: 2 × 36 × 3 = 216 jobs), estimated **≈ 5–6 h**.
   - Both use `results_cte`, `--job_timeout_min 240`, and the download lock (E35).
 
-## Course clarification (forum, Eilam Shapira, 2026-10-06; brought in by Dima on 2026-10-19)
-- **Question (another student):** frozen E5, no fine-tuning and no target values, but the target column's *name* is
+## Clarification on target-awareness (2026-10-06; recorded 2026-10-19)
+- **Question (external):** frozen E5, no fine-tuning and no target values, but the target column's *name* is
   embedded to build interaction features. Is that target-aware (compare with Joint TAR) or not (compare with Joint
   Frozen)?
 - **Answer:** "No. If you don't use the target value of specific examples, it is not a target-aware representation."
@@ -1774,10 +1778,10 @@ Features for the learner = structured columns (upstream preprocessing)
   - The dev ideas that use only the target's name (p9_prompt, p9_tok, the "query:" prefix) would count as label-free;
     none is in the final method.
 
-## Course clarifications (forum, Eilam Shapira, 2026-08-08; brought in by Dima on 2026-10-19)
-- **Image datasets:** not needed for the algorithm track. We evaluate on the 20 text datasets only, as before.
+## Scope clarifications (2026-08-08; recorded 2026-10-19)
+- **Image datasets:** out of scope. We evaluate on the 20 text datasets only, as before.
 - **Task types:** an algorithm may target only classification or only regression (checking the other is advised). **The
-  grade is based on the whole project, especially in the algorithm track, not on success or failure on specific
+  assessment is based on the whole project, not on success or failure on specific
   datasets.** We cover both task types on all 20 datasets.
 - **Label-free vs label-aware:** "two completely different tasks with completely different solutions; choose one
   approach."
@@ -1804,7 +1808,7 @@ Features for the learner = structured columns (upstream preprocessing)
 - **Next:** part B (C7, 36 untouched datasets, both methods, folds 0–2): the one-shot confirmation.
 
 ## P15 — Learner robustness of the final method (written 2026-10-19, BEFORE any P15 run; Dima: "I approve whatever you think is right")
-- **Why (Cowork review, verified):** the PDF says "outperform the Joint TAR baseline" without naming a learner.
+- **Why (Cowork review, verified):** the goal "outperform the Joint TAR baseline" names no learner.
   - In MulTaBench, Joint TAR is a feature construction reported with each learner. Our comparison (same learner,
     text features swapped) is the natural reading, and every result so far is valid under it.
   - Our first C1 draft (line 93) asked for significance on **≥ 3 of 5 learners**. P4 (2026-10-10) narrowed the
@@ -1815,7 +1819,7 @@ Features for the learner = structured columns (upstream preprocessing)
   p < 0.05 AND positive mean. Together with C9 (CatBoost) this tests the original "≥ 3 of 5 learners" criterion:
   **met iff C9 and both C10 tests pass.**
 - **Not run:** TabPFN-v2 / TabPFN-2.5 (license token and much more GPU time; their leaderboard Joint TAR lacks Spotify
-  and Wine). Added only if the course forum says all 5 learners are required.
+  and Wine). Added only if all 5 learners turn out to be required.
 - **Reported in addition:** the cross-learner table (our CatBoost vs every learner's Joint TAR), and Holm over all
   pre-registered tests.
 - **Run plan:** `jobs/p15.txt`: `cte_depth_top3` LightGBM × 100 then TabM × 100, `results_cte` (layer / expert caches
@@ -2005,7 +2009,7 @@ Features for the learner = structured columns (upstream preprocessing)
 - **Next:** paper (main result table across 5 learners, per-dataset appendix tables), README results section.
 
 ## E47 — Check: release-day upstream (27.7) vs the `paper_version` tag we use   (2026-10-21, no run)
-- **Question (Dima):** the course says to use MulTaBench as of the homework release (2026-07-27); we use tag
+- **Question (Dima):** the reference version of MulTaBench is upstream as of 2026-07-27; we use tag
   `paper_version` (3bb9507, 2026-09-19). Does anything that affects our comparison differ?
 - **Evidence:** the last upstream commit on or before 27.7 is 599bd6a (2026-07-26).
   `git diff --stat 599bd6a paper_version` over `baselines/training/` (splits, metrics), `baselines/preprocessing/`,

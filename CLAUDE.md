@@ -1,6 +1,6 @@
 # Working rules for Claude Code in this repository
 
-Full original project brief (task, upstream details, candidate ideas): [`archive/CLAUDE_project_brief.md`](archive/CLAUDE_project_brief.md).
+Full original project brief: `archive/CLAUDE_project_brief.md` (local only, git-ignored; read it at the start of a session).
 Owner: Dima (GitHub DimaBsharaa). Upstream: MulTaBench @ tag `paper_version` (identical to upstream `master` of
 2026-07-26 for the 20 text datasets, see archive/PROGRESS.md E47). Final method: `cte_depth_top3`.
 
@@ -26,4 +26,5 @@ Owner: Dima (GitHub DimaBsharaa). Upstream: MulTaBench @ tag `paper_version` (id
    Dima to paste them. W&B disabled. Explain things simply.
 9. **Runtime approval.** Every new job comes with a measured runtime estimate; nothing over 1 hour total runs without
    Dima's approval.
-10. Commits use pytest's own exit code. The README is written for an outside reader (no course or deadline wording).
+10. Commits use pytest's own exit code. Every tracked file outside the lab notebook is written for an outside reader:
+    the method, the evidence and how to run it, nothing about the project's administration.

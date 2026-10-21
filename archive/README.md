@@ -32,10 +32,10 @@ Every result was followed by a "hostile review" that looked for leakage, split m
 | Path | Contents |
 |---|---|
 | [`PROGRESS.md`](PROGRESS.md) | The lab notebook: all pre-registrations (P…), entries (E…) and claims (C…), in order |
-| [`CLAUDE_project_brief.md`](CLAUDE_project_brief.md) | The original project brief and working rules |
 | `../multabench/ours/archive/` | Code of stages 2, 5 and 7 (`p6.py`, `p9.py`, `context_text.py`, `feature_tokens.py`, `structured_offset.py`); our TAR re-implementation stays in `multabench/ours/tar_engine.py` (the final method uses its encoding helpers) |
 | [`scripts/`](scripts/) | Reports and tools of earlier claims (`pilot_report.py`, `cte_report.py`, `p6_report.py`, `p8_report.py`, `p10_report.py`, …) |
 | [`jobs/`](jobs/) | The jobs files of earlier runs |
 | [`reports/`](reports/) | The reports, tables and figures of earlier claims |
 | [`notebooks/`](notebooks/) | The analysis notebook of stages 1–5 |
 | [`docs/method_spec.md`](docs/method_spec.md) | The specification of the stage-2 variants |
+| `paper_notes/` | Working notes for the paper (local only) |

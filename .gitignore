@@ -29,3 +29,7 @@ figures/
 
 # result charts shown in the README and notebook 02
 !results/figures/
+
+# the original project brief: local only
+archive/CLAUDE_project_brief.md
+archive/paper_notes/
