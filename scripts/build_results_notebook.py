@@ -387,7 +387,7 @@ md("""
    fine-tuning helps (Spearman ρ = 0.06).
 8. **Class imbalance does not drive the result**: the gain is unrelated to the minority-class share (ρ = 0.42,
    p = 0.23, 10 datasets), splits are stratified, and AUROC does not depend on the class ratio.
-9. **Cross-fitting is essential**: the same lexical expert without it scores 0.035 lower (−0.035 vs. Joint TAR
+9. **Cross-fitting is essential**: the same lexical expert without it scores 0.034 lower (−0.034 vs. Joint TAR
    instead of ±0.000), and 0.045 below the full set of cross-fitted experts.
 10. **On 36 further datasets** the gain is positive but small (median +0.003, 24 of 36 won); significant on its own
    (p = 0.017), not after the 17-test correction.

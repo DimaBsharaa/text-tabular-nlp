@@ -1,0 +1,23 @@
+\begin{tabular}{llrr}
+\toprule
+Test & Comparison & $p$ & Holm (all 17) \\
+\midrule
+C1 & Cross-fitted fine-tuned TAR head (CatBoost) vs.\ Joint TAR & 0.409 & 0.557 \\
+C2 & Experts only (CatBoost) vs.\ Joint TAR & 0.058 & 0.242 \\
+C3a & Experts, Naive-Bayes lexical model vs.\ Joint TAR & 0.048 & 0.242 \\
+C3b & Experts on residual targets vs.\ Joint TAR & 0.064 & 0.242 \\
+C4 & Label-free variant (CatBoost) vs.\ Joint Frozen & $<$0.0001 & 0.0003 \\
+C5 & Experts + probe (CatBoost) vs.\ Joint TAR & 0.002 & 0.033 \\
+C6 & Experts + probe, e5 query prefix vs.\ Joint TAR & 0.015 & 0.138 \\
+C8 & Experts + probe (LightGBM) vs.\ Joint TAR & 0.011 & 0.107 \\
+C9 & \textbf{Final method, CatBoost} vs.\ Joint TAR & 0.002 & 0.033 \\
+C7a & 36 datasets: experts + probe vs.\ Joint Frozen & 0.019 & 0.138 \\
+C7b & 36 datasets: experts + probe vs.\ Joint TAR & 0.025 & 0.150 \\
+C7c & 36 datasets: final method vs.\ Joint Frozen & 0.279 & 0.557 \\
+C7d & 36 datasets: final method vs.\ Joint TAR & 0.017 & 0.138 \\
+C10 & \textbf{Final method, LightGBM} vs.\ Joint TAR & 0.006 & 0.061 \\
+C10 & \textbf{Final method, TabM} vs.\ Joint TAR & 0.0007 & 0.011 \\
+C11 & \textbf{Final method, TabPFN-v2} vs.\ Joint TAR & 0.004 & 0.048 \\
+C11 & \textbf{Final method, TabPFN-2.5} vs.\ Joint TAR & 0.001 & 0.019 \\
+\bottomrule
+\end{tabular}

@@ -1,0 +1,13 @@
+\begin{tabular}{lrrr}
+\toprule
+Text features (CatBoost) & $\Delta$ vs.\ Joint TAR & Wins & $p$ \\
+\midrule
+numeracy features only & $-$0.011 & 3/20 & 0.007 \\
+neighbour expert only & $-$0.006 & 5/20 & 0.083 \\
+lexical expert, \emph{not} cross-fitted & $-$0.034 & 1/20 & 0.0001 \\
+lexical expert only & 0.000 & 8/20 & 0.729 \\
+all experts & +0.011 & 11/20 & 0.058 \\
++ final-layer probe & +0.014 & 15/20 & 0.002 \\
++ depth probes (final method) & +0.016 & 14/20 & 0.002 \\
+\bottomrule
+\end{tabular}

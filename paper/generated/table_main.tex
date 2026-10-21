@@ -1,0 +1,11 @@
+\begin{tabular}{lrrrrrrr}
+\toprule
+Learner & $n$ & Joint Frozen & Joint TAR & Ours & Gain [95\% CI] & Wins & $p$ (Holm) \\
+\midrule
+CatBoost & 20 & 0.791 & 0.811 & \textbf{0.828} & +0.016 [0.008, 0.024] & 14 & 0.002 (0.033) \\
+LightGBM & 20 & 0.773 & 0.798 & \textbf{0.817} & +0.019 [0.008, 0.031] & 14 & 0.006 (0.061) \\
+TabM & 20 & 0.807 & 0.819 & \textbf{0.836} & +0.016 [0.008, 0.024] & 16 & 0.0007 (0.011) \\
+TabPFN-v2 & 18 & 0.767 & 0.783 & \textbf{0.812} & +0.029 [0.013, 0.049] & 14 & 0.004 (0.048) \\
+TabPFN-2.5 & 18 & 0.797 & 0.807 & \textbf{0.827} & +0.020 [0.010, 0.031] & 15 & 0.001 (0.019) \\
+\bottomrule
+\end{tabular}

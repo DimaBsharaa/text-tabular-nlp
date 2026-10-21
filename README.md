@@ -16,7 +16,7 @@ regression), compared with the published Joint TAR score of the **same learner, 
 |---|---:|---:|---:|---:|---:|---:|
 | CatBoost | 20 | 0.811 | 0.828 | +0.016 [0.008, 0.024] | 14 | 0.002 |
 | LightGBM | 20 | 0.798 | 0.817 | +0.019 [0.008, 0.031] | 14 | 0.006 |
-| TabM | 20 | 0.819 | 0.836 | +0.016 [0.008, 0.025] | 16 | 0.0007 |
+| TabM | 20 | 0.819 | 0.836 | +0.016 [0.008, 0.024] | 16 | 0.0007 |
 | TabPFN-v2 | 18 | 0.783 | 0.812 | +0.029 [0.013, 0.049] | 14 | 0.004 |
 | TabPFN-2.5 | 18 | 0.807 | 0.827 | +0.020 [0.010, 0.031] | 15 | 0.001 |
 
@@ -95,7 +95,7 @@ fine-tuning, so no GPU (5).
 **Cross-fitting** is what makes this work. The training rows are split into 5 parts; each part's expert predictions
 come from experts trained on the other 4, so no training row's feature was computed with its own label, exactly as
 for a test row. Test rows get predictions from experts trained on all training rows. The same lexical expert without cross-fitting
-(trained on all training rows, then used on them) scores 0.035 lower, well below Joint TAR.
+(trained on all training rows, then used on them) scores 0.034 lower, well below Joint TAR.
 
 Everything that uses labels is fit on training rows only, and nothing is fine-tuned: the encoder is the public
 `intfloat/e5-small-v2`, and no model weights are needed beyond it. Details, every option and runtimes:
