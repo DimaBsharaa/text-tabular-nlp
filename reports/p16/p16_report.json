@@ -1,0 +1,106 @@
+{
+ "label": "P16 - claim C11 (TabPFN learners); C1-C10 unchanged",
+ "C11": {
+  "tabpfnv2": {
+   "n": 18,
+   "mean_diff": 0.02941496910414971,
+   "median_diff": 0.02252308788372461,
+   "wins": 14,
+   "ci95": [
+    0.012872740911882752,
+    0.04926211077671849
+   ],
+   "wilcoxon_W": 22.0,
+   "p_value": 0.00400543212890625,
+   "rank_biserial_r": 0.7426900584795322,
+   "cohens_dz": 0.739120000174835,
+   "excluded_datasets": [],
+   "per_dataset": {
+    "BIN_TEXT_FAKE_JOB_POSTING": 0.03953,
+    "BIN_TEXT_JIGSAW_TOXICITY": -0.01247,
+    "BIN_TEXT_KICKSTARTER_FUNDING": 0.024,
+    "MUL_TEXT_DATA_SCIENTIST_SALARY": 0.03025,
+    "MUL_TEXT_MICHELIN_RESTAURANTS": 0.00674,
+    "MUL_TEXT_PRODUCT_SENTIMENT": -0.01339,
+    "MUL_TEXT_US_ACCIDENTS": -0.00347,
+    "MUL_TEXT_WOMEN_CLOTHING_REVIEW": -0.00252,
+    "REG_TEXT_BABIES_PRICES": 0.01074,
+    "REG_TEXT_BOOK_PRICE": 0.08743,
+    "REG_TEXT_BOOK_READABILITY": 0.03425,
+    "REG_TEXT_MERCARI_MARKETPLACE": 0.07123,
+    "REG_TEXT_MONTGOMERY_SALARIES": 0.00176,
+    "REG_TEXT_ROTTEN_TOMATOES": 0.06161,
+    "REG_TEXT_SCIMAGOJR_IMPACT": 0.00026,
+    "REG_TEXT_VANCOUVER_SALARIES": 0.02105,
+    "REG_TEXT_VIDEO_GAMES_SALES": 0.03181,
+    "REG_TEXT_ZOMATO_RESTAURANTS": 0.14067
+   },
+   "p_holm": 0.00400543212890625,
+   "passes": true
+  },
+  "tabpfnv2p5": {
+   "n": 18,
+   "mean_diff": 0.020422528993231704,
+   "median_diff": 0.012447562147589263,
+   "wins": 15,
+   "ci95": [
+    0.010231451769194773,
+    0.03157953675881218
+   ],
+   "wilcoxon_W": 16.0,
+   "p_value": 0.00128936767578125,
+   "rank_biserial_r": 0.8128654970760234,
+   "cohens_dz": 0.8627357363708578,
+   "excluded_datasets": [],
+   "per_dataset": {
+    "BIN_TEXT_FAKE_JOB_POSTING": 0.03639,
+    "BIN_TEXT_JIGSAW_TOXICITY": -0.01106,
+    "BIN_TEXT_KICKSTARTER_FUNDING": 0.01793,
+    "MUL_TEXT_DATA_SCIENTIST_SALARY": 0.03251,
+    "MUL_TEXT_MICHELIN_RESTAURANTS": 0.00617,
+    "MUL_TEXT_PRODUCT_SENTIMENT": 0.00081,
+    "MUL_TEXT_US_ACCIDENTS": -0.0011,
+    "MUL_TEXT_WOMEN_CLOTHING_REVIEW": 0.00046,
+    "REG_TEXT_BABIES_PRICES": -0.00063,
+    "REG_TEXT_BOOK_PRICE": 0.07248,
+    "REG_TEXT_BOOK_READABILITY": 0.02996,
+    "REG_TEXT_MERCARI_MARKETPLACE": 0.05031,
+    "REG_TEXT_MONTGOMERY_SALARIES": 0.00097,
+    "REG_TEXT_ROTTEN_TOMATOES": 0.05542,
+    "REG_TEXT_SCIMAGOJR_IMPACT": 0.00696,
+    "REG_TEXT_VANCOUVER_SALARIES": 0.00235,
+    "REG_TEXT_VIDEO_GAMES_SALES": 0.03976,
+    "REG_TEXT_ZOMATO_RESTAURANTS": 0.0279
+   },
+   "p_holm": 0.0025787353515625,
+   "passes": true
+  }
+ },
+ "learners_passing": 5,
+ "per_learner_pass": {
+  "catboost": true,
+  "lgbm": true,
+  "tabm": true,
+  "tabpfnv2": true,
+  "tabpfnv2p5": true
+ },
+ "holm_all_preregistered": {
+  "C4": 0.000324,
+  "C10_tabm": 0.011322,
+  "C11_tabpfnv2p5": 0.019341,
+  "C5": 0.03255,
+  "C9": 0.03255,
+  "C11_tabpfnv2": 0.048065,
+  "C10_lgbm": 0.06139,
+  "C8": 0.106888,
+  "C6": 0.13779,
+  "C7:cte_depth_top3|vs_joint_tar": 0.13779,
+  "C7:cte_probe|vs_joint_frozen": 0.13779,
+  "C7:cte_probe|vs_joint_tar": 0.14965,
+  "C3_nb": 0.242,
+  "C2": 0.242,
+  "C3_res": 0.242,
+  "C7:cte_depth_top3|vs_joint_frozen": 0.557109,
+  "C1": 0.557109
+ }
+}

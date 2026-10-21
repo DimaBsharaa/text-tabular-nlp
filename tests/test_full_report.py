@@ -198,3 +198,5 @@ def test_p16_report_on_synthetic_results(tmp_path):
     rep = pr.p16_report(out)
     assert rep["C11"]["tabpfnv2"]["n"] == 18 and rep["C11"]["tabpfnv2"]["passes"]
     assert rep["C11"]["tabpfnv2p5"]["passes"] is False and rep["learners_passing"] == 4
+    holm = rep["holm_all_preregistered"]  # C1-C8 (C3 x2), C9, C7 x4, C10 x2, C11 x2
+    assert len(holm) == 17 and holm["C1"] >= 0.409 and all(0 < v <= 1 for v in holm.values())

@@ -74,6 +74,7 @@ Entry template:
 | E41–E43 | 2026-10-20 | P15: final method with LightGBM + TabM (TabM NaN bug fixed) | **C10 passes**: LightGBM +0.0193 (p = 0.0056), TabM +0.0161 (16/20, p = 0.0007) → 3 of 5 learners |
 | P16 / E44 | 2026-10-21 | C11 (TabPFN-v2 / TabPFN-2.5) pre-registration + timing run (6 jobs) | v2 works (3/3); 2.5 blocked by the Prior Labs license check; full run ≈ 4.5–6 h, awaits approval |
 | E45 | 2026-10-21 | P16 full run (178/180; 2 TabPFN-2.5 GPU out-of-memory) | TabPFN-v2 +0.0294, 14/18, p = 0.0040; TabPFN-2.5 provisional +0.0216, 14/17, p = 0.0017; re-run the 2 alone |
+| E46 | 2026-10-21 | P16 complete (2 OOM jobs re-run alone; 180/180) | **C11 passes**: TabPFN-v2 +0.0294 (p = 0.0040), TabPFN-2.5 +0.0204 (15/18, p = 0.0013) → **all 5 learners**; 4 of 5 survive Holm over all 17 tests |
 
 ---
 
@@ -1970,3 +1971,34 @@ Features for the learner = structured columns (upstream preprocessing)
     weakness, not an artefact. Wilcoxon is rank-based, so this one dataset cannot drive the p-value.
   - Losses: Jigsaw (−0.013 / −0.011, the known fine-tuning win), Product Sentiment, US Accidents, Women Clothing (small).
 - **Next:** re-run the 2 OOM jobs alone, then the final C11 (Holm over 2) and the "N of 5 learners" statement.
+
+## E46 — P16 complete: C11 PASSES; the final method beats same-learner Joint TAR with all 5 MulTaBench learners   (2026-10-21)
+- **Re-run of the 2 OOM jobs** (TabPFN-2.5, Montgomery Salaries folds 2 and 4), alone (`--parallel_jobs 1`), commit
+  53dd261, clean, A100: fold 2 0.98808 (LB ft 0.98858, −0.0005), fold 4 0.98422 (LB ft 0.98032, +0.0039); n_test 922
+  as in every other run of that fold. Run summary: 180 / 180 finished, 0 failed. Export
+  `results_export_20261021_085444.zip`; the two JSONs were fetched directly from Drive and checked (score, n_test,
+  commit, learner, GPU) before use.
+- **Change from the pre-registration, disclosed:** those 2 jobs ran with 1 parallel job instead of 2. Only GPU
+  sharing changes; code, learner settings, seed and data are the same. No other job was re-run.
+- **C11 (vs the same learner's leaderboard Joint TAR, 18 datasets, folds 0–4, Holm over 2):**
+  - TabPFN-v2: mean +0.0294, median +0.0225, 14/18, p = 0.0040 (Holm 0.0040) → **passes**;
+  - TabPFN-2.5: mean +0.0204, median +0.0124, 15/18, p = 0.0013 (Holm 0.0026) → **passes**.
+  - `scripts/check_recompute.py` (no project code) reproduces both rows exactly.
+- **All 5 learners:** CatBoost (C9), LightGBM, TabM (C10), TabPFN-v2, TabPFN-2.5 (C11), each significant in its own
+  pre-registered family. `reports/p16/p16_report.json`: learners_passing = 5.
+- **Holm over all 17 pre-registered tests** (C1–C8 with C3 ×2, C9, C7 ×4, C10 ×2, C11 ×2; now computed in
+  `scripts/p16_report.py`): C4 0.0003, C10-TabM 0.011, C11-TabPFN-2.5 0.019, C5 0.033, C9 0.033, C11-TabPFN-v2 0.048
+  (pass); C10-LightGBM 0.061 (does not survive this strictest correction), C8 0.11, C6 / C7 ≥ 0.14, others ≥ 0.24.
+  So under the global correction, 4 of the 5 same-learner comparisons survive; the paper reports both readings.
+- **Correction of E43:** E43 says "Holm over all 16 tests"; the list it names has **15** tests (8 + C9 + C7 ×4 +
+  C10 ×2), and its numbers are the 15-test values (e.g. C5 0.002325 × 13 = 0.030). Only the count was wrong. Also,
+  `reports/p15/p15_report.json` "holm_all_preregistered" leaves out the 4 C7 tests (11 tests); E43's text has the
+  15-test numbers. The 17-test table above supersedes both.
+- **Fold-score table rebuilt** (`reports/tables/fold_scores.csv`, same two exports as before + export_p15,
+  export_p15tabm, export_p16): 1,919 old rows unchanged (0 missing, 0 score changes), 596 added (the final method
+  with LightGBM / TabM / both TabPFNs, and the 36-dataset C7 runs).
+- **Statement for the paper:** "Replacing Joint TAR's fine-tuned text features with ours, with the learner held fixed,
+  improves AUROC / R² significantly for all 5 MulTaBench learners (CatBoost, LightGBM, TabM: 20 datasets; TabPFN-v2,
+  TabPFN-2.5: the 18 datasets with a TabPFN baseline); 4 of the 5 also survive Holm correction over all 17 tests we
+  pre-registered."
+- **Next:** paper (main result table across 5 learners, per-dataset appendix tables), README results section.

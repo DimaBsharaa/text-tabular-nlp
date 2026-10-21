@@ -30,7 +30,8 @@ fine-tuning) improves over Joint TAR **with the same learner**. State the readin
 - Setup: 20 MulTaBench text datasets, 5 folds, upstream splits and metrics, upstream learner defaults, seed 42.
 - Statistics: fold-averaged per-dataset differences, two-sided Wilcoxon over datasets, p < 0.05, bootstrap CI;
   Holm over all pre-registered tests. State pre-registration and the development path honestly (C1–C3 failed).
-- Main result table (reports/tables/table_c2.csv style, final: C9): [PENDING: C10 other learners, C7 36 datasets]
+- Main result table: final method vs same-learner Joint TAR for all 5 learners (C9, C10, C11: reports/p14, p15, p16),
+  with per-learner Holm and Holm over all 17 tests (C10-LightGBM 0.061 does not survive the global one). C7 (36) separately.
 - Per-dataset figure: reports/figures/fig6_c4_c5_per_dataset.png (replace by C9 per-dataset when exported).
 - Cross-learner table: our CatBoost vs each learner's Joint TAR (computed 2026-10-20: LightGBM, TabPFN-v2 significant;
   TabM p = 0.058; TabPFN-2.5 tie) and same-learner results [PENDING: P15].
@@ -40,7 +41,8 @@ fine-tuning) improves over Joint TAR **with the same learner**. State the readin
 - Negative results in one compact table: C1, C2, C3, the query prefix (C6), P12 refinements.
 
 ## 5. Conclusion and limitations (~0.3 page)
-- Jigsaw (toxicity) is where fine-tuning still wins; TabPFN-2.5 TAR is not beaten; compute (no fine-tuning, no GPU
+- Jigsaw (toxicity) is where fine-tuning still wins (all learners); TabPFN results cover 18 datasets (no baseline for
+  Spotify / Wine); compute (no fine-tuning, no GPU
   training); single seed; environment offset on Video Games; reuse of the 20 datasets during development, mitigated
   by pre-registration and the 36-dataset confirmation.
 

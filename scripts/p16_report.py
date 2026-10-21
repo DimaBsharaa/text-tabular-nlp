@@ -16,9 +16,17 @@ from os.path import abspath, dirname, join
 sys.path.insert(0, dirname(abspath(__file__)))
 import full_report as fr  # noqa: E402
 from p5_report import comparison, leaderboard_state  # noqa: E402
+from p14_report import EARLIER_ALL  # noqa: E402
 
 REPO_ROOT = dirname(dirname(abspath(__file__)))
 EARLIER_PASSES = {"catboost": True, "lgbm": True, "tabm": True}  # C9 (E38), C10 (E43)
+# raw two-sided Wilcoxon p-values of the earlier pre-registered tests, from reports/p14 and reports/p15
+EARLIER_P = dict(EARLIER_ALL, C9=0.0023250579833984375,  # E38
+                 **{"C7:cte_probe|vs_joint_frozen": 0.01918059220770374,  # E39
+                    "C7:cte_probe|vs_joint_tar": 0.024941622250480577,
+                    "C7:cte_depth_top3|vs_joint_frozen": 0.27855437609832734,
+                    "C7:cte_depth_top3|vs_joint_tar": 0.016752589581301436,
+                    "C10_lgbm": 0.005580902099609375, "C10_tabm": 0.0007076263427734375})  # E43
 
 
 def p16_report(out: str) -> dict:
@@ -32,6 +40,8 @@ def p16_report(out: str) -> dict:
     passes = dict(EARLIER_PASSES, **{k: c["passes"] for k, c in rep["C11"].items()})
     rep["learners_passing"] = None if any(v is None for v in passes.values()) else sum(passes.values())
     rep["per_learner_pass"] = passes
+    allp = dict(EARLIER_P, **{f"C11_{k}": c.get("p_value") for k, c in rep["C11"].items() if c["n"] == 18})
+    rep["holm_all_preregistered"] = {k: round(float(v), 6) for k, v in fr.holm(allp).items()}
     return rep
 
 
@@ -47,6 +57,7 @@ def main() -> None:
     for k, c in rep["C11"].items():
         print(f"{k:<11} n={c['n']} mean={c.get('mean_diff')} median={c.get('median_diff')} p={c.get('p_value')} "
               f"p_holm={c.get('p_holm')} wins={c.get('wins')} passes={c.get('passes')}")
+    print(f"Holm over all {len(rep['holm_all_preregistered'])} pre-registered tests:", rep["holm_all_preregistered"])
 
 
 if __name__ == "__main__":
