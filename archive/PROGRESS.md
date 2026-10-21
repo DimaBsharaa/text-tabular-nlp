@@ -80,6 +80,7 @@ Entry template:
 | E45 | 2026-10-21 | P16 full run (178/180; 2 TabPFN-2.5 GPU out-of-memory) | TabPFN-v2 +0.0294, 14/18, p = 0.0040; TabPFN-2.5 provisional +0.0216, 14/17, p = 0.0017; re-run the 2 alone |
 | E46 | 2026-10-21 | P16 complete (2 OOM jobs re-run alone; 180/180) | **C11 passes**: TabPFN-v2 +0.0294 (p = 0.0040), TabPFN-2.5 +0.0204 (15/18, p = 0.0013) → **all 5 learners**; 4 of 5 survive Holm over all 17 tests |
 | E47 | 2026-10-21 | check: upstream of 26 July 2026 (599bd6a) vs `paper_version` | identical splits / metrics / preprocessing / baseline CSVs for the 20; 2 of the 36 C7 loaders differ |
+| P17 | 2026-10-22 | C12 pre-registration: final method with cross-fitting fold seeds 43 / 44 (LightGBM) | jobs/p17.txt, ≈ 3.5–4 h A100, approved |
 
 ---
 
@@ -2025,3 +2026,30 @@ Features for the learner = structured columns (upstream preprocessing)
   (frozen e5 encoding and TF-IDF transform are label-free); (2) the logged diagnostic `quality("test", ...)`
   (`cte.py:500-522`), computed after the features and never fed back. Empirical check: E40's label-shuffle test kept
   the true test labels in the same path and fell to chance (Kickstarter 0.50–0.53).
+
+## P17 — Robustness to the cross-fitting fold seed (written 2026-10-22, BEFORE any P17 run; Dima approved the run)
+- **Question:** the method's own randomness is the assignment of training rows to the 5 cross-fitting folds (fixed at
+  seed 42 in every result so far; the learners' seeds are fixed by upstream, as in the published baselines). Is the gain
+  a lucky fold assignment?
+- **Implementation (code in this entry's commit):** method names `cte_depth_top3_xs43` / `_xs44` = `cte_depth_top3` with
+  the cross-fitting fold seed 43 / 44 (`scripts/run_experiment.py::split_xfit` sets `OURS_XFIT_SEED` before
+  `multabench/ours/cte.py` is imported; every expert, the probe and the depth probes take their folds from it; the job
+  fails if the seed did not take effect). Nothing else changes: same engine (`depth/1`), splits, learner settings.
+  Unset = 42 (golden-features test unchanged). Every result JSON records `xfit_seed`. Tests: `tests/test_xfit_seed.py`.
+  Laptop smoke (Product Sentiment fold 0, 300 rows, LightGBM): seeds 42 / 43 run end to end into separate folders,
+  different out-of-fold expert scores.
+- **C12:** for each of seeds 43 and 44: `cte_depth_top3` (LightGBM) vs the leaderboard Joint TAR of LightGBM, 20 datasets,
+  folds 0–4, fold-averaged per-dataset difference, two-sided Wilcoxon; Holm over the 2 seeds. **Pass = both seeds
+  Holm p < 0.05 AND positive mean.** Descriptive: seed 42 (= C10-LightGBM, E42) alongside, and per dataset the standard
+  deviation of the gain over the 3 seeds, and how many datasets keep the same sign.
+- **Why LightGBM:** the fold seed changes the features, which all learners share, so the cheapest learner answers the
+  question: measured cost ≈ 9–10 job-hours per seed (features from scratch: 319 job-min on 18 datasets in the P16
+  TabPFN-v2 run + ≈ 75 for Spotify / Wine; LightGBM fits 176 job-min in P15), ≈ 1.5–2 h wall per seed with 6 parallel
+  jobs, **≈ 3.5–4 h for both** on an A100 runtime. CatBoost would take ≈ 5 h per seed (29.5 job-hours in P14, 14.4 of
+  them Spotify Genres).
+- **Multiple testing, decided now:** C12 re-tests an existing claim (C10-LightGBM) under another fold seed; it is not a
+  new hypothesis, so it is corrected within its own family (Holm over the 2 seeds) and not added to the 17-test family of
+  E46. For transparency the report will also state what the all-tests Holm would be with these 2 tests added.
+- **Run:** `jobs/p17.txt` (200 jobs: seed 43 block first, then seed 44; longest datasets first within each),
+  `EXTRA_ARGS = ["--job_timeout_min", "240"]` (parallel auto), results root `results_cte`. Report:
+  `scripts/p17_report.py --out <export>/results` → `reports/p17/` (synthetic test in `tests/test_full_report.py`).

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import hashlib
 import itertools
+import re
 import json
 import os
 import time
@@ -39,6 +40,7 @@ EXPERT_METHOD_NAMES = {"tar_experts", "frozen_experts", "tar_experts_lex", "tar_
 
 
 def engine_version(method: str) -> str:
+    method = re.sub(r"_xs\d+$", "", method)  # P17: same method, other cross-fitting fold seed
     if method == "tar_repro":
         return te.ENGINE_VERSION
     if method in EXPERT_METHOD_NAMES:

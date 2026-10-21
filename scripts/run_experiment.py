@@ -40,8 +40,24 @@ METHODS = ("tar_repro", "offset", "prefix", "prefix_offset", "context", "context
            "cte_probe", "cte_rowlex", "cte_lsa_row", "cte_probe_rowlex", "cte_all",  # P7 label-aware
            "p9_base", "p9_avg", "p9_rep3", "p9_rep3_avg", "p9_prompt", "p9_rff", "p9_nb", "p9_query", "p9_percol", "p9_k10", "p9_maxpool", "p9_tok",  # P9 / P12
            "frozen0_query", "tf_num_lsa_query",
-           "cte_depth", "cte_depth_mm", "cte_depth_top3", "cte_depth_sl")  # P13 depth probes (Cowork); see docs/method_spec.md
+           "cte_depth", "cte_depth_mm", "cte_depth_top3", "cte_depth_sl",  # P13 depth probes (Cowork)
+           "cte_depth_top3_xs43", "cte_depth_top3_xs44")  # P17: final method, cross-fitting fold seed 43 / 44
 DEFAULTS = {"train_examples": 10_000, "epochs": 50, "seed": 42}
+
+
+def split_xfit(method: str) -> tuple[str, Optional[int]]:
+    """P17: 'cte_depth_top3_xs43' -> ('cte_depth_top3', 43): the same method with cross-fitting fold seed 43. The seed
+    is passed to multabench/ours/cte.py through OURS_XFIT_SEED, which must be set before that module is imported."""
+    import re
+    m = re.fullmatch(r"(.+)_xs(\d+)", method or "")
+    return (m.group(1), int(m.group(2))) if m else (method, None)
+
+
+def set_xfit_seed(method: str) -> Optional[int]:
+    _, xs = split_xfit(method)
+    if xs is not None:
+        os.environ["OURS_XFIT_SEED"] = str(xs)
+    return xs
 COMPANIONS = {"xfit_pred": ["frozen_xfit_pred"]}  # P3: written by the same job (shares the fold fine-tunes)
 SUFFIX = {"epochs": "ep", "train_examples": "n", "seed": "s"}
 
@@ -158,7 +174,8 @@ def fit_learner(args: argparse.Namespace):
     cfg = TarConfig(epochs=args.epochs, seed=args.seed, fast=not args.no_fast, micro_batch_size=args.micro_batch_size,
                     eval_batch_size=256 if device.type == "cuda" else 16,  # eval batch size: speed only
                     lower_cache_dir=args.lower_cache_dir)
-    model.configure_ours(variant=args.method, cfg=cfg, cache_dir=args.cache_dir, dataset=args.dataset, fold=args.fold,
+    model.configure_ours(variant=split_xfit(args.method)[0], cfg=cfg, cache_dir=args.cache_dir, dataset=args.dataset,
+                         fold=args.fold,
                          test=(x_test, y_test))
     model.fit(x_train, y_train)
     return model, learner_cls, x_train, y_train, x_test, y_test, t0
@@ -172,6 +189,10 @@ def run_one(args: argparse.Namespace) -> dict:
     from multabench.utils.hardware import get_hardware_dict
 
     model, learner_cls, x_train, y_train, x_test, y_test, t0 = fit_learner(args)
+    from multabench.ours import cte
+    xs = split_xfit(args.method)[1]
+    if xs is not None and cte.CTE_CONFIG.seed != xs:  # the seed must have reached every fold assignment
+        raise RuntimeError(f"{args.method}: cross-fitting seed is {cte.CTE_CONFIG.seed}, expected {xs}")
     device = args._device
     t_fit = time.time() - t0
     metrics = model.score_all_metrics(X=x_test, y=y_test)
@@ -184,6 +205,7 @@ def run_one(args: argparse.Namespace) -> dict:
     score = float(metrics.score)
     out = {
         "method": args.method, "run_name": run_name(args.method, args), "engine_version": engine_version(args.method),
+        "xfit_seed": cte.CTE_CONFIG.seed,
         "tar_path": None if not tar else ("fast" if tar.diagnostics["train"].get("fast_path") else "full_model"),
         "learner": args.learner,
         "learner_model_name": learner_cls.MODEL_NAME, "dataset": args.dataset, "fold": args.fold,
@@ -455,6 +477,7 @@ def main() -> int:
     p.add_argument("--parallel_jobs", default="auto",
                    help='--jobs_file: jobs run at once ("auto" = CPU cores // 2 if every job is CTE, else 1)')
     args = p.parse_args()
+    set_xfit_seed(args.method)  # P17: before any multabench.ours import (the jobs runner passes it to each job)
     args.cache_dir = args.cache_dir or join(args.out, "_cache")
     if args.jobs_file:
         return run_jobs(args)

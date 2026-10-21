@@ -71,7 +71,9 @@ class CTEConfig:
                             neighbour_weights="inverse_distance", reg_target="rank_gauss")
 
 
-CTE_CONFIG = CTEConfig()
+# P17: the cross-fitting fold seed can be changed per process (method names *_xs<seed>, scripts/run_experiment.py set
+# OURS_XFIT_SEED before this module is imported); unset = 42, the configuration of every other result.
+CTE_CONFIG = CTEConfig(seed=int(os.environ.get("OURS_XFIT_SEED", SEED)))
 
 # ---------------------------------------------------------------------------------------- numeracy / form features
 

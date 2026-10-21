@@ -201,3 +201,15 @@ def test_p16_report_on_synthetic_results(tmp_path):
     assert rep["C11"]["tabpfnv2p5"]["passes"] is False and rep["learners_passing"] == 4
     holm = rep["holm_all_preregistered"]  # C1-C8 (C3 x2), C9, C7 x4, C10 x2, C11 x2
     assert len(holm) == 17 and holm["C1"] >= 0.409 and all(0 < v <= 1 for v in holm.values())
+
+
+def test_p17_report_on_synthetic_results(tmp_path):
+    import p17_report as pr
+    out = str(tmp_path)
+    rng = np.random.default_rng(17)
+    for run, off in (("cte_depth_top3", 0.02), ("cte_depth_top3_xs43", 0.019), ("cte_depth_top3_xs44", -0.002)):
+        _write(out, run, "lgbm", {k: v + off + rng.normal(0, 0.002) for k, v in _lb("lgbm").items()})
+    rep = pr.p17_report(out)
+    assert rep["C12"]["seed43"]["n"] == 20 and rep["C12"]["seed43"]["passes"]
+    assert rep["C12"]["seed44"]["passes"] is False and rep["C12_passes"] is False
+    assert rep["seed42_C10"]["n"] == 20 and rep["seed_spread"]["datasets"] == 20
