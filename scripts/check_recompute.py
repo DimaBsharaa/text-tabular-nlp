@@ -16,7 +16,7 @@ from scipy.stats import wilcoxon
 
 LEADERBOARD = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "multabench", "leaderboard",
                            "results", "text")
-LEARNER_PREFIX = {"catboost": "CatBoost", "lgbm": "LightGBM", "tabm": "TabM"}
+LEARNER_PREFIX = {"catboost": "CatBoost", "lgbm": "LightGBM", "tabm": "TabM", "tabpfnv2": "TabPFN-v2", "tabpfnv2p5": "TabPFN-v2p5"}
 
 
 def main():

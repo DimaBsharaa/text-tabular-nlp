@@ -73,6 +73,7 @@ Entry template:
 | E40 | 2026-10-20 | trust checks: independent recomputation + label-shuffle leakage test | both pass (C5 / C8 / C9 reproduced exactly; shuffled labels → chance) |
 | E41–E43 | 2026-10-20 | P15: final method with LightGBM + TabM (TabM NaN bug fixed) | **C10 passes**: LightGBM +0.0193 (p = 0.0056), TabM +0.0161 (16/20, p = 0.0007) → 3 of 5 learners |
 | P16 / E44 | 2026-10-21 | C11 (TabPFN-v2 / TabPFN-2.5) pre-registration + timing run (6 jobs) | v2 works (3/3); 2.5 blocked by the Prior Labs license check; full run ≈ 4.5–6 h, awaits approval |
+| E45 | 2026-10-21 | P16 full run (178/180; 2 TabPFN-2.5 GPU out-of-memory) | TabPFN-v2 +0.0294, 14/18, p = 0.0040; TabPFN-2.5 provisional +0.0216, 14/17, p = 0.0017; re-run the 2 alone |
 
 ---
 
@@ -1949,3 +1950,23 @@ Features for the learner = structured columns (upstream preprocessing)
   at the E44 estimate of ≈ 4.5–6 h wall. The account shows the TabPFN-2.5 license as accepted, so the failure was the
   key reaching the job (secret missing or wrong). The 90 TabPFN-v2 jobs come first in jobs/p16.txt. If the key is still
   wrong, only the TabPFN-2.5 jobs fail (fast, logged); they rerun after the key is fixed, and finished jobs are skipped.
+
+## E45 — P16 full run (jobs/p16.txt): TabPFN-v2 complete (90/90), TabPFN-2.5 88/90 (2 GPU out-of-memory)   (2026-10-21, Colab A100)
+- **Commits:** b649f47 (175 jobs) + a469515 (3 timing jobs; the two differ only in PROGRESS.md), all clean, all on
+  an A100-SXM4-40GB. Export `results_export_20261021_044221.zip`. `EXTRA_ARGS` as pre-registered (2 parallel).
+- **Failures:** TabPFN-2.5 Montgomery Salaries folds 2 and 4: `TabPFNCUDAOutOfMemoryError`. The other job running in
+  parallel held 38.7 of 40 GB at that moment. An environment failure, not a method failure; the
+  fix is to re-run those 2 jobs alone (`--parallel_jobs 1`, same code, same learner settings; ≈ 2 min, features cached).
+- **C11, TabPFN-v2 (complete, n = 18):** mean +0.0294, median +0.0225, 14/18 wins, two-sided Wilcoxon p = 0.0040.
+- **C11, TabPFN-2.5 (provisional, n = 17, Montgomery missing):** mean +0.0216, median +0.0179, 14/17, p = 0.0017.
+  Not a C11 result until n = 18; Holm over the 2 is applied then.
+- **Hostile review:**
+  - `scripts/check_recompute.py` (no project code; TabPFN prefixes added, "TabPFN-v2 " with the space so it cannot
+    match "TabPFN-v2p5") reproduces both rows exactly.
+  - n_test equals the CatBoost P14 run on every (dataset, fold) → same splits; n_train ≤ 10,000; identical n_train
+    for both TabPFN learners.
+  - Largest gain, Zomato with TabPFN-v2 (+0.141): the leaderboard's TabPFN-v2 Joint TAR is weak there (0.744 vs 0.84–0.86
+    for the other learners); ours is 0.878–0.889 on all 5 folds and the same with TabPFN-2.5 (0.879–0.895) → baseline
+    weakness, not an artefact. Wilcoxon is rank-based, so this one dataset cannot drive the p-value.
+  - Losses: Jigsaw (−0.013 / −0.011, the known fine-tuning win), Product Sentiment, US Accidents, Women Clothing (small).
+- **Next:** re-run the 2 OOM jobs alone, then the final C11 (Holm over 2) and the "N of 5 learners" statement.
