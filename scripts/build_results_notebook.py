@@ -257,7 +257,7 @@ expert *without* cross-fitting, the experts together, then the probe and the dep
 benchmark runs (`reports/tables/fold_scores.csv`). **Depth profile**: for all 20 datasets, how well a cross-fitted
 linear probe on each of e5's 12 layers predicts the target, minus the final-layer probe (out-of-fold scores on the
 training rows of the final CatBoost run, averaged over the 5 folds; `scripts/depth_figures.py`). The dot marks each
-dataset's best layer.
+dataset's best layer. Colours are clipped at ±0.03 (Book Readability exceeds the scale: +0.055 at layer 3).
 """)
 
 code("""
