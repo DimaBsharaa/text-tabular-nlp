@@ -18,7 +18,7 @@
 | | [`compute_cost.py`](compute_cost.py), [`class_balance.py`](class_balance.py) | `results/compute_cost.csv`, `results/class_balance.csv` |
 | **Trust checks** | [`check_recompute.py`](check_recompute.py) | Recomputes every headline number from the raw result files with no project code |
 | | [`check_label_shuffle.py`](check_label_shuffle.py) | Trains with shuffled training labels: the method must fall to chance (it does) |
-| **Earlier stages** (kept because the final reports import their tested statistics) | [`full_report.py`](full_report.py), [`p5_report.py`](p5_report.py), [`p11_report.py`](p11_report.py) | Analyses of earlier claims (C1, C2, C8); `full_report.py` holds the shared Wilcoxon / bootstrap / Holm code |
+| **Earlier stages** (kept because the final reports import their tested statistics) | [`full_report.py`](full_report.py), [`p5_report.py`](p5_report.py), [`p11_report.py`](p11_report.py) | Analyses of earlier claims: `full_report.py` C1, `p5_report.py` the first P5 plan, `p11_report.py` the first C7 plan and C8; `full_report.py` holds the shared Wilcoxon / bootstrap / Holm code |
 | | [`phase0_diagnostics.py`](phase0_diagnostics.py) | What the published baselines show before any method was built → [`reports/phase0/`](../reports/phase0/), notebook 01 |
 | | [`depth_profile.py`](depth_profile.py) | Layer-by-layer probe scores on training rows, used while developing the depth probes |
 
