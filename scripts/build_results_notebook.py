@@ -254,9 +254,10 @@ md("""
 
 **Build-up** (CatBoost, all 20 datasets, 5 folds, each vs. Joint TAR of the same fold): each expert alone, the lexical
 expert *without* cross-fitting, the experts together, then the probe and the depth probes added. All rows are full
-benchmark runs (`reports/tables/fold_scores.csv`). **Depth profile**: for four development datasets, how well a
-cross-fitted linear probe on each of e5's 12 layers predicts the target (training rows only), relative to the final
-layer.
+benchmark runs (`reports/tables/fold_scores.csv`). **Depth profile**: for all 20 datasets, how well a cross-fitted
+linear probe on each of e5's 12 layers predicts the target, minus the final-layer probe (out-of-fold scores on the
+training rows of the final CatBoost run, averaged over the 5 folds; `scripts/depth_figures.py`). The dot marks each
+dataset's best layer.
 """)
 
 code("""
@@ -281,14 +282,22 @@ ax.barh(bu.stage, bu.mean_gain_vs_tar, color=[C_OURS if v > 0 else C_TAR for v i
 ax.axvline(0, color="k", lw=0.8); ax.invert_yaxis()
 ax.set_xlabel("mean over 20 datasets: score − Joint TAR (CatBoost)"); ax.set_title("Build-up of the method")
 fig.tight_layout(); fig.savefig(join(FIG, "fig5a_build_up.png"), dpi=200); plt.show()
-dp = pd.read_csv(R("reports", "figures", "fig7_depth_profile_dev.csv"))
-fig, ax = plt.subplots(figsize=(7, 3.8))
-for ds, g_ in dp.groupby("dataset"):
-    ax.plot(g_.layer, g_.delta, marker="o", label=NAME(ds))
-ax.axhline(0, color="k", lw=0.8)
-ax.set_xlabel("e5 layer"); ax.set_ylabel("probe score − final-layer probe score")
-ax.set_title("Where in the frozen encoder the target signal is"); ax.legend(fontsize=8, frameon=False)
+dp = pd.read_csv(R("reports", "figures", "fig7_depth_profile_20.csv"))
+hm = dp.pivot(index="dataset", columns="layer", values="delta")
+best = hm.idxmax(axis=1)
+hm = hm.loc[best.sort_values().index]
+fig, ax = plt.subplots(figsize=(7.5, 6.5))
+lim = 0.03
+im = ax.imshow(hm.clip(-lim, lim), cmap="PuOr_r", vmin=-lim, vmax=lim, aspect="auto")
+ax.scatter(hm.idxmax(axis=1).to_numpy() - 1, range(len(hm)), s=18, color="k")
+ax.set_xticks(range(12), range(1, 13)); ax.set_yticks(range(len(hm)), [NAME(d) for d in hm.index], fontsize=8)
+ax.set_xlabel("layer of frozen e5-small-v2 (Joint TAR fine-tunes layers 10-12)")
+fig.colorbar(im, ax=ax, shrink=0.6, label="probe score − final-layer probe (clipped ±0.03)")
+ax.set_title("Where in the frozen encoder the target is most readable")
 fig.tight_layout(); fig.savefig(join(FIG, "fig5_depth_profile.png"), dpi=200); plt.show()
+print("best layer per dataset:", best.value_counts().sort_index().to_dict())
+print("datasets whose best layer is an inner one (< 12):", int((best < 12).sum()), "of", len(best))
+print("largest inner-layer gains:", hm.max(axis=1).sort_values(ascending=False).head(4).round(4).rename(index=NAME).to_dict())
 """)
 
 md("""
@@ -371,18 +380,20 @@ md("""
 4. **Above the noise.** On 10 of the 20 datasets the mean gain exceeds one standard deviation of the baseline's own
    fold-to-fold noise; only Wine Review loses by more than that, and by 0.002.
 5. **Largest on regression** (+0.024 to +0.046), then binary (+0.010 to +0.017), smallest on multiclass (+0.004 to +0.011).
-6. **Where fine-tuning still wins: Jigsaw Toxicity**, the one dataset where fine-tuning itself adds +0.117 over the
+6. **The target sits at different depths**: the best probe layer ranges from 2 to 12 and is an inner layer in 14 of
+   the 20 datasets (largest gain: Book Readability, layer 3), which is what the depth probes exploit.
+7. **Where fine-tuning still wins: Jigsaw Toxicity**, the one dataset where fine-tuning itself adds +0.117 over the
    frozen encoder; toxicity is not linearly readable from frozen e5. Elsewhere our gain is unrelated to how much
    fine-tuning helps (Spearman ρ = 0.06).
-7. **Class imbalance does not drive the result**: the gain is unrelated to the minority-class share (ρ = 0.42,
+8. **Class imbalance does not drive the result**: the gain is unrelated to the minority-class share (ρ = 0.42,
    p = 0.23, 10 datasets), splits are stratified, and AUROC does not depend on the class ratio.
-8. **Cross-fitting is essential**: the same lexical expert without it scores 0.035 lower (−0.035 vs. Joint TAR
+9. **Cross-fitting is essential**: the same lexical expert without it scores 0.035 lower (−0.035 vs. Joint TAR
    instead of ±0.000), and 0.045 below the full set of cross-fitted experts.
-9. **On 36 further datasets** the gain is positive but small (median +0.003, 24 of 36 won); significant on its own
+10. **On 36 further datasets** the gain is positive but small (median +0.003, 24 of 36 won); significant on its own
    (p = 0.017), not after the 17-test correction.
-10. **No GPU needed, but not faster**: building our features takes about 2.7 min per job on a CPU, against 1.3 min for
+11. **No GPU needed, but not faster**: building our features takes about 2.7 min per job on a CPU, against 1.3 min for
     an optimised GPU fine-tuning of Joint TAR.
-11. **No leakage path found**: with shuffled training labels the method falls to chance (AUROC 0.50–0.53, R² −0.01).
+12. **No leakage path found**: with shuffled training labels the method falls to chance (AUROC 0.50–0.53, R² −0.01).
 """)
 
 

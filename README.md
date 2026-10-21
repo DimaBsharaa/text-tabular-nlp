@@ -22,6 +22,9 @@ regression), compared with the published Joint TAR score of the **same learner, 
 
 ![Mean score per learner: Joint TAR vs ours, and the gain with its 95% interval](results/figures/fig1_mean_by_learner.png)
 
+Left: mean scores (the axis starts at 0.70 and averages AUROC with R², as the benchmark's summaries do). Right: the
+gain over Joint TAR with its 95% interval, the honest scale.
+
 - **Significant with every learner** (two-sided Wilcoxon signed-rank test over datasets, each test specified before
   its run). With a Holm correction over all 17 tests run during the project, 4 of 5 remain significant (LightGBM: 0.061).
 - **Broad:** 76% of the 480 individual (learner, dataset, fold) runs beat Joint TAR; 14 of the 20 datasets are won
@@ -52,13 +55,16 @@ Each one measured on the benchmark, while studying it or while developing the me
 1. **Over-trust.** The encoder is fine-tuned on the training rows and then embeds those same rows, so their text
    features look better than they will on new rows: TAR's prediction head scores +0.031 higher on its own training
    rows than on test rows (16 of 18 runs, p = 0.0002). The learner trusts them too much.
-2. **PCA ignores the target.** 384 → 30 dimensions keeps the directions in which the texts vary most, not the ones that
-   predict the target: a probe on the full 384 dimensions adds +0.0035 on top of the experts (CatBoost, 20 datasets).
-3. **Only the last layer is read.** How far into the encoder the target signal is strongest depends on the task:
-   toxicity peaks at layer 3, sentiment at layer 9, prices at layers 10–12 of 12.
+2. **PCA does not look at the target.** 384 → 30 dimensions keeps the directions in which the texts vary most, not
+   necessarily the ones that predict the target. This is a motivation rather than the cause of Joint TAR's gain (the
+   MulTaBench paper's Figure 6 finds Joint TAR ahead of Joint Frozen at 15, 30 and 60 components alike); a probe on the full 384
+   dimensions adds +0.0035 on top of the experts (CatBoost, 20 datasets).
+3. **Only the last layer is read.** The layer from which a linear probe best predicts the target varies from layer 2 to
+   layer 12, and in 14 of the 20 datasets it is an inner layer, not the final one (out-of-fold scores on training rows,
+   20 datasets × 5 folds). The largest gain is Book Readability at layer 3, where surface form matters.
 4. **Exact words and numbers get blurred.** A sentence embedding smooths over the specific tokens ("Riesling",
-   "$45", "2015") that often carry the signal: a plain TF-IDF model of the words, cross-fitted, already matches Joint
-   TAR on its own (±0.000).
+   "$45", "2015") that often carry the signal: adding only the cross-fitted lexical expert (TF-IDF + Ridge) to the
+   standard frozen features already matches Joint TAR (±0.000).
 5. **A GPU for every run.** Upstream fine-tunes the encoder again inside every learner's run: for every dataset,
    fold and learner.
 

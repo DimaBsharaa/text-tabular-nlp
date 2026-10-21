@@ -81,6 +81,7 @@ Entry template:
 | E46 | 2026-10-21 | P16 complete (2 OOM jobs re-run alone; 180/180) | **C11 passes**: TabPFN-v2 +0.0294 (p = 0.0040), TabPFN-2.5 +0.0204 (15/18, p = 0.0013) → **all 5 learners**; 4 of 5 survive Holm over all 17 tests |
 | E47 | 2026-10-21 | check: upstream of 26 July 2026 (599bd6a) vs `paper_version` | identical splits / metrics / preprocessing / baseline CSVs for the 20; 2 of the 36 C7 loaders differ |
 | P17 | 2026-10-22 | C12 pre-registration: final method with cross-fitting fold seeds 43 / 44 (LightGBM) | jobs/p17.txt, ≈ 3.5–4 h A100, approved |
+| E48 | 2026-10-22 | review round: depth profile from all 20 datasets; README wording | best layer 2–12, inner in 14/20; the 4-dataset pattern by task type does not hold |
 
 ---
 
@@ -2053,3 +2054,17 @@ Features for the learner = structured columns (upstream preprocessing)
 - **Run:** `jobs/p17.txt` (200 jobs: seed 43 block first, then seed 44; longest datasets first within each),
   `EXTRA_ARGS = ["--job_timeout_min", "240"]` (parallel auto), results root `results_cte`. Report:
   `scripts/p17_report.py --out <export>/results` → `reports/p17/` (synthetic test in `tests/test_full_report.py`).
+
+## E48 — Review round: depth profile from all 20 datasets supersedes the 4-dataset development profile   (2026-10-22, no run)
+- **Depth profile regenerated** from the final CatBoost run's stored training-row out-of-fold layer scores (20 datasets ×
+  5 folds): `scripts/depth_figures.py --results <P14 export>/results --run cte_depth_top3 --out
+  reports/figures/fig7_depth_profile_20`. The best layer ranges from 2 to 12 (counts: L2 1, L3 1, L6 3, L7 2, L8 4,
+  L9 1, L10 2, L12 6); it is an inner layer in 14 of 20 datasets. Largest inner-layer gains: Book Readability L3
+  +0.055, Rotten Tomatoes L8 +0.024, Book Price L10 +0.023, Product Sentiment L7 +0.017; Jigsaw: no layer helps (+0.0007).
+- **Correction:** the README and archive/README had stated "toxicity peaks at layer 3, sentiment at layer 9, prices at
+  layers 10–12" from the 4-dataset development profile. The full data does not support a pattern by task type
+  (Jigsaw L7 with +0.0007, Product Sentiment L7, Zomato prices L6). Both texts now state the 20-dataset result.
+- **Other wording fixes:** "the lexical expert matches Joint TAR on its own" → "adding only the lexical expert to the
+  standard frozen features"; PCA presented as a motivation, not the cause (MulTaBench Figure 6, verified on arXiv: TAR
+  ahead of Frozen at 15, 30 and 60 components); Figure 1's caption states the 0.70 axis and the AUROC / R² mix.
+- `CLAUDE.md` (working rules for Claude Code) is git-ignored and stays local; Claude Code reads it from disk.

@@ -119,7 +119,7 @@ on Google Drive. The final runs: `jobs/p14_A.txt` (CatBoost), `jobs/p15.txt` (Li
 | File | What it holds |
 |---|---|
 | [`cte.py`](cte.py) | the frozen-embedding cache (`frozen_embeddings_cached`), numeracy features (`numeracy_features`), the lexical and neighbour experts with cross-fitting (`compute_cte_features`, `ridge_fit`, `neighbour_average`), the column budget, `run_cte` |
-| [`p7.py`](p7.py) | the probe: cross-fitted Ridge on the full embeddings (`xfit_linear`, `run_p7`, method `cte_probe`) |
+| [`p7.py`](p7.py) | the probe: cross-fitted Ridge on the full embeddings (`xfit_linear`, `run_p7`, method `cte_probe`); the file is named after the development round that introduced it |
 | [`depth.py`](depth.py) | depth probes: every layer's pooled states (`layer_states_cached`), the per-layer cross-fitted Ridge (`xfit_linear_eig`), the top-3 aggregation (`run_depth`, method `cte_depth_top3`) |
 | [`experts.py`](experts.py) | fold construction (`expert_folds`), the rank-Gaussian target transform, the feature cache |
 | [`learners.py`](learners.py) | the plug-in point: wraps each upstream learner so that its text-encoder step returns our features (`make_learner`) |
