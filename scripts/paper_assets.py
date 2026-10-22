@@ -157,6 +157,10 @@ def main() -> None:
     r_ = spearmanr(mm.minority_share, mm.g)
     m["rhoImbalance"], m["pImbalance"] = f"{r_.statistic:.2f}", f"{r_.pvalue:.2f}"
 
+    # ---- the depth probes on their own: final method vs. the same method without them (CatBoost, 20 datasets)
+    inc = json.load(open(R("reports", "p14", "p14_report.json")))["C9_vs_our_cte_probe"]
+    m["depthIncWins"], m["depthIncP"] = str(inc["wins"]), fp(inc["p_value"])
+
     # ---- C12: other cross-fitting fold seeds (LightGBM), a replication of C10, Holm within its own family of 2
     import full_report as fr
     import p16_report as pr

@@ -1,0 +1,372 @@
+{
+ "method": "cte_depth_top3",
+ "run_name": "cte_depth_top3",
+ "engine_version": "depth/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "BIN_TEXT_SOCIAL_IMDB_GENRE_PREDICTION",
+ "fold": 0,
+ "task": "BIN",
+ "score": 0.8214285714285715,
+ "metrics": {
+  "score": 0.8214285714285715,
+  "metrics": {
+   "auc": 0.8214285714285715
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 44.2,
+  "fit": 44.2,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1",
+   "method": "cte_depth_top3",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 718,
+ "n_test": 82,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 00:37:19",
+ "argv": [
+  "--method",
+  "cte_depth_top3",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "BIN_TEXT_SOCIAL_IMDB_GENRE_PREDICTION",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 5.9,
+   "probe": 0.3
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 10.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.729569,
+     0.73844,
+     0.747705,
+     0.753748
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": false,
+    "nbr": false
+   },
+   "seconds": {
+    "frozen_embeddings": 3.1,
+    "experts": 2.7
+   }
+  },
+  "probe": {
+   "alpha": 3.0,
+   "oof_metric": [
+    0.7517751650085631,
+    0.7737698924317356,
+    0.7805241788057806,
+    0.7756749475628764
+   ]
+  },
+  "n_extra_columns": {
+   "Actors": 24,
+   "Description": 21,
+   "Director": 21,
+   "Title": 21
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ]
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "sparse_cg",
+   "layer_oof_metric": {
+    "1": 0.782737,
+    "2": 0.794283,
+    "3": 0.798661,
+    "4": 0.79462,
+    "5": 0.795976,
+    "6": 0.798882,
+    "7": 0.800845,
+    "8": 0.798083,
+    "9": 0.797044,
+    "10": 0.796419,
+    "11": 0.787076,
+    "12": 0.779139
+   },
+   "layer_alpha": {
+    "1": 10.0,
+    "2": 10.0,
+    "3": 10.0,
+    "4": 10.0,
+    "5": 10.0,
+    "6": 10.0,
+    "7": 10.0,
+    "8": 10.0,
+    "9": 10.0,
+    "10": 10.0,
+    "11": 30.0,
+    "12": 30.0
+   },
+   "ranked_layers": [
+    7,
+    6,
+    3,
+    8,
+    9,
+    10,
+    5,
+    4,
+    2,
+    11,
+    1,
+    12
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.7517751650085631,
+    0.7737698924317356,
+    0.7805241788057806,
+    0.7756749475628764
+   ],
+   "probe_cache_hits": 0,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 5.0,
+    "probes": 9.8
+   }
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Actors_txt_pca_30": 4.048,
+    "Actors_txt_pca_31": 1.452,
+    "Actors_txt_pca_32": 2.46,
+    "Actors_txt_pca_33": 0.0,
+    "Actors_txt_pca_34": 0.0,
+    "Actors_txt_pca_35": 0.0,
+    "Actors_txt_pca_36": 0.0,
+    "Actors_txt_pca_37": 0.0,
+    "Actors_txt_pca_38": 0.0,
+    "Actors_txt_pca_39": 0.0,
+    "Actors_txt_pca_40": 0.0,
+    "Actors_txt_pca_41": 0.0,
+    "Actors_txt_pca_42": 0.346,
+    "Actors_txt_pca_43": 0.088,
+    "Actors_txt_pca_44": 0.0,
+    "Actors_txt_pca_45": 0.309,
+    "Actors_txt_pca_46": 0.202,
+    "Actors_txt_pca_47": 0.0,
+    "Actors_txt_pca_48": 0.078,
+    "Actors_txt_pca_49": 0.0,
+    "Actors_txt_pca_50": 0.0,
+    "Actors_txt_pca_51": 0.0,
+    "Actors_txt_pca_52": 0.0,
+    "Actors_txt_pca_53": 3.074,
+    "Actors_txt_pca_54": 8.206,
+    "Description_txt_pca_30": 2.336,
+    "Description_txt_pca_31": 0.027,
+    "Description_txt_pca_32": 0.081,
+    "Description_txt_pca_33": 0.026,
+    "Description_txt_pca_34": 0.133,
+    "Description_txt_pca_35": 0.0,
+    "Description_txt_pca_36": 0.055,
+    "Description_txt_pca_37": 0.0,
+    "Description_txt_pca_38": 0.0,
+    "Description_txt_pca_39": 0.0,
+    "Description_txt_pca_40": 0.261,
+    "Description_txt_pca_41": 0.078,
+    "Description_txt_pca_42": 0.061,
+    "Description_txt_pca_43": 0.737,
+    "Description_txt_pca_44": 1.076,
+    "Description_txt_pca_45": 0.108,
+    "Description_txt_pca_46": 0.264,
+    "Description_txt_pca_47": 0.0,
+    "Description_txt_pca_48": 0.004,
+    "Description_txt_pca_49": 0.583,
+    "Description_txt_pca_50": 0.0,
+    "Director_txt_pca_30": 0.504,
+    "Director_txt_pca_31": 0.0,
+    "Director_txt_pca_32": 0.0,
+    "Director_txt_pca_33": 0.0,
+    "Director_txt_pca_34": 0.0,
+    "Director_txt_pca_35": 0.0,
+    "Director_txt_pca_36": 0.0,
+    "Director_txt_pca_37": 0.0,
+    "Director_txt_pca_38": 0.0,
+    "Director_txt_pca_39": 0.0,
+    "Director_txt_pca_40": 0.232,
+    "Director_txt_pca_41": 0.02,
+    "Director_txt_pca_42": 0.027,
+    "Director_txt_pca_43": 0.083,
+    "Director_txt_pca_44": 0.106,
+    "Director_txt_pca_45": 0.0,
+    "Director_txt_pca_46": 0.024,
+    "Director_txt_pca_47": 0.0,
+    "Director_txt_pca_48": 0.0,
+    "Director_txt_pca_49": 0.0,
+    "Director_txt_pca_50": 0.0,
+    "Title_txt_pca_30": 0.783,
+    "Title_txt_pca_31": 0.0,
+    "Title_txt_pca_32": 0.018,
+    "Title_txt_pca_33": 0.0,
+    "Title_txt_pca_34": 0.006,
+    "Title_txt_pca_35": 0.0,
+    "Title_txt_pca_36": 0.0,
+    "Title_txt_pca_37": 0.0,
+    "Title_txt_pca_38": 0.0,
+    "Title_txt_pca_39": 0.0,
+    "Title_txt_pca_40": 0.155,
+    "Title_txt_pca_41": 0.193,
+    "Title_txt_pca_42": 0.008,
+    "Title_txt_pca_43": 0.136,
+    "Title_txt_pca_44": 0.159,
+    "Title_txt_pca_45": 0.0,
+    "Title_txt_pca_46": 0.105,
+    "Title_txt_pca_47": 0.004,
+    "Title_txt_pca_48": 0.0,
+    "Title_txt_pca_49": 0.0,
+    "Title_txt_pca_50": 0.0
+   },
+   "pred_share": 0.2866,
+   "group_share": {
+    "structured": 0.1722,
+    "pca": 0.5413,
+    "lex": 0.0405,
+    "nbr": 0.0753,
+    "num": 0.0579,
+    "probe": 0.0307,
+    "depthtop3": 0.0821
+   },
+   "top10": [
+    [
+     "Actors_txt_pca_54",
+     8.206
+    ],
+    [
+     "Revenue (Millions)",
+     4.856
+    ],
+    [
+     "Rating",
+     4.68
+    ],
+    [
+     "Actors_txt_pca_30",
+     4.048
+    ],
+    [
+     "Runtime (Minutes)",
+     3.6
+    ],
+    [
+     "Actors_txt_pca_53",
+     3.074
+    ],
+    [
+     "Actors_txt_pca_32",
+     2.46
+    ],
+    [
+     "Description_txt_pca_30",
+     2.336
+    ],
+    [
+     "Metascore",
+     1.898
+    ],
+    [
+     "Actors_txt_pca_31",
+     1.452
+    ]
+   ]
+  }
+ }
+}

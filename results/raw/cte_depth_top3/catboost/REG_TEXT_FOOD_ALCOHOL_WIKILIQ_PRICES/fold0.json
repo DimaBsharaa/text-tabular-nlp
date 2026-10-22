@@ -1,0 +1,396 @@
+{
+ "method": "cte_depth_top3",
+ "run_name": "cte_depth_top3",
+ "engine_version": "depth/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_FOOD_ALCOHOL_WIKILIQ_PRICES",
+ "fold": 0,
+ "task": "REG",
+ "score": 0.5085089947396406,
+ "metrics": {
+  "score": 0.5085089947396406,
+  "metrics": {
+   "r2": 0.5085089947396406,
+   "mse": 434861.10281620186,
+   "rmse": 659.4399918235183
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 470.6,
+  "fit": 470.5,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1",
+   "method": "cte_depth_top3",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 1256,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-19 23:49:00",
+ "argv": [
+  "--method",
+  "cte_depth_top3",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_FOOD_ALCOHOL_WIKILIQ_PRICES",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 65.2,
+   "probe": 8.0
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 3.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.760186,
+     0.788074,
+     0.801804,
+     0.796622
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": false,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 17.9,
+    "experts": 47.1
+   }
+  },
+  "probe": {
+   "alpha": 3.0,
+   "oof_metric": [
+    0.7447593086921129,
+    0.7598575455826108,
+    0.764768022472217,
+    0.756402360341986
+   ]
+  },
+  "n_extra_columns": {
+   "Brand": 24,
+   "Categories": 21,
+   "Description": 21,
+   "Name": 21,
+   "Tasting Notes": 21
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ]
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "sparse_cg",
+   "layer_oof_metric": {
+    "1": 0.760447,
+    "2": 0.759591,
+    "3": 0.760894,
+    "4": 0.761864,
+    "5": 0.759685,
+    "6": 0.76076,
+    "7": 0.762861,
+    "8": 0.762214,
+    "9": 0.76082,
+    "10": 0.762728,
+    "11": 0.760392,
+    "12": 0.763884
+   },
+   "layer_alpha": {
+    "1": 30.0,
+    "2": 30.0,
+    "3": 10.0,
+    "4": 10.0,
+    "5": 10.0,
+    "6": 10.0,
+    "7": 10.0,
+    "8": 10.0,
+    "9": 10.0,
+    "10": 10.0,
+    "11": 30.0,
+    "12": 30.0
+   },
+   "ranked_layers": [
+    12,
+    7,
+    10,
+    8,
+    4,
+    3,
+    9,
+    6,
+    1,
+    11,
+    5,
+    2
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.7447593086921129,
+    0.7598575455826108,
+    0.764768022472217,
+    0.756402360341986
+   ],
+   "probe_cache_hits": 0,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 22.4,
+    "probes": 265.5
+   }
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Brand_txt_pca_30": 10.082,
+    "Brand_txt_pca_31": 1.814,
+    "Brand_txt_pca_32": 5.164,
+    "Brand_txt_pca_33": 0.0,
+    "Brand_txt_pca_34": 0.0,
+    "Brand_txt_pca_35": 0.0,
+    "Brand_txt_pca_36": 0.0,
+    "Brand_txt_pca_37": 0.0,
+    "Brand_txt_pca_38": 0.0,
+    "Brand_txt_pca_39": 0.0,
+    "Brand_txt_pca_40": 0.0,
+    "Brand_txt_pca_41": 0.0,
+    "Brand_txt_pca_42": 0.02,
+    "Brand_txt_pca_43": 0.0,
+    "Brand_txt_pca_44": 0.0,
+    "Brand_txt_pca_45": 0.116,
+    "Brand_txt_pca_46": 3.677,
+    "Brand_txt_pca_47": 0.0,
+    "Brand_txt_pca_48": 0.001,
+    "Brand_txt_pca_49": 0.0,
+    "Brand_txt_pca_50": 0.0,
+    "Brand_txt_pca_51": 0.0,
+    "Brand_txt_pca_52": 0.0,
+    "Brand_txt_pca_53": 0.953,
+    "Brand_txt_pca_54": 0.749,
+    "Categories_txt_pca_30": 0.197,
+    "Categories_txt_pca_31": 0.0,
+    "Categories_txt_pca_32": 0.0,
+    "Categories_txt_pca_33": 0.0,
+    "Categories_txt_pca_34": 0.0,
+    "Categories_txt_pca_35": 0.0,
+    "Categories_txt_pca_36": 0.0,
+    "Categories_txt_pca_37": 0.0,
+    "Categories_txt_pca_38": 0.0,
+    "Categories_txt_pca_39": 0.0,
+    "Categories_txt_pca_40": 0.184,
+    "Categories_txt_pca_41": 0.0,
+    "Categories_txt_pca_42": 0.0,
+    "Categories_txt_pca_43": 0.002,
+    "Categories_txt_pca_44": 0.0,
+    "Categories_txt_pca_45": 0.0,
+    "Categories_txt_pca_46": 0.003,
+    "Categories_txt_pca_47": 0.0,
+    "Categories_txt_pca_48": 0.0,
+    "Categories_txt_pca_49": 0.0,
+    "Categories_txt_pca_50": 0.0,
+    "Description_txt_pca_30": 0.93,
+    "Description_txt_pca_31": 0.779,
+    "Description_txt_pca_32": 0.024,
+    "Description_txt_pca_33": 0.061,
+    "Description_txt_pca_34": 0.043,
+    "Description_txt_pca_35": 0.28,
+    "Description_txt_pca_36": 0.045,
+    "Description_txt_pca_37": 0.002,
+    "Description_txt_pca_38": 0.03,
+    "Description_txt_pca_39": 0.0,
+    "Description_txt_pca_40": 0.175,
+    "Description_txt_pca_41": 0.064,
+    "Description_txt_pca_42": 0.133,
+    "Description_txt_pca_43": 0.757,
+    "Description_txt_pca_44": 0.067,
+    "Description_txt_pca_45": 0.07,
+    "Description_txt_pca_46": 0.073,
+    "Description_txt_pca_47": 0.0,
+    "Description_txt_pca_48": 0.0,
+    "Description_txt_pca_49": 0.195,
+    "Description_txt_pca_50": 0.0,
+    "Name_txt_pca_30": 4.308,
+    "Name_txt_pca_31": 0.479,
+    "Name_txt_pca_32": 1.294,
+    "Name_txt_pca_33": 3.43,
+    "Name_txt_pca_34": 0.409,
+    "Name_txt_pca_35": 0.791,
+    "Name_txt_pca_36": 0.924,
+    "Name_txt_pca_37": 0.0,
+    "Name_txt_pca_38": 0.0,
+    "Name_txt_pca_39": 0.0,
+    "Name_txt_pca_40": 0.317,
+    "Name_txt_pca_41": 0.51,
+    "Name_txt_pca_42": 0.001,
+    "Name_txt_pca_43": 1.166,
+    "Name_txt_pca_44": 1.465,
+    "Name_txt_pca_45": 0.548,
+    "Name_txt_pca_46": 0.055,
+    "Name_txt_pca_47": 0.0,
+    "Name_txt_pca_48": 0.0,
+    "Name_txt_pca_49": 0.004,
+    "Name_txt_pca_50": 0.0,
+    "Tasting Notes_txt_pca_30": 0.089,
+    "Tasting Notes_txt_pca_31": 0.0,
+    "Tasting Notes_txt_pca_32": 0.0,
+    "Tasting Notes_txt_pca_33": 0.0,
+    "Tasting Notes_txt_pca_34": 0.0,
+    "Tasting Notes_txt_pca_35": 0.0,
+    "Tasting Notes_txt_pca_36": 0.0,
+    "Tasting Notes_txt_pca_37": 0.0,
+    "Tasting Notes_txt_pca_38": 0.0,
+    "Tasting Notes_txt_pca_39": 0.0,
+    "Tasting Notes_txt_pca_40": 0.003,
+    "Tasting Notes_txt_pca_41": 0.0,
+    "Tasting Notes_txt_pca_42": 0.0,
+    "Tasting Notes_txt_pca_43": 0.003,
+    "Tasting Notes_txt_pca_44": 0.001,
+    "Tasting Notes_txt_pca_45": 0.0,
+    "Tasting Notes_txt_pca_46": 0.009,
+    "Tasting Notes_txt_pca_47": 0.0,
+    "Tasting Notes_txt_pca_48": 0.0,
+    "Tasting Notes_txt_pca_49": 0.005,
+    "Tasting Notes_txt_pca_50": 0.0
+   },
+   "pred_share": 0.425,
+   "group_share": {
+    "structured": 0.1397,
+    "pca": 0.4353,
+    "lex": 0.1008,
+    "nbr": 0.125,
+    "num": 0.1822,
+    "probe": 0.0095,
+    "depthtop3": 0.0075
+   },
+   "top10": [
+    [
+     "Years Aged",
+     13.247
+    ],
+    [
+     "Brand_txt_pca_30",
+     10.082
+    ],
+    [
+     "Brand_txt_pca_32",
+     5.164
+    ],
+    [
+     "Name_txt_pca_30",
+     4.308
+    ],
+    [
+     "Description_txt_pca_24",
+     4.295
+    ],
+    [
+     "Brand_txt_pca_46",
+     3.677
+    ],
+    [
+     "Name_txt_pca_33",
+     3.43
+    ],
+    [
+     "Name_txt_pca_22",
+     2.71
+    ],
+    [
+     "Categories_txt_pca_6",
+     1.884
+    ],
+    [
+     "Brand_txt_pca_28",
+     1.828
+    ]
+   ]
+  }
+ }
+}

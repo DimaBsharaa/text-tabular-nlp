@@ -1,0 +1,462 @@
+{
+ "method": "cte_depth_top3",
+ "run_name": "cte_depth_top3",
+ "engine_version": "depth/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_SOCIAL_MUSEUMS_US_REVENUES",
+ "fold": 0,
+ "task": "REG",
+ "score": 0.918610575152007,
+ "metrics": {
+  "score": 0.918610575152007,
+  "metrics": {
+   "r2": 0.918610575152007,
+   "mse": 5301718963780040.0,
+   "rmse": 72812903.82741262
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 619.9,
+  "fit": 619.7,
+  "predict": 0.2,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1",
+   "method": "cte_depth_top3",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 03:02:58",
+ "argv": [
+  "--method",
+  "cte_depth_top3",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_SOCIAL_MUSEUMS_US_REVENUES",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 43.7,
+   "probe": 8.7
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 3.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.485275,
+     0.519329,
+     0.538627,
+     0.533843
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": false,
+    "nbr": false
+   },
+   "seconds": {
+    "frozen_embeddings": 19.5,
+    "experts": 24.1
+   }
+  },
+  "probe": {
+   "alpha": 3.0,
+   "oof_metric": [
+    0.5386848038157789,
+    0.5536013425993481,
+    0.5572313640951919,
+    0.5462368665748365
+   ]
+  },
+  "n_extra_columns": {
+   "Alternate Name": 24,
+   "City (Administrative Location)": 21,
+   "City (Physical Location)": 21,
+   "Institution Name": 21,
+   "Legal Name": 21,
+   "Museum Name": 21,
+   "Street Address (Administrative Location)": 21,
+   "Street Address (Physical Location)": 21
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ]
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "sparse_cg",
+   "layer_oof_metric": {
+    "1": 0.55233,
+    "2": 0.558152,
+    "3": 0.556748,
+    "4": 0.558015,
+    "5": 0.559618,
+    "6": 0.561663,
+    "7": 0.563135,
+    "8": 0.565395,
+    "9": 0.565227,
+    "10": 0.563839,
+    "11": 0.556173,
+    "12": 0.555858
+   },
+   "layer_alpha": {
+    "1": 30.0,
+    "2": 30.0,
+    "3": 30.0,
+    "4": 30.0,
+    "5": 30.0,
+    "6": 30.0,
+    "7": 30.0,
+    "8": 30.0,
+    "9": 30.0,
+    "10": 30.0,
+    "11": 30.0,
+    "12": 30.0
+   },
+   "ranked_layers": [
+    8,
+    9,
+    10,
+    7,
+    6,
+    5,
+    2,
+    4,
+    3,
+    11,
+    12,
+    1
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.5386848038157789,
+    0.5536013425993481,
+    0.5572313640951919,
+    0.5462368665748365
+   ],
+   "probe_cache_hits": 0,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 30.2,
+    "probes": 480.7
+   }
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Alternate Name_txt_pca_30": 0.082,
+    "Alternate Name_txt_pca_31": 0.007,
+    "Alternate Name_txt_pca_32": 0.002,
+    "Alternate Name_txt_pca_33": 0.0,
+    "Alternate Name_txt_pca_34": 0.0,
+    "Alternate Name_txt_pca_35": 0.0,
+    "Alternate Name_txt_pca_36": 0.0,
+    "Alternate Name_txt_pca_37": 0.0,
+    "Alternate Name_txt_pca_38": 0.0,
+    "Alternate Name_txt_pca_39": 0.0,
+    "Alternate Name_txt_pca_40": 0.0,
+    "Alternate Name_txt_pca_41": 0.0,
+    "Alternate Name_txt_pca_42": 0.0,
+    "Alternate Name_txt_pca_43": 0.0,
+    "Alternate Name_txt_pca_44": 0.0,
+    "Alternate Name_txt_pca_45": 0.003,
+    "Alternate Name_txt_pca_46": 0.028,
+    "Alternate Name_txt_pca_47": 0.0,
+    "Alternate Name_txt_pca_48": 0.0,
+    "Alternate Name_txt_pca_49": 0.0,
+    "Alternate Name_txt_pca_50": 0.0,
+    "Alternate Name_txt_pca_51": 0.0,
+    "Alternate Name_txt_pca_52": 0.0,
+    "Alternate Name_txt_pca_53": 0.245,
+    "Alternate Name_txt_pca_54": 0.546,
+    "City (Administrative Location)_txt_pca_30": 0.013,
+    "City (Administrative Location)_txt_pca_31": 0.0,
+    "City (Administrative Location)_txt_pca_32": 0.0,
+    "City (Administrative Location)_txt_pca_33": 0.0,
+    "City (Administrative Location)_txt_pca_34": 0.0,
+    "City (Administrative Location)_txt_pca_35": 0.0,
+    "City (Administrative Location)_txt_pca_36": 0.0,
+    "City (Administrative Location)_txt_pca_37": 0.0,
+    "City (Administrative Location)_txt_pca_38": 0.0,
+    "City (Administrative Location)_txt_pca_39": 0.0,
+    "City (Administrative Location)_txt_pca_40": 0.0,
+    "City (Administrative Location)_txt_pca_41": 0.001,
+    "City (Administrative Location)_txt_pca_42": 0.0,
+    "City (Administrative Location)_txt_pca_43": 0.0,
+    "City (Administrative Location)_txt_pca_44": 0.031,
+    "City (Administrative Location)_txt_pca_45": 0.0,
+    "City (Administrative Location)_txt_pca_46": 0.0,
+    "City (Administrative Location)_txt_pca_47": 0.0,
+    "City (Administrative Location)_txt_pca_48": 0.0,
+    "City (Administrative Location)_txt_pca_49": 0.0,
+    "City (Administrative Location)_txt_pca_50": 0.0,
+    "City (Physical Location)_txt_pca_30": 0.0,
+    "City (Physical Location)_txt_pca_31": 0.0,
+    "City (Physical Location)_txt_pca_32": 0.0,
+    "City (Physical Location)_txt_pca_33": 0.0,
+    "City (Physical Location)_txt_pca_34": 0.0,
+    "City (Physical Location)_txt_pca_35": 0.0,
+    "City (Physical Location)_txt_pca_36": 0.0,
+    "City (Physical Location)_txt_pca_37": 0.0,
+    "City (Physical Location)_txt_pca_38": 0.0,
+    "City (Physical Location)_txt_pca_39": 0.0,
+    "City (Physical Location)_txt_pca_40": 0.0,
+    "City (Physical Location)_txt_pca_41": 0.0,
+    "City (Physical Location)_txt_pca_42": 0.0,
+    "City (Physical Location)_txt_pca_43": 0.0,
+    "City (Physical Location)_txt_pca_44": 0.0,
+    "City (Physical Location)_txt_pca_45": 0.0,
+    "City (Physical Location)_txt_pca_46": 0.0,
+    "City (Physical Location)_txt_pca_47": 0.0,
+    "City (Physical Location)_txt_pca_48": 0.0,
+    "City (Physical Location)_txt_pca_49": 0.0,
+    "City (Physical Location)_txt_pca_50": 0.0,
+    "Institution Name_txt_pca_30": 52.599,
+    "Institution Name_txt_pca_31": 0.0,
+    "Institution Name_txt_pca_32": 0.0,
+    "Institution Name_txt_pca_33": 0.0,
+    "Institution Name_txt_pca_34": 0.0,
+    "Institution Name_txt_pca_35": 0.0,
+    "Institution Name_txt_pca_36": 0.0,
+    "Institution Name_txt_pca_37": 0.0,
+    "Institution Name_txt_pca_38": 0.0,
+    "Institution Name_txt_pca_39": 0.0,
+    "Institution Name_txt_pca_40": 0.023,
+    "Institution Name_txt_pca_41": 0.13,
+    "Institution Name_txt_pca_42": 0.004,
+    "Institution Name_txt_pca_43": 0.841,
+    "Institution Name_txt_pca_44": 0.822,
+    "Institution Name_txt_pca_45": 0.0,
+    "Institution Name_txt_pca_46": 0.005,
+    "Institution Name_txt_pca_47": 0.0,
+    "Institution Name_txt_pca_48": 0.0,
+    "Institution Name_txt_pca_49": 0.0,
+    "Institution Name_txt_pca_50": 0.0,
+    "Legal Name_txt_pca_30": 9.295,
+    "Legal Name_txt_pca_31": 0.0,
+    "Legal Name_txt_pca_32": 0.0,
+    "Legal Name_txt_pca_33": 0.0,
+    "Legal Name_txt_pca_34": 0.0,
+    "Legal Name_txt_pca_35": 0.0,
+    "Legal Name_txt_pca_36": 0.0,
+    "Legal Name_txt_pca_37": 0.0,
+    "Legal Name_txt_pca_38": 0.0,
+    "Legal Name_txt_pca_39": 0.0,
+    "Legal Name_txt_pca_40": 0.483,
+    "Legal Name_txt_pca_41": 0.026,
+    "Legal Name_txt_pca_42": 0.0,
+    "Legal Name_txt_pca_43": 0.417,
+    "Legal Name_txt_pca_44": 0.0,
+    "Legal Name_txt_pca_45": 0.0,
+    "Legal Name_txt_pca_46": 0.0,
+    "Legal Name_txt_pca_47": 0.0,
+    "Legal Name_txt_pca_48": 0.0,
+    "Legal Name_txt_pca_49": 0.0,
+    "Legal Name_txt_pca_50": 0.0,
+    "Museum Name_txt_pca_30": 0.049,
+    "Museum Name_txt_pca_31": 0.0,
+    "Museum Name_txt_pca_32": 0.0,
+    "Museum Name_txt_pca_33": 0.0,
+    "Museum Name_txt_pca_34": 0.0,
+    "Museum Name_txt_pca_35": 0.0,
+    "Museum Name_txt_pca_36": 0.0,
+    "Museum Name_txt_pca_37": 0.0,
+    "Museum Name_txt_pca_38": 0.0,
+    "Museum Name_txt_pca_39": 0.0,
+    "Museum Name_txt_pca_40": 0.096,
+    "Museum Name_txt_pca_41": 0.083,
+    "Museum Name_txt_pca_42": 0.0,
+    "Museum Name_txt_pca_43": 0.0,
+    "Museum Name_txt_pca_44": 0.022,
+    "Museum Name_txt_pca_45": 0.0,
+    "Museum Name_txt_pca_46": 0.001,
+    "Museum Name_txt_pca_47": 0.0,
+    "Museum Name_txt_pca_48": 0.0,
+    "Museum Name_txt_pca_49": 0.0,
+    "Museum Name_txt_pca_50": 0.0,
+    "Street Address (Administrative Location)_txt_pca_30": 0.02,
+    "Street Address (Administrative Location)_txt_pca_31": 0.0,
+    "Street Address (Administrative Location)_txt_pca_32": 0.168,
+    "Street Address (Administrative Location)_txt_pca_33": 0.162,
+    "Street Address (Administrative Location)_txt_pca_34": 0.005,
+    "Street Address (Administrative Location)_txt_pca_35": 0.0,
+    "Street Address (Administrative Location)_txt_pca_36": 0.0,
+    "Street Address (Administrative Location)_txt_pca_37": 0.0,
+    "Street Address (Administrative Location)_txt_pca_38": 0.0,
+    "Street Address (Administrative Location)_txt_pca_39": 0.0,
+    "Street Address (Administrative Location)_txt_pca_40": 0.003,
+    "Street Address (Administrative Location)_txt_pca_41": 0.0,
+    "Street Address (Administrative Location)_txt_pca_42": 0.0,
+    "Street Address (Administrative Location)_txt_pca_43": 0.009,
+    "Street Address (Administrative Location)_txt_pca_44": 0.003,
+    "Street Address (Administrative Location)_txt_pca_45": 0.03,
+    "Street Address (Administrative Location)_txt_pca_46": 0.0,
+    "Street Address (Administrative Location)_txt_pca_47": 0.0,
+    "Street Address (Administrative Location)_txt_pca_48": 0.0,
+    "Street Address (Administrative Location)_txt_pca_49": 0.0,
+    "Street Address (Administrative Location)_txt_pca_50": 0.0,
+    "Street Address (Physical Location)_txt_pca_30": 0.033,
+    "Street Address (Physical Location)_txt_pca_31": 0.0,
+    "Street Address (Physical Location)_txt_pca_32": 0.0,
+    "Street Address (Physical Location)_txt_pca_33": 0.0,
+    "Street Address (Physical Location)_txt_pca_34": 0.0,
+    "Street Address (Physical Location)_txt_pca_35": 0.0,
+    "Street Address (Physical Location)_txt_pca_36": 0.0,
+    "Street Address (Physical Location)_txt_pca_37": 0.0,
+    "Street Address (Physical Location)_txt_pca_38": 0.0,
+    "Street Address (Physical Location)_txt_pca_39": 0.0,
+    "Street Address (Physical Location)_txt_pca_40": 0.0,
+    "Street Address (Physical Location)_txt_pca_41": 0.0,
+    "Street Address (Physical Location)_txt_pca_42": 0.0,
+    "Street Address (Physical Location)_txt_pca_43": 0.0,
+    "Street Address (Physical Location)_txt_pca_44": 0.0,
+    "Street Address (Physical Location)_txt_pca_45": 0.0,
+    "Street Address (Physical Location)_txt_pca_46": 0.0,
+    "Street Address (Physical Location)_txt_pca_47": 0.0,
+    "Street Address (Physical Location)_txt_pca_48": 0.0,
+    "Street Address (Physical Location)_txt_pca_49": 0.0,
+    "Street Address (Physical Location)_txt_pca_50": 0.0
+   },
+   "pred_share": 0.6629,
+   "group_share": {
+    "structured": 0.0028,
+    "pca": 0.3343,
+    "lex": 0.0008,
+    "nbr": 0.6202,
+    "num": 0.034,
+    "probe": 0.0025,
+    "depthtop3": 0.0055
+   },
+   "top10": [
+    [
+     "Institution Name_txt_pca_30",
+     52.599
+    ],
+    [
+     "Legal Name_txt_pca_30",
+     9.295
+    ],
+    [
+     "Institution Name_txt_pca_1",
+     5.469
+    ],
+    [
+     "Institution Name_txt_pca_6",
+     2.078
+    ],
+    [
+     "Institution Name_txt_pca_0",
+     1.604
+    ],
+    [
+     "Legal Name_txt_pca_5",
+     1.428
+    ],
+    [
+     "Institution Name_txt_pca_5",
+     1.409
+    ],
+    [
+     "Institution Name_txt_pca_14",
+     1.353
+    ],
+    [
+     "Legal Name_txt_pca_9",
+     1.332
+    ],
+    [
+     "Legal Name_txt_pca_14",
+     1.312
+    ]
+   ]
+  }
+ }
+}

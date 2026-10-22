@@ -1,0 +1,233 @@
+{
+ "method": "cte_depth_top3",
+ "run_name": "cte_depth_top3",
+ "engine_version": "depth/1",
+ "tar_path": null,
+ "learner": "tabm",
+ "learner_model_name": "TabM \u24c2\ufe0f",
+ "dataset": "MUL_TEXT_WOMEN_CLOTHING_REVIEW",
+ "fold": 3,
+ "task": "MUL",
+ "score": 0.9078581876437697,
+ "metrics": {
+  "score": 0.9078581876437697,
+  "metrics": {
+   "auc": 0.9078581876437697,
+   "logloss": 0.6599509745864222
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9057746757318228,
+  "joint_tar": 0.9072636680593658,
+  "unimodal_structured": 0.7700557187395543,
+  "unimodal_text": 0.8893429395084406
+ },
+ "diff_vs_csv_joint_tar": 0.0005945195844039297,
+ "runtime_s": {
+  "total": 18.2,
+  "fit": 17.9,
+  "predict": 0.2,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1",
+   "method": "cte_depth_top3",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 1878,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "41b7f4fe0c6f61b210a57b216e66c6d04963ea9b",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 19:24:13",
+ "argv": [
+  "--method",
+  "cte_depth_top3",
+  "--learner",
+  "tabm",
+  "--dataset",
+  "MUL_TEXT_WOMEN_CLOTHING_REVIEW",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 2.8,
+   "probe": 4.7
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 10.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.801209,
+     0.825039,
+     0.844186,
+     0.854093
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.2,
+    "experts": 2.5
+   }
+  },
+  "probe": {
+   "alpha": 3.0,
+   "oof_metric": [
+    0.8639762375463684,
+    0.8735523382126129,
+    0.878511354884755,
+    0.8782120060217171
+   ]
+  },
+  "n_extra_columns": {
+   "Review Text": 32,
+   "Title": 20
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ]
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "eig",
+   "layer_oof_metric": {
+    "1": 0.848308,
+    "2": 0.851546,
+    "3": 0.855505,
+    "4": 0.858988,
+    "5": 0.867919,
+    "6": 0.874917,
+    "7": 0.878601,
+    "8": 0.881612,
+    "9": 0.88148,
+    "10": 0.879761,
+    "11": 0.879651,
+    "12": 0.87877
+   },
+   "layer_alpha": {
+    "1": 10.0,
+    "2": 30.0,
+    "3": 10.0,
+    "4": 30.0,
+    "5": 30.0,
+    "6": 30.0,
+    "7": 30.0,
+    "8": 30.0,
+    "9": 30.0,
+    "10": 30.0,
+    "11": 30.0,
+    "12": 30.0
+   },
+   "ranked_layers": [
+    8,
+    9,
+    10,
+    11,
+    12,
+    7,
+    6,
+    5,
+    4,
+    3,
+    2,
+    1
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.8639762375463684,
+    0.8735523382126129,
+    0.878511354884755,
+    0.8782120060217171
+   ],
+   "probe_cache_hits": 12,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 0.9,
+    "probes": 4.2
+   }
+  },
+  "catboost_importance": null
+ }
+}

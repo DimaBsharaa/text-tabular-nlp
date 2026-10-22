@@ -407,6 +407,16 @@ def compute_cte_features(kind: str, texts: Dict[str, list[str]], embs: Optional[
 
 # ---------------------------------------------------------------------------------------- main entry
 
+def content_key(y: np.ndarray, extra_texts: Dict[str, Dict[str, list]], text_cols: list[str]) -> str:
+    """Fingerprint of what a supervised cache entry also depends on beyond the row ids and training texts: the training
+    labels and the texts of the rows it predicts (learner-val / test). Without it, a rerun with other labels or edited
+    prediction texts under the same dataset / fold / row ids would reuse stale features (audit, 2026-10-22)."""
+    h = hashlib.sha1(np.ascontiguousarray(y).tobytes())
+    for k in sorted(extra_texts):
+        h.update(("\x01" + k + "\x00" + "\x00".join(t for c in text_cols for t in extra_texts[k][c])).encode())
+    return h.hexdigest()[:10]
+
+
 def run_cte(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], is_cls: bool,
             extra: Dict[str, tuple[DataFrame, Series]], cfg: te.TarConfig, device: torch.device,
             cache_root: Optional[str], dataset: str, fold: int, struct_cols: Optional[list[str]] = None,
@@ -443,6 +453,7 @@ def run_cte(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], 
     extra_texts = {k: {c: te.encoding_texts(x, c) for c in text_cols} for k, (x, _) in extra_t.items()}
     rows_key = te._rows_hash(x_fit.index, *[x.index for x, _ in extra.values()])
     texts_key = hashlib.sha1("\x00".join(t for c in text_cols for t in texts[c]).encode()).hexdigest()[:10]
+    content = content_key(y, extra_texts, text_cols)
     t1 = time.time()
     feats_by_split, hits, timings = {"pool": {}, **{k: {} for k in extra}}, {}, {}
     residual, hooks, p6_info = None, {}, {}
@@ -458,7 +469,7 @@ def run_cte(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], 
         tag = kind + ("nb" if nb and kind == "lex" else "")
         if residual is not None:
             tag += "res_" + p6.P6_CONFIG.key() + "_" + hashlib.sha1("|".join(residual.xs.columns).encode()).hexdigest()[:8]
-        key = f"{dataset}/fold{fold}/cte_{tag}_{mode}_{ccfg.key()}_{rows_key}_{texts_key}"
+        key = f"{dataset}/fold{fold}/cte_{tag}_{mode}_{ccfg.key()}_{rows_key}_{texts_key}_{content}"
 
         def compute(kind=kind):
             embs = extra_embs = None

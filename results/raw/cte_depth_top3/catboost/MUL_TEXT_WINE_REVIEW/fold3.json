@@ -1,0 +1,376 @@
+{
+ "method": "cte_depth_top3",
+ "run_name": "cte_depth_top3",
+ "engine_version": "depth/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_WINE_REVIEW",
+ "fold": 3,
+ "task": "MUL",
+ "score": 0.980992859483035,
+ "metrics": {
+  "score": 0.980992859483035,
+  "metrics": {
+   "auc": 0.980992859483035,
+   "logloss": 0.7985283348825485
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9739780145521624,
+  "joint_tar": 0.9820413538206678,
+  "unimodal_structured": 0.8548362202887065,
+  "unimodal_text": 0.9710420329731444
+ },
+ "diff_vs_csv_joint_tar": -0.001048494337632766,
+ "runtime_s": {
+  "total": 2102.8,
+  "fit": 2102.6,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1",
+   "method": "cte_depth_top3",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "0728696809ed92a11b55357ab0f1b5897a8d1e28",
+  "dirty": false
+ },
+ "timestamp": "2026-10-19 17:18:02",
+ "argv": [
+  "--method",
+  "cte_depth_top3",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_WINE_REVIEW",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 4.3,
+   "probe": 25.1
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 10.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.936815,
+     0.945229,
+     0.953474,
+     0.959741
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.3,
+    "experts": 3.8
+   }
+  },
+  "probe": {
+   "alpha": 10.0,
+   "oof_metric": [
+    0.9483093731249773,
+    0.9510561034404249,
+    0.9535098003670327,
+    0.9542194911880132
+   ]
+  },
+  "n_extra_columns": {
+   "description": 56,
+   "province": 20
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ]
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "eig",
+   "layer_oof_metric": {
+    "1": 0.943356,
+    "2": 0.941531,
+    "3": 0.937038,
+    "4": 0.93597,
+    "5": 0.935258,
+    "6": 0.934578,
+    "7": 0.934541,
+    "8": 0.934963,
+    "9": 0.938117,
+    "10": 0.943185,
+    "11": 0.949189,
+    "12": 0.954744
+   },
+   "layer_alpha": {
+    "1": 10.0,
+    "2": 3.0,
+    "3": 3.0,
+    "4": 3.0,
+    "5": 3.0,
+    "6": 3.0,
+    "7": 3.0,
+    "8": 3.0,
+    "9": 3.0,
+    "10": 3.0,
+    "11": 30.0,
+    "12": 30.0
+   },
+   "ranked_layers": [
+    12,
+    11,
+    1,
+    10,
+    2,
+    9,
+    3,
+    4,
+    5,
+    8,
+    6,
+    7
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.9483093731249773,
+    0.9510561034404249,
+    0.9535098003670327,
+    0.9542194911880132
+   ],
+   "probe_cache_hits": 0,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 10.5,
+    "probes": 42.1
+   }
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "description_txt_pca_30": 2.471,
+    "description_txt_pca_31": 2.997,
+    "description_txt_pca_32": 2.336,
+    "description_txt_pca_33": 3.189,
+    "description_txt_pca_34": 3.22,
+    "description_txt_pca_35": 1.111,
+    "description_txt_pca_36": 1.456,
+    "description_txt_pca_37": 1.254,
+    "description_txt_pca_38": 1.276,
+    "description_txt_pca_39": 0.901,
+    "description_txt_pca_40": 2.453,
+    "description_txt_pca_41": 0.599,
+    "description_txt_pca_42": 4.006,
+    "description_txt_pca_43": 2.978,
+    "description_txt_pca_44": 1.641,
+    "description_txt_pca_45": 0.928,
+    "description_txt_pca_46": 0.494,
+    "description_txt_pca_47": 2.09,
+    "description_txt_pca_48": 0.304,
+    "description_txt_pca_49": 0.86,
+    "description_txt_pca_50": 0.265,
+    "description_txt_pca_51": 0.55,
+    "description_txt_pca_52": 1.084,
+    "description_txt_pca_53": 0.945,
+    "description_txt_pca_54": 0.0,
+    "description_txt_pca_55": 0.044,
+    "description_txt_pca_56": 0.079,
+    "description_txt_pca_57": 0.011,
+    "description_txt_pca_58": 0.004,
+    "description_txt_pca_59": 0.003,
+    "description_txt_pca_60": 0.0,
+    "description_txt_pca_61": 0.0,
+    "description_txt_pca_62": 0.065,
+    "description_txt_pca_63": 0.164,
+    "description_txt_pca_64": 0.099,
+    "description_txt_pca_65": 0.051,
+    "description_txt_pca_66": 0.489,
+    "description_txt_pca_67": 0.971,
+    "description_txt_pca_68": 0.223,
+    "description_txt_pca_69": 0.477,
+    "description_txt_pca_70": 0.001,
+    "description_txt_pca_71": 0.0,
+    "description_txt_pca_72": 0.182,
+    "description_txt_pca_73": 0.0,
+    "description_txt_pca_74": 0.37,
+    "description_txt_pca_75": 1.376,
+    "description_txt_pca_76": 1.207,
+    "description_txt_pca_77": 0.765,
+    "description_txt_pca_78": 1.182,
+    "description_txt_pca_79": 1.159,
+    "description_txt_pca_80": 1.178,
+    "description_txt_pca_81": 0.586,
+    "description_txt_pca_82": 0.687,
+    "description_txt_pca_83": 0.697,
+    "description_txt_pca_84": 0.476,
+    "description_txt_pca_85": 0.366,
+    "description_txt_pca_86": 0.564,
+    "description_txt_pca_87": 0.936,
+    "description_txt_pca_88": 1.897,
+    "description_txt_pca_89": 1.735,
+    "description_txt_pca_90": 0.913,
+    "description_txt_pca_91": 0.547,
+    "description_txt_pca_92": 0.841,
+    "description_txt_pca_93": 0.319,
+    "description_txt_pca_94": 0.466,
+    "description_txt_pca_95": 0.431,
+    "description_txt_pca_96": 0.703,
+    "description_txt_pca_97": 0.738,
+    "province_txt_pca_30": 0.0,
+    "province_txt_pca_31": 0.0,
+    "province_txt_pca_32": 0.0,
+    "province_txt_pca_33": 0.0,
+    "province_txt_pca_34": 0.0,
+    "province_txt_pca_35": 0.0,
+    "province_txt_pca_36": 0.0,
+    "province_txt_pca_37": 0.0,
+    "province_txt_pca_38": 0.0,
+    "province_txt_pca_39": 0.1,
+    "province_txt_pca_40": 0.053,
+    "province_txt_pca_41": 0.0,
+    "province_txt_pca_42": 0.052,
+    "province_txt_pca_43": 0.222,
+    "province_txt_pca_44": 0.0,
+    "province_txt_pca_45": 0.0,
+    "province_txt_pca_46": 0.0,
+    "province_txt_pca_47": 0.0,
+    "province_txt_pca_48": 0.0,
+    "province_txt_pca_49": 0.0
+   },
+   "pred_share": 0.6284,
+   "group_share": {
+    "structured": 0.0612,
+    "pca": 0.3104,
+    "lex": 0.2326,
+    "nbr": 0.1614,
+    "num": 0.0329,
+    "probe": 0.1005,
+    "depthtop3": 0.1009
+   },
+   "top10": [
+    [
+     "country",
+     4.193
+    ],
+    [
+     "description_txt_pca_42",
+     4.006
+    ],
+    [
+     "description_txt_pca_34",
+     3.22
+    ],
+    [
+     "description_txt_pca_33",
+     3.189
+    ],
+    [
+     "description_txt_pca_31",
+     2.997
+    ],
+    [
+     "description_txt_pca_43",
+     2.978
+    ],
+    [
+     "description_txt_pca_30",
+     2.471
+    ],
+    [
+     "description_txt_pca_40",
+     2.453
+    ],
+    [
+     "description_txt_pca_32",
+     2.336
+    ],
+    [
+     "description_txt_pca_47",
+     2.09
+    ]
+   ]
+  }
+ }
+}

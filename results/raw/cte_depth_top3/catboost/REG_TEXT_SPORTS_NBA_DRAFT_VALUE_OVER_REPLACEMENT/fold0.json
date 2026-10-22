@@ -1,0 +1,330 @@
+{
+ "method": "cte_depth_top3",
+ "run_name": "cte_depth_top3",
+ "engine_version": "depth/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_SPORTS_NBA_DRAFT_VALUE_OVER_REPLACEMENT",
+ "fold": 0,
+ "task": "REG",
+ "score": 0.9918077076451988,
+ "metrics": {
+  "score": 0.9918077076451988,
+  "metrics": {
+   "r2": 0.9918077076451988,
+   "mse": 1.0683161193918078,
+   "rmse": 1.033593788386815
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 51.9,
+  "fit": 51.9,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1",
+   "method": "cte_depth_top3",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 1503,
+ "n_test": 166,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 03:04:37",
+ "argv": [
+  "--method",
+  "cte_depth_top3",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_SPORTS_NBA_DRAFT_VALUE_OVER_REPLACEMENT",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 3.0,
+   "probe": 0.3
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 10.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.022786,
+     0.028241,
+     0.031486,
+     0.033432
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": false,
+    "nbr": false
+   },
+   "seconds": {
+    "frozen_embeddings": 2.1,
+    "experts": 0.8
+   }
+  },
+  "probe": {
+   "alpha": 3.0,
+   "oof_metric": [
+    0.25170689244092154,
+    0.2812940160695783,
+    0.2949638887914607,
+    0.2912595277025013
+   ]
+  },
+  "n_extra_columns": {
+   "college": 24,
+   "player": 21
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ]
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "sparse_cg",
+   "layer_oof_metric": {
+    "1": 0.263939,
+    "2": 0.287527,
+    "3": 0.296572,
+    "4": 0.307746,
+    "5": 0.304254,
+    "6": 0.311808,
+    "7": 0.30623,
+    "8": 0.300696,
+    "9": 0.308964,
+    "10": 0.314181,
+    "11": 0.310655,
+    "12": 0.298047
+   },
+   "layer_alpha": {
+    "1": 10.0,
+    "2": 10.0,
+    "3": 10.0,
+    "4": 10.0,
+    "5": 10.0,
+    "6": 10.0,
+    "7": 10.0,
+    "8": 30.0,
+    "9": 10.0,
+    "10": 30.0,
+    "11": 30.0,
+    "12": 30.0
+   },
+   "ranked_layers": [
+    10,
+    6,
+    11,
+    9,
+    4,
+    7,
+    5,
+    8,
+    12,
+    3,
+    2,
+    1
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.25170689244092154,
+    0.2812940160695783,
+    0.2949638887914607,
+    0.2912595277025013
+   ],
+   "probe_cache_hits": 0,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 3.3,
+    "probes": 9.5
+   }
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "college_txt_pca_30": 0.069,
+    "college_txt_pca_31": 0.314,
+    "college_txt_pca_32": 0.361,
+    "college_txt_pca_33": 0.0,
+    "college_txt_pca_34": 0.0,
+    "college_txt_pca_35": 0.0,
+    "college_txt_pca_36": 0.0,
+    "college_txt_pca_37": 0.0,
+    "college_txt_pca_38": 0.0,
+    "college_txt_pca_39": 0.0,
+    "college_txt_pca_40": 0.0,
+    "college_txt_pca_41": 0.0,
+    "college_txt_pca_42": 0.076,
+    "college_txt_pca_43": 0.075,
+    "college_txt_pca_44": 0.0,
+    "college_txt_pca_45": 0.412,
+    "college_txt_pca_46": 0.308,
+    "college_txt_pca_47": 0.0,
+    "college_txt_pca_48": 0.006,
+    "college_txt_pca_49": 0.0,
+    "college_txt_pca_50": 0.0,
+    "college_txt_pca_51": 0.109,
+    "college_txt_pca_52": 0.006,
+    "college_txt_pca_53": 0.458,
+    "college_txt_pca_54": 0.025,
+    "player_txt_pca_30": 0.89,
+    "player_txt_pca_31": 0.0,
+    "player_txt_pca_32": 0.0,
+    "player_txt_pca_33": 0.0,
+    "player_txt_pca_34": 0.0,
+    "player_txt_pca_35": 0.0,
+    "player_txt_pca_36": 0.0,
+    "player_txt_pca_37": 0.0,
+    "player_txt_pca_38": 0.0,
+    "player_txt_pca_39": 0.0,
+    "player_txt_pca_40": 0.048,
+    "player_txt_pca_41": 0.004,
+    "player_txt_pca_42": 0.0,
+    "player_txt_pca_43": 0.022,
+    "player_txt_pca_44": 0.047,
+    "player_txt_pca_45": 0.0,
+    "player_txt_pca_46": 0.01,
+    "player_txt_pca_47": 0.0,
+    "player_txt_pca_48": 0.0,
+    "player_txt_pca_49": 0.0,
+    "player_txt_pca_50": 0.0
+   },
+   "pred_share": 0.0324,
+   "group_share": {
+    "structured": 0.8866,
+    "pca": 0.081,
+    "lex": 0.0007,
+    "nbr": 0.0156,
+    "num": 0.0112,
+    "probe": 0.0046,
+    "depthtop3": 0.0003
+   },
+   "top10": [
+    [
+     "win_shares",
+     53.348
+    ],
+    [
+     "box_plus_minus",
+     20.698
+    ],
+    [
+     "average_minutes_played",
+     4.416
+    ],
+    [
+     "points_per_game",
+     2.822
+    ],
+    [
+     "years_active",
+     2.645
+    ],
+    [
+     "average_assists",
+     2.259
+    ],
+    [
+     "player_txt_pca_30",
+     0.89
+    ],
+    [
+     "player_txt_pca_4",
+     0.889
+    ],
+    [
+     "player_txt_pca_0",
+     0.739
+    ],
+    [
+     "3_point_percentage",
+     0.722
+    ]
+   ]
+  }
+ }
+}

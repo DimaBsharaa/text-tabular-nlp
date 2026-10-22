@@ -1,0 +1,232 @@
+{
+ "method": "cte_depth_top3",
+ "run_name": "cte_depth_top3",
+ "engine_version": "depth/1",
+ "tar_path": null,
+ "learner": "tabpfnv2",
+ "learner_model_name": "TabPFN-v2 \ud83e\udd2f",
+ "dataset": "MUL_TEXT_PRODUCT_SENTIMENT",
+ "fold": 1,
+ "task": "MUL",
+ "score": 0.9206901473366743,
+ "metrics": {
+  "score": 0.9206901473366743,
+  "metrics": {
+   "auc": 0.9206901473366743,
+   "logloss": 0.41504939159982485
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.912157043598033,
+  "joint_tar": 0.9265624544565152,
+  "unimodal_structured": 0.8214248084121688,
+  "unimodal_text": 0.8023980404590743
+ },
+ "diff_vs_csv_joint_tar": -0.0058723071198408805,
+ "runtime_s": {
+  "total": 33.3,
+  "fit": 28.7,
+  "predict": 4.6,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1",
+   "method": "cte_depth_top3",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 4582,
+ "n_test": 509,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "b649f47211bce858897802ead14f2fcd29f7130a",
+  "dirty": false
+ },
+ "timestamp": "2026-10-21 04:04:05",
+ "argv": [
+  "--method",
+  "cte_depth_top3",
+  "--learner",
+  "tabpfnv2",
+  "--dataset",
+  "MUL_TEXT_PRODUCT_SENTIMENT",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 6,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 12.1,
+   "probe": 0.6
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 10.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.722347,
+     0.735507,
+     0.745107,
+     0.749373
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": false,
+    "nbr": false
+   },
+   "seconds": {
+    "frozen_embeddings": 1.1,
+    "experts": 11.0
+   }
+  },
+  "probe": {
+   "alpha": 3.0,
+   "oof_metric": [
+    0.7640330001395128,
+    0.7747453785790638,
+    0.7790350780380562,
+    0.7715117676581303
+   ]
+  },
+  "n_extra_columns": {
+   "Product_Description": 29
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ]
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "eig",
+   "layer_oof_metric": {
+    "1": 0.736443,
+    "2": 0.737051,
+    "3": 0.751227,
+    "4": 0.758022,
+    "5": 0.769347,
+    "6": 0.784384,
+    "7": 0.795475,
+    "8": 0.792444,
+    "9": 0.791144,
+    "10": 0.787912,
+    "11": 0.777196,
+    "12": 0.776676
+   },
+   "layer_alpha": {
+    "1": 10.0,
+    "2": 10.0,
+    "3": 3.0,
+    "4": 3.0,
+    "5": 10.0,
+    "6": 10.0,
+    "7": 10.0,
+    "8": 10.0,
+    "9": 10.0,
+    "10": 10.0,
+    "11": 30.0,
+    "12": 30.0
+   },
+   "ranked_layers": [
+    7,
+    8,
+    9,
+    10,
+    6,
+    11,
+    12,
+    5,
+    4,
+    3,
+    2,
+    1
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.7640330001395128,
+    0.7747453785790638,
+    0.7790350780380562,
+    0.7715117676581303
+   ],
+   "probe_cache_hits": 0,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 3.6,
+    "probes": 4.4
+   }
+  },
+  "catboost_importance": null
+ }
+}

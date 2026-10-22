@@ -4,7 +4,7 @@ An extension of [MulTaBench](https://github.com/alanarazi7/MulTaBench), the benc
 columns ([arXiv:2605.10616](https://arxiv.org/abs/2605.10616)). The benchmark's strongest text pipeline, **Joint TAR**,
 fine-tunes the text encoder on each task. This repository presents a method that makes the text features target-aware
 **without fine-tuning anything**. A frozen encoder is read by a few cheap models that predict the target ("experts"),
-each trained so that it never sees the label of the row it describes. With all five MulTaBench learners, the method
+each fitted without the label of the row it describes. With all five MulTaBench learners, the method
 scores higher than Joint TAR with the same learner.
 
 ## Results
@@ -36,8 +36,9 @@ gain over Joint TAR with its 95% interval, the honest scale.
   (median +0.003, 24 of 36 won).
 - TabPFN has no published baseline for 2 of the 20 datasets (Spotify Genres, Wine Review).
 
-Full analysis, with every comparison and chart: [**notebook 02**](notebooks/02_results.ipynb). Raw scores:
-[`results/`](results/).
+Full analysis, with every comparison and chart: [**notebook 02**](notebooks/02_results.ipynb). Scores per fold, dataset
+and learner: [`results/`](results/); the result file of every run of the final method (788 JSONs, with config, git
+commit and hardware): [`results/raw/`](results/raw/).
 
 ## Background
 
@@ -56,7 +57,8 @@ Each one measured on the benchmark, while studying it or while developing the me
 
 1. **Over-trust.** The encoder is fine-tuned on the training rows and then embeds those same rows, so their text
    features look better than they will on new rows: TAR's prediction head scores +0.031 higher on its own training
-   rows than on test rows (16 of 18 runs, p = 0.0002). The learner trusts them too much.
+   rows than on test rows (16 of 18 runs on 6 datasets, p = 0.0002). A downstream learner may trust them too much; like
+   point 2, this is a motivation, not a measured cause.
 2. **PCA does not look at the target.** 384 → 30 dimensions keeps the directions in which the texts vary most, not
    necessarily the ones that predict the target. This is a motivation, not a measured cause of Joint TAR's shortfall (the
    MulTaBench paper's Figure 6 finds Joint TAR ahead of Joint Frozen at 15, 30 and 60 components alike); a probe on the full 384
@@ -95,8 +97,10 @@ final-layer embedding (probe) and the best inner layers (depth probes). Each ans
 fine-tuning, so no GPU (5).
 
 **Cross-fitting** is what makes this work. The training rows are split into 5 parts; each part's expert predictions
-come from experts trained on the other 4, so no training row's feature was computed with its own label, exactly as
-for a test row. Test rows get predictions from experts trained on all training rows. The same lexical expert without cross-fitting
+come from experts trained on the other 4, so each training row's feature comes from a model that never saw that row's
+label, as for a test row. Test rows get predictions from experts trained on all training rows. The few selection
+choices (the Ridge penalty from a small grid, the three depth layers) are made once from all training rows'
+out-of-fold scores, never from validation or test labels. The same lexical expert without cross-fitting
 (trained on all training rows, then used on them) scores 0.034 lower, well below Joint TAR.
 
 Everything that uses labels is fit on training rows only, and nothing is fine-tuned: the encoder is the public
@@ -128,8 +132,8 @@ Learner choice, API keys (TabPFN-2.5 needs one), measured runtimes and the bench
   ([`learners.py`](multabench/ours/learners.py)); the learners, their settings, the splits and the metric functions
   are upstream's own.
 - Our re-implementation of Joint TAR reproduces the published scores (mean difference −0.002).
-- Every headline number is recomputed from the raw result files by a script that uses no project code
-  ([`check_recompute.py`](scripts/check_recompute.py)), and with shuffled training labels the method falls to chance
+- Every headline number is recomputed from the committed raw result files (`results/raw/`) by a script that uses no
+  project code ([`check_recompute.py`](scripts/check_recompute.py)), and with shuffled training labels the method falls to chance
   ([`check_label_shuffle.py`](scripts/check_label_shuffle.py)).
 
 ## Notebooks
@@ -155,10 +159,12 @@ a probe on the full embedding, then probes on the inner layers, took it clearly 
   encoder cannot represent, no read-out of it can recover.
 - **Smaller gains on new data.** On 36 further datasets the gain is positive but small, and not significant after
   correcting for the number of tests.
-- **The 20 datasets were seen during development.** Ideas were compared on splits of the training rows only and each
-  final claim was specified before its run, but the method was chosen on these datasets.
-- **Not faster.** Building our features on a CPU takes about 2.7 minutes per job, against 1.3 minutes for an
-  optimised GPU fine-tuning of Joint TAR on the same machine; the method saves the GPU, not time.
+- **The 20 datasets were seen during development.** Early on, their test scores were looked at; later ideas were
+  compared on splits of the training rows only and each final claim was specified before its run, but the method was
+  chosen on these datasets, so they are not a pristine holdout. The 36 datasets never used show a smaller gain.
+- **Not faster.** Building our features on a CPU takes about 2.7 minutes per job (excluding the frozen encoding, done
+  once per dataset), against 1.3 minutes for an optimised GPU fine-tuning of Joint TAR on the same machine; the method
+  saves the GPU, not time.
 - **One learner seed** (42), as in the published baselines; the method's own randomness, the assignment of rows to
   cross-fitting folds, was checked with two more seeds.
 

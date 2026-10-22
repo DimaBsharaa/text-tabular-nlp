@@ -1,0 +1,308 @@
+{
+ "method": "cte_depth_top3",
+ "run_name": "cte_depth_top3",
+ "engine_version": "depth/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_PROFESSIONAL_ML_DS_AI_JOBS_SALARIES",
+ "fold": 2,
+ "task": "REG",
+ "score": 0.36262524724326684,
+ "metrics": {
+  "score": 0.36262524724326684,
+  "metrics": {
+   "r2": 0.36262524724326684,
+   "mse": 8771549321.85401,
+   "rmse": 93656.54980754956
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 70.4,
+  "fit": 70.4,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1",
+   "method": "cte_depth_top3",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 02:33:14",
+ "argv": [
+  "--method",
+  "cte_depth_top3",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_PROFESSIONAL_ML_DS_AI_JOBS_SALARIES",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 5.6,
+   "probe": 0.9
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 10.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.431684,
+     0.433532,
+     0.434164,
+     0.434331
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": false,
+    "nbr": false
+   },
+   "seconds": {
+    "frozen_embeddings": 1.8,
+    "experts": 3.8
+   }
+  },
+  "probe": {
+   "alpha": 0.3,
+   "oof_metric": [
+    0.4309883434470365,
+    0.42875940721335787,
+    0.4232880518213832,
+    0.4110760002231362
+   ]
+  },
+  "n_extra_columns": {
+   "job_title": 24
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ]
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "sparse_cg",
+   "layer_oof_metric": {
+    "1": 0.429712,
+    "2": 0.431228,
+    "3": 0.430546,
+    "4": 0.429868,
+    "5": 0.430973,
+    "6": 0.432046,
+    "7": 0.430559,
+    "8": 0.432001,
+    "9": 0.431276,
+    "10": 0.431595,
+    "11": 0.430032,
+    "12": 0.430208
+   },
+   "layer_alpha": {
+    "1": 1.0,
+    "2": 1.0,
+    "3": 3.0,
+    "4": 3.0,
+    "5": 3.0,
+    "6": 3.0,
+    "7": 3.0,
+    "8": 3.0,
+    "9": 3.0,
+    "10": 3.0,
+    "11": 3.0,
+    "12": 3.0
+   },
+   "ranked_layers": [
+    6,
+    8,
+    10,
+    9,
+    2,
+    5,
+    7,
+    3,
+    12,
+    11,
+    4,
+    1
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.4309883434470365,
+    0.42875940721335787,
+    0.4232880518213832,
+    0.4110760002231362
+   ],
+   "probe_cache_hits": 0,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 0.7,
+    "probes": 42.5
+   }
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "job_title_txt_pca_30": 1.807,
+    "job_title_txt_pca_31": 1.131,
+    "job_title_txt_pca_32": 0.47,
+    "job_title_txt_pca_33": 0.0,
+    "job_title_txt_pca_34": 0.0,
+    "job_title_txt_pca_35": 0.0,
+    "job_title_txt_pca_36": 0.0,
+    "job_title_txt_pca_37": 0.0,
+    "job_title_txt_pca_38": 0.0,
+    "job_title_txt_pca_39": 0.0,
+    "job_title_txt_pca_40": 0.0,
+    "job_title_txt_pca_41": 0.0,
+    "job_title_txt_pca_42": 0.128,
+    "job_title_txt_pca_43": 0.069,
+    "job_title_txt_pca_44": 0.0,
+    "job_title_txt_pca_45": 0.53,
+    "job_title_txt_pca_46": 0.054,
+    "job_title_txt_pca_47": 0.0,
+    "job_title_txt_pca_48": 0.0,
+    "job_title_txt_pca_49": 0.0,
+    "job_title_txt_pca_50": 0.0,
+    "job_title_txt_pca_51": 0.0,
+    "job_title_txt_pca_52": 0.0,
+    "job_title_txt_pca_53": 1.783,
+    "job_title_txt_pca_54": 2.3
+   },
+   "pred_share": 0.0827,
+   "group_share": {
+    "structured": 0.6611,
+    "pca": 0.2562,
+    "lex": 0.0181,
+    "nbr": 0.016,
+    "num": 0.0078,
+    "probe": 0.0178,
+    "depthtop3": 0.023
+   },
+   "top10": [
+    [
+     "salary_currency",
+     52.448
+    ],
+    [
+     "job_title_txt_pca_12",
+     5.338
+    ],
+    [
+     "company_size",
+     5.136
+    ],
+    [
+     "job_title_txt_pca_22",
+     3.916
+    ],
+    [
+     "job_title_txt_pca_4",
+     3.488
+    ],
+    [
+     "remote_ratio",
+     2.909
+    ],
+    [
+     "job_title_txt_pca_17",
+     2.892
+    ],
+    [
+     "experience_level",
+     2.799
+    ],
+    [
+     "job_title_txt_pca_54",
+     2.3
+    ],
+    [
+     "job_title_txt_pca_30",
+     1.807
+    ]
+   ]
+  }
+ }
+}

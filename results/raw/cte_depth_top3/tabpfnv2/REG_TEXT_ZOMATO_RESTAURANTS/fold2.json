@@ -1,0 +1,239 @@
+{
+ "method": "cte_depth_top3",
+ "run_name": "cte_depth_top3",
+ "engine_version": "depth/1",
+ "tar_path": null,
+ "learner": "tabpfnv2",
+ "learner_model_name": "TabPFN-v2 \ud83e\udd2f",
+ "dataset": "REG_TEXT_ZOMATO_RESTAURANTS",
+ "fold": 2,
+ "task": "REG",
+ "score": 0.8780234053943077,
+ "metrics": {
+  "score": 0.8780234053943077,
+  "metrics": {
+   "r2": 0.8780234053943077,
+   "mse": 0.0238786135637878,
+   "rmse": 0.1545270641790227
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.7136564499286909,
+  "joint_tar": 0.7404192944625209,
+  "unimodal_structured": 0.5711979665524614,
+  "unimodal_text": 0.6892153024995635
+ },
+ "diff_vs_csv_joint_tar": 0.13760411093178682,
+ "runtime_s": {
+  "total": 543.2,
+  "fit": 503.3,
+  "predict": 40.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1",
+   "method": "cte_depth_top3",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "b649f47211bce858897802ead14f2fcd29f7130a",
+  "dirty": false
+ },
+ "timestamp": "2026-10-21 01:32:33",
+ "argv": [
+  "--method",
+  "cte_depth_top3",
+  "--learner",
+  "tabpfnv2",
+  "--dataset",
+  "REG_TEXT_ZOMATO_RESTAURANTS",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 6,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 193.6,
+   "probe": 6.1
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 0.3,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.898951,
+     0.893662,
+     0.876165,
+     0.841152
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": false,
+    "nbr": false
+   },
+   "seconds": {
+    "frozen_embeddings": 1.1,
+    "experts": 191.8
+   }
+  },
+  "probe": {
+   "alpha": 1.0,
+   "oof_metric": [
+    0.8226073183239136,
+    0.823051475761931,
+    0.8186305124926722,
+    0.8035013427258181
+   ]
+  },
+  "n_extra_columns": {
+   "address": 24,
+   "cuisines": 21,
+   "dish_liked": 21,
+   "menu_item": 21,
+   "name": 21,
+   "phone": 21,
+   "reviews_list": 21
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ]
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "sparse_cg",
+   "layer_oof_metric": {
+    "1": 0.819601,
+    "2": 0.822861,
+    "3": 0.824578,
+    "4": 0.823673,
+    "5": 0.827076,
+    "6": 0.83058,
+    "7": 0.829866,
+    "8": 0.828303,
+    "9": 0.825205,
+    "10": 0.827903,
+    "11": 0.820609,
+    "12": 0.822081
+   },
+   "layer_alpha": {
+    "1": 1.0,
+    "2": 1.0,
+    "3": 1.0,
+    "4": 1.0,
+    "5": 1.0,
+    "6": 1.0,
+    "7": 1.0,
+    "8": 1.0,
+    "9": 1.0,
+    "10": 1.0,
+    "11": 3.0,
+    "12": 10.0
+   },
+   "ranked_layers": [
+    6,
+    7,
+    8,
+    10,
+    5,
+    9,
+    3,
+    4,
+    2,
+    12,
+    11,
+    1
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.8226073183239136,
+    0.823051475761931,
+    0.8186305124926722,
+    0.8035013427258181
+   ],
+   "probe_cache_hits": 0,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 1.9,
+    "probes": 236.8
+   }
+  },
+  "catboost_importance": null
+ }
+}

@@ -24,8 +24,10 @@ C−1; more than 10 classes: the scores of the 10 most frequent training classes
 
 **Cross-fitting.** The learner's training rows are split into 5 folds (stratified by class when every class has at
 least 5 rows). Each fold's expert columns come from
-experts fit on the other 4 folds, so no training row's feature saw its own label. The learner's validation rows and
-the test rows get experts fit on all training rows. The same holds for the probe and every depth probe.
+experts fit on the other 4 folds, so each training row's feature comes from a model that never saw that row's label.
+The learner's validation rows and the test rows get experts fit on all training rows. The same holds for the probe and
+every depth probe. The selection choices (Ridge penalty, the three best layers, the top classes) are made once from
+all training rows' out-of-fold scores; no validation or test label is ever used.
 
 **What is never done:** fine-tuning the encoder, fitting anything label-aware on validation or test rows, or tuning a
 setting on test scores. TF-IDF vocabularies and PCA are fit on training rows only.
@@ -130,7 +132,7 @@ on Google Drive. The final runs: `jobs/p14_A.txt` (CatBoost), `jobs/p15.txt` (Li
 ## Tests
 
 `.venv/bin/python -m pytest tests` covers:
-- the leakage rules: out-of-fold features never see their own label; PCA, TF-IDF and target transforms are fit on
+- the leakage rules: out-of-fold features come from models that never saw that row; PCA, TF-IDF and target transforms are fit on
   training rows only
 - determinism, and bit-for-bit golden features for the expert core
 - the frozen Joint TAR re-implementation

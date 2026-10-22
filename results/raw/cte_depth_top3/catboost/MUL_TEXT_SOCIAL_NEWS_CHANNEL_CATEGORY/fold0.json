@@ -1,0 +1,322 @@
+{
+ "method": "cte_depth_top3",
+ "run_name": "cte_depth_top3",
+ "engine_version": "depth/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_SOCIAL_NEWS_CHANNEL_CATEGORY",
+ "fold": 0,
+ "task": "MUL",
+ "score": 0.7929779144165162,
+ "metrics": {
+  "score": 0.7929779144165162,
+  "metrics": {
+   "auc": 0.7929779144165162,
+   "logloss": 1.2877934595087441
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 118.7,
+  "fit": 118.7,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1",
+   "method": "cte_depth_top3",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 01:00:02",
+ "argv": [
+  "--method",
+  "cte_depth_top3",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_SOCIAL_NEWS_CHANNEL_CATEGORY",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 27.9,
+   "probe": 3.2
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 10.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.552834,
+     0.564532,
+     0.576127,
+     0.586735
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": false,
+    "nbr": false
+   },
+   "seconds": {
+    "frozen_embeddings": 6.6,
+    "experts": 21.2
+   }
+  },
+  "probe": {
+   "alpha": 10.0,
+   "oof_metric": [
+    0.592168509072864,
+    0.5984096343900271,
+    0.6052867227189299,
+    0.6101229669458607
+   ]
+  },
+  "n_extra_columns": {
+   "article_title": 35
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ]
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "eig",
+   "layer_oof_metric": {
+    "1": 0.603104,
+    "2": 0.606608,
+    "3": 0.604252,
+    "4": 0.605151,
+    "5": 0.605827,
+    "6": 0.606564,
+    "7": 0.607233,
+    "8": 0.607196,
+    "9": 0.609504,
+    "10": 0.608656,
+    "11": 0.610095,
+    "12": 0.610356
+   },
+   "layer_alpha": {
+    "1": 100.0,
+    "2": 100.0,
+    "3": 100.0,
+    "4": 100.0,
+    "5": 100.0,
+    "6": 100.0,
+    "7": 30.0,
+    "8": 100.0,
+    "9": 30.0,
+    "10": 30.0,
+    "11": 100.0,
+    "12": 100.0
+   },
+   "ranked_layers": [
+    12,
+    11,
+    9,
+    10,
+    7,
+    8,
+    2,
+    6,
+    5,
+    4,
+    3,
+    1
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.592168509072864,
+    0.5984096343900271,
+    0.6052867227189299,
+    0.6101229669458607
+   ],
+   "probe_cache_hits": 0,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 7.2,
+    "probes": 10.0
+   }
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "article_title_txt_pca_30": 1.001,
+    "article_title_txt_pca_31": 0.858,
+    "article_title_txt_pca_32": 1.279,
+    "article_title_txt_pca_33": 0.695,
+    "article_title_txt_pca_34": 1.113,
+    "article_title_txt_pca_35": 1.189,
+    "article_title_txt_pca_36": 1.263,
+    "article_title_txt_pca_37": 0.745,
+    "article_title_txt_pca_38": 0.946,
+    "article_title_txt_pca_39": 0.898,
+    "article_title_txt_pca_40": 0.01,
+    "article_title_txt_pca_41": 0.124,
+    "article_title_txt_pca_42": 0.062,
+    "article_title_txt_pca_43": 0.341,
+    "article_title_txt_pca_44": 0.0,
+    "article_title_txt_pca_45": 0.018,
+    "article_title_txt_pca_46": 0.017,
+    "article_title_txt_pca_47": 0.012,
+    "article_title_txt_pca_48": 0.009,
+    "article_title_txt_pca_49": 0.446,
+    "article_title_txt_pca_50": 0.319,
+    "article_title_txt_pca_51": 0.061,
+    "article_title_txt_pca_52": 0.776,
+    "article_title_txt_pca_53": 1.482,
+    "article_title_txt_pca_54": 0.05,
+    "article_title_txt_pca_55": 0.411,
+    "article_title_txt_pca_56": 0.0,
+    "article_title_txt_pca_57": 0.038,
+    "article_title_txt_pca_58": 0.024,
+    "article_title_txt_pca_59": 0.0,
+    "article_title_txt_pca_60": 0.561,
+    "article_title_txt_pca_61": 1.302,
+    "article_title_txt_pca_62": 0.605,
+    "article_title_txt_pca_63": 0.962,
+    "article_title_txt_pca_64": 0.734,
+    "article_title_txt_pca_65": 0.974,
+    "article_title_txt_pca_66": 0.96,
+    "article_title_txt_pca_67": 0.997,
+    "article_title_txt_pca_68": 1.521,
+    "article_title_txt_pca_69": 0.874
+   },
+   "pred_share": 0.2368,
+   "group_share": {
+    "structured": 0.4922,
+    "pca": 0.2711,
+    "lex": 0.0495,
+    "nbr": 0.0504,
+    "num": 0.042,
+    "probe": 0.0417,
+    "depthtop3": 0.0533
+   },
+   "top10": [
+    [
+     "average_token_length",
+     6.145
+    ],
+    [
+     "num_self_hrefs",
+     5.071
+    ],
+    [
+     "num_keywords",
+     4.906
+    ],
+    [
+     "num_imgs",
+     4.683
+    ],
+    [
+     "n_tokens_content",
+     4.33
+    ],
+    [
+     "global_rate_positive_words",
+     3.736
+    ],
+    [
+     "num_videos",
+     3.467
+    ],
+    [
+     "num_hrefs",
+     3.259
+    ],
+    [
+     "global_subjectivity",
+     2.847
+    ],
+    [
+     "global_sentiment_polarity",
+     2.67
+    ]
+   ]
+  }
+ }
+}

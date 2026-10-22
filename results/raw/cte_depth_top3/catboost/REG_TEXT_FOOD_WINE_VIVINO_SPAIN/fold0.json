@@ -1,0 +1,330 @@
+{
+ "method": "cte_depth_top3",
+ "run_name": "cte_depth_top3",
+ "engine_version": "depth/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_FOOD_WINE_VIVINO_SPAIN",
+ "fold": 0,
+ "task": "REG",
+ "score": 0.850437403182462,
+ "metrics": {
+  "score": 0.850437403182462,
+  "metrics": {
+   "r2": 0.850437403182462,
+   "mse": 0.00830019491494665,
+   "rmse": 0.09110540551990672
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 118.6,
+  "fit": 118.5,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1",
+   "method": "cte_depth_top3",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 7785,
+ "n_test": 865,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 02:02:59",
+ "argv": [
+  "--method",
+  "cte_depth_top3",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_FOOD_WINE_VIVINO_SPAIN",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 9.3,
+   "probe": 1.9
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 3.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.874391,
+     0.881356,
+     0.885597,
+     0.878229
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": false,
+    "nbr": false
+   },
+   "seconds": {
+    "frozen_embeddings": 2.7,
+    "experts": 6.5
+   }
+  },
+  "probe": {
+   "alpha": 0.3,
+   "oof_metric": [
+    0.8546602072438307,
+    0.8466984129900836,
+    0.8311481742450995,
+    0.8104340821612757
+   ]
+  },
+  "n_extra_columns": {
+   "Wine": 24,
+   "Winery": 21
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ]
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "sparse_cg",
+   "layer_oof_metric": {
+    "1": 0.854114,
+    "2": 0.857907,
+    "3": 0.855549,
+    "4": 0.853314,
+    "5": 0.853,
+    "6": 0.851026,
+    "7": 0.853666,
+    "8": 0.852604,
+    "9": 0.855278,
+    "10": 0.85133,
+    "11": 0.856514,
+    "12": 0.85564
+   },
+   "layer_alpha": {
+    "1": 1.0,
+    "2": 1.0,
+    "3": 1.0,
+    "4": 1.0,
+    "5": 1.0,
+    "6": 1.0,
+    "7": 1.0,
+    "8": 1.0,
+    "9": 1.0,
+    "10": 1.0,
+    "11": 1.0,
+    "12": 3.0
+   },
+   "ranked_layers": [
+    2,
+    11,
+    12,
+    3,
+    9,
+    1,
+    7,
+    4,
+    5,
+    8,
+    10,
+    6
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.8546602072438307,
+    0.8466984129900836,
+    0.8311481742450995,
+    0.8104340821612757
+   ],
+   "probe_cache_hits": 0,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 3.8,
+    "probes": 81.6
+   }
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Wine_txt_pca_30": 19.273,
+    "Wine_txt_pca_31": 4.318,
+    "Wine_txt_pca_32": 4.193,
+    "Wine_txt_pca_33": 0.054,
+    "Wine_txt_pca_34": 0.077,
+    "Wine_txt_pca_35": 0.482,
+    "Wine_txt_pca_36": 0.112,
+    "Wine_txt_pca_37": 0.031,
+    "Wine_txt_pca_38": 0.256,
+    "Wine_txt_pca_39": 0.0,
+    "Wine_txt_pca_40": 0.0,
+    "Wine_txt_pca_41": 0.0,
+    "Wine_txt_pca_42": 0.711,
+    "Wine_txt_pca_43": 0.034,
+    "Wine_txt_pca_44": 0.018,
+    "Wine_txt_pca_45": 0.127,
+    "Wine_txt_pca_46": 1.241,
+    "Wine_txt_pca_47": 1.015,
+    "Wine_txt_pca_48": 0.076,
+    "Wine_txt_pca_49": 0.0,
+    "Wine_txt_pca_50": 0.018,
+    "Wine_txt_pca_51": 0.004,
+    "Wine_txt_pca_52": 0.0,
+    "Wine_txt_pca_53": 8.288,
+    "Wine_txt_pca_54": 9.406,
+    "Winery_txt_pca_30": 4.573,
+    "Winery_txt_pca_31": 0.0,
+    "Winery_txt_pca_32": 0.0,
+    "Winery_txt_pca_33": 0.0,
+    "Winery_txt_pca_34": 0.0,
+    "Winery_txt_pca_35": 0.0,
+    "Winery_txt_pca_36": 0.0,
+    "Winery_txt_pca_37": 0.0,
+    "Winery_txt_pca_38": 0.0,
+    "Winery_txt_pca_39": 0.0,
+    "Winery_txt_pca_40": 0.046,
+    "Winery_txt_pca_41": 0.371,
+    "Winery_txt_pca_42": 0.0,
+    "Winery_txt_pca_43": 0.189,
+    "Winery_txt_pca_44": 0.481,
+    "Winery_txt_pca_45": 0.002,
+    "Winery_txt_pca_46": 0.004,
+    "Winery_txt_pca_47": 0.0,
+    "Winery_txt_pca_48": 0.0,
+    "Winery_txt_pca_49": 0.0,
+    "Winery_txt_pca_50": 0.0
+   },
+   "pred_share": 0.554,
+   "group_share": {
+    "structured": 0.1243,
+    "pca": 0.3217,
+    "lex": 0.1927,
+    "nbr": 0.1308,
+    "num": 0.0535,
+    "probe": 0.0829,
+    "depthtop3": 0.0941
+   },
+   "top10": [
+    [
+     "Wine_txt_pca_30",
+     19.273
+    ],
+    [
+     "price",
+     11.2
+    ],
+    [
+     "Wine_txt_pca_54",
+     9.406
+    ],
+    [
+     "Wine_txt_pca_53",
+     8.288
+    ],
+    [
+     "Winery_txt_pca_30",
+     4.573
+    ],
+    [
+     "Wine_txt_pca_31",
+     4.318
+    ],
+    [
+     "Wine_txt_pca_32",
+     4.193
+    ],
+    [
+     "Wine_txt_pca_13",
+     2.885
+    ],
+    [
+     "Winery_txt_pca_2",
+     2.273
+    ],
+    [
+     "Wine_txt_pca_27",
+     1.632
+    ]
+   ]
+  }
+ }
+}

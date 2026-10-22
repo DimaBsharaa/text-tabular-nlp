@@ -358,7 +358,9 @@ def test_parallel_jobs_encode_each_text_once(tmp_path):
 
 
 def test_cte3_features_unchanged_golden():
-    """P5's code path (cte/3) must reproduce the features generated at f1514bc, bit for bit."""
+    """P5's code path (cte/3) must reproduce the features generated at f1514bc. Bit for bit in the pinned environment
+    (Python 3.11, uv.lock); other BLAS / Python builds differ by ~2e-4 (external audit), so the check allows 1e-3 and
+    requires identical missing-value positions: a code change moves features far more than that."""
     import sys
     from os.path import abspath, dirname, join
     sys.path.insert(0, join(dirname(abspath(__file__)), "golden"))
@@ -367,4 +369,17 @@ def test_cte3_features_unchanged_golden():
     new = g.all_features()
     assert set(new) == set(ref.files)
     for k in ref.files:
-        assert np.array_equal(new[k], ref[k]), k
+        assert new[k].shape == ref[k].shape and np.array_equal(np.isnan(new[k]), np.isnan(ref[k])), k
+        assert np.allclose(new[k], ref[k], rtol=0, atol=1e-3, equal_nan=True), k
+
+
+def test_cache_key_depends_on_labels_and_prediction_texts():
+    """A supervised cache entry must not be reused after the training labels or the predicted rows' texts change under
+    the same dataset / fold / row ids (external audit, 2026-10-22)."""
+    y = np.array([0, 1, 1, 0, 2])
+    extra = {"test": {"a": ["x", "y"]}, "learner_val": {"a": ["z"]}}
+    k = cte.content_key(y, extra, ["a"])
+    assert k == cte.content_key(y.copy(), {"learner_val": {"a": ["z"]}, "test": {"a": ["x", "y"]}}, ["a"])  # order-free
+    assert k != cte.content_key(np.array([0, 1, 1, 0, 1]), extra, ["a"])  # one label changed
+    assert k != cte.content_key(y, {"test": {"a": ["x", "y!"]}, "learner_val": {"a": ["z"]}}, ["a"])  # a test text edited
+    assert k != cte.content_key(y, {"test": {"a": ["x", "y"]}}, ["a"])  # a split missing

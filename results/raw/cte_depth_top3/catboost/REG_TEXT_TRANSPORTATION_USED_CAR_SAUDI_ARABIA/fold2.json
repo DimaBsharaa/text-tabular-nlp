@@ -1,0 +1,308 @@
+{
+ "method": "cte_depth_top3",
+ "run_name": "cte_depth_top3",
+ "engine_version": "depth/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_TRANSPORTATION_USED_CAR_SAUDI_ARABIA",
+ "fold": 2,
+ "task": "REG",
+ "score": 0.9154911582837167,
+ "metrics": {
+  "score": 0.9154911582837167,
+  "metrics": {
+   "r2": 0.9154911582837167,
+   "mse": 381508603.3704168,
+   "rmse": 19532.245220926776
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 46.0,
+  "fit": 46.0,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1",
+   "method": "cte_depth_top3",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 7232,
+ "n_test": 803,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 03:07:40",
+ "argv": [
+  "--method",
+  "cte_depth_top3",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_TRANSPORTATION_USED_CAR_SAUDI_ARABIA",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 2.3,
+   "probe": 0.6
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 3.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.19714,
+     0.198803,
+     0.199959,
+     0.199588
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": false,
+    "nbr": false
+   },
+   "seconds": {
+    "frozen_embeddings": 0.0,
+    "experts": 2.2
+   }
+  },
+  "probe": {
+   "alpha": 0.3,
+   "oof_metric": [
+    0.1967858225183544,
+    0.19306039878521225,
+    0.18624898792127287,
+    0.1656365524324555
+   ]
+  },
+  "n_extra_columns": {
+   "Type": 24
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ]
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "sparse_cg",
+   "layer_oof_metric": {
+    "1": 0.191768,
+    "2": 0.194258,
+    "3": 0.193389,
+    "4": 0.194802,
+    "5": 0.189668,
+    "6": 0.189454,
+    "7": 0.191867,
+    "8": 0.190258,
+    "9": 0.196367,
+    "10": 0.185623,
+    "11": 0.194915,
+    "12": 0.199434
+   },
+   "layer_alpha": {
+    "1": 1.0,
+    "2": 1.0,
+    "3": 1.0,
+    "4": 1.0,
+    "5": 1.0,
+    "6": 1.0,
+    "7": 1.0,
+    "8": 1.0,
+    "9": 1.0,
+    "10": 1.0,
+    "11": 1.0,
+    "12": 1.0
+   },
+   "ranked_layers": [
+    12,
+    9,
+    11,
+    4,
+    2,
+    3,
+    7,
+    1,
+    8,
+    5,
+    6,
+    10
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.1967858225183544,
+    0.19306039878521225,
+    0.18624898792127287,
+    0.1656365524324555
+   ],
+   "probe_cache_hits": 0,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 0.0,
+    "probes": 17.9
+   }
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Type_txt_pca_30": 0.296,
+    "Type_txt_pca_31": 0.507,
+    "Type_txt_pca_32": 0.241,
+    "Type_txt_pca_33": 0.0,
+    "Type_txt_pca_34": 0.079,
+    "Type_txt_pca_35": 0.033,
+    "Type_txt_pca_36": 0.027,
+    "Type_txt_pca_37": 0.0,
+    "Type_txt_pca_38": 0.0,
+    "Type_txt_pca_39": 0.0,
+    "Type_txt_pca_40": 0.0,
+    "Type_txt_pca_41": 0.0,
+    "Type_txt_pca_42": 0.331,
+    "Type_txt_pca_43": 1.275,
+    "Type_txt_pca_44": 0.0,
+    "Type_txt_pca_45": 2.081,
+    "Type_txt_pca_46": 3.842,
+    "Type_txt_pca_47": 0.064,
+    "Type_txt_pca_48": 0.009,
+    "Type_txt_pca_49": 0.0,
+    "Type_txt_pca_50": 0.0,
+    "Type_txt_pca_51": 0.0,
+    "Type_txt_pca_52": 0.0,
+    "Type_txt_pca_53": 2.204,
+    "Type_txt_pca_54": 1.333
+   },
+   "pred_share": 0.1232,
+   "group_share": {
+    "structured": 0.7097,
+    "pca": 0.1671,
+    "lex": 0.003,
+    "nbr": 0.0075,
+    "num": 0.0774,
+    "probe": 0.022,
+    "depthtop3": 0.0133
+   },
+   "top10": [
+    [
+     "Negotiable",
+     27.596
+    ],
+    [
+     "Year",
+     18.111
+    ],
+    [
+     "Engine_Size",
+     12.073
+    ],
+    [
+     "Make",
+     5.352
+    ],
+    [
+     "Type_txt_pca_46",
+     3.842
+    ],
+    [
+     "Mileage",
+     3.515
+    ],
+    [
+     "Options",
+     2.829
+    ],
+    [
+     "Type_txt_pca_53",
+     2.204
+    ],
+    [
+     "Type_txt_pca_45",
+     2.081
+    ],
+    [
+     "Type_txt_pca_0",
+     1.407
+    ]
+   ]
+  }
+ }
+}

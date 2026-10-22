@@ -257,7 +257,8 @@ def run_depth(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str]
     rows_key = te._rows_hash(x_fit.index, *[x.index for x, _ in extra.values()])
     texts_key = hashlib.sha1("\x00".join(t for col in text_cols for t in te.encoding_texts(x_fit, col)).encode()
                              ).hexdigest()[:10]
-    y_key = hashlib.sha1(np.ascontiguousarray(y).tobytes()).hexdigest()[:8]
+    y_key = cte.content_key(y, {k: {col: te.encoding_texts(x, col) for col in text_cols} for k, (x, _) in extra.items()},
+                            text_cols)  # labels + prediction-row texts
     solver = "eig" if is_cls and n_classes > 2 else "sparse_cg"  # multiclass: one direct solve for all one-hot targets
     probe_key = hashlib.sha1(repr((DEPTH_VERSION, spec.pooling, spec.alphas, c.key(), solver)).encode()).hexdigest()[:10]
     for layer in layers:

@@ -1,0 +1,440 @@
+{
+ "method": "cte_depth_top3",
+ "run_name": "cte_depth_top3",
+ "engine_version": "depth/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_SOCIAL_ANIME_PLANET_RATING",
+ "fold": 1,
+ "task": "REG",
+ "score": 0.7582725106546949,
+ "metrics": {
+  "score": 0.7582725106546949,
+  "metrics": {
+   "r2": 0.7582725106546949,
+   "mse": 0.19056720627557777,
+   "rmse": 0.436540039716379
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 600.5,
+  "fit": 600.4,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1",
+   "method": "cte_depth_top3",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 1439,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-19 23:19:53",
+ "argv": [
+  "--method",
+  "cte_depth_top3",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_SOCIAL_ANIME_PLANET_RATING",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 58.8,
+   "probe": 9.1
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 3.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.751587,
+     0.765997,
+     0.766665,
+     0.748383
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": false,
+    "nbr": false
+   },
+   "seconds": {
+    "frozen_embeddings": 6.4,
+    "experts": 52.3
+   }
+  },
+  "probe": {
+   "alpha": 1.0,
+   "oof_metric": [
+    0.7494786420673876,
+    0.7536413812251216,
+    0.7492124466016499,
+    0.7328454106087416
+   ]
+  },
+  "n_extra_columns": {
+   "Alternative Name": 24,
+   "Content Warning": 21,
+   "Name": 21,
+   "Season": 21,
+   "Studios": 21,
+   "Synopsis": 21,
+   "Tags": 21
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ]
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "sparse_cg",
+   "layer_oof_metric": {
+    "1": 0.750748,
+    "2": 0.750386,
+    "3": 0.746987,
+    "4": 0.747404,
+    "5": 0.745751,
+    "6": 0.748369,
+    "7": 0.748842,
+    "8": 0.746421,
+    "9": 0.748342,
+    "10": 0.750846,
+    "11": 0.750292,
+    "12": 0.753094
+   },
+   "layer_alpha": {
+    "1": 3.0,
+    "2": 3.0,
+    "3": 3.0,
+    "4": 3.0,
+    "5": 3.0,
+    "6": 3.0,
+    "7": 3.0,
+    "8": 1.0,
+    "9": 3.0,
+    "10": 3.0,
+    "11": 3.0,
+    "12": 10.0
+   },
+   "ranked_layers": [
+    12,
+    10,
+    1,
+    2,
+    11,
+    7,
+    6,
+    9,
+    4,
+    3,
+    8,
+    5
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.7494786420673876,
+    0.7536413812251216,
+    0.7492124466016499,
+    0.7328454106087416
+   ],
+   "probe_cache_hits": 0,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 11.8,
+    "probes": 378.2
+   }
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Alternative Name_txt_pca_30": 9.452,
+    "Alternative Name_txt_pca_31": 0.125,
+    "Alternative Name_txt_pca_32": 1.496,
+    "Alternative Name_txt_pca_33": 0.001,
+    "Alternative Name_txt_pca_34": 0.001,
+    "Alternative Name_txt_pca_35": 0.006,
+    "Alternative Name_txt_pca_36": 0.003,
+    "Alternative Name_txt_pca_37": 0.0,
+    "Alternative Name_txt_pca_38": 0.0,
+    "Alternative Name_txt_pca_39": 0.0,
+    "Alternative Name_txt_pca_40": 0.0,
+    "Alternative Name_txt_pca_41": 0.0,
+    "Alternative Name_txt_pca_42": 0.026,
+    "Alternative Name_txt_pca_43": 0.017,
+    "Alternative Name_txt_pca_44": 0.0,
+    "Alternative Name_txt_pca_45": 0.082,
+    "Alternative Name_txt_pca_46": 0.203,
+    "Alternative Name_txt_pca_47": 0.017,
+    "Alternative Name_txt_pca_48": 0.115,
+    "Alternative Name_txt_pca_49": 0.011,
+    "Alternative Name_txt_pca_50": 0.0,
+    "Alternative Name_txt_pca_51": 0.02,
+    "Alternative Name_txt_pca_52": 0.0,
+    "Alternative Name_txt_pca_53": 3.82,
+    "Alternative Name_txt_pca_54": 5.307,
+    "Content Warning_txt_pca_30": 0.029,
+    "Content Warning_txt_pca_31": 0.0,
+    "Content Warning_txt_pca_32": 0.0,
+    "Content Warning_txt_pca_33": 0.0,
+    "Content Warning_txt_pca_34": 0.0,
+    "Content Warning_txt_pca_35": 0.0,
+    "Content Warning_txt_pca_36": 0.0,
+    "Content Warning_txt_pca_37": 0.0,
+    "Content Warning_txt_pca_38": 0.0,
+    "Content Warning_txt_pca_39": 0.0,
+    "Content Warning_txt_pca_40": 0.0,
+    "Content Warning_txt_pca_41": 0.008,
+    "Content Warning_txt_pca_42": 0.0,
+    "Content Warning_txt_pca_43": 0.014,
+    "Content Warning_txt_pca_44": 0.027,
+    "Content Warning_txt_pca_45": 0.0,
+    "Content Warning_txt_pca_46": 0.006,
+    "Content Warning_txt_pca_47": 0.0,
+    "Content Warning_txt_pca_48": 0.0,
+    "Content Warning_txt_pca_49": 0.001,
+    "Content Warning_txt_pca_50": 0.0,
+    "Name_txt_pca_30": 1.622,
+    "Name_txt_pca_31": 0.016,
+    "Name_txt_pca_32": 0.031,
+    "Name_txt_pca_33": 0.019,
+    "Name_txt_pca_34": 0.028,
+    "Name_txt_pca_35": 0.0,
+    "Name_txt_pca_36": 0.004,
+    "Name_txt_pca_37": 0.0,
+    "Name_txt_pca_38": 0.0,
+    "Name_txt_pca_39": 0.0,
+    "Name_txt_pca_40": 0.275,
+    "Name_txt_pca_41": 0.135,
+    "Name_txt_pca_42": 0.0,
+    "Name_txt_pca_43": 0.389,
+    "Name_txt_pca_44": 0.334,
+    "Name_txt_pca_45": 0.118,
+    "Name_txt_pca_46": 0.256,
+    "Name_txt_pca_47": 0.0,
+    "Name_txt_pca_48": 0.0,
+    "Name_txt_pca_49": 0.014,
+    "Name_txt_pca_50": 0.0,
+    "Season_txt_pca_30": 0.484,
+    "Season_txt_pca_31": 0.0,
+    "Season_txt_pca_32": 0.035,
+    "Season_txt_pca_33": 0.156,
+    "Season_txt_pca_34": 0.131,
+    "Season_txt_pca_35": 0.059,
+    "Season_txt_pca_36": 0.181,
+    "Season_txt_pca_37": 0.0,
+    "Season_txt_pca_38": 0.0,
+    "Season_txt_pca_39": 0.0,
+    "Season_txt_pca_40": 0.193,
+    "Season_txt_pca_41": 0.022,
+    "Season_txt_pca_42": 0.0,
+    "Season_txt_pca_43": 0.015,
+    "Season_txt_pca_44": 0.0,
+    "Season_txt_pca_45": 0.091,
+    "Season_txt_pca_46": 0.0,
+    "Season_txt_pca_47": 0.0,
+    "Season_txt_pca_48": 0.0,
+    "Season_txt_pca_49": 0.0,
+    "Season_txt_pca_50": 0.0,
+    "Studios_txt_pca_30": 1.301,
+    "Studios_txt_pca_31": 0.0,
+    "Studios_txt_pca_32": 0.002,
+    "Studios_txt_pca_33": 0.001,
+    "Studios_txt_pca_34": 0.006,
+    "Studios_txt_pca_35": 0.0,
+    "Studios_txt_pca_36": 0.0,
+    "Studios_txt_pca_37": 0.0,
+    "Studios_txt_pca_38": 0.0,
+    "Studios_txt_pca_39": 0.0,
+    "Studios_txt_pca_40": 0.066,
+    "Studios_txt_pca_41": 0.004,
+    "Studios_txt_pca_42": 0.0,
+    "Studios_txt_pca_43": 0.112,
+    "Studios_txt_pca_44": 0.143,
+    "Studios_txt_pca_45": 0.01,
+    "Studios_txt_pca_46": 0.037,
+    "Studios_txt_pca_47": 0.0,
+    "Studios_txt_pca_48": 0.0,
+    "Studios_txt_pca_49": 0.001,
+    "Studios_txt_pca_50": 0.0,
+    "Synopsis_txt_pca_30": 0.35,
+    "Synopsis_txt_pca_31": 0.0,
+    "Synopsis_txt_pca_32": 0.003,
+    "Synopsis_txt_pca_33": 0.017,
+    "Synopsis_txt_pca_34": 0.014,
+    "Synopsis_txt_pca_35": 0.0,
+    "Synopsis_txt_pca_36": 0.051,
+    "Synopsis_txt_pca_37": 0.001,
+    "Synopsis_txt_pca_38": 0.002,
+    "Synopsis_txt_pca_39": 0.002,
+    "Synopsis_txt_pca_40": 0.165,
+    "Synopsis_txt_pca_41": 0.104,
+    "Synopsis_txt_pca_42": 0.232,
+    "Synopsis_txt_pca_43": 0.222,
+    "Synopsis_txt_pca_44": 0.342,
+    "Synopsis_txt_pca_45": 0.036,
+    "Synopsis_txt_pca_46": 0.201,
+    "Synopsis_txt_pca_47": 0.029,
+    "Synopsis_txt_pca_48": 0.004,
+    "Synopsis_txt_pca_49": 0.123,
+    "Synopsis_txt_pca_50": 0.0,
+    "Tags_txt_pca_30": 4.169,
+    "Tags_txt_pca_31": 0.0,
+    "Tags_txt_pca_32": 0.0,
+    "Tags_txt_pca_33": 0.0,
+    "Tags_txt_pca_34": 0.0,
+    "Tags_txt_pca_35": 0.0,
+    "Tags_txt_pca_36": 0.0,
+    "Tags_txt_pca_37": 0.0,
+    "Tags_txt_pca_38": 0.0,
+    "Tags_txt_pca_39": 0.0,
+    "Tags_txt_pca_40": 0.35,
+    "Tags_txt_pca_41": 0.297,
+    "Tags_txt_pca_42": 0.0,
+    "Tags_txt_pca_43": 0.62,
+    "Tags_txt_pca_44": 0.173,
+    "Tags_txt_pca_45": 0.037,
+    "Tags_txt_pca_46": 0.384,
+    "Tags_txt_pca_47": 0.0,
+    "Tags_txt_pca_48": 0.0,
+    "Tags_txt_pca_49": 0.029,
+    "Tags_txt_pca_50": 0.0
+   },
+   "pred_share": 0.3503,
+   "group_share": {
+    "structured": 0.2576,
+    "pca": 0.3921,
+    "lex": 0.0945,
+    "nbr": 0.0958,
+    "num": 0.0688,
+    "probe": 0.0382,
+    "depthtop3": 0.0531
+   },
+   "top10": [
+    [
+     "Number Votes",
+     13.622
+    ],
+    [
+     "Alternative Name_txt_pca_30",
+     9.452
+    ],
+    [
+     "Alternative Name_txt_pca_54",
+     5.307
+    ],
+    [
+     "Tags_txt_pca_30",
+     4.169
+    ],
+    [
+     "Alternative Name_txt_pca_53",
+     3.82
+    ],
+    [
+     "Duration",
+     2.884
+    ],
+    [
+     "StartYear",
+     2.576
+    ],
+    [
+     "Type",
+     2.307
+    ],
+    [
+     "EndYear",
+     2.168
+    ],
+    [
+     "Episodes",
+     1.975
+    ]
+   ]
+  }
+ }
+}

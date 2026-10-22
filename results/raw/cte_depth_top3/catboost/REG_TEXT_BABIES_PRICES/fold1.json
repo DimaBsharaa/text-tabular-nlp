@@ -1,0 +1,379 @@
+{
+ "method": "cte_depth_top3",
+ "run_name": "cte_depth_top3",
+ "engine_version": "depth/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_BABIES_PRICES",
+ "fold": 1,
+ "task": "REG",
+ "score": 0.948936982507372,
+ "metrics": {
+  "score": 0.948936982507372,
+  "metrics": {
+   "r2": 0.948936982507372,
+   "mse": 118.12184172216774,
+   "rmse": 10.868387264086966
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9133264565083082,
+  "joint_tar": 0.934436444736227,
+  "unimodal_structured": 0.5235360735970463,
+  "unimodal_text": 0.8769888861060158
+ },
+ "diff_vs_csv_joint_tar": 0.014500537771145017,
+ "runtime_s": {
+  "total": 198.8,
+  "fit": 198.8,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1",
+   "method": "cte_depth_top3",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 4577,
+ "n_test": 508,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "0728696809ed92a11b55357ab0f1b5897a8d1e28",
+  "dirty": false
+ },
+ "timestamp": "2026-10-19 19:51:53",
+ "argv": [
+  "--method",
+  "cte_depth_top3",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_BABIES_PRICES",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 2.3,
+   "probe": 2.3
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 0.3,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.924842,
+     0.91819,
+     0.903579,
+     0.876959
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.1,
+    "experts": 2.1
+   }
+  },
+  "probe": {
+   "alpha": 0.3,
+   "oof_metric": [
+    0.856785783866435,
+    0.8399391974792261,
+    0.8109050344027793,
+    0.7632708351116622
+   ]
+  },
+  "n_extra_columns": {
+   "colors": 24,
+   "company_free": 21,
+   "company_struct": 21,
+   "title": 21
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ]
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "sparse_cg",
+   "layer_oof_metric": {
+    "1": 0.850455,
+    "2": 0.845807,
+    "3": 0.845137,
+    "4": 0.842774,
+    "5": 0.833857,
+    "6": 0.831288,
+    "7": 0.828246,
+    "8": 0.829236,
+    "9": 0.828702,
+    "10": 0.839559,
+    "11": 0.849538,
+    "12": 0.863593
+   },
+   "layer_alpha": {
+    "1": 1.0,
+    "2": 1.0,
+    "3": 1.0,
+    "4": 1.0,
+    "5": 1.0,
+    "6": 1.0,
+    "7": 1.0,
+    "8": 1.0,
+    "9": 1.0,
+    "10": 1.0,
+    "11": 1.0,
+    "12": 1.0
+   },
+   "ranked_layers": [
+    12,
+    1,
+    11,
+    2,
+    3,
+    4,
+    10,
+    5,
+    6,
+    8,
+    9,
+    7
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.856785783866435,
+    0.8399391974792261,
+    0.8109050344027793,
+    0.7632708351116622
+   ],
+   "probe_cache_hits": 0,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 2.6,
+    "probes": 109.8
+   }
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "colors_txt_pca_30": 43.738,
+    "colors_txt_pca_31": 1.182,
+    "colors_txt_pca_32": 0.181,
+    "colors_txt_pca_33": 0.0,
+    "colors_txt_pca_34": 0.0,
+    "colors_txt_pca_35": 0.0,
+    "colors_txt_pca_36": 0.0,
+    "colors_txt_pca_37": 0.0,
+    "colors_txt_pca_38": 0.0,
+    "colors_txt_pca_39": 0.0,
+    "colors_txt_pca_40": 0.0,
+    "colors_txt_pca_41": 0.0,
+    "colors_txt_pca_42": 0.038,
+    "colors_txt_pca_43": 0.017,
+    "colors_txt_pca_44": 0.0,
+    "colors_txt_pca_45": 0.002,
+    "colors_txt_pca_46": 0.0,
+    "colors_txt_pca_47": 0.0,
+    "colors_txt_pca_48": 0.009,
+    "colors_txt_pca_49": 0.0,
+    "colors_txt_pca_50": 0.0,
+    "colors_txt_pca_51": 0.021,
+    "colors_txt_pca_52": 0.0,
+    "colors_txt_pca_53": 4.582,
+    "colors_txt_pca_54": 5.937,
+    "company_free_txt_pca_30": 0.376,
+    "company_free_txt_pca_31": 0.0,
+    "company_free_txt_pca_32": 0.0,
+    "company_free_txt_pca_33": 0.0,
+    "company_free_txt_pca_34": 0.0,
+    "company_free_txt_pca_35": 0.0,
+    "company_free_txt_pca_36": 0.0,
+    "company_free_txt_pca_37": 0.0,
+    "company_free_txt_pca_38": 0.0,
+    "company_free_txt_pca_39": 0.0,
+    "company_free_txt_pca_40": 0.069,
+    "company_free_txt_pca_41": 0.06,
+    "company_free_txt_pca_42": 0.0,
+    "company_free_txt_pca_43": 0.069,
+    "company_free_txt_pca_44": 0.087,
+    "company_free_txt_pca_45": 0.0,
+    "company_free_txt_pca_46": 0.03,
+    "company_free_txt_pca_47": 0.0,
+    "company_free_txt_pca_48": 0.0,
+    "company_free_txt_pca_49": 0.0,
+    "company_free_txt_pca_50": 0.0,
+    "company_struct_txt_pca_30": 2.353,
+    "company_struct_txt_pca_31": 0.0,
+    "company_struct_txt_pca_32": 0.008,
+    "company_struct_txt_pca_33": 0.001,
+    "company_struct_txt_pca_34": 0.002,
+    "company_struct_txt_pca_35": 0.0,
+    "company_struct_txt_pca_36": 0.0,
+    "company_struct_txt_pca_37": 0.0,
+    "company_struct_txt_pca_38": 0.0,
+    "company_struct_txt_pca_39": 0.0,
+    "company_struct_txt_pca_40": 0.096,
+    "company_struct_txt_pca_41": 0.027,
+    "company_struct_txt_pca_42": 0.014,
+    "company_struct_txt_pca_43": 0.33,
+    "company_struct_txt_pca_44": 0.133,
+    "company_struct_txt_pca_45": 0.346,
+    "company_struct_txt_pca_46": 0.013,
+    "company_struct_txt_pca_47": 0.0,
+    "company_struct_txt_pca_48": 0.0,
+    "company_struct_txt_pca_49": 0.0,
+    "company_struct_txt_pca_50": 0.0,
+    "title_txt_pca_30": 4.877,
+    "title_txt_pca_31": 0.26,
+    "title_txt_pca_32": 1.154,
+    "title_txt_pca_33": 0.758,
+    "title_txt_pca_34": 0.899,
+    "title_txt_pca_35": 0.0,
+    "title_txt_pca_36": 0.0,
+    "title_txt_pca_37": 0.0,
+    "title_txt_pca_38": 0.0,
+    "title_txt_pca_39": 0.0,
+    "title_txt_pca_40": 0.079,
+    "title_txt_pca_41": 0.05,
+    "title_txt_pca_42": 0.0,
+    "title_txt_pca_43": 0.633,
+    "title_txt_pca_44": 0.397,
+    "title_txt_pca_45": 0.276,
+    "title_txt_pca_46": 0.261,
+    "title_txt_pca_47": 0.0,
+    "title_txt_pca_48": 0.0,
+    "title_txt_pca_49": 0.039,
+    "title_txt_pca_50": 0.0
+   },
+   "pred_share": 0.6941,
+   "group_share": {
+    "structured": 0.0399,
+    "pca": 0.2661,
+    "lex": 0.4374,
+    "nbr": 0.0897,
+    "num": 0.0618,
+    "probe": 0.0458,
+    "depthtop3": 0.0594
+   },
+   "top10": [
+    [
+     "colors_txt_pca_30",
+     43.738
+    ],
+    [
+     "colors_txt_pca_54",
+     5.937
+    ],
+    [
+     "title_txt_pca_30",
+     4.877
+    ],
+    [
+     "colors_txt_pca_53",
+     4.582
+    ],
+    [
+     "category",
+     2.484
+    ],
+    [
+     "company_struct_txt_pca_30",
+     2.353
+    ],
+    [
+     "colors_txt_pca_31",
+     1.182
+    ],
+    [
+     "title_txt_pca_32",
+     1.154
+    ],
+    [
+     "title_txt_pca_12",
+     1.092
+    ],
+    [
+     "is_discounted",
+     1.04
+    ]
+   ]
+  }
+ }
+}

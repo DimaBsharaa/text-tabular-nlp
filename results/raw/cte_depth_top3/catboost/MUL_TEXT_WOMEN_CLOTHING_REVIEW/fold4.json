@@ -1,0 +1,344 @@
+{
+ "method": "cte_depth_top3",
+ "run_name": "cte_depth_top3",
+ "engine_version": "depth/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_WOMEN_CLOTHING_REVIEW",
+ "fold": 4,
+ "task": "MUL",
+ "score": 0.9044381377982834,
+ "metrics": {
+  "score": 0.9044381377982834,
+  "metrics": {
+   "auc": 0.9044381377982834,
+   "logloss": 0.6640694647394575
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9009836279109956,
+  "joint_tar": 0.9083147657473656,
+  "unimodal_structured": 0.7788157151828876,
+  "unimodal_text": 0.8813863754532264
+ },
+ "diff_vs_csv_joint_tar": -0.0038766279490821676,
+ "runtime_s": {
+  "total": 184.0,
+  "fit": 183.9,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1",
+   "method": "cte_depth_top3",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 1878,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "0728696809ed92a11b55357ab0f1b5897a8d1e28",
+  "dirty": false
+ },
+ "timestamp": "2026-10-19 19:14:45",
+ "argv": [
+  "--method",
+  "cte_depth_top3",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_WOMEN_CLOTHING_REVIEW",
+  "--fold",
+  "4",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 4.5,
+   "probe": 7.5
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 10.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.796794,
+     0.820902,
+     0.841946,
+     0.85372
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.3,
+    "experts": 4.1
+   }
+  },
+  "probe": {
+   "alpha": 10.0,
+   "oof_metric": [
+    0.8653659584839477,
+    0.8751061087622338,
+    0.8801918050307981,
+    0.8803502726439216
+   ]
+  },
+  "n_extra_columns": {
+   "Review Text": 32,
+   "Title": 20
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ]
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "eig",
+   "layer_oof_metric": {
+    "1": 0.851411,
+    "2": 0.854838,
+    "3": 0.85725,
+    "4": 0.861057,
+    "5": 0.869042,
+    "6": 0.878099,
+    "7": 0.881641,
+    "8": 0.883361,
+    "9": 0.883492,
+    "10": 0.883291,
+    "11": 0.881661,
+    "12": 0.880787
+   },
+   "layer_alpha": {
+    "1": 30.0,
+    "2": 30.0,
+    "3": 30.0,
+    "4": 30.0,
+    "5": 30.0,
+    "6": 30.0,
+    "7": 30.0,
+    "8": 30.0,
+    "9": 30.0,
+    "10": 30.0,
+    "11": 30.0,
+    "12": 30.0
+   },
+   "ranked_layers": [
+    9,
+    8,
+    10,
+    11,
+    7,
+    12,
+    6,
+    5,
+    4,
+    3,
+    2,
+    1
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.8653659584839477,
+    0.8751061087622338,
+    0.8801918050307981,
+    0.8803502726439216
+   ],
+   "probe_cache_hits": 0,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 5.2,
+    "probes": 28.3
+   }
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Review Text_txt_pca_30": 2.183,
+    "Review Text_txt_pca_31": 1.0,
+    "Review Text_txt_pca_32": 2.363,
+    "Review Text_txt_pca_33": 1.974,
+    "Review Text_txt_pca_34": 0.932,
+    "Review Text_txt_pca_35": 1.906,
+    "Review Text_txt_pca_36": 1.157,
+    "Review Text_txt_pca_37": 1.278,
+    "Review Text_txt_pca_38": 0.269,
+    "Review Text_txt_pca_39": 0.067,
+    "Review Text_txt_pca_40": 0.26,
+    "Review Text_txt_pca_41": 0.145,
+    "Review Text_txt_pca_42": 0.0,
+    "Review Text_txt_pca_43": 0.0,
+    "Review Text_txt_pca_44": 0.0,
+    "Review Text_txt_pca_45": 0.002,
+    "Review Text_txt_pca_46": 0.0,
+    "Review Text_txt_pca_47": 0.808,
+    "Review Text_txt_pca_48": 0.472,
+    "Review Text_txt_pca_49": 0.2,
+    "Review Text_txt_pca_50": 0.697,
+    "Review Text_txt_pca_51": 0.548,
+    "Review Text_txt_pca_52": 0.125,
+    "Review Text_txt_pca_53": 0.301,
+    "Review Text_txt_pca_54": 0.029,
+    "Review Text_txt_pca_55": 0.0,
+    "Review Text_txt_pca_56": 1.009,
+    "Review Text_txt_pca_57": 0.0,
+    "Review Text_txt_pca_58": 2.713,
+    "Review Text_txt_pca_59": 2.563,
+    "Review Text_txt_pca_60": 3.395,
+    "Review Text_txt_pca_61": 3.939,
+    "Review Text_txt_pca_62": 2.8,
+    "Review Text_txt_pca_63": 3.256,
+    "Review Text_txt_pca_64": 2.676,
+    "Review Text_txt_pca_65": 3.081,
+    "Title_txt_pca_30": 0.0,
+    "Title_txt_pca_31": 0.001,
+    "Title_txt_pca_32": 0.0,
+    "Title_txt_pca_33": 0.0,
+    "Title_txt_pca_34": 0.0,
+    "Title_txt_pca_35": 0.0,
+    "Title_txt_pca_36": 0.0,
+    "Title_txt_pca_37": 0.0,
+    "Title_txt_pca_38": 0.0,
+    "Title_txt_pca_39": 0.52,
+    "Title_txt_pca_40": 0.168,
+    "Title_txt_pca_41": 0.002,
+    "Title_txt_pca_42": 0.33,
+    "Title_txt_pca_43": 0.252,
+    "Title_txt_pca_44": 0.004,
+    "Title_txt_pca_45": 0.205,
+    "Title_txt_pca_46": 0.013,
+    "Title_txt_pca_47": 0.027,
+    "Title_txt_pca_48": 0.093,
+    "Title_txt_pca_49": 0.0
+   },
+   "pred_share": 0.4376,
+   "group_share": {
+    "structured": 0.1612,
+    "pca": 0.4012,
+    "lex": 0.0752,
+    "nbr": 0.0527,
+    "num": 0.0655,
+    "probe": 0.1261,
+    "depthtop3": 0.1181
+   },
+   "top10": [
+    [
+     "Recommended IND",
+     13.572
+    ],
+    [
+     "Review Text_txt_pca_61",
+     3.939
+    ],
+    [
+     "Review Text_txt_pca_60",
+     3.395
+    ],
+    [
+     "Review Text_txt_pca_63",
+     3.256
+    ],
+    [
+     "Review Text_txt_pca_65",
+     3.081
+    ],
+    [
+     "Review Text_txt_pca_62",
+     2.8
+    ],
+    [
+     "Review Text_txt_pca_58",
+     2.713
+    ],
+    [
+     "Review Text_txt_pca_64",
+     2.676
+    ],
+    [
+     "Review Text_txt_pca_59",
+     2.563
+    ],
+    [
+     "Review Text_txt_pca_32",
+     2.363
+    ]
+   ]
+  }
+ }
+}

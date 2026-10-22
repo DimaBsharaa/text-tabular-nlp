@@ -83,6 +83,7 @@ Entry template:
 | P17 | 2026-10-22 | C12 pre-registration: final method with cross-fitting fold seeds 43 / 44 (LightGBM) | jobs/p17.txt, ≈ 3.5–4 h A100, approved |
 | E48 | 2026-10-22 | review round: depth profile from all 20 datasets; README wording | best layer 2–12, inner in 14/20; the 4-dataset pattern by task type does not hold |
 | E49 | 2026-10-22 | P17: cross-fitting fold seeds 43 / 44 (LightGBM, 200 jobs) | **C12 passes**: +0.0169 / +0.0176 (15/20 each, Holm 0.019); per-dataset SD over seeds 0.0013; 18/20 same sign |
+| E50 | 2026-10-22 | external audit: findings checked; figures tracked, raw JSONs added, cache keys fixed, wording narrowed | method and results unchanged |
 
 ---
 
@@ -2094,3 +2095,27 @@ Features for the learner = structured columns (upstream preprocessing)
 - **Decision (Dima, 2026-10-22):** the paper and README report the pre-registered reading only (C12 corrected within its
   own family; 4 of 5 learners survive Holm over the 17 claims). The 19-test figure above stays in this entry, which meets
   P17's transparency clause; the paper's appendix table still lists every test with its raw p-value.
+
+## E50 — External audit (2026-10-22): findings checked, packaging and wording fixed   (no run)
+- **Packaging (true, fixed):** upstream's `.gitignore` rule `figures/` silently excluded `paper/figures/` and
+  `reports/figures/fig7_depth_profile_20.*`, so the paper could not compile from the repository → exceptions added, files
+  tracked. Colab runner default `jobs/pilot_tar_repro.txt` (archived) → `jobs/p14_A.txt`. The final method's raw result
+  JSONs (788: `cte_depth_top3` all learners incl. the 36 C7 datasets, `_xs43`, `_xs44`) are now in `results/raw/`
+  (7 MB, no secrets: the only "token" matches are two dataset column names); `scripts/check_recompute.py` reads them by
+  default and reproduces all 5 rows of Table 1 from the repository alone.
+- **Supervised cache keys (true, fixed):** the CTE expert cache key omitted the training labels and the predicted rows'
+  texts; the depth cache had labels but not those texts. No result was affected (label-shuffle runs used other fold
+  ids, P17 another config key, TabPFN other row ids), but the cache was unsafe for reuse → `cte.content_key` (labels +
+  prediction-row texts) added to both keys; `tests/test_cte.py::test_cache_key_depends_on_labels_and_prediction_texts`.
+  Features unchanged (golden tests pass); old cache entries are simply not reused.
+- **Golden tests (true):** exact equality fails on other Python / BLAS builds (max difference ~2e-4) → tolerance 1e-3 with
+  identical missing-value positions; still exact in the pinned environment.
+- **Wording (true, fixed in paper, README, method README):** (a) "no training row's feature is computed with its own
+  label" was too strong: the model producing a row's feature never saw it, but the Ridge penalty (small grid), the three
+  depth layers and the top classes are chosen once from all training rows' out-of-fold scores (training-side selection;
+  no validation / test label is used) → stated precisely. (b) "the learner over-trusts" → "may over-trust", a
+  motivation. (c) The depth probes on their own: +0.002, 11/20, p = 0.216, not significant → stated in the paper.
+  (d) Cost comparison: ours excludes the frozen encoding (done once per dataset) → stated. (e) Limitations: early looks at
+  the 20 datasets' test scores → stated; they are not a pristine holdout. (f) Jigsaw: "no layer probe beats the final
+  one" (about our probes, not about what a frozen model can represent).
+- **Not changed:** the method and every result; TabPFN reload differences were already documented.

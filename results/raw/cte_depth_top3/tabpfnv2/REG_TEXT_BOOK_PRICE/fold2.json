@@ -1,0 +1,237 @@
+{
+ "method": "cte_depth_top3",
+ "run_name": "cte_depth_top3",
+ "engine_version": "depth/1",
+ "tar_path": null,
+ "learner": "tabpfnv2",
+ "learner_model_name": "TabPFN-v2 \ud83e\udd2f",
+ "dataset": "REG_TEXT_BOOK_PRICE",
+ "fold": 2,
+ "task": "REG",
+ "score": 0.593548012509524,
+ "metrics": {
+  "score": 0.593548012509524,
+  "metrics": {
+   "r2": 0.593548012509524,
+   "mse": 0.040378444838499866,
+   "rmse": 0.20094388479996067
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.531526509467665,
+  "joint_tar": 0.5237444805189,
+  "unimodal_structured": 0.2118770507428864,
+  "unimodal_text": 0.5191521978250109
+ },
+ "diff_vs_csv_joint_tar": 0.06980353199062406,
+ "runtime_s": {
+  "total": 115.7,
+  "fit": 106.9,
+  "predict": 8.8,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1",
+   "method": "cte_depth_top3",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 4491,
+ "n_test": 498,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "b649f47211bce858897802ead14f2fcd29f7130a",
+  "dirty": false
+ },
+ "timestamp": "2026-10-21 03:17:19",
+ "argv": [
+  "--method",
+  "cte_depth_top3",
+  "--learner",
+  "tabpfnv2",
+  "--dataset",
+  "REG_TEXT_BOOK_PRICE",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 6,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 34.5,
+   "probe": 1.4
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 1.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.696355,
+     0.702957,
+     0.696812,
+     0.668888
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": false,
+    "nbr": false
+   },
+   "seconds": {
+    "frozen_embeddings": 0.2,
+    "experts": 34.3
+   }
+  },
+  "probe": {
+   "alpha": 1.0,
+   "oof_metric": [
+    0.6557243746073637,
+    0.6632932078799268,
+    0.6563830831293449,
+    0.6296542516782268
+   ]
+  },
+  "n_extra_columns": {
+   "Author": 24,
+   "Edition": 21,
+   "Genre": 21,
+   "Synopsis": 21,
+   "Title": 21
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ]
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "sparse_cg",
+   "layer_oof_metric": {
+    "1": 0.668343,
+    "2": 0.677639,
+    "3": 0.677703,
+    "4": 0.680032,
+    "5": 0.679738,
+    "6": 0.679396,
+    "7": 0.675274,
+    "8": 0.681579,
+    "9": 0.679168,
+    "10": 0.686858,
+    "11": 0.67418,
+    "12": 0.669172
+   },
+   "layer_alpha": {
+    "1": 10.0,
+    "2": 10.0,
+    "3": 10.0,
+    "4": 10.0,
+    "5": 10.0,
+    "6": 3.0,
+    "7": 3.0,
+    "8": 3.0,
+    "9": 3.0,
+    "10": 3.0,
+    "11": 10.0,
+    "12": 10.0
+   },
+   "ranked_layers": [
+    10,
+    8,
+    4,
+    5,
+    6,
+    9,
+    3,
+    2,
+    7,
+    11,
+    12,
+    1
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.6557243746073637,
+    0.6632932078799268,
+    0.6563830831293449,
+    0.6296542516782268
+   ],
+   "probe_cache_hits": 0,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 0.5,
+    "probes": 51.4
+   }
+  },
+  "catboost_importance": null
+ }
+}

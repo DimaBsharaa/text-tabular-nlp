@@ -92,7 +92,8 @@ def test_cte3_golden_still_holds():
     import make_cte3_golden as g
     ref = np.load(g.OUT)
     new = g.all_features()
-    assert all(np.array_equal(new[k], ref[k]) for k in ref.files)
+    assert all(np.array_equal(np.isnan(new[k]), np.isnan(ref[k])) for k in ref.files)  # see test_cte3_features_unchanged_golden
+    assert all(np.allclose(new[k], ref[k], rtol=0, atol=1e-3, equal_nan=True) for k in ref.files)
 
 
 def test_median_filling_for_tabm_only(tmp_path, cfg):

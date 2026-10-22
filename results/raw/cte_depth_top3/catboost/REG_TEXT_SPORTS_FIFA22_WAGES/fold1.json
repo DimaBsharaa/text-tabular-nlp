@@ -1,0 +1,308 @@
+{
+ "method": "cte_depth_top3",
+ "run_name": "cte_depth_top3",
+ "engine_version": "depth/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_SPORTS_FIFA22_WAGES",
+ "fold": 1,
+ "task": "REG",
+ "score": 0.7115883356094183,
+ "metrics": {
+  "score": 0.7115883356094183,
+  "metrics": {
+   "r2": 0.7115883356094183,
+   "mse": 135048688.01802057,
+   "rmse": 11621.0450484464
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 72.1,
+  "fit": 72.1,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1",
+   "method": "cte_depth_top3",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 1917,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 03:02:25",
+ "argv": [
+  "--method",
+  "cte_depth_top3",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_SPORTS_FIFA22_WAGES",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 6.3,
+   "probe": 1.1
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 10.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.423608,
+     0.424172,
+     0.425744,
+     0.427038
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": false,
+    "nbr": false
+   },
+   "seconds": {
+    "frozen_embeddings": 2.2,
+    "experts": 4.1
+   }
+  },
+  "probe": {
+   "alpha": 0.3,
+   "oof_metric": [
+    0.40323963501677446,
+    0.3847066293415036,
+    0.3612781221537614,
+    0.31499436653839474
+   ]
+  },
+  "n_extra_columns": {
+   "nationality_name": 24
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ]
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "sparse_cg",
+   "layer_oof_metric": {
+    "1": 0.419982,
+    "2": 0.418801,
+    "3": 0.418008,
+    "4": 0.418855,
+    "5": 0.416713,
+    "6": 0.413,
+    "7": 0.41249,
+    "8": 0.411821,
+    "9": 0.411344,
+    "10": 0.416952,
+    "11": 0.414964,
+    "12": 0.41811
+   },
+   "layer_alpha": {
+    "1": 1.0,
+    "2": 1.0,
+    "3": 1.0,
+    "4": 1.0,
+    "5": 1.0,
+    "6": 1.0,
+    "7": 1.0,
+    "8": 1.0,
+    "9": 1.0,
+    "10": 1.0,
+    "11": 1.0,
+    "12": 1.0
+   },
+   "ranked_layers": [
+    1,
+    4,
+    2,
+    12,
+    3,
+    10,
+    5,
+    11,
+    6,
+    7,
+    8,
+    9
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.40323963501677446,
+    0.3847066293415036,
+    0.3612781221537614,
+    0.31499436653839474
+   ],
+   "probe_cache_hits": 0,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 1.0,
+    "probes": 47.2
+   }
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "nationality_name_txt_pca_30": 0.386,
+    "nationality_name_txt_pca_31": 0.714,
+    "nationality_name_txt_pca_32": 0.429,
+    "nationality_name_txt_pca_33": 0.0,
+    "nationality_name_txt_pca_34": 0.0,
+    "nationality_name_txt_pca_35": 0.0,
+    "nationality_name_txt_pca_36": 0.0,
+    "nationality_name_txt_pca_37": 0.0,
+    "nationality_name_txt_pca_38": 0.0,
+    "nationality_name_txt_pca_39": 0.0,
+    "nationality_name_txt_pca_40": 0.0,
+    "nationality_name_txt_pca_41": 0.0,
+    "nationality_name_txt_pca_42": 0.174,
+    "nationality_name_txt_pca_43": 0.011,
+    "nationality_name_txt_pca_44": 0.0,
+    "nationality_name_txt_pca_45": 0.104,
+    "nationality_name_txt_pca_46": 0.16,
+    "nationality_name_txt_pca_47": 0.0,
+    "nationality_name_txt_pca_48": 0.0,
+    "nationality_name_txt_pca_49": 0.0,
+    "nationality_name_txt_pca_50": 0.0,
+    "nationality_name_txt_pca_51": 0.0,
+    "nationality_name_txt_pca_52": 0.0,
+    "nationality_name_txt_pca_53": 0.556,
+    "nationality_name_txt_pca_54": 0.306
+   },
+   "pred_share": 0.0284,
+   "group_share": {
+    "structured": 0.8445,
+    "pca": 0.1271,
+    "lex": 0.0039,
+    "nbr": 0.0114,
+    "num": 0.0045,
+    "probe": 0.0056,
+    "depthtop3": 0.0031
+   },
+   "top10": [
+    [
+     "overall",
+     43.57
+    ],
+    [
+     "movement_reactions",
+     7.187
+    ],
+    [
+     "skill_ball_control",
+     4.627
+    ],
+    [
+     "skill_dribbling",
+     3.386
+    ],
+    [
+     "potential",
+     2.641
+    ],
+    [
+     "defending_sliding_tackle",
+     2.404
+    ],
+    [
+     "defending_standing_tackle",
+     2.007
+    ],
+    [
+     "age",
+     1.808
+    ],
+    [
+     "attacking_heading_accuracy",
+     1.593
+    ],
+    [
+     "attacking_crossing",
+     1.584
+    ]
+   ]
+  }
+ }
+}

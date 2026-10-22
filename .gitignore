@@ -35,3 +35,5 @@ archive/CLAUDE_project_brief.md
 archive/paper_notes/
 # Claude Code working rules: local only
 CLAUDE.md
+!paper/figures/
+!reports/figures/

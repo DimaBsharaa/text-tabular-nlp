@@ -4,7 +4,7 @@ Reads the raw per-job result JSONs of a Colab export and the official upstream l
 for a method and learner: per dataset, mean over folds 0-4 of (our test score - leaderboard Joint TAR score of the
 same learner and fold); the mean / median of those 20 differences; wins; and a two-sided Wilcoxon signed-rank p-value.
 If the project's analysis code had a bug, these numbers would disagree with reports/*.json.
-    python scripts/check_recompute.py --results .explore/export_p14/results --method cte_depth_top3 --learner catboost
+    python scripts/check_recompute.py --method cte_depth_top3 --learner catboost   # reads the committed results/raw/
 """
 import argparse
 import glob
@@ -21,7 +21,8 @@ LEARNER_PREFIX = {"catboost": "CatBoost", "lgbm": "LightGBM", "tabm": "TabM", "t
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--results", required=True)
+    p.add_argument("--results", default=os.path.join(os.path.dirname(LEADERBOARD), "..", "..", "..", "results", "raw"),
+                   help="a results root with <method>/<learner>/<dataset>/fold<k>.json (default: the committed results/raw)")
     p.add_argument("--method", required=True)
     p.add_argument("--learner", default="catboost")
     a = p.parse_args()
