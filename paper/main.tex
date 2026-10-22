@@ -250,8 +250,7 @@ the Holm correction ($\cSevenHolm$).
 \paragraph{Robustness and checks.}
 The gain is not a lucky fold assignment: with two other cross-fitting seeds (LightGBM) it is \seedGainA{} and
 \seedGainB{} (\seedWinsA{} of 20 datasets each, Holm $p = \seedHolm$), varies per dataset by a median \seedSd{} across
-seeds and keeps its sign on \seedSameSign{} of 20; counted as two further tests, they leave \nHolmPassNineteen{} of 5
-learners significant under the global Holm correction (TabPFN-v2: \holmNineteenPFNtwo).
+seeds and keeps its sign on \seedSameSign{} of 20.
 Shuffled training labels drop the method to chance (AUROC \shuffleMin--\shuffleMax, $R^2$ \shuffleRtwo), and an
 independent script reproduces Table~\ref{tab:main} from the raw results. The method saves the GPU, not time: our features take a median \costOurs{} minutes per run on a CPU, against
 \costTar{} for an optimised GPU fine-tuning of Joint TAR.
@@ -288,8 +287,7 @@ published Joint TAR and ours, per learner; bold where ours is higher. TabPFN has
 \caption{All tests run in the project, each specified in writing before its run: raw two-sided Wilcoxon $p$ and the
 Holm-adjusted $p$ over the \nTests{} claims. Bold: the final method. C1--C6 and C8 are earlier versions of the method;
 C7a--d are the checks on 36 further datasets (CatBoost, folds 0--2). $^\dagger$C12a--b replicate C10 (LightGBM) with
-other cross-fitting fold seeds and were corrected within their own family of two, as specified before the run; adding
-them to the family raises TabPFN-v2 (C11) to \holmNineteenPFNtwo.}
+other cross-fitting fold seeds and were corrected within their own family of two, as specified before the run.}
 \label{tab:tests}
 \centering
 \scriptsize

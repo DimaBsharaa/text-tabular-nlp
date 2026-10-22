@@ -26,8 +26,7 @@ Left: mean scores (the axis starts at 0.70 and averages AUROC with R², as the b
 gain over Joint TAR with its 95% interval, the honest scale.
 
 - **Significant with every learner** (two-sided Wilcoxon signed-rank test over datasets, each test specified before
-  its run). With a Holm correction over all 17 claims tested in the project, 4 of 5 remain significant (LightGBM: 0.061);
-  counting the two seed replications below as further tests, 3 of 5 (TabPFN-v2: 0.056).
+  its run). With a Holm correction over all 17 claims tested in the project, 4 of 5 remain significant (LightGBM: 0.061).
 - **Not a lucky seed:** re-run with two other cross-fitting fold seeds (LightGBM), the gain is +0.017 and +0.018
   (15 of 20 datasets each, Holm p = 0.019); per dataset it moves by a median 0.001 between seeds.
 - **Broad:** 76% of the 480 individual (learner, dataset, fold) runs beat Joint TAR; 14 of the 20 datasets are won

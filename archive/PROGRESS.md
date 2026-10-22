@@ -2091,3 +2091,6 @@ Features for the learner = structured columns (upstream preprocessing)
   "4 of 5 learners survive Holm over the 17 tests"; the paper and README also state the 19-test reading (3 of 5).
 - **Fold-score table rebuilt** with this export appended: 2,515 old rows unchanged, 200 added (`*_xs43`, `*_xs44`).
 - **Next:** paper robustness sentence, README, notebook 02.
+- **Decision (Dima, 2026-10-22):** the paper and README report the pre-registered reading only (C12 corrected within its
+  own family; 4 of 5 learners survive Holm over the 17 claims). The 19-test figure above stays in this entry, which meets
+  P17's transparency clause; the paper's appendix table still lists every test with its raw p-value.
