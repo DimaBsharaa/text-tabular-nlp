@@ -66,7 +66,7 @@ def test_every_depth_variant_end_to_end(tmp_path, cfg, method, task):
     dcols = [c for c in f.columns if c.startswith("depth")]
     spec = depth.DEPTH_METHODS[method]
     k = 2 if task == "mul" else 1  # 3 classes -> C-1 = 2 columns per expert
-    agg = spec.aggregate if k == 1 else "top3"  # multiclass always top3
+    agg = spec.aggregate if k == 1 or spec.aggregate == "cat3" else "top3"  # multiclass top3, except one-probe cat3
     assert len(dcols) == (12 if agg == "stack" else k)
     assert d["depth"]["aggregate"] == agg
     if agg == "sl":
