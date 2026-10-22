@@ -41,9 +41,9 @@ e5-small-v2 frozen and adds a few columns that predict the target from the text:
 a probe on the full embedding and probes on the encoder's inner layers. Each is \emph{cross-fitted}, so that no
 training row's feature is computed with its own label. On the 20 text-tabular datasets of MulTaBench, the method
 scores higher than Joint TAR with every one of the benchmark's five learners (mean gain \gainMin{} to \gainMax{}
-AUROC~/~$R^2$, Wilcoxon $p \le \pMax$; \nHolmPass{} of 5 also survive a Holm correction over all \nTests{} tests of
-the project). Cross-fitting is essential, and the depth at which the target is best read varies from task to task.
-The method needs no GPU; it does not win on toxicity detection, where fine-tuning keeps its edge.
+AUROC~/~$R^2$, Wilcoxon $p \le \pMax$; \nHolmPass{} of 5 also survive a Holm correction over all \nTests{} claims
+tested in the project), and the gain is stable across cross-fitting seeds. Cross-fitting is essential, and the depth at which the target is best read varies from task to task.
+It needs no GPU, but does not win on toxicity detection.
 \end{abstract}
 
 \section{Introduction}
@@ -187,11 +187,11 @@ TabPFN has none for two datasets ($n = 18$). Our re-implementation of Joint TAR 
 published numbers ($p = \tarReproP$), so our environment does not favour our method. Per learner, the fold-averaged
 differences to Joint TAR are tested over datasets with a two-sided Wilcoxon signed-rank test; each
 test and its threshold ($p < 0.05$, positive mean) were fixed in writing before its run, and Holm corrects over all
-\nTests{} tests of the project. All runs use seed 42, as the baselines.
+\nTests{} claims tested in the project. All runs use seed 42, as the baselines.
 
 \begin{table}[t]
 \caption{Ours vs.\ the published scores of the same learner (mean over datasets). Gain: ours $-$ Joint TAR, bootstrap
-95\% interval; wins: datasets with a positive gain; $p$: Wilcoxon over datasets (Holm over all \nTests{} tests).}
+95\% interval; wins: datasets with a positive gain; $p$: Wilcoxon over datasets (Holm over all \nTests{} claims).}
 \label{tab:main}
 \centering
 \small
@@ -201,8 +201,7 @@ test and its threshold ($p < 0.05$, positive mean) were fixed in writing before 
 
 \paragraph{Main result.}
 Table~\ref{tab:main} and Figure~\ref{fig:results}a: with every learner our features beat Joint TAR, by \gainMin{} to
-\gainMax{}. Measured from Joint Frozen, they add \multMin{} to \multMax{} times what fine-tuning adds, with the encoder
-unchanged. The gain is broad: \runsWonPct\% of the \nRuns{} individual (learner, dataset, fold) runs beat Joint TAR,
+\gainMax{}. Measured from Joint Frozen, they add \multMin{} to \multMax{} times what fine-tuning adds. The gain is broad: \runsWonPct\% of the \nRuns{} individual (learner, dataset, fold) runs beat Joint TAR,
 \dsWonFour{} of the 20 datasets are won with at least four learners (\dsWonAll{} with all), and on \dsAboveNoise{}
 the mean gain exceeds the baselines' own fold-to-fold noise. It is largest for
 regression (\gainRegMin{} to \gainRegMax{} by learner), smaller for binary (\gainBinMin{} to \gainBinMax{}) and
@@ -249,10 +248,12 @@ On 36 further text datasets never used in development (CatBoost, folds 0--2) the
 the Holm correction ($\cSevenHolm$).
 
 \paragraph{Robustness and checks.}
-\pending{seed check: cross-fitting fold seeds 43 and 44, LightGBM (C12)}
-With shuffled training labels the method falls to chance (AUROC \shuffleMin--\shuffleMax, $R^2$ \shuffleRtwo), so no
-label reaches the features by another path, and an independent script reproduces Table~\ref{tab:main} from the raw
-results. The method saves the GPU, not time: our features take a median \costOurs{} minutes per run on a CPU, against
+The gain is not a lucky fold assignment: with two other cross-fitting seeds (LightGBM) it is \seedGainA{} and
+\seedGainB{} (\seedWinsA{} of 20 datasets each, Holm $p = \seedHolm$), varies per dataset by a median \seedSd{} across
+seeds and keeps its sign on \seedSameSign{} of 20; counted as two further tests, they leave \nHolmPassNineteen{} of 5
+learners significant under the global Holm correction (TabPFN-v2: \holmNineteenPFNtwo).
+Shuffled training labels drop the method to chance (AUROC \shuffleMin--\shuffleMax, $R^2$ \shuffleRtwo), and an
+independent script reproduces Table~\ref{tab:main} from the raw results. The method saves the GPU, not time: our features take a median \costOurs{} minutes per run on a CPU, against
 \costTar{} for an optimised GPU fine-tuning of Joint TAR.
 
 \section{Conclusion}
@@ -285,8 +286,10 @@ published Joint TAR and ours, per learner; bold where ours is higher. TabPFN has
 
 \begin{table}[h]
 \caption{All tests run in the project, each specified in writing before its run: raw two-sided Wilcoxon $p$ and the
-Holm-adjusted $p$ over all of them. Bold: the final method. C1--C6 and C8 are earlier versions of the method; C7a--d are the
-checks on 36 further datasets (CatBoost, folds 0--2).}
+Holm-adjusted $p$ over the \nTests{} claims. Bold: the final method. C1--C6 and C8 are earlier versions of the method;
+C7a--d are the checks on 36 further datasets (CatBoost, folds 0--2). $^\dagger$C12a--b replicate C10 (LightGBM) with
+other cross-fitting fold seeds and were corrected within their own family of two, as specified before the run; adding
+them to the family raises TabPFN-v2 (C11) to \holmNineteenPFNtwo.}
 \label{tab:tests}
 \centering
 \scriptsize

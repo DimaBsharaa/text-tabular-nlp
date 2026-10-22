@@ -369,6 +369,25 @@ pd.read_csv(R("reports", "checks", "label_shuffle.csv")).round(4)
 """)
 
 md("""
+**Not a lucky seed.** The method's own randomness is the assignment of training rows to the 5 cross-fitting folds
+(seed 42 everywhere above; the learners' seeds are fixed by the benchmark). LightGBM was re-run with fold seeds 43 and
+44 (`reports/p17/`, specified before the run, Holm over the two seeds). Below: the gain per seed, then per dataset.
+""")
+
+code("""
+p17 = json.load(open(R("reports", "p17", "p17_report.json")))
+runs = {"seed 42": p17["seed42_C10"], "seed 43": p17["C12"]["seed43"], "seed 44": p17["C12"]["seed44"]}
+display(pd.DataFrame({k: {"mean gain": c["mean_diff"], "median gain": c["median_diff"], "wins": c["wins"], "p": c["p_value"],
+                          "Holm (2 seeds)": c.get("p_holm")} for k, c in runs.items()}).T.round(4))
+sd = pd.DataFrame({k: c["per_dataset"] for k, c in runs.items()})
+sd.index = sd.index.map(NAME)
+sd["sd over seeds"] = sd.std(axis=1, ddof=1)
+print(f"per-dataset sd of the gain over the 3 seeds: median {sd['sd over seeds'].median():.4f}, "
+      f"max {sd['sd over seeds'].max():.4f} ({sd['sd over seeds'].idxmax()})")
+sd.sort_values("sd over seeds", ascending=False).head(5).round(4)
+""")
+
+md("""
 ## 11. Summary
 
 1. **Better than Joint TAR with every learner.** The mean gain is +0.016 to +0.029 (AUROC / R²). Measured from Joint
@@ -394,6 +413,8 @@ md("""
 11. **No GPU needed, but not faster**: building our features takes about 2.7 min per job on a CPU, against 1.3 min for
     an optimised GPU fine-tuning of Joint TAR.
 12. **No leakage path found**: with shuffled training labels the method falls to chance (AUROC 0.50–0.53, R² −0.01).
+13. **Not a lucky seed**: with two other cross-fitting fold seeds (LightGBM) the gain is +0.017 and +0.018 (15 of 20
+    datasets each, Holm p = 0.019); per dataset it moves by a median 0.001 between seeds, most on Video Games Sales.
 """)
 
 

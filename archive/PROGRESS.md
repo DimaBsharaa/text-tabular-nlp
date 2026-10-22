@@ -82,6 +82,7 @@ Entry template:
 | E47 | 2026-10-21 | check: upstream of 26 July 2026 (599bd6a) vs `paper_version` | identical splits / metrics / preprocessing / baseline CSVs for the 20; 2 of the 36 C7 loaders differ |
 | P17 | 2026-10-22 | C12 pre-registration: final method with cross-fitting fold seeds 43 / 44 (LightGBM) | jobs/p17.txt, ≈ 3.5–4 h A100, approved |
 | E48 | 2026-10-22 | review round: depth profile from all 20 datasets; README wording | best layer 2–12, inner in 14/20; the 4-dataset pattern by task type does not hold |
+| E49 | 2026-10-22 | P17: cross-fitting fold seeds 43 / 44 (LightGBM, 200 jobs) | **C12 passes**: +0.0169 / +0.0176 (15/20 each, Holm 0.019); per-dataset SD over seeds 0.0013; 18/20 same sign |
 
 ---
 
@@ -2068,3 +2069,25 @@ Features for the learner = structured columns (upstream preprocessing)
   standard frozen features"; PCA presented as a motivation, not the cause (MulTaBench Figure 6, verified on arXiv: TAR
   ahead of Frozen at 15, 30 and 60 components); Figure 1's caption states the 0.70 axis and the AUROC / R² mix.
 - `CLAUDE.md` (working rules for Claude Code) is git-ignored and stays local; Claude Code reads it from disk.
+
+## E49 — P17 complete: C12 PASSES; the gain is robust to the cross-fitting fold seed   (2026-10-22, Colab A100)
+- **Run:** `jobs/p17.txt`, 200/200 jobs, 0 errors, commit 5bf29c6 (clean), all A100-SXM4-40GB, engine `depth/1`, export
+  `results_export_20261022_013026.zip`. Every JSON records `xfit_seed` 43 / 44 as intended; the lexical expert's
+  out-of-fold scores differ from seed 42 in 200/200 runs (folds really changed); n_train / n_test equal the seed-42
+  run on every (dataset, fold).
+- **C12 (LightGBM vs leaderboard Joint TAR, 20 datasets, Holm over the 2 seeds):**
+  - seed 43: mean +0.0169, median +0.0140, 15/20, p = 0.0094 (Holm 0.019) → passes;
+  - seed 44: mean +0.0176, median +0.0129, 15/20, p = 0.0107 (Holm 0.019) → passes;
+  - seed 42 (C10, same export, reproduced exactly): +0.0193, 14/20, p = 0.0056.
+  - `scripts/check_recompute.py` reproduces all three rows. Report: `reports/p17/p17_report.json`.
+- **Spread over the 3 seeds:** per-dataset SD of the gain, median 0.0013, max 0.018 (Video Games Sales); 18/20 datasets
+  keep their sign (the two that flip are ties: Women Clothing −0.0009 / +0.0009 / −0.0007, SCImago −0.0009 / −0.0003 /
+  +0.0024). Single runs move by 0.006 on average; the largest moves are all Video Games Sales with LightGBM (fold 4:
+  R² 0.141 / −0.026 / 0.023, Joint TAR 0.239), a heavy-tailed target on which LightGBM is unstable (it is also the one
+  dataset where LightGBM loses at seed 42 while the other four learners win).
+- **Transparency clause of P17:** with the 2 C12 tests added to the 17-test family (19 tests), Holm gives C9 0.037,
+  C10-TabM 0.013, C11-TabPFN-2.5 0.022 (pass), C11-TabPFN-v2 0.056 and C10-LightGBM 0.073 (fail), C12 0.113 / 0.118.
+  As pre-registered, C12 is a replication of C10-LightGBM corrected within its own family, so the headline stays
+  "4 of 5 learners survive Holm over the 17 tests"; the paper and README also state the 19-test reading (3 of 5).
+- **Fold-score table rebuilt** with this export appended: 2,515 old rows unchanged, 200 added (`*_xs43`, `*_xs44`).
+- **Next:** paper robustness sentence, README, notebook 02.

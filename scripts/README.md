@@ -10,7 +10,7 @@
 | **Final analysis** | [`p14_report.py`](p14_report.py) | Claim C9 (CatBoost, 20 datasets) and C7 (36 further datasets) → [`reports/p14/`](../reports/p14/) |
 | | [`p15_report.py`](p15_report.py) | Claim C10 (LightGBM, TabM) → [`reports/p15/`](../reports/p15/) |
 | | [`p16_report.py`](p16_report.py) | Claim C11 (TabPFN-v2, TabPFN-2.5) and the Holm correction over all tests → [`reports/p16/`](../reports/p16/) |
-| | [`p17_report.py`](p17_report.py) | Robustness to the cross-fitting fold seed (LightGBM, seeds 43 / 44) → `reports/p17/` |
+| | [`p17_report.py`](p17_report.py) | Robustness to the cross-fitting fold seed (LightGBM, seeds 43 / 44) → [`reports/p17/`](../reports/p17/) |
 | | [`collect_fold_scores.py`](collect_fold_scores.py) | Result JSONs → [`reports/tables/fold_scores.csv`](../reports/tables/fold_scores.csv) (every run, one row each) |
 | | [`make_results.py`](make_results.py) | `fold_scores.csv` → [`results/`](../results/) (final method vs Joint TAR / Joint Frozen, per fold, dataset, learner) |
 | | [`build_results_notebook.py`](build_results_notebook.py) | Builds and runs [`notebooks/02_results.ipynb`](../notebooks/02_results.ipynb) from `results/` and `reports/` |

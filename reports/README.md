@@ -9,7 +9,7 @@ plus the raw tables and checks the results are built from. The summary numbers f
 | [`p14/`](p14/) | C9: final method with CatBoost on the 20 datasets; C7: the 36 further datasets never used in development |
 | [`p15/`](p15/) | C10: LightGBM and TabM |
 | [`p16/`](p16/) | C11: TabPFN-v2 and TabPFN-2.5; Holm correction over all 17 pre-registered tests of the project |
-| `p17/` | Robustness to the cross-fitting fold seed (added when that run is analysed) |
+| [`p17/`](p17/) | Robustness to the cross-fitting fold seed: LightGBM with fold seeds 43 and 44 (C12; both pass, Holm p = 0.019) |
 | [`tables/`](tables/) | `fold_scores.csv`: one row per run (method, learner, dataset, fold) of every full run, with the leaderboard scores of the same fold; `table_ablations.csv`: the expert ablations (CatBoost) |
 | [`checks/`](checks/) | `label_shuffle.csv`: the leakage check (shuffled labels → chance) |
 | [`phase0/`](phase0/) | What the published MulTaBench baselines show before building anything (fine-tuning gain, fold noise); notebook 01 |

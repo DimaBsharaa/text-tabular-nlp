@@ -26,7 +26,10 @@ Left: mean scores (the axis starts at 0.70 and averages AUROC with R², as the b
 gain over Joint TAR with its 95% interval, the honest scale.
 
 - **Significant with every learner** (two-sided Wilcoxon signed-rank test over datasets, each test specified before
-  its run). With a Holm correction over all 17 tests run during the project, 4 of 5 remain significant (LightGBM: 0.061).
+  its run). With a Holm correction over all 17 claims tested in the project, 4 of 5 remain significant (LightGBM: 0.061);
+  counting the two seed replications below as further tests, 3 of 5 (TabPFN-v2: 0.056).
+- **Not a lucky seed:** re-run with two other cross-fitting fold seeds (LightGBM), the gain is +0.017 and +0.018
+  (15 of 20 datasets each, Holm p = 0.019); per dataset it moves by a median 0.001 between seeds.
 - **Broad:** 76% of the 480 individual (learner, dataset, fold) runs beat Joint TAR; 14 of the 20 datasets are won
   with at least 4 of the 5 learners.
 - **Where fine-tuning still wins:** Jigsaw Toxicity, the dataset on which fine-tuning itself gains the most
@@ -157,7 +160,8 @@ a probe on the full embedding, then probes on the inner layers, took it clearly 
   final claim was specified before its run, but the method was chosen on these datasets.
 - **Not faster.** Building our features on a CPU takes about 2.7 minutes per job, against 1.3 minutes for an
   optimised GPU fine-tuning of Joint TAR on the same machine; the method saves the GPU, not time.
-- **One seed** (42) per run, as in the published baselines.
+- **One learner seed** (42), as in the published baselines; the method's own randomness, the assignment of rows to
+  cross-fitting folds, was checked with two more seeds.
 
 ## Repository layout
 
