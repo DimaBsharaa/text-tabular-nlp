@@ -66,6 +66,9 @@ DEPTH_METHODS = {
     "cte_depth_mm": DepthSpec(pooling="meanmax"),
     "cte_depth_top3": DepthSpec(aggregate="top3"),
     "cte_depth_sl": DepthSpec(aggregate="sl"),
+    # Development round E51 (exploratory until pre-registered):
+    "cte_depth_top3_mm": DepthSpec(pooling="meanmax", aggregate="top3"),  # max pool keeps single-token signals
+    "cte_depth_cat3": DepthSpec(aggregate="cat3"),  # one probe on the 3 best layers together, not their mean
 }
 
 
@@ -278,7 +281,8 @@ def run_depth(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str]
                             float(out["meta"]["alpha"][0]))
     t_probe = time.time() - t1
     k_cols = next(iter(per_layer.values()))[0].shape[1]
-    aggregate = spec.aggregate if k_cols == 1 else "top3"  # multiclass: bounded column count
+    # multiclass: bounded column count (cat3 is one probe, so its column count is already bounded)
+    aggregate = spec.aggregate if k_cols == 1 or spec.aggregate == "cat3" else "top3"
     ranked = sorted(layers, key=lambda l: (per_layer[l][2], l), reverse=True)  # best OOF metric first; ties: deeper
     new, sl_weights = {}, None
     if aggregate == "stack":
@@ -291,6 +295,29 @@ def run_depth(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str]
                                               {k: np.hstack([per_layer[l][1][k] for l in layers]) for k in other},
                                               targets, y, is_cls, c)
         new[f"depthsl:{ALL_COLS}"] = {"pool": oof, **ext}
+    elif aggregate == "cat3":
+        top = sorted(ranked[:spec.top_k])
+
+        def compute_cat(top=top):
+            blocks_p, stats = [], []
+            for l in top:
+                Xl, st = layer_matrix(states, text_cols, rows["pool"], l - 1)
+                blocks_p.append(Xl)
+                stats.append(st)
+            Xp = np.hstack(blocks_p)
+            Xe = {k: np.hstack([layer_matrix(states, text_cols, rows[k], l - 1, st)[0] for l, st in zip(top, stats)])
+                  for k in other}
+            if solver == "eig":
+                oof, ext, meta, _ = xfit_linear_eig(Xp, Xe, y, is_cls, n_classes, c)
+            else:
+                oof, ext, meta = p7.xfit_linear(Xp, Xe, y, is_cls, n_classes, c)
+            return {"pool": {"f": oof}, **{k: {"f": v} for k, v in ext.items()},
+                    "meta": {"alpha": np.array([meta["alpha"]]), "oof_metric": np.array(meta["oof_metric"])}}
+        layers_tag = "-".join(f"{l:02d}" for l in top)
+        out, _ = cached_expert_features(
+            cache_root, f"{dataset}/fold{fold}/depth_cat{layers_tag}_{probe_key}_{rows_key}_{texts_key}_{y_key}",
+            compute_cat)
+        new[f"depthcat{spec.top_k}:{ALL_COLS}"] = {"pool": out["pool"]["f"], **{k: out[k]["f"] for k in other}}
     else:
         top = ranked[:spec.top_k]
         new[f"depthtop{spec.top_k}:{ALL_COLS}"] = {k: np.mean([per_layer[l][0] if k == "pool" else per_layer[l][1][k]
