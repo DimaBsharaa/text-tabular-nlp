@@ -84,6 +84,7 @@ Entry template:
 | E48 | 2026-10-22 | review round: depth profile from all 20 datasets; README wording | best layer 2–12, inner in 14/20; the 4-dataset pattern by task type does not hold |
 | E49 | 2026-10-22 | P17: cross-fitting fold seeds 43 / 44 (LightGBM, 200 jobs) | **C12 passes**: +0.0169 / +0.0176 (15/20 each, Holm 0.019); per-dataset SD over seeds 0.0013; 18/20 same sign |
 | E50 | 2026-10-22 | external audit: findings checked; figures tracked, raw JSONs added, cache keys fixed, wording narrowed | method and results unchanged |
+| E51 | 2026-10-23 | dev round: two depth-probe aggregations on the P12 protocol (VM T4, 162 jobs) | neither advances: `cte_depth_cat3` +0.0009 (7/9), `cte_depth_top3_mm` +0.0015 (5/9); final method unchanged |
 
 ---
 
@@ -2119,3 +2120,31 @@ Features for the learner = structured columns (upstream preprocessing)
   the 20 datasets' test scores → stated; they are not a pristine holdout. (f) Jigsaw: "no layer probe beats the final
   one" (about our probes, not about what a frozen model can represent).
 - **Not changed:** the method and every result; TabPFN reload differences were already documented.
+
+## E51 — Dev round: two depth-probe aggregations; NEITHER advances, the final method is unchanged   (2026-10-23, course VM, Tesla T4)
+- **Why:** the only systematic loss to Joint TAR is Jigsaw (−0.011, every learner), where a single token can decide the
+  label; and the depth probes average three separately fitted layer probes rather than reading the layers jointly.
+- **Variants (code on branch `enhance`, `multabench/ours/depth.py`):**
+  - `cte_depth_top3_mm`: the final method with mean+max pooling of each layer (max keeps single-token signals).
+  - `cte_depth_cat3`: one cross-fitted Ridge on the concatenated states of the 3 best layers (same selection rule,
+    alpha grid and folds), instead of the mean of the 3 layer probes; multiclass included (one multi-target probe).
+- **Protocol and rule (P12, unchanged, fixed before the run):** 9 dev datasets × training rows of folds 0–2 × seeds 0, 1
+  (80/20 dev splits; test rows never used), CatBoost; baseline `cte_depth_top3`. Advance only if the mean over the 54
+  dataset-splits is > +0.002 AND the variant is better on ≥ 6/9 datasets.
+- **Result** (`reports/dev/e51/`):
+
+  | variant | mean | median | datasets ahead | splits ahead |
+  |---|---|---|---|---|
+  | `cte_depth_cat3` | +0.0009 | +0.0004 | 7/9 | 33/54 |
+  | `cte_depth_top3_mm` | +0.0015 | +0.0004 | 5/9 | 31/54 |
+
+  - `cte_depth_cat3` per dataset: Jigsaw −0.0008, Kickstarter −0.0015, Product Sentiment +0.0001, Women Clothing
+    +0.0006, Baby +0.0006, Book Price +0.0023, Montgomery 0.0000, Vancouver +0.0026, Video Games +0.0047.
+  - `cte_depth_top3_mm` per dataset: Jigsaw +0.0007, Kickstarter −0.0017, Product Sentiment −0.0017, Women Clothing
+    −0.0002, Baby +0.0016, Book Price +0.0023, Montgomery +0.0001, Vancouver −0.0022, Video Games +0.0148 (its mean is
+    carried by Video Games, the noisiest dataset).
+- **Hostile review:** training rows only; the rule was the P12 rule, unchanged; neither variant is pre-registered for a
+  full run. Mean+max matches the E33 profile (not consistently better, about level on Jigsaw). Joint reading of the
+  top layers is about as good as averaging their probes.
+- **Conclusion:** diminishing returns from re-aggregating the frozen layers; `cte_depth_top3` stays the final method.
+
