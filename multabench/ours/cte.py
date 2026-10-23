@@ -174,7 +174,8 @@ def frozen_embeddings_cached(x_frames: list[DataFrame], text_cols: list[str], cf
         uniq = uniq.tolist()
         hashes = _h64(uniq)
         sub = "" if prefix == "passage: " else hashlib.sha1(prefix.encode()).hexdigest()[:8]  # other prefixes: own store
-        path = join(cache_root, "frozen_emb", dataset, cfg.model_name.replace("/", "__"), *([sub] if sub else []),
+        path = join(cache_root, "frozen_emb", dataset, cfg.model_name.replace("/", "__"), f"len{cfg.max_length}",
+                    *([sub] if sub else []),
                     hashlib.sha1(col.encode()).hexdigest()[:12] + ".npz") if cache_root else None
         with _store_lock(path):  # parallel jobs: one encodes, the others wait and then read the cache
             store_h, store_e = np.zeros(0, dtype=np.uint64), np.zeros((0, 384), dtype=np.float32)

@@ -37,7 +37,7 @@ setting on test scores. TF-IDF vocabularies and PCA are fit on training rows onl
 | What | Needed for | How |
 |---|---|---|
 | Python 3.11 + pinned packages | everything | `uv sync --frozen` (from `pyproject.toml` + `uv.lock`), or `source init.sh` |
-| Kaggle API credentials | downloading MulTaBench datasets (`--dataset`) | `KAGGLE_USERNAME`, `KAGGLE_KEY` in `.env` (copy `.env.example`); not needed for `--csv` |
+| Kaggle API credentials | downloading MulTaBench datasets (`--dataset`) | `KAGGLE_USERNAME`, `KAGGLE_KEY` in a `.env` holding just these two lines (do not copy `.env.example`: its placeholder `HF_TOKEN` makes Hugging Face reject the public model download); not needed for `--csv` |
 | Prior Labs API key | the TabPFN-2.5 learner only | accept the TabPFN-2.5 license at [ux.priorlabs.ai](https://ux.priorlabs.ai), copy the API key from Account, add `TABPFN_TOKEN=<key>` to `.env` |
 | GPU | optional | everything runs on CPU; a GPU speeds up the e5 encoding and TabPFN / TabM |
 

@@ -2119,3 +2119,8 @@ Features for the learner = structured columns (upstream preprocessing)
   the 20 datasets' test scores → stated; they are not a pristine holdout. (f) Jigsaw: "no layer probe beats the final
   one" (about our probes, not about what a frozen model can represent).
 - **Not changed:** the method and every result; TabPFN reload differences were already documented.
+- **Follow-up (2026-10-23):** (1) README / method README: create `.env` with only the Kaggle lines; copying the upstream
+  `.env.example` sends its placeholder `HF_TOKEN` and Hugging Face rejects the public e5 download (the upstream file is
+  left unchanged). (2) The frozen-embedding and layer-state caches are now also keyed by `max_length`
+  (`len<max_length>/` in the path; every run used 512, so no result changes); test
+  `test_frozen_embedding_cache_depends_on_max_length`. Tests: 98 passed (cte, depth, stacking, tar_engine).

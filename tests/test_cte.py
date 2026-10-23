@@ -383,3 +383,14 @@ def test_cache_key_depends_on_labels_and_prediction_texts():
     assert k != cte.content_key(np.array([0, 1, 1, 0, 1]), extra, ["a"])  # one label changed
     assert k != cte.content_key(y, {"test": {"a": ["x", "y!"]}, "learner_val": {"a": ["z"]}}, ["a"])  # a test text edited
     assert k != cte.content_key(y, {"test": {"a": ["x", "y"]}}, ["a"])  # a split missing
+
+
+def test_frozen_embedding_cache_depends_on_max_length(tmp_path, cfg):
+    """Another max_length must not reuse embeddings encoded with the old one (external review, 2026-10-23)."""
+    import dataclasses
+    x, _, _ = _table(60)
+    root = str(tmp_path / "c")
+    _, s1 = cte.frozen_embeddings_cached([x], ["review"], cfg, CPU, root, "SYNTH_LEN")
+    _, s2 = cte.frozen_embeddings_cached([x], ["review"], cfg, CPU, root, "SYNTH_LEN")
+    _, s3 = cte.frozen_embeddings_cached([x], ["review"], dataclasses.replace(cfg, max_length=16), CPU, root, "SYNTH_LEN")
+    assert s1["encoded"] > 0 and s2["encoded"] == 0 and s3["encoded"] == s1["encoded"]

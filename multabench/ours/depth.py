@@ -184,7 +184,7 @@ def layer_states_cached(x_frames: list[DataFrame], text_cols: list[str], cfg: te
         uniq, inverse = np.unique(np.array(raw, dtype=object), return_inverse=True)
         uniq = uniq.tolist()
         hashes = te._text_hash(uniq)
-        path = join(cache_root, "depth_states", dataset, cfg.model_name.replace("/", "__"), pooling,
+        path = join(cache_root, "depth_states", dataset, cfg.model_name.replace("/", "__"), f"len{cfg.max_length}", pooling,
                     hashlib.sha1(col.encode()).hexdigest()[:12] + ".npz") if cache_root else None
         with cte._store_lock(path):
             store_h, store_s = np.zeros(0, dtype=np.uint64), None
