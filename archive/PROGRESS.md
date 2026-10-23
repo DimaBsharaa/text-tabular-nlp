@@ -85,6 +85,7 @@ Entry template:
 | E49 | 2026-10-22 | P17: cross-fitting fold seeds 43 / 44 (LightGBM, 200 jobs) | **C12 passes**: +0.0169 / +0.0176 (15/20 each, Holm 0.019); per-dataset SD over seeds 0.0013; 18/20 same sign |
 | E50 | 2026-10-22 | external audit: findings checked; figures tracked, raw JSONs added, cache keys fixed, wording narrowed | method and results unchanged |
 | E51 | 2026-10-23 | dev round: two depth-probe aggregations on the P12 protocol (VM T4, 162 jobs) | neither advances: `cte_depth_cat3` +0.0009 (7/9), `cte_depth_top3_mm` +0.0015 (5/9); final method unchanged |
+| E52 | 2026-10-23 | dev round: cross-fitted attention probe on token states (`cte_depth_top3_attn`, VM T4, 54 jobs) | **advances**: +0.0064 vs `cte_depth_top3`, 8/9 datasets, 44/54 splits (Jigsaw +0.028); label-shuffle clean → P18 |
 
 ---
 
@@ -2147,4 +2148,47 @@ Features for the learner = structured columns (upstream preprocessing)
   full run. Mean+max matches the E33 profile (not consistently better, about level on Jigsaw). Joint reading of the
   top layers is about as good as averaging their probes.
 - **Conclusion:** diminishing returns from re-aggregating the frozen layers; `cte_depth_top3` stays the final method.
+
+## E52 — Dev round: a cross-fitted ATTENTION PROBE on the frozen token states ADVANCES   (2026-10-23, course VM, Tesla T4)
+- **Idea:** every expert reads a cell through a mean pool or TF-IDF counts, so a single decisive token (a slur, one
+  symptom) is blurred; that is the case where Joint TAR still wins (Jigsaw −0.011 with every learner). A small learned
+  attention head on the frozen encoder's token states can weight tokens without touching the encoder.
+- **Method (`multabench/ours/attn.py`, `cte_depth_top3_attn` = `cte_depth_top3` + one expert):** token states of the
+  best depth layer (ranked by the training-row OOF metric, as top-3 already does), standardised with training-row token
+  statistics; per text column a scorer tanh(W h_t)·v → softmax over real tokens → weighted sum; a linear output on the
+  columns' pooled vectors. Targets = the experts' (class index with cross-entropy; rank-Gaussian y with MSE). Cross-fitted
+  on the experts' 5 folds and seed; early stopping on an inner split of each fold's training rows; learner-val / test
+  rows get the mean of the 5 fold heads. Output columns: `cte.class_features`' budget. hidden 64, ≤ 256 tokens per cell,
+  AdamW 2e-3 / wd 1e-2, ≤ 40 epochs, patience 4 (fixed before any dev run, never tuned).
+- **Tests:** `tests/test_attn.py` (decisive-token recovery on synthetic states, column budget, a row's own label never
+  changes its own feature, determinism); `tests/test_depth.py` end to end with the real encoder (attention columns
+  present, finite, layer = best depth layer). 41 passed on the VM (the 3 packaged-featurizer tests are excluded: they
+  fail on this VM for the untouched backup commit too, a numeric-tolerance issue of the saved-model path).
+- **Protocol and rule:** P12, unchanged (as E51): 9 dev datasets × training rows of folds 0–2 × seeds 0, 1, CatBoost;
+  baseline `cte_depth_top3` (E51's rows of the same splits, same caches); advance iff mean > +0.002 AND ≥ 6/9 datasets.
+- **Result** (`reports/dev/e52/`): **mean +0.0064, median +0.0022, 8/9 datasets, 44/54 splits → ADVANCES** (the largest
+  dev gain of the project; depth probes in E37: +0.0033, 7/9). Per dataset: Jigsaw **+0.0283**, Video Games +0.0149,
+  Baby +0.0058, Book Price +0.0043, Vancouver +0.0021, Product Sentiment +0.0015, Women Clothing +0.0010,
+  Montgomery +0.0001, Kickstarter −0.0003.
+- **Hostile review — label shuffle** (`scripts/check_label_shuffle.py`, dev split 0 of fold 0, training labels permuted):
+  Video Games R² 0.434 → 0.006 / −0.001; Product Sentiment AUROC 0.912 → 0.459 / 0.450; Jigsaw AUROC 0.943 → 0.573 /
+  0.488 / 0.494 / 0.557 / 0.488 (5 permutations). The current method on the same Jigsaw permutations: 0.554 / 0.512 /
+  0.487 / 0.553 / 0.467 — the same spread (the high permutations are high for both), i.e. the null distribution of the
+  pipeline, not a leak. Every label path was re-read: token states and their standardisation are label-free; the layer
+  choice uses training-row OOF scores only; early stopping uses an inner split of the fold's training rows; dev-test /
+  learner-val / test rows are only predicted.
+- **Caveat:** Video Games is the noisiest dataset (E28); without it the mean is +0.0053, still above the rule.
+
+## P18 — Pre-registration: the attention probe on the 20 datasets with all 5 learners (2026-10-23, BEFORE any P18 run)
+- **C13:** `cte_depth_top3_attn` vs the leaderboard Joint TAR of the SAME learner, each of CatBoost, LightGBM, TabM,
+  TabPFN-v2, TabPFN-2.5; the 20 datasets (TabPFN: the 18 with a leaderboard baseline), folds 0–4, fold-averaged;
+  two-sided Wilcoxon; Holm over the 5 learners; a learner passes iff Holm p < 0.05 AND positive mean.
+- **Secondary (reported regardless):** paired vs our `cte_depth_top3` per learner (same folds); the current method under
+  the same Holm-over-5 reading (from `results/raw`: 5/5); Holm over all pre-registered tests C1–C13.
+- **Final-method rule (fixed now):** the final method becomes `cte_depth_top3_attn` iff (a) C13 passes for at least as
+  many learners as `cte_depth_top3` under the same reading (i.e. 5/5) AND (b) its paired mean vs `cte_depth_top3` is
+  positive for ≥ 4 of the 5 learners. Otherwise `cte_depth_top3` stays final and P18 is reported as an analysis.
+- **Analysis:** `scripts/p18_report.py` (committed with this entry, before the run; dry-run on `results/raw` reproduces
+  the current method's numbers). **Run:** `jobs/p18.txt` (480 jobs), course VM (Tesla T4, 8 CPUs), `--job_timeout_min
+  240`, results root `~/p18/results`; engine version `depth/1+attn/1`.
 
