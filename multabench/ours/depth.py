@@ -271,7 +271,7 @@ def run_depth(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str]
                 oof, ext, meta = p7.xfit_linear(Xp, Xe, y, is_cls, n_classes, c)
             return {"pool": {"f": oof}, **{k: {"f": v} for k, v in ext.items()},
                     "meta": {"alpha": np.array([meta["alpha"]]), "oof_metric": np.array(meta["oof_metric"])}}
-        key = f"{dataset}/fold{fold}/depth_L{layer:02d}_{probe_key}_{rows_key}_{texts_key}_{y_key}"
+        key = f"{dataset}/fold{fold}/depth_L{layer:02d}_{probe_key}_{rows_key}_{texts_key}_{y_key}_{cte.encoder_key(cfg)}"
         out, hit = cached_expert_features(cache_root, key, compute)
         hits += int(hit)
         per_layer[layer] = (out["pool"]["f"], {k: out[k]["f"] for k in other}, float(out["meta"]["oof_metric"].max()),

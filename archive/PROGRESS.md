@@ -2124,3 +2124,8 @@ Features for the learner = structured columns (upstream preprocessing)
   left unchanged). (2) The frozen-embedding and layer-state caches are now also keyed by `max_length`
   (`len<max_length>/` in the path; every run used 512, so no result changes); test
   `test_frozen_embedding_cache_depends_on_max_length`. Tests: 98 passed (cte, depth, stacking, tar_engine).
+- **Follow-up 2 (2026-10-23, external review):** the cached *predictions* built on embeddings (neighbour expert,
+  depth probes) are now keyed by an encoder fingerprint (`cte.encoder_key`: model name + max_length); the lexical cache
+  stays shared (no encoder). Test `test_prediction_caches_depend_on_encoder_settings`: warm at 512, all reused at 512,
+  at max_length 6 the embeddings, layer states, neighbour and depth predictions are recomputed and differ, the lexical
+  expert is reused. Every run used one encoder at 512, so no result changes. Tests: 163 passed.
