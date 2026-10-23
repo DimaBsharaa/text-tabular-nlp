@@ -56,6 +56,7 @@ class DepthSpec:
     layers: Optional[tuple] = None  # None = all layers 1..L (hidden_states[1:]); 0 would be the embedding layer
     top_k: int = 3
     alphas: tuple = (1.0, 3.0, 10.0, 30.0, 100.0, 300.0)  # wider than cte's (0.3..10): standardised layer states
+    attn: bool = False  # E52: + a cross-fitted attention probe on the best layer's token states (multabench/ours/attn.py)
 
     def cte_config(self):
         return dataclasses.replace(cte.CTE_CONFIG, ridge_alphas=self.alphas)
@@ -69,6 +70,7 @@ DEPTH_METHODS = {
     # Development round E51 (exploratory until pre-registered):
     "cte_depth_top3_mm": DepthSpec(pooling="meanmax", aggregate="top3"),  # max pool keeps single-token signals
     "cte_depth_cat3": DepthSpec(aggregate="cat3"),  # one probe on the 3 best layers together, not their mean
+    "cte_depth_top3_attn": DepthSpec(aggregate="top3", attn=True),  # E52: + token-level attention probe
 }
 
 
@@ -322,6 +324,25 @@ def run_depth(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str]
         top = ranked[:spec.top_k]
         new[f"depthtop{spec.top_k}:{ALL_COLS}"] = {k: np.mean([per_layer[l][0] if k == "pool" else per_layer[l][1][k]
                                                                for l in top], axis=0) for k in splits}
+    attn_meta = None
+    if spec.attn:  # E52: token-level attention probe on the best-ranked layer (training-row OOF selection, as top3)
+        from multabench.ours import attn
+        layer_a = ranked[0]
+
+        def compute_attn():
+            st = attn.token_states_cached([x[text_cols] for x in splits.values()], text_cols, cfg, device, cache_root,
+                                          dataset, layer_a)
+            oof, ext, meta = attn.xfit_attention(st, text_cols, rows["pool"], {k: rows[k] for k in other}, y, is_cls,
+                                                 n_classes, c, device)
+            return {"pool": {"f": oof}, **{k: {"f": v} for k, v in ext.items()},
+                    "meta": {"oof_metric": np.array([meta["oof_metric"]])}}
+        t2 = time.time()
+        out, _ = cached_expert_features(
+            cache_root, f"{dataset}/fold{fold}/attn_L{layer_a:02d}_{attn.ATTN_SPEC.key()}_{c.key()}_{rows_key}_"
+                        f"{texts_key}_{y_key}", compute_attn)
+        new[f"attn:{ALL_COLS}"] = {"pool": out["pool"]["f"], **{k: out[k]["f"] for k in other}}
+        attn_meta = {"layer": int(layer_a), "oof_metric": round(float(out["meta"]["oof_metric"][0]), 6),
+                     "seconds": round(time.time() - t2, 1)}
     features = {c: base.features[c].copy() for c in text_cols}
     owner = text_cols[0]
     for name, arrs in new.items():
@@ -337,7 +358,8 @@ def run_depth(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str]
                       "probe_cache_hits": hits,
                       "sl_weights": None if sl_weights is None else [float(w) for w in sl_weights[0]],
                       "sl_intercept": None if sl_weights is None else float(sl_weights[1]),
-                      "seconds": {"states": round(t_states, 1), "probes": round(t_probe, 1)}}}
+                      "seconds": {"states": round(t_states, 1), "probes": round(t_probe, 1)},
+                      "attn": attn_meta}}
     print(f"  [STACK:{method}] depth probes on {len(layers)} layers ({spec.pooling}, {aggregate}); best layers "
           f"{ranked[:3]}; states {t_states:.0f}s, probes {t_probe:.0f}s", flush=True)
     return StackResult(method=method, embedding_result=base.embedding_result, base_result=None, features=features,
