@@ -330,7 +330,9 @@ def run_depth(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str]
         layer_a = ranked[0]
 
         def compute_attn():
-            st = attn.token_states_cached([x[text_cols] for x in splits.values()], text_cols, cfg, device, cache_root,
+            # token states are kept in memory only (cache_root=None): they are needed once per dataset-fold, the attention
+            # features below are cached and shared by every learner; persisting the states filled the VM's disk (P18)
+            st = attn.token_states_cached([x[text_cols] for x in splits.values()], text_cols, cfg, device, None,
                                           dataset, layer_a)
             oof, ext, meta = attn.xfit_attention(st, text_cols, rows["pool"], {k: rows[k] for k in other}, y, is_cls,
                                                  n_classes, c, device)
