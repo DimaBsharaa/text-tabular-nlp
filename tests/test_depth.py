@@ -73,7 +73,14 @@ def test_every_depth_variant_end_to_end(tmp_path, cfg, method, task):
         assert len(d["depth"]["sl_weights"]) == 12 and min(d["depth"]["sl_weights"]) >= 0
     assert np.isfinite(f[dcols].to_numpy()).all()
     assert set(d["depth"]["layer_oof_metric"]) == set(range(1, 13))
-    assert all(c.startswith("depth") for c in res.features["review"].columns[-len(dcols):])  # owner = first text col
+    acols = [c for c in f.columns if c.startswith("attn")]
+    if spec.attn:  # E52: the attention probe's columns follow the depth columns, same column budget
+        assert len(acols) == k and np.isfinite(f[acols].to_numpy()).all()
+        assert d["depth"]["attn"]["layer"] == d["depth"]["ranked_layers"][0]
+    else:
+        assert not acols and d["depth"]["attn"] is None
+    tail = res.features["review"].columns[-(len(dcols) + len(acols)):]  # owner = first text col
+    assert [c.split(":")[0] for c in tail] == [c.split(":")[0] for c in dcols + acols]
 
 
 def test_layer_standardisation_uses_training_rows_only():
