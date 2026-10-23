@@ -41,7 +41,8 @@ METHODS = ("tar_repro", "offset", "prefix", "prefix_offset", "context", "context
            "p9_base", "p9_avg", "p9_rep3", "p9_rep3_avg", "p9_prompt", "p9_rff", "p9_nb", "p9_query", "p9_percol", "p9_k10", "p9_maxpool", "p9_tok",  # P9 / P12
            "frozen0_query", "tf_num_lsa_query",
            "cte_depth", "cte_depth_mm", "cte_depth_top3", "cte_depth_sl",  # P13 depth probes (Cowork)
-           "cte_depth_top3_xs43", "cte_depth_top3_xs44")  # P17: final method, cross-fitting fold seed 43 / 44
+           "cte_depth_top3_xs43", "cte_depth_top3_xs44",  # P17: final method, cross-fitting fold seed 43 / 44
+           "cte_depth_top3_attn")  # P18: + the cross-fitted attention probe (E52)
 DEFAULTS = {"train_examples": 10_000, "epochs": 50, "seed": 42}
 
 
