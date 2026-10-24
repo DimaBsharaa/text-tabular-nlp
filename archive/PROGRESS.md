@@ -2360,3 +2360,18 @@ Features for the learner = structured columns (upstream preprocessing)
 - **Left as is:** the bootstrap intervals of `results/summary.csv` (make_results) and `reports/p18` (p18_report) use
   different random-number streams (e.g. TabPFN-v2 upper bound 0.0513 vs 0.0520); both are valid, the paper and README
   use `results/summary.csv`.
+
+## E59 — The T4 machine's hash manifest, saved and verified   (2026-10-24)
+- Made on the T4 machine today (17:15 +0300) in its repository copy (HEAD `8b3bb76`, `c63c26e` fetched), with the command
+  in `reports/p18/vm_provenance/README.md`; committed as `vm_hash_manifest.txt` and `vm_file_times.txt` (485 lines each).
+  This completes the evidence E58 listed as missing.
+- **Verified on the laptop against `c63c26e`:** the file list equals `c63c26e`'s 485 files (multabench/,
+  run_experiment.py, jobs/p18.txt, pyproject.toml, uv.lock); column 2 equals the `c63c26e` blob for all 485; 481 files
+  byte-identical, 4 identical after removing CR (`jobs/p18.txt`, `depth.py`, `variants.py`, `run_experiment.py`); the 38
+  lines where only the CR-stripped hash differs are benchmark CSVs stored with CRLF in `c63c26e` itself (all 38 checked).
+- **File times:** newest `multabench/ours/depth.py`, 2026-10-23 20:12:54 +0300 (the f145a76 → c63c26e change). From
+  `provenance_t4.csv`: the last run starting before it started at 19:59:57, the first after it at 20:13:24, the first
+  of all at 18:11:17 (after `run_experiment.py`'s last change, 18:11:07). So the split is exact: 35 LightGBM runs on
+  `f145a76`, 265 runs on the `c63c26e` content. Nothing on the machine changed after the runs.
+- **Reading (unchanged from E58):** the implementation is shown to be equivalent; the E55 check still failed its
+  tolerance, and keeping the runs remains the documented deviation of E56.
