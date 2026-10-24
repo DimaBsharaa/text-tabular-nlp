@@ -197,8 +197,8 @@ into the text features did not help, possibly because the learner already combin
 \paragraph{Setup.}
 We use the 20 MulTaBench text-tabular datasets (3 binary, 7 multiclass, 10 regression), the benchmark's five folds
 (test: 10\% of the rows, at most 2,000) and its code and metrics (AUROC, macro one-vs-rest for multiclass; $R^2$).
-Baselines are the published Joint TAR and Joint Frozen scores of the same learner, dataset and fold; TabPFN has none
-for two datasets ($n = 18$). Our re-implementation of Joint TAR scores \tarReproDiff{} against the
+Baselines are the published Joint TAR and Joint Frozen scores of the same learner, dataset and fold; TabPFN cannot
+run the two datasets with 30 and 114 classes ($n = 18$). Our re-implementation of Joint TAR scores \tarReproDiff{} against the
 published numbers ($p = \tarReproP$), so our environment does not appear to favor us. Per learner, the fold-averaged
 differences to Joint TAR are tested over datasets with a two-sided Wilcoxon signed-rank test; each
 test and its threshold ($p < 0.05$, positive mean) were fixed in writing before its run, and Holm corrects over all
@@ -297,7 +297,7 @@ Combining the experts with fine-tuning; new data such as VAERS-Serious, vaccine 
 
 \begin{table}[h]
 \caption{Fold-averaged scores per dataset (AUROC for binary (B) and multiclass (M), $R^2$ for regression (R)): the
-published Joint TAR and ours, per learner; bold where ours is higher. TabPFN has no published baseline for two datasets.}
+published Joint TAR and ours, per learner; bold where ours is higher. TabPFN cannot run the two datasets with 30 and 114 classes.}
 \label{tab:per_dataset}
 \centering
 \scriptsize

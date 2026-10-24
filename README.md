@@ -39,7 +39,8 @@ gain over Joint TAR with its 95% interval, the honest scale.
 - **Checked with the version without the attention probe:** re-run with two other cross-fitting fold seeds
   (LightGBM), the gain is +0.017 and +0.018 (15 of 20 datasets each, Holm p = 0.019); on 36 further text datasets
   never used in development it is smaller (median +0.003, 24 of 36 won).
-- TabPFN has no published baseline for 2 of the 20 datasets (Spotify Genres, Wine Review).
+- TabPFN cannot run 2 of the 20 datasets (Spotify Genres, 114 classes; Wine Review, 30 classes), so MulTaBench has no
+  TabPFN baseline there and TabPFN rows cover 18 datasets.
 
 Full analysis, with every comparison and chart: [**notebook 02**](notebooks/02_results.ipynb). Scores per fold, dataset
 and learner: [`results/`](results/); the result file of every run of the final method and of its version without

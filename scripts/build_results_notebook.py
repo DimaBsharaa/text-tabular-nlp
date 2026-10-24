@@ -37,7 +37,8 @@ without the attention probe; some checks (36 further datasets, other seeds, cost
 - **Learners:** CatBoost, LightGBM, TabM, TabPFN-v2, TabPFN-2.5, each with upstream default settings.
 - **Metric:** AUROC for classification (macro one-vs-rest for multiclass), R² for regression, exactly as upstream.
 - **Baselines:** the leaderboard scores of the same learner, dataset and fold. **Joint TAR** fine-tunes e5 on the
-  target; **Joint Frozen** uses e5 as is. TabPFN has no published baseline for Spotify Genres and Wine Review (18 datasets).
+  target; **Joint Frozen** uses e5 as is. TabPFN cannot run Spotify Genres (114 classes) and Wine Review (30
+  classes), so MulTaBench has no TabPFN baseline there (18 datasets).
 
 Inputs: `results/*.csv` (built by `scripts/make_results.py` from `reports/tables/fold_scores.csv`) and `reports/`.
 """)
