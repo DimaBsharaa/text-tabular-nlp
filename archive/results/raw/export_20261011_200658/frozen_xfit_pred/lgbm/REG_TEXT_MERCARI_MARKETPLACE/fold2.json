@@ -1,0 +1,327 @@
+{
+ "method": "frozen_xfit_pred",
+ "run_name": "frozen_xfit_pred",
+ "engine_version": "stacking/1",
+ "tar_path": "fast",
+ "learner": "lgbm",
+ "learner_model_name": "LightGBM \ud83d\udca1",
+ "dataset": "REG_TEXT_MERCARI_MARKETPLACE",
+ "fold": 2,
+ "task": "REG",
+ "score": 0.4707758309407687,
+ "metrics": {
+  "score": 0.4707758309407687,
+  "metrics": {
+   "r2": 0.4707758309407687,
+   "mse": 0.3205959192720895,
+   "rmse": 0.5662119031529534
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.4380971746803239,
+  "joint_tar": 0.461253252320051,
+  "unimodal_structured": 0.1116926975448395,
+  "unimodal_text": 0.401156416412856
+ },
+ "diff_vs_csv_joint_tar": 0.009522578620717703,
+ "runtime_s": {
+  "total": 14.1,
+  "fit": 14.0,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_key": "REG_TEXT_MERCARI_MARKETPLACE/fold2/tar_repro/seed42/07055b3820_831d9b6c10",
+  "cache_hit": true,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "stacking/1",
+   "method": "frozen_xfit_pred",
+   "base": "tar_repro"
+  },
+  "text_cols": [
+   "brand_name",
+   "cat2",
+   "cat3",
+   "category_name",
+   "item_description",
+   "name"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.34537209568039096,
+    "n": 8100
+   },
+   "e5_val": {
+    "score": 0.31288503030312,
+    "n": 900
+   },
+   "test": {
+    "score": 0.2855622928238988,
+    "n": 2000
+   },
+   "learner_val": {
+    "score": 0.2604819028902222,
+    "n": 1000
+   }
+  },
+  "n_unique_texts": {
+   "brand_name": 829,
+   "cat2": 109,
+   "cat3": 495,
+   "category_name": 661,
+   "item_description": 11065,
+   "name": 11805
+  },
+  "train": {
+   "epochs_run": 18,
+   "best_epoch": 15,
+   "best_val_loss": 2.7559065617455376,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 2.8841464612120955,
+     "val_loss": 2.8638258683239974,
+     "seconds": 5.9
+    },
+    {
+     "epoch": 2,
+     "train_loss": 2.8356649451393157,
+     "val_loss": 2.8134431937888817,
+     "seconds": 5.6
+    },
+    {
+     "epoch": 3,
+     "train_loss": 2.7916913811169533,
+     "val_loss": 2.788416179727625,
+     "seconds": 5.6
+    },
+    {
+     "epoch": 4,
+     "train_loss": 2.7697221619013406,
+     "val_loss": 2.783468877651073,
+     "seconds": 5.6
+    },
+    {
+     "epoch": 5,
+     "train_loss": 2.754832581414117,
+     "val_loss": 2.7734243933359783,
+     "seconds": 5.5
+    },
+    {
+     "epoch": 6,
+     "train_loss": 2.7448832846276554,
+     "val_loss": 2.7659715624208805,
+     "seconds": 5.5
+    },
+    {
+     "epoch": 7,
+     "train_loss": 2.7343588058251904,
+     "val_loss": 2.7686824102754946,
+     "seconds": 5.5
+    },
+    {
+     "epoch": 8,
+     "train_loss": 2.7270137822578966,
+     "val_loss": 2.7591498085304544,
+     "seconds": 5.6
+    },
+    {
+     "epoch": 9,
+     "train_loss": 2.7206636605046906,
+     "val_loss": 2.7573196534757263,
+     "seconds": 5.6
+    },
+    {
+     "epoch": 10,
+     "train_loss": 2.7113777329401714,
+     "val_loss": 2.760910990326493,
+     "seconds": 5.5
+    },
+    {
+     "epoch": 11,
+     "train_loss": 2.7061484614713693,
+     "val_loss": 2.758168762701529,
+     "seconds": 5.6
+    },
+    {
+     "epoch": 12,
+     "train_loss": 2.702758346683204,
+     "val_loss": 2.7570888342680755,
+     "seconds": 5.5
+    },
+    {
+     "epoch": 13,
+     "train_loss": 2.6968271674638915,
+     "val_loss": 2.7594192564928974,
+     "seconds": 5.6
+    },
+    {
+     "epoch": 14,
+     "train_loss": 2.692796017564373,
+     "val_loss": 2.7599043185622603,
+     "seconds": 5.5
+    },
+    {
+     "epoch": 15,
+     "train_loss": 2.6880699061954956,
+     "val_loss": 2.7559065617455376,
+     "seconds": 5.6
+    },
+    {
+     "epoch": 16,
+     "train_loss": 2.682889465324182,
+     "val_loss": 2.7582221130088524,
+     "seconds": 5.4
+    },
+    {
+     "epoch": 17,
+     "train_loss": 2.67980432121842,
+     "val_loss": 2.7604190776966235,
+     "seconds": 5.5
+    },
+    {
+     "epoch": 18,
+     "train_loss": 2.6763792422180805,
+     "val_loss": 2.760185146685,
+     "seconds": 5.5
+    }
+   ],
+   "n_train_cells": 48600,
+   "n_val_cells": 5400,
+   "mean_train_tokens": 16.58485596707819,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 9.44,
+   "truncated_frac": 0.0,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 8100,
+   "e5_val": 900,
+   "learner_val": 1000,
+   "test": 2000
+  }
+ },
+ "leakage_gap_head_train_minus_test": 0.05980980285649218,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-11 18:46:17",
+ "argv": [
+  "--method",
+  "frozen_xfit_pred",
+  "--learner",
+  "lgbm",
+  "--dataset",
+  "REG_TEXT_MERCARI_MARKETPLACE",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "stacking/1",
+  "k_folds": 3,
+  "method": "frozen_xfit_pred",
+  "fold_models": [
+   {
+    "fold": 0,
+    "n_train_rows": 6000,
+    "n_heldout": 3000,
+    "cache_key": "REG_TEXT_MERCARI_MARKETPLACE/fold2/tar_repro/seed42/07055b3820_26e9a2d0dc",
+    "cache_hit": true,
+    "best_epoch": 11,
+    "train_rows_hash": "9f986aa994",
+    "heldout_rows_hash": "1fae5dd2b0"
+   },
+   {
+    "fold": 1,
+    "n_train_rows": 6000,
+    "n_heldout": 3000,
+    "cache_key": "REG_TEXT_MERCARI_MARKETPLACE/fold2/tar_repro/seed42/07055b3820_19bea49849",
+    "cache_hit": true,
+    "best_epoch": 18,
+    "train_rows_hash": "ebbd1d60c5",
+    "heldout_rows_hash": "8b35210659"
+   },
+   {
+    "fold": 2,
+    "n_train_rows": 6000,
+    "n_heldout": 3000,
+    "cache_key": "REG_TEXT_MERCARI_MARKETPLACE/fold2/tar_repro/seed42/07055b3820_33455677ef",
+    "cache_hit": true,
+    "best_epoch": 10,
+    "train_rows_hash": "0d9030faad",
+    "heldout_rows_hash": "447b38c950"
+   }
+  ],
+  "folds_cover_pool": true,
+  "pred_feature_quality": {
+   "train_rows": 0.30363102700103684,
+   "test": 0.2988194634879686,
+   "learner_val": 0.2675045243434153,
+   "gap_train_minus_test": 0.004811563513068218
+  },
+  "n_pred_features_per_col": {
+   "brand_name": 2,
+   "cat2": 2,
+   "cat3": 2,
+   "category_name": 2,
+   "item_description": 2,
+   "name": 2
+  },
+  "catboost_importance": null
+ }
+}

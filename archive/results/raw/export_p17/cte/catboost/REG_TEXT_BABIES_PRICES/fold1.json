@@ -1,0 +1,341 @@
+{
+ "method": "cte",
+ "run_name": "cte",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_BABIES_PRICES",
+ "fold": 1,
+ "task": "REG",
+ "score": 0.945186676339968,
+ "metrics": {
+  "score": 0.945186676339968,
+  "metrics": {
+   "r2": 0.945186676339968,
+   "mse": 126.7972607096908,
+   "rmse": 11.260428975385032
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9133264565083082,
+  "joint_tar": 0.934436444736227,
+  "unimodal_structured": 0.5235360735970463,
+  "unimodal_text": 0.8769888861060158
+ },
+ "diff_vs_csv_joint_tar": 0.010750231603741,
+ "runtime_s": {
+  "total": 68.0,
+  "fit": 68.0,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 4577,
+ "n_test": 508,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-13 17:03:37",
+ "argv": [
+  "--method",
+  "cte",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_BABIES_PRICES",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte",
+  "experts": [
+   "lex",
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": true,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "tfidf": 1.5,
+   "ridge": 3.64,
+   "n_tfidf_features": 20152,
+   "knn": 1.04,
+   "numeracy": 0.47
+  },
+  "expert_cache_hits": {
+   "lex": false,
+   "nbr": false
+  },
+  "lex_alpha": {
+   "chosen": 0.3,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.924842,
+    0.91819,
+    0.903579,
+    0.876959
+   ]
+  },
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 5519
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.9248419874916187,
+     "nbr:colors": 0.09186713922958198,
+     "nbr:company_free": 0.19301123725707492,
+     "nbr:company_struct": 0.7044464042982151,
+     "nbr:title": 0.8671615854191335,
+     "nbr:__all__": 0.7941014964237886
+    },
+    "test": {
+     "lex:__all__": 0.9356797417364334,
+     "nbr:colors": 0.12190021250750539,
+     "nbr:company_free": 0.24725188045941898,
+     "nbr:company_struct": 0.6830498765122831,
+     "nbr:title": 0.8682968885645604,
+     "nbr:__all__": 0.7808706120456316
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": -0.010837754244814701,
+    "nbr:colors": -0.030033073277923414,
+    "nbr:company_free": -0.05424064320234406,
+    "nbr:company_struct": 0.02139652778593204,
+    "nbr:title": -0.0011353031454269802,
+    "nbr:__all__": 0.013230884378157004
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "colors": 23,
+   "company_free": 21,
+   "company_struct": 21,
+   "title": 21
+  },
+  "seconds": {
+   "frozen_embeddings": 0.1,
+   "experts": 6.7
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "colors_txt_pca_30": 52.844,
+    "colors_txt_pca_31": 3.598,
+    "colors_txt_pca_32": 0.17,
+    "colors_txt_pca_33": 0.0,
+    "colors_txt_pca_34": 0.0,
+    "colors_txt_pca_35": 0.0,
+    "colors_txt_pca_36": 0.0,
+    "colors_txt_pca_37": 0.0,
+    "colors_txt_pca_38": 0.0,
+    "colors_txt_pca_39": 0.0,
+    "colors_txt_pca_40": 0.0,
+    "colors_txt_pca_41": 0.0,
+    "colors_txt_pca_42": 0.026,
+    "colors_txt_pca_43": 0.046,
+    "colors_txt_pca_44": 0.0,
+    "colors_txt_pca_45": 0.009,
+    "colors_txt_pca_46": 0.0,
+    "colors_txt_pca_47": 0.0,
+    "colors_txt_pca_48": 0.016,
+    "colors_txt_pca_49": 0.0,
+    "colors_txt_pca_50": 0.0,
+    "colors_txt_pca_51": 0.069,
+    "colors_txt_pca_52": 0.003,
+    "company_free_txt_pca_30": 0.285,
+    "company_free_txt_pca_31": 0.0,
+    "company_free_txt_pca_32": 0.0,
+    "company_free_txt_pca_33": 0.0,
+    "company_free_txt_pca_34": 0.0,
+    "company_free_txt_pca_35": 0.0,
+    "company_free_txt_pca_36": 0.0,
+    "company_free_txt_pca_37": 0.0,
+    "company_free_txt_pca_38": 0.0,
+    "company_free_txt_pca_39": 0.0,
+    "company_free_txt_pca_40": 0.047,
+    "company_free_txt_pca_41": 0.002,
+    "company_free_txt_pca_42": 0.0,
+    "company_free_txt_pca_43": 0.002,
+    "company_free_txt_pca_44": 0.005,
+    "company_free_txt_pca_45": 0.0,
+    "company_free_txt_pca_46": 0.007,
+    "company_free_txt_pca_47": 0.0,
+    "company_free_txt_pca_48": 0.0,
+    "company_free_txt_pca_49": 0.0,
+    "company_free_txt_pca_50": 0.002,
+    "company_struct_txt_pca_30": 2.263,
+    "company_struct_txt_pca_31": 0.001,
+    "company_struct_txt_pca_32": 0.001,
+    "company_struct_txt_pca_33": 0.001,
+    "company_struct_txt_pca_34": 0.001,
+    "company_struct_txt_pca_35": 0.0,
+    "company_struct_txt_pca_36": 0.0,
+    "company_struct_txt_pca_37": 0.0,
+    "company_struct_txt_pca_38": 0.0,
+    "company_struct_txt_pca_39": 0.0,
+    "company_struct_txt_pca_40": 0.078,
+    "company_struct_txt_pca_41": 0.149,
+    "company_struct_txt_pca_42": 0.016,
+    "company_struct_txt_pca_43": 0.171,
+    "company_struct_txt_pca_44": 0.046,
+    "company_struct_txt_pca_45": 0.367,
+    "company_struct_txt_pca_46": 0.03,
+    "company_struct_txt_pca_47": 0.0,
+    "company_struct_txt_pca_48": 0.0,
+    "company_struct_txt_pca_49": 0.0,
+    "company_struct_txt_pca_50": 0.0,
+    "title_txt_pca_30": 5.524,
+    "title_txt_pca_31": 0.389,
+    "title_txt_pca_32": 0.527,
+    "title_txt_pca_33": 1.02,
+    "title_txt_pca_34": 0.934,
+    "title_txt_pca_35": 0.001,
+    "title_txt_pca_36": 0.0,
+    "title_txt_pca_37": 0.0,
+    "title_txt_pca_38": 0.0,
+    "title_txt_pca_39": 0.0,
+    "title_txt_pca_40": 0.136,
+    "title_txt_pca_41": 0.054,
+    "title_txt_pca_42": 0.002,
+    "title_txt_pca_43": 0.653,
+    "title_txt_pca_44": 0.236,
+    "title_txt_pca_45": 0.116,
+    "title_txt_pca_46": 0.301,
+    "title_txt_pca_47": 0.0,
+    "title_txt_pca_48": 0.0,
+    "title_txt_pca_49": 0.028,
+    "title_txt_pca_50": 0.0
+   },
+   "pred_share": 0.7018,
+   "group_share": {
+    "structured": 0.037,
+    "pca": 0.2612,
+    "lex": 0.5284,
+    "nbr": 0.1184,
+    "num": 0.0549
+   },
+   "top10": [
+    [
+     "colors_txt_pca_30",
+     52.844
+    ],
+    [
+     "title_txt_pca_30",
+     5.524
+    ],
+    [
+     "colors_txt_pca_31",
+     3.598
+    ],
+    [
+     "category",
+     2.413
+    ],
+    [
+     "company_struct_txt_pca_30",
+     2.263
+    ],
+    [
+     "title_txt_pca_12",
+     1.212
+    ],
+    [
+     "company_struct_txt_pca_18",
+     1.172
+    ],
+    [
+     "title_txt_pca_3",
+     1.031
+    ],
+    [
+     "title_txt_pca_33",
+     1.02
+    ],
+    [
+     "title_txt_pca_34",
+     0.934
+    ]
+   ]
+  }
+ }
+}

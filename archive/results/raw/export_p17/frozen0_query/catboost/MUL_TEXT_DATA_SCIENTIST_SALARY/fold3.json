@@ -1,0 +1,164 @@
+{
+ "method": "frozen0_query",
+ "run_name": "frozen0_query",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_DATA_SCIENTIST_SALARY",
+ "fold": 3,
+ "task": "MUL",
+ "score": 0.8192163157884306,
+ "metrics": {
+  "score": 0.8192163157884306,
+  "metrics": {
+   "auc": 0.8192163157884306,
+   "logloss": 1.2442150134030765
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.8204165526555727,
+  "joint_tar": 0.8306160198932416,
+  "unimodal_structured": 0.5653230118830296,
+  "unimodal_text": 0.8154569172298904
+ },
+ "diff_vs_csv_joint_tar": -0.01139970410481106,
+ "runtime_s": {
+  "total": 118.6,
+  "fit": 118.5,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "frozen0_query",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 1584,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "d5d75d7c617d0dba506955489e46acdff90e62a5",
+  "dirty": false
+ },
+ "timestamp": "2026-10-16 13:06:33",
+ "argv": [
+  "--method",
+  "frozen0_query",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_DATA_SCIENTIST_SALARY",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "frozen0_query",
+  "groups": [],
+  "seconds": {
+   "base": 0.4
+  },
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 24559
+  },
+  "n_extra_columns": {
+   "experience": 0,
+   "job_description": 0,
+   "job_desig": 0,
+   "key_skills": 0,
+   "location": 0
+  },
+  "catboost_importance": {
+   "pred_columns": {},
+   "pred_share": 0.0,
+   "group_share": {
+    "structured": 0.0241,
+    "pca": 0.9759
+   },
+   "top10": [
+    [
+     "experience_txt_pca_0",
+     18.926
+    ],
+    [
+     "experience_txt_pca_2",
+     5.121
+    ],
+    [
+     "key_skills_txt_pca_5",
+     2.68
+    ],
+    [
+     "job_type",
+     2.413
+    ],
+    [
+     "job_desig_txt_pca_3",
+     2.221
+    ],
+    [
+     "job_desig_txt_pca_10",
+     1.869
+    ],
+    [
+     "job_desig_txt_pca_8",
+     1.72
+    ],
+    [
+     "job_description_txt_pca_0",
+     1.591
+    ],
+    [
+     "job_desig_txt_pca_6",
+     1.293
+    ],
+    [
+     "experience_txt_pca_8",
+     1.201
+    ]
+   ]
+  }
+ }
+}

@@ -1,0 +1,234 @@
+{
+ "method": "cte_lex",
+ "run_name": "cte_lex",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_BOOK_PRICE",
+ "fold": 1,
+ "task": "REG",
+ "score": 0.5931742118136489,
+ "metrics": {
+  "score": 0.5931742118136489,
+  "metrics": {
+   "r2": 0.5931742118136489,
+   "mse": 0.03915575883983786,
+   "rmse": 0.19787814138968926
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.5796265495618038,
+  "joint_tar": 0.5799502074859735,
+  "unimodal_structured": 0.1985946254287753,
+  "unimodal_text": 0.5691865552366293
+ },
+ "diff_vs_csv_joint_tar": 0.013224004327675454,
+ "runtime_s": {
+  "total": 76.5,
+  "fit": 76.5,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte_lex",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 4491,
+ "n_test": 498,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-13 20:53:08",
+ "argv": [
+  "--method",
+  "cte_lex",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_BOOK_PRICE",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte_lex",
+  "experts": [
+   "lex"
+  ],
+  "mode": "oof",
+  "numeracy": false,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 0.0
+  },
+  "expert_cache_hits": {
+   "lex": true
+  },
+  "lex_alpha": {
+   "chosen": 1.0,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.674588,
+    0.682983,
+    0.680547,
+    0.657212
+   ]
+  },
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 15486
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.6829829996216871
+    },
+    "test": {
+     "lex:__all__": 0.7141682127881126
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": -0.03118521316642553
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "Author": 1,
+   "Edition": 0,
+   "Genre": 0,
+   "Synopsis": 0,
+   "Title": 0
+  },
+  "seconds": {
+   "frozen_embeddings": 0.2,
+   "experts": 0.0
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Author_txt_pca_30": 23.044
+   },
+   "pred_share": 0.2304,
+   "group_share": {
+    "structured": 0.0492,
+    "pca": 0.7204,
+    "lex": 0.2304
+   },
+   "top10": [
+    [
+     "Author_txt_pca_30",
+     23.044
+    ],
+    [
+     "Reviews",
+     2.226
+    ],
+    [
+     "Edition_txt_pca_20",
+     2.219
+    ],
+    [
+     "Ratings",
+     1.682
+    ],
+    [
+     "Author_txt_pca_1",
+     1.33
+    ],
+    [
+     "Author_txt_pca_6",
+     1.2
+    ],
+    [
+     "Title_txt_pca_0",
+     1.178
+    ],
+    [
+     "Title_txt_pca_10",
+     1.126
+    ],
+    [
+     "BookCategory",
+     1.009
+    ],
+    [
+     "Synopsis_txt_pca_17",
+     0.992
+    ]
+   ]
+  }
+ }
+}

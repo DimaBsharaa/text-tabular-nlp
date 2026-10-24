@@ -1,0 +1,245 @@
+{
+ "method": "tar_repro",
+ "run_name": "tar_repro",
+ "engine_version": "tar_engine/2",
+ "tar_path": "fast",
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_MICHELIN_RESTAURANTS",
+ "fold": 1,
+ "task": "MUL",
+ "score": 0.9120488853154107,
+ "metrics": {
+  "score": 0.9120488853154107,
+  "metrics": {
+   "auc": 0.9120488853154107,
+   "logloss": 0.6120774842647008
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9043823204644534,
+  "joint_tar": 0.916252988470458,
+  "unimodal_structured": 0.8752873654682487,
+  "unimodal_text": 0.8544845246681124
+ },
+ "diff_vs_csv_joint_tar": -0.004204103155047267,
+ "runtime_s": {
+  "total": 142.8,
+  "fit": 142.7,
+  "predict": 0.1,
+  "tar_lower_cache": 9.0,
+  "tar_train": 84.0,
+  "tar_encode": 3.2
+ },
+ "tar": {
+  "cache_key": "MUL_TEXT_MICHELIN_RESTAURANTS/fold1/tar_repro/seed42/07055b3820_ecc24ede0e",
+  "cache_hit": false,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "tar_engine/2"
+  },
+  "text_cols": [
+   "Address",
+   "Cuisine",
+   "Description",
+   "FacilitiesAndServices",
+   "Location",
+   "Name"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.8769830830110539,
+    "n": 8100,
+    "n_unseen_class": 0
+   },
+   "e5_val": {
+    "score": 0.8362648752812507,
+    "n": 900,
+    "n_unseen_class": 0
+   },
+   "test": {
+    "score": 0.8422175496419679,
+    "n": 1884,
+    "n_unseen_class": 0
+   },
+   "learner_val": {
+    "score": 0.8340781805315511,
+    "n": 1000,
+    "n_unseen_class": 0
+   }
+  },
+  "n_unique_texts": {
+   "Address": 11690,
+   "Cuisine": 1411,
+   "Description": 11884,
+   "FacilitiesAndServices": 539,
+   "Location": 4205,
+   "Name": 11597
+  },
+  "train": {
+   "epochs_run": 13,
+   "best_epoch": 10,
+   "best_val_loss": 0.9654928406962642,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 1.122495365770756,
+     "val_loss": 1.038522887053313,
+     "seconds": 6.8
+    },
+    {
+     "epoch": 2,
+     "train_loss": 1.0220104604493443,
+     "val_loss": 1.0114302924827294,
+     "seconds": 6.4
+    },
+    {
+     "epoch": 3,
+     "train_loss": 0.9855973899904102,
+     "val_loss": 0.9917493270944666,
+     "seconds": 6.4
+    },
+    {
+     "epoch": 4,
+     "train_loss": 0.9713594539077194,
+     "val_loss": 0.9815835611908524,
+     "seconds": 6.4
+    },
+    {
+     "epoch": 5,
+     "train_loss": 0.9601513664614516,
+     "val_loss": 0.972549969708478,
+     "seconds": 6.5
+    },
+    {
+     "epoch": 6,
+     "train_loss": 0.9538255542786523,
+     "val_loss": 0.9713675046850134,
+     "seconds": 6.4
+    },
+    {
+     "epoch": 7,
+     "train_loss": 0.9484265951266505,
+     "val_loss": 0.9675512587582623,
+     "seconds": 6.4
+    },
+    {
+     "epoch": 8,
+     "train_loss": 0.943985412267991,
+     "val_loss": 0.9657487655569006,
+     "seconds": 6.4
+    },
+    {
+     "epoch": 9,
+     "train_loss": 0.9391386275036345,
+     "val_loss": 0.9672136153115166,
+     "seconds": 6.4
+    },
+    {
+     "epoch": 10,
+     "train_loss": 0.935350420219908,
+     "val_loss": 0.9654928406962642,
+     "seconds": 6.4
+    },
+    {
+     "epoch": 11,
+     "train_loss": 0.9337587728029416,
+     "val_loss": 0.9674232871444137,
+     "seconds": 6.4
+    },
+    {
+     "epoch": 12,
+     "train_loss": 0.929304892398693,
+     "val_loss": 0.9659102614720663,
+     "seconds": 6.5
+    },
+    {
+     "epoch": 13,
+     "train_loss": 0.9269683103993106,
+     "val_loss": 0.9664359401773523,
+     "seconds": 6.5
+    }
+   ],
+   "n_train_cells": 48600,
+   "n_val_cells": 5400,
+   "mean_train_tokens": 33.36818930041152,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 7.0,
+   "truncated_frac": 0.0,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 8100,
+   "e5_val": 900,
+   "test": 1884,
+   "learner_val": 1000
+  }
+ },
+ "leakage_gap_head_train_minus_test": 0.034765533369085944,
+ "n_train": 10000,
+ "n_test": 1884,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-11 00:26:58",
+ "argv": [
+  "--method",
+  "tar_repro",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_MICHELIN_RESTAURANTS",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5"
+}

@@ -1,0 +1,582 @@
+{
+ "method": "frozen_xfit_pred",
+ "run_name": "frozen_xfit_pred",
+ "engine_version": "stacking/1",
+ "tar_path": "fast",
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_ZOMATO_RESTAURANTS",
+ "fold": 2,
+ "task": "REG",
+ "score": 0.8393583809439318,
+ "metrics": {
+  "score": 0.8393583809439318,
+  "metrics": {
+   "r2": 0.8393583809439318,
+   "mse": 0.03144782944712618,
+   "rmse": 0.17733535870526831
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.8289452640520776,
+  "joint_tar": 0.8329378915602517,
+  "unimodal_structured": 0.5881380023741138,
+  "unimodal_text": 0.8024283063572369
+ },
+ "diff_vs_csv_joint_tar": 0.006420489383680117,
+ "runtime_s": {
+  "total": 1579.5,
+  "fit": 1579.3,
+  "predict": 0.2,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_key": "REG_TEXT_ZOMATO_RESTAURANTS/fold2/tar_repro/seed42/07055b3820_1bae0fed7c",
+  "cache_hit": true,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "stacking/1",
+   "method": "frozen_xfit_pred",
+   "base": "tar_repro"
+  },
+  "text_cols": [
+   "address",
+   "cuisines",
+   "dish_liked",
+   "menu_item",
+   "name",
+   "phone",
+   "reviews_list"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.5099899997800112,
+    "n": 8100
+   },
+   "e5_val": {
+    "score": 0.4385994990501224,
+    "n": 900
+   },
+   "test": {
+    "score": 0.4491798800384911,
+    "n": 2000
+   },
+   "learner_val": {
+    "score": 0.42872630762297703,
+    "n": 1000
+   }
+  },
+  "n_unique_texts": {
+   "address": 5944,
+   "cuisines": 1902,
+   "dish_liked": 3398,
+   "menu_item": 2829,
+   "name": 4793,
+   "phone": 6940,
+   "reviews_list": 8807
+  },
+  "train": {
+   "epochs_run": 50,
+   "best_epoch": 49,
+   "best_val_loss": 2.4592148095085506,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 2.7103712909772493,
+     "val_loss": 2.6720891433291967,
+     "seconds": 12.4
+    },
+    {
+     "epoch": 2,
+     "train_loss": 2.631337022529077,
+     "val_loss": 2.6021532207065157,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 3,
+     "train_loss": 2.587536604475933,
+     "val_loss": 2.587890646646893,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 4,
+     "train_loss": 2.569573364240993,
+     "val_loss": 2.5727185163043793,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 5,
+     "train_loss": 2.5552029789482265,
+     "val_loss": 2.5651491408877902,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 6,
+     "train_loss": 2.545004573314068,
+     "val_loss": 2.5608244134509373,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 7,
+     "train_loss": 2.5344259201870605,
+     "val_loss": 2.551013442902338,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 8,
+     "train_loss": 2.523711305682201,
+     "val_loss": 2.5428830336010644,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 9,
+     "train_loss": 2.5152108413117693,
+     "val_loss": 2.5384952047136093,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 10,
+     "train_loss": 2.5059132693389947,
+     "val_loss": 2.532549531573341,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 11,
+     "train_loss": 2.4970579631576673,
+     "val_loss": 2.5327739197867256,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 12,
+     "train_loss": 2.4902465710984756,
+     "val_loss": 2.5221200296613904,
+     "seconds": 12.2
+    },
+    {
+     "epoch": 13,
+     "train_loss": 2.4819479128082382,
+     "val_loss": 2.5187976343669587,
+     "seconds": 12.3
+    },
+    {
+     "epoch": 14,
+     "train_loss": 2.475804875187142,
+     "val_loss": 2.5136040115356444,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 15,
+     "train_loss": 2.4672482410478005,
+     "val_loss": 2.517328759904892,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 16,
+     "train_loss": 2.460243221868283,
+     "val_loss": 2.5072678823319694,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 17,
+     "train_loss": 2.4572067022407706,
+     "val_loss": 2.5036951055980863,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 18,
+     "train_loss": 2.4485908379798635,
+     "val_loss": 2.501372003403921,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 19,
+     "train_loss": 2.442004415118505,
+     "val_loss": 2.4969319744715617,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 20,
+     "train_loss": 2.4378464410502656,
+     "val_loss": 2.5026842441256085,
+     "seconds": 11.9
+    },
+    {
+     "epoch": 21,
+     "train_loss": 2.431370174165756,
+     "val_loss": 2.492951944896153,
+     "seconds": 11.9
+    },
+    {
+     "epoch": 22,
+     "train_loss": 2.428887069776155,
+     "val_loss": 2.5049442158048114,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 23,
+     "train_loss": 2.4228140917278473,
+     "val_loss": 2.4879009405771892,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 24,
+     "train_loss": 2.418390136765845,
+     "val_loss": 2.483373761858259,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 25,
+     "train_loss": 2.411548837379173,
+     "val_loss": 2.4848826938205297,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 26,
+     "train_loss": 2.408180935185212,
+     "val_loss": 2.482936479629032,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 27,
+     "train_loss": 2.4025336350335014,
+     "val_loss": 2.4813486025068494,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 28,
+     "train_loss": 2.4017929869017696,
+     "val_loss": 2.479327633872865,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 29,
+     "train_loss": 2.397668794870797,
+     "val_loss": 2.4751499390980554,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 30,
+     "train_loss": 2.390061579927986,
+     "val_loss": 2.4762669878157357,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 31,
+     "train_loss": 2.3870866950437084,
+     "val_loss": 2.477103633123731,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 32,
+     "train_loss": 2.3829693940245074,
+     "val_loss": 2.473428252689422,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 33,
+     "train_loss": 2.3807093109992024,
+     "val_loss": 2.4712488068474663,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 34,
+     "train_loss": 2.3768121558396276,
+     "val_loss": 2.469520817559863,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 35,
+     "train_loss": 2.375185030646215,
+     "val_loss": 2.469317863252428,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 36,
+     "train_loss": 2.372296439596375,
+     "val_loss": 2.467293086733137,
+     "seconds": 12.2
+    },
+    {
+     "epoch": 37,
+     "train_loss": 2.369005887134155,
+     "val_loss": 2.465667101239401,
+     "seconds": 11.9
+    },
+    {
+     "epoch": 38,
+     "train_loss": 2.3661816190790246,
+     "val_loss": 2.4667639178321474,
+     "seconds": 11.9
+    },
+    {
+     "epoch": 39,
+     "train_loss": 2.3640259394906398,
+     "val_loss": 2.46295004239158,
+     "seconds": 11.9
+    },
+    {
+     "epoch": 40,
+     "train_loss": 2.3612052988291206,
+     "val_loss": 2.464775348239475,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 41,
+     "train_loss": 2.3603723876690736,
+     "val_loss": 2.4621641199929374,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 42,
+     "train_loss": 2.3577912612020233,
+     "val_loss": 2.4618780496385364,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 43,
+     "train_loss": 2.3558954215848678,
+     "val_loss": 2.4615327885037375,
+     "seconds": 11.9
+    },
+    {
+     "epoch": 44,
+     "train_loss": 2.354551224178738,
+     "val_loss": 2.4619718120211647,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 45,
+     "train_loss": 2.3523496109762307,
+     "val_loss": 2.459946467989967,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 46,
+     "train_loss": 2.351249206667434,
+     "val_loss": 2.460269929038154,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 47,
+     "train_loss": 2.348878433321729,
+     "val_loss": 2.4595845818898034,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 48,
+     "train_loss": 2.3490614723023913,
+     "val_loss": 2.459786881946382,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 49,
+     "train_loss": 2.3482491817171613,
+     "val_loss": 2.4592148095085506,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 50,
+     "train_loss": 2.3448798372716078,
+     "val_loss": 2.4592995168292333,
+     "seconds": 12.0
+    }
+   ],
+   "n_train_cells": 56700,
+   "n_val_cells": 6300,
+   "mean_train_tokens": 82.12587301587301,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 11.26,
+   "truncated_frac": 0.09918871252204585,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 8100,
+   "e5_val": 900,
+   "learner_val": 1000,
+   "test": 2000
+  }
+ },
+ "leakage_gap_head_train_minus_test": 0.060810119741520174,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-11 16:07:48",
+ "argv": [
+  "--method",
+  "frozen_xfit_pred",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_ZOMATO_RESTAURANTS",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "stacking/1",
+  "k_folds": 3,
+  "method": "frozen_xfit_pred",
+  "fold_models": [
+   {
+    "fold": 0,
+    "n_train_rows": 6000,
+    "n_heldout": 3000,
+    "cache_key": "REG_TEXT_ZOMATO_RESTAURANTS/fold2/tar_repro/seed42/07055b3820_66996cbd3e",
+    "cache_hit": false,
+    "best_epoch": 27,
+    "train_rows_hash": "f2d1e6ec16",
+    "heldout_rows_hash": "afe5a713a5"
+   },
+   {
+    "fold": 1,
+    "n_train_rows": 6000,
+    "n_heldout": 3000,
+    "cache_key": "REG_TEXT_ZOMATO_RESTAURANTS/fold2/tar_repro/seed42/07055b3820_75fba8ccd5",
+    "cache_hit": false,
+    "best_epoch": 42,
+    "train_rows_hash": "65edd893a2",
+    "heldout_rows_hash": "c043c0751a"
+   },
+   {
+    "fold": 2,
+    "n_train_rows": 6000,
+    "n_heldout": 3000,
+    "cache_key": "REG_TEXT_ZOMATO_RESTAURANTS/fold2/tar_repro/seed42/07055b3820_1b9cbd921a",
+    "cache_hit": false,
+    "best_epoch": 34,
+    "train_rows_hash": "c9a7be8d2d",
+    "heldout_rows_hash": "0f70853b63"
+   }
+  ],
+  "folds_cover_pool": true,
+  "pred_feature_quality": {
+   "train_rows": 0.39185420438741736,
+   "test": 0.39511444226464454,
+   "learner_val": 0.3805507938135274,
+   "gap_train_minus_test": -0.003260237877227179
+  },
+  "n_pred_features_per_col": {
+   "address": 2,
+   "cuisines": 2,
+   "dish_liked": 2,
+   "menu_item": 2,
+   "name": 2,
+   "phone": 2,
+   "reviews_list": 2
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "address_txt_pca_30": 0.607,
+    "address_txt_pca_31": 0.465,
+    "cuisines_txt_pca_30": 0.5,
+    "cuisines_txt_pca_31": 0.295,
+    "dish_liked_txt_pca_30": 7.213,
+    "dish_liked_txt_pca_31": 0.366,
+    "menu_item_txt_pca_30": 0.027,
+    "menu_item_txt_pca_31": 0.002,
+    "name_txt_pca_30": 1.827,
+    "name_txt_pca_31": 0.472,
+    "phone_txt_pca_30": 0.798,
+    "phone_txt_pca_31": 0.423,
+    "reviews_list_txt_pca_30": 15.235,
+    "reviews_list_txt_pca_31": 2.431
+   },
+   "pred_share": 0.3066,
+   "top10": [
+    [
+     "reviews_list_txt_pca_30",
+     15.235
+    ],
+    [
+     "dish_liked_txt_pca_30",
+     7.213
+    ],
+    [
+     "votes",
+     6.907
+    ],
+    [
+     "reviews_list_txt_pca_31",
+     2.431
+    ],
+    [
+     "name_txt_pca_30",
+     1.827
+    ],
+    [
+     "dish_liked_txt_pca_0",
+     1.399
+    ],
+    [
+     "reviews_list_txt_pca_10",
+     1.305
+    ],
+    [
+     "phone_txt_pca_2",
+     1.279
+    ],
+    [
+     "name_txt_pca_2",
+     0.999
+    ],
+    [
+     "reviews_list_txt_pca_12",
+     0.866
+    ]
+   ]
+  }
+ }
+}

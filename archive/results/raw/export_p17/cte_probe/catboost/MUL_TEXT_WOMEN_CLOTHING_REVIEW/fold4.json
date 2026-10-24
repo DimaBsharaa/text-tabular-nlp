@@ -1,0 +1,251 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_WOMEN_CLOTHING_REVIEW",
+ "fold": 4,
+ "task": "MUL",
+ "score": 0.9036244033893869,
+ "metrics": {
+  "score": 0.9036244033893869,
+  "metrics": {
+   "auc": 0.9036244033893869,
+   "logloss": 0.6671095488205465
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9009836279109956,
+  "joint_tar": 0.9083147657473656,
+  "unimodal_structured": 0.7788157151828876,
+  "unimodal_text": 0.8813863754532264
+ },
+ "diff_vs_csv_joint_tar": -0.004690362357978706,
+ "runtime_s": {
+  "total": 123.4,
+  "fit": 123.4,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 1878,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "96082deb0d891e2ee657e35f4fbae0bee93b17e3",
+  "dirty": false
+ },
+ "timestamp": "2026-10-15 21:34:09",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_WOMEN_CLOTHING_REVIEW",
+  "--fold",
+  "4",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 6.3,
+   "probe": 4.4
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 10.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.796794,
+     0.820902,
+     0.841946,
+     0.85372
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.2,
+    "experts": 5.9
+   }
+  },
+  "probe": {
+   "alpha": 10.0,
+   "oof_metric": [
+    0.8653659584839477,
+    0.8751061087622338,
+    0.8801918050307981,
+    0.8803502726439216
+   ]
+  },
+  "n_extra_columns": {
+   "Review Text": 32,
+   "Title": 20
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Review Text_txt_pca_30": 2.192,
+    "Review Text_txt_pca_31": 1.769,
+    "Review Text_txt_pca_32": 2.875,
+    "Review Text_txt_pca_33": 3.121,
+    "Review Text_txt_pca_34": 1.861,
+    "Review Text_txt_pca_35": 2.032,
+    "Review Text_txt_pca_36": 1.138,
+    "Review Text_txt_pca_37": 1.441,
+    "Review Text_txt_pca_38": 0.148,
+    "Review Text_txt_pca_39": 0.124,
+    "Review Text_txt_pca_40": 0.192,
+    "Review Text_txt_pca_41": 0.023,
+    "Review Text_txt_pca_42": 0.0,
+    "Review Text_txt_pca_43": 0.002,
+    "Review Text_txt_pca_44": 0.0,
+    "Review Text_txt_pca_45": 0.001,
+    "Review Text_txt_pca_46": 0.0,
+    "Review Text_txt_pca_47": 0.42,
+    "Review Text_txt_pca_48": 0.56,
+    "Review Text_txt_pca_49": 0.158,
+    "Review Text_txt_pca_50": 0.588,
+    "Review Text_txt_pca_51": 0.268,
+    "Review Text_txt_pca_52": 0.123,
+    "Review Text_txt_pca_53": 0.391,
+    "Review Text_txt_pca_54": 0.003,
+    "Review Text_txt_pca_55": 0.016,
+    "Review Text_txt_pca_56": 0.671,
+    "Review Text_txt_pca_57": 0.0,
+    "Review Text_txt_pca_58": 3.005,
+    "Review Text_txt_pca_59": 7.52,
+    "Review Text_txt_pca_60": 3.68,
+    "Review Text_txt_pca_61": 3.536,
+    "Title_txt_pca_30": 0.001,
+    "Title_txt_pca_31": 0.005,
+    "Title_txt_pca_32": 0.0,
+    "Title_txt_pca_33": 0.0,
+    "Title_txt_pca_34": 0.0,
+    "Title_txt_pca_35": 0.0,
+    "Title_txt_pca_36": 0.0,
+    "Title_txt_pca_37": 0.0,
+    "Title_txt_pca_38": 0.0,
+    "Title_txt_pca_39": 0.059,
+    "Title_txt_pca_40": 0.215,
+    "Title_txt_pca_41": 0.057,
+    "Title_txt_pca_42": 0.371,
+    "Title_txt_pca_43": 0.426,
+    "Title_txt_pca_44": 0.0,
+    "Title_txt_pca_45": 0.305,
+    "Title_txt_pca_46": 0.002,
+    "Title_txt_pca_47": 0.0,
+    "Title_txt_pca_48": 0.119,
+    "Title_txt_pca_49": 0.0
+   },
+   "pred_share": 0.3942,
+   "group_share": {
+    "structured": 0.1815,
+    "pca": 0.4243,
+    "lex": 0.0996,
+    "nbr": 0.0647,
+    "num": 0.0525,
+    "probe": 0.1774
+   },
+   "top10": [
+    [
+     "Recommended IND",
+     14.656
+    ],
+    [
+     "Review Text_txt_pca_59",
+     7.52
+    ],
+    [
+     "Review Text_txt_pca_60",
+     3.68
+    ],
+    [
+     "Review Text_txt_pca_61",
+     3.536
+    ],
+    [
+     "Review Text_txt_pca_0",
+     3.388
+    ],
+    [
+     "Review Text_txt_pca_33",
+     3.121
+    ],
+    [
+     "Review Text_txt_pca_58",
+     3.005
+    ],
+    [
+     "Review Text_txt_pca_32",
+     2.875
+    ],
+    [
+     "Review Text_txt_pca_30",
+     2.192
+    ],
+    [
+     "Review Text_txt_pca_35",
+     2.032
+    ]
+   ]
+  }
+ }
+}

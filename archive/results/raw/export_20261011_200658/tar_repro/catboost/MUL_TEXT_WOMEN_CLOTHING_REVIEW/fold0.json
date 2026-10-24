@@ -1,0 +1,261 @@
+{
+ "method": "tar_repro",
+ "run_name": "tar_repro",
+ "engine_version": "tar_engine/2",
+ "tar_path": "fast",
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_WOMEN_CLOTHING_REVIEW",
+ "fold": 0,
+ "task": "MUL",
+ "score": 0.9118169970668898,
+ "metrics": {
+  "score": 0.9118169970668898,
+  "metrics": {
+   "auc": 0.9118169970668898,
+   "logloss": 0.6571224107050074
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9048007523264818,
+  "joint_tar": 0.9107655955880404,
+  "unimodal_structured": 0.7898930349933002,
+  "unimodal_text": 0.8852713193551356
+ },
+ "diff_vs_csv_joint_tar": 0.001051401478849412,
+ "runtime_s": {
+  "total": 70.3,
+  "fit": 70.2,
+  "predict": 0.1,
+  "tar_lower_cache": 5.6,
+  "tar_train": 36.5,
+  "tar_encode": 1.4
+ },
+ "tar": {
+  "cache_key": "MUL_TEXT_WOMEN_CLOTHING_REVIEW/fold0/tar_repro/seed42/07055b3820_1e1bd8cf5f",
+  "cache_hit": false,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "tar_engine/2"
+  },
+  "text_cols": [
+   "Review Text",
+   "Title"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.910291851245803,
+    "n": 8100,
+    "n_unseen_class": 0
+   },
+   "e5_val": {
+    "score": 0.9015472524890822,
+    "n": 900,
+    "n_unseen_class": 0
+   },
+   "test": {
+    "score": 0.8933073136065266,
+    "n": 1878,
+    "n_unseen_class": 0
+   },
+   "learner_val": {
+    "score": 0.8941056372792204,
+    "n": 1000,
+    "n_unseen_class": 0
+   }
+  },
+  "n_unique_texts": {
+   "Review Text": 11457,
+   "Title": 7588
+  },
+  "train": {
+   "epochs_run": 17,
+   "best_epoch": 14,
+   "best_val_loss": 0.8047046513027615,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 1.3021707002027536,
+     "val_loss": 1.140275101131863,
+     "seconds": 2.4
+    },
+    {
+     "epoch": 2,
+     "train_loss": 1.0249266589129413,
+     "val_loss": 0.9248469776577419,
+     "seconds": 2.2
+    },
+    {
+     "epoch": 3,
+     "train_loss": 0.8923998778837698,
+     "val_loss": 0.8864224494828118,
+     "seconds": 2.2
+    },
+    {
+     "epoch": 4,
+     "train_loss": 0.8621342262220971,
+     "val_loss": 0.8713194251060485,
+     "seconds": 2.1
+    },
+    {
+     "epoch": 5,
+     "train_loss": 0.8439044603006339,
+     "val_loss": 0.8621563543213738,
+     "seconds": 2.1
+    },
+    {
+     "epoch": 6,
+     "train_loss": 0.8320455670062407,
+     "val_loss": 0.8378658633761936,
+     "seconds": 2.1
+    },
+    {
+     "epoch": 7,
+     "train_loss": 0.8197325215516267,
+     "val_loss": 0.8295928335189819,
+     "seconds": 2.1
+    },
+    {
+     "epoch": 8,
+     "train_loss": 0.8129676230748495,
+     "val_loss": 0.8233898125754462,
+     "seconds": 2.1
+    },
+    {
+     "epoch": 9,
+     "train_loss": 0.8050217012122826,
+     "val_loss": 0.8186397239896986,
+     "seconds": 2.1
+    },
+    {
+     "epoch": 10,
+     "train_loss": 0.7996174245410496,
+     "val_loss": 0.8189178991317749,
+     "seconds": 2.1
+    },
+    {
+     "epoch": 11,
+     "train_loss": 0.7953462125931257,
+     "val_loss": 0.8155293663342794,
+     "seconds": 2.1
+    },
+    {
+     "epoch": 12,
+     "train_loss": 0.7905015621067565,
+     "val_loss": 0.811353907585144,
+     "seconds": 2.1
+    },
+    {
+     "epoch": 13,
+     "train_loss": 0.7879198367213025,
+     "val_loss": 0.8095019602775574,
+     "seconds": 2.1
+    },
+    {
+     "epoch": 14,
+     "train_loss": 0.7860794990151017,
+     "val_loss": 0.8047046513027615,
+     "seconds": 2.1
+    },
+    {
+     "epoch": 15,
+     "train_loss": 0.779534297813604,
+     "val_loss": 0.8050482190979852,
+     "seconds": 2.2
+    },
+    {
+     "epoch": 16,
+     "train_loss": 0.7755343442198671,
+     "val_loss": 0.8048356048266093,
+     "seconds": 2.1
+    },
+    {
+     "epoch": 17,
+     "train_loss": 0.7738486252302005,
+     "val_loss": 0.8066282076305813,
+     "seconds": 2.1
+    }
+   ],
+   "n_train_cells": 16200,
+   "n_val_cells": 1800,
+   "mean_train_tokens": 44.62851851851852,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 3.52,
+   "truncated_frac": 0.0,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 8100,
+   "e5_val": 900,
+   "test": 1878,
+   "learner_val": 1000
+  }
+ },
+ "leakage_gap_head_train_minus_test": 0.01698453763927643,
+ "n_train": 10000,
+ "n_test": 1878,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-10 21:35:31",
+ "argv": [
+  "--method",
+  "tar_repro",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_WOMEN_CLOTHING_REVIEW",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5"
+}

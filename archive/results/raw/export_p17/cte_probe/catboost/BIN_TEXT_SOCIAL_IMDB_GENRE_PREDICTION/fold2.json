@@ -1,0 +1,282 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "BIN_TEXT_SOCIAL_IMDB_GENRE_PREDICTION",
+ "fold": 2,
+ "task": "BIN",
+ "score": 0.838095238095238,
+ "metrics": {
+  "score": 0.838095238095238,
+  "metrics": {
+   "auc": 0.838095238095238
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 20.2,
+  "fit": 20.1,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 718,
+ "n_test": 82,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 00:38:26",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "BIN_TEXT_SOCIAL_IMDB_GENRE_PREDICTION",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 0.4,
+   "probe": 0.2
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 10.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.744001,
+     0.750544,
+     0.757394,
+     0.760627
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.1,
+    "experts": 0.3
+   }
+  },
+  "probe": {
+   "alpha": 3.0,
+   "oof_metric": [
+    0.7728269863567263,
+    0.7899821040275559,
+    0.794735120364847,
+    0.7871918717647737
+   ]
+  },
+  "n_extra_columns": {
+   "Actors": 24,
+   "Description": 21,
+   "Director": 21,
+   "Title": 21
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Actors_txt_pca_30": 5.96,
+    "Actors_txt_pca_31": 0.426,
+    "Actors_txt_pca_32": 2.376,
+    "Actors_txt_pca_33": 0.0,
+    "Actors_txt_pca_34": 0.0,
+    "Actors_txt_pca_35": 0.0,
+    "Actors_txt_pca_36": 0.0,
+    "Actors_txt_pca_37": 0.0,
+    "Actors_txt_pca_38": 0.0,
+    "Actors_txt_pca_39": 0.0,
+    "Actors_txt_pca_40": 0.0,
+    "Actors_txt_pca_41": 0.0,
+    "Actors_txt_pca_42": 0.229,
+    "Actors_txt_pca_43": 0.07,
+    "Actors_txt_pca_44": 0.035,
+    "Actors_txt_pca_45": 0.302,
+    "Actors_txt_pca_46": 0.262,
+    "Actors_txt_pca_47": 0.0,
+    "Actors_txt_pca_48": 0.193,
+    "Actors_txt_pca_49": 0.0,
+    "Actors_txt_pca_50": 0.0,
+    "Actors_txt_pca_51": 0.001,
+    "Actors_txt_pca_52": 0.0,
+    "Actors_txt_pca_53": 9.139,
+    "Description_txt_pca_30": 2.337,
+    "Description_txt_pca_31": 0.034,
+    "Description_txt_pca_32": 0.058,
+    "Description_txt_pca_33": 0.092,
+    "Description_txt_pca_34": 0.076,
+    "Description_txt_pca_35": 0.039,
+    "Description_txt_pca_36": 0.065,
+    "Description_txt_pca_37": 0.0,
+    "Description_txt_pca_38": 0.0,
+    "Description_txt_pca_39": 0.007,
+    "Description_txt_pca_40": 0.479,
+    "Description_txt_pca_41": 0.404,
+    "Description_txt_pca_42": 0.04,
+    "Description_txt_pca_43": 0.246,
+    "Description_txt_pca_44": 0.927,
+    "Description_txt_pca_45": 0.124,
+    "Description_txt_pca_46": 0.364,
+    "Description_txt_pca_47": 0.0,
+    "Description_txt_pca_48": 0.009,
+    "Description_txt_pca_49": 0.402,
+    "Description_txt_pca_50": 0.0,
+    "Director_txt_pca_30": 3.461,
+    "Director_txt_pca_31": 0.0,
+    "Director_txt_pca_32": 0.0,
+    "Director_txt_pca_33": 0.0,
+    "Director_txt_pca_34": 0.0,
+    "Director_txt_pca_35": 0.0,
+    "Director_txt_pca_36": 0.0,
+    "Director_txt_pca_37": 0.0,
+    "Director_txt_pca_38": 0.0,
+    "Director_txt_pca_39": 0.0,
+    "Director_txt_pca_40": 0.208,
+    "Director_txt_pca_41": 0.0,
+    "Director_txt_pca_42": 0.008,
+    "Director_txt_pca_43": 0.255,
+    "Director_txt_pca_44": 0.205,
+    "Director_txt_pca_45": 0.0,
+    "Director_txt_pca_46": 0.044,
+    "Director_txt_pca_47": 0.0,
+    "Director_txt_pca_48": 0.0,
+    "Director_txt_pca_49": 0.0,
+    "Director_txt_pca_50": 0.0,
+    "Title_txt_pca_30": 1.104,
+    "Title_txt_pca_31": 0.03,
+    "Title_txt_pca_32": 0.031,
+    "Title_txt_pca_33": 0.031,
+    "Title_txt_pca_34": 0.03,
+    "Title_txt_pca_35": 0.0,
+    "Title_txt_pca_36": 0.0,
+    "Title_txt_pca_37": 0.0,
+    "Title_txt_pca_38": 0.0,
+    "Title_txt_pca_39": 0.0,
+    "Title_txt_pca_40": 0.261,
+    "Title_txt_pca_41": 0.225,
+    "Title_txt_pca_42": 0.004,
+    "Title_txt_pca_43": 0.243,
+    "Title_txt_pca_44": 0.393,
+    "Title_txt_pca_45": 0.119,
+    "Title_txt_pca_46": 0.22,
+    "Title_txt_pca_47": 0.001,
+    "Title_txt_pca_48": 0.001,
+    "Title_txt_pca_49": 0.005,
+    "Title_txt_pca_50": 0.0
+   },
+   "pred_share": 0.3157,
+   "group_share": {
+    "structured": 0.1553,
+    "pca": 0.529,
+    "lex": 0.0596,
+    "nbr": 0.097,
+    "num": 0.0677,
+    "probe": 0.0914
+   },
+   "top10": [
+    [
+     "Actors_txt_pca_53",
+     9.139
+    ],
+    [
+     "Actors_txt_pca_30",
+     5.96
+    ],
+    [
+     "Revenue (Millions)",
+     5.744
+    ],
+    [
+     "Runtime (Minutes)",
+     4.06
+    ],
+    [
+     "Director_txt_pca_30",
+     3.461
+    ],
+    [
+     "Rating",
+     3.248
+    ],
+    [
+     "Actors_txt_pca_32",
+     2.376
+    ],
+    [
+     "Description_txt_pca_30",
+     2.337
+    ],
+    [
+     "Director_txt_pca_0",
+     2.188
+    ],
+    [
+     "Metascore",
+     1.636
+    ]
+   ]
+  }
+ }
+}

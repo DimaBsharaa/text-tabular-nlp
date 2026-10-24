@@ -1,0 +1,288 @@
+{
+ "method": "tar_repro",
+ "run_name": "tar_repro",
+ "engine_version": "tar_engine/2",
+ "tar_path": "fast",
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_VANCOUVER_SALARIES",
+ "fold": 4,
+ "task": "REG",
+ "score": 0.8118215253670089,
+ "metrics": {
+  "score": 0.8118215253670089,
+  "metrics": {
+   "r2": 0.8118215253670089,
+   "mse": 128827335.09387723,
+   "rmse": 11350.212997731682
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.7799673815845569,
+  "joint_tar": 0.8167482440992839,
+  "unimodal_structured": 0.2905947292679486,
+  "unimodal_text": 0.597990030594422
+ },
+ "diff_vs_csv_joint_tar": -0.004926718732275015,
+ "runtime_s": {
+  "total": 53.5,
+  "fit": 53.4,
+  "predict": 0.0,
+  "tar_lower_cache": 1.0,
+  "tar_train": 36.8,
+  "tar_encode": 0.4
+ },
+ "tar": {
+  "cache_key": "REG_TEXT_VANCOUVER_SALARIES/fold4/tar_repro/seed42/07055b3820_9f25439bee",
+  "cache_hit": false,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "tar_engine/2"
+  },
+  "text_cols": [
+   "name",
+   "title"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.419294921111108,
+    "n": 8100
+   },
+   "e5_val": {
+    "score": 0.3454251195233863,
+    "n": 900
+   },
+   "test": {
+    "score": 0.399154176423662,
+    "n": 2000
+   },
+   "learner_val": {
+    "score": 0.3354854564587726,
+    "n": 1000
+   }
+  },
+  "n_unique_texts": {
+   "name": 5292,
+   "title": 1789
+  },
+  "train": {
+   "epochs_run": 22,
+   "best_epoch": 19,
+   "best_val_loss": 2.8307009018792044,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 3.002307761392476,
+     "val_loss": 2.9938761234283446,
+     "seconds": 1.9
+    },
+    {
+     "epoch": 2,
+     "train_loss": 2.989862628277437,
+     "val_loss": 2.9815659183926053,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 3,
+     "train_loss": 2.962831287501771,
+     "val_loss": 2.9343211619059244,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 4,
+     "train_loss": 2.911833802917857,
+     "val_loss": 2.8923373169369166,
+     "seconds": 1.7
+    },
+    {
+     "epoch": 5,
+     "train_loss": 2.880486557925189,
+     "val_loss": 2.872905404832628,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 6,
+     "train_loss": 2.859876091097608,
+     "val_loss": 2.8603565152486166,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 7,
+     "train_loss": 2.8428936197728287,
+     "val_loss": 2.852002663082547,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 8,
+     "train_loss": 2.830555382481328,
+     "val_loss": 2.845668592453003,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 9,
+     "train_loss": 2.821563790521504,
+     "val_loss": 2.8434656206766764,
+     "seconds": 1.7
+    },
+    {
+     "epoch": 10,
+     "train_loss": 2.813561607054722,
+     "val_loss": 2.8416119543711345,
+     "seconds": 1.7
+    },
+    {
+     "epoch": 11,
+     "train_loss": 2.8079951506485172,
+     "val_loss": 2.8559549458821616,
+     "seconds": 1.7
+    },
+    {
+     "epoch": 12,
+     "train_loss": 2.8019369757616963,
+     "val_loss": 2.8365918774074976,
+     "seconds": 1.7
+    },
+    {
+     "epoch": 13,
+     "train_loss": 2.7931549096990516,
+     "val_loss": 2.838226181666056,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 14,
+     "train_loss": 2.7866574559388337,
+     "val_loss": 2.8419818676842583,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 15,
+     "train_loss": 2.7792446039929803,
+     "val_loss": 2.835076488918728,
+     "seconds": 1.7
+    },
+    {
+     "epoch": 16,
+     "train_loss": 2.7756419338414697,
+     "val_loss": 2.834100266562568,
+     "seconds": 1.7
+    },
+    {
+     "epoch": 17,
+     "train_loss": 2.7716512336260006,
+     "val_loss": 2.8318167580498588,
+     "seconds": 1.7
+    },
+    {
+     "epoch": 18,
+     "train_loss": 2.767831209441762,
+     "val_loss": 2.8321156416998967,
+     "seconds": 1.7
+    },
+    {
+     "epoch": 19,
+     "train_loss": 2.7613064796541944,
+     "val_loss": 2.8307009018792044,
+     "seconds": 1.7
+    },
+    {
+     "epoch": 20,
+     "train_loss": 2.7595176428335684,
+     "val_loss": 2.830797035429213,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 21,
+     "train_loss": 2.753146326865679,
+     "val_loss": 2.8308930651346844,
+     "seconds": 1.7
+    },
+    {
+     "epoch": 22,
+     "train_loss": 2.750552280685048,
+     "val_loss": 2.8320343907674155,
+     "seconds": 1.6
+    }
+   ],
+   "n_train_cells": 16200,
+   "n_val_cells": 1800,
+   "mean_train_tokens": 9.74358024691358,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 0.6,
+   "truncated_frac": 0.0,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 8100,
+   "e5_val": 900,
+   "test": 2000,
+   "learner_val": 1000
+  }
+ },
+ "leakage_gap_head_train_minus_test": 0.020140744687445977,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-10 21:45:33",
+ "argv": [
+  "--method",
+  "tar_repro",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_VANCOUVER_SALARIES",
+  "--fold",
+  "4",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5"
+}

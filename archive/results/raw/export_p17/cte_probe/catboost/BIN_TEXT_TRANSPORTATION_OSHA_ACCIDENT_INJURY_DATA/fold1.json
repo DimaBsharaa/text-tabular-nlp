@@ -1,0 +1,260 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "BIN_TEXT_TRANSPORTATION_OSHA_ACCIDENT_INJURY_DATA",
+ "fold": 1,
+ "task": "BIN",
+ "score": 0.6104881804184403,
+ "metrics": {
+  "score": 0.6104881804184403,
+  "metrics": {
+   "auc": 0.6104881804184403
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 39.6,
+  "fit": 39.5,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 4361,
+ "n_test": 486,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 00:39:18",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "BIN_TEXT_TRANSPORTATION_OSHA_ACCIDENT_INJURY_DATA",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 17.1,
+   "probe": 1.6
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 10.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.582035,
+     0.590209,
+     0.598017,
+     0.602595
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": false,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.1,
+    "experts": 16.9
+   }
+  },
+  "probe": {
+   "alpha": 3.0,
+   "oof_metric": [
+    0.5751076319849399,
+    0.5806552044868475,
+    0.5825806056352933,
+    0.5799925646209627
+   ]
+  },
+  "n_extra_columns": {
+   "Abstract Text": 24,
+   "Event Description": 21,
+   "Event Keywords": 21
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Abstract Text_txt_pca_30": 4.787,
+    "Abstract Text_txt_pca_31": 1.718,
+    "Abstract Text_txt_pca_32": 0.512,
+    "Abstract Text_txt_pca_33": 0.908,
+    "Abstract Text_txt_pca_34": 3.095,
+    "Abstract Text_txt_pca_35": 0.145,
+    "Abstract Text_txt_pca_36": 0.755,
+    "Abstract Text_txt_pca_37": 1.097,
+    "Abstract Text_txt_pca_38": 0.203,
+    "Abstract Text_txt_pca_39": 0.0,
+    "Abstract Text_txt_pca_40": 0.0,
+    "Abstract Text_txt_pca_41": 0.0,
+    "Abstract Text_txt_pca_42": 0.859,
+    "Abstract Text_txt_pca_43": 0.686,
+    "Abstract Text_txt_pca_44": 0.293,
+    "Abstract Text_txt_pca_45": 0.574,
+    "Abstract Text_txt_pca_46": 0.325,
+    "Abstract Text_txt_pca_47": 0.477,
+    "Abstract Text_txt_pca_48": 0.647,
+    "Abstract Text_txt_pca_49": 0.0,
+    "Abstract Text_txt_pca_50": 0.004,
+    "Abstract Text_txt_pca_51": 1.153,
+    "Abstract Text_txt_pca_52": 0.0,
+    "Abstract Text_txt_pca_53": 1.554,
+    "Event Description_txt_pca_30": 1.398,
+    "Event Description_txt_pca_31": 0.037,
+    "Event Description_txt_pca_32": 0.0,
+    "Event Description_txt_pca_33": 0.055,
+    "Event Description_txt_pca_34": 0.0,
+    "Event Description_txt_pca_35": 0.0,
+    "Event Description_txt_pca_36": 0.0,
+    "Event Description_txt_pca_37": 0.0,
+    "Event Description_txt_pca_38": 0.0,
+    "Event Description_txt_pca_39": 0.0,
+    "Event Description_txt_pca_40": 0.573,
+    "Event Description_txt_pca_41": 0.298,
+    "Event Description_txt_pca_42": 0.018,
+    "Event Description_txt_pca_43": 0.155,
+    "Event Description_txt_pca_44": 0.239,
+    "Event Description_txt_pca_45": 0.013,
+    "Event Description_txt_pca_46": 0.181,
+    "Event Description_txt_pca_47": 0.0,
+    "Event Description_txt_pca_48": 0.0,
+    "Event Description_txt_pca_49": 0.099,
+    "Event Description_txt_pca_50": 0.0,
+    "Event Keywords_txt_pca_30": 1.277,
+    "Event Keywords_txt_pca_31": 0.0,
+    "Event Keywords_txt_pca_32": 0.054,
+    "Event Keywords_txt_pca_33": 0.0,
+    "Event Keywords_txt_pca_34": 0.01,
+    "Event Keywords_txt_pca_35": 0.0,
+    "Event Keywords_txt_pca_36": 0.0,
+    "Event Keywords_txt_pca_37": 0.0,
+    "Event Keywords_txt_pca_38": 0.0,
+    "Event Keywords_txt_pca_39": 0.0,
+    "Event Keywords_txt_pca_40": 0.782,
+    "Event Keywords_txt_pca_41": 0.877,
+    "Event Keywords_txt_pca_42": 0.0,
+    "Event Keywords_txt_pca_43": 0.535,
+    "Event Keywords_txt_pca_44": 0.579,
+    "Event Keywords_txt_pca_45": 0.0,
+    "Event Keywords_txt_pca_46": 0.283,
+    "Event Keywords_txt_pca_47": 0.0,
+    "Event Keywords_txt_pca_48": 0.0,
+    "Event Keywords_txt_pca_49": 0.0,
+    "Event Keywords_txt_pca_50": 0.0
+   },
+   "pred_share": 0.2726,
+   "group_share": {
+    "structured": 0.1322,
+    "pca": 0.5953,
+    "lex": 0.0479,
+    "nbr": 0.0491,
+    "num": 0.1601,
+    "probe": 0.0155
+   },
+   "top10": [
+    [
+     "Abstract Text_txt_pca_30",
+     4.787
+    ],
+    [
+     "Abstract Text_txt_pca_34",
+     3.095
+    ],
+    [
+     "Project Type",
+     2.164
+    ],
+    [
+     "Event Keywords_txt_pca_19",
+     1.793
+    ],
+    [
+     "Abstract Text_txt_pca_31",
+     1.718
+    ],
+    [
+     "Construction End Use",
+     1.571
+    ],
+    [
+     "Abstract Text_txt_pca_53",
+     1.554
+    ],
+    [
+     "fat_cause",
+     1.473
+    ],
+    [
+     "Event Description_txt_pca_30",
+     1.398
+    ],
+    [
+     "Abstract Text_txt_pca_11",
+     1.349
+    ]
+   ]
+  }
+ }
+}

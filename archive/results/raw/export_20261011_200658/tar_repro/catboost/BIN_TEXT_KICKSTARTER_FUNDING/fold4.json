@@ -1,0 +1,212 @@
+{
+ "method": "tar_repro",
+ "run_name": "tar_repro",
+ "engine_version": "tar_engine/2",
+ "tar_path": "fast",
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "BIN_TEXT_KICKSTARTER_FUNDING",
+ "fold": 4,
+ "task": "BIN",
+ "score": 0.7278354779411764,
+ "metrics": {
+  "score": 0.7278354779411764,
+  "metrics": {
+   "auc": 0.7278354779411764
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.7205215992647059,
+  "joint_tar": 0.729387637867647,
+  "unimodal_structured": 0.6064918428308823,
+  "unimodal_text": 0.6832295496323528
+ },
+ "diff_vs_csv_joint_tar": -0.0015521599264706198,
+ "runtime_s": {
+  "total": 81.2,
+  "fit": 81.2,
+  "predict": 0.1,
+  "tar_lower_cache": 10.5,
+  "tar_train": 42.3,
+  "tar_encode": 3.8
+ },
+ "tar": {
+  "cache_key": "BIN_TEXT_KICKSTARTER_FUNDING/fold4/tar_repro/seed42/07055b3820_37beff2845",
+  "cache_hit": false,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "tar_engine/2"
+  },
+  "text_cols": [
+   "created_at",
+   "deadline",
+   "desc",
+   "keywords",
+   "name"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.7630521738929087,
+    "n": 8096,
+    "n_unseen_class": 0
+   },
+   "e5_val": {
+    "score": 0.7049630686967555,
+    "n": 901,
+    "n_unseen_class": 0
+   },
+   "test": {
+    "score": 0.698639705882353,
+    "n": 2000,
+    "n_unseen_class": 0
+   },
+   "learner_val": {
+    "score": 0.7212463289280471,
+    "n": 1001,
+    "n_unseen_class": 0
+   }
+  },
+  "n_unique_texts": {
+   "created_at": 11998,
+   "deadline": 11849,
+   "desc": 11983,
+   "keywords": 11998,
+   "name": 11995
+  },
+  "train": {
+   "epochs_run": 8,
+   "best_epoch": 5,
+   "best_val_loss": 0.599182594192941,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 0.6306493601780164,
+     "val_loss": 0.6224461735948739,
+     "seconds": 5.6
+    },
+    {
+     "epoch": 2,
+     "train_loss": 0.6126087396041207,
+     "val_loss": 0.6056693629736906,
+     "seconds": 5.2
+    },
+    {
+     "epoch": 3,
+     "train_loss": 0.5994531343105753,
+     "val_loss": 0.6027485607731488,
+     "seconds": 5.3
+    },
+    {
+     "epoch": 4,
+     "train_loss": 0.5929671007182759,
+     "val_loss": 0.5997404057098414,
+     "seconds": 5.3
+    },
+    {
+     "epoch": 5,
+     "train_loss": 0.5865344324601969,
+     "val_loss": 0.599182594192941,
+     "seconds": 5.2
+    },
+    {
+     "epoch": 6,
+     "train_loss": 0.5820497455804244,
+     "val_loss": 0.6023313248329502,
+     "seconds": 5.2
+    },
+    {
+     "epoch": 7,
+     "train_loss": 0.5760126245822831,
+     "val_loss": 0.6045446793194219,
+     "seconds": 5.2
+    },
+    {
+     "epoch": 8,
+     "train_loss": 0.5707524493748962,
+     "val_loss": 0.6048822452701819,
+     "seconds": 5.3
+    }
+   ],
+   "n_train_cells": 40480,
+   "n_val_cells": 4505,
+   "mean_train_tokens": 30.83586956521739,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 11.26,
+   "truncated_frac": 0.0010869565217391304,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 8096,
+   "e5_val": 901,
+   "test": 2000,
+   "learner_val": 1001
+  }
+ },
+ "leakage_gap_head_train_minus_test": 0.06441246801055567,
+ "n_train": 9998,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-10 22:38:53",
+ "argv": [
+  "--method",
+  "tar_repro",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "BIN_TEXT_KICKSTARTER_FUNDING",
+  "--fold",
+  "4",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5"
+}

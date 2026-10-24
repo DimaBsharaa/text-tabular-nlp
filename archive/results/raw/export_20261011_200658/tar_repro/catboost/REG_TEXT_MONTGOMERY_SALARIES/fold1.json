@@ -1,0 +1,280 @@
+{
+ "method": "tar_repro",
+ "run_name": "tar_repro",
+ "engine_version": "tar_engine/2",
+ "tar_path": "fast",
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_MONTGOMERY_SALARIES",
+ "fold": 1,
+ "task": "REG",
+ "score": 0.9661178173844183,
+ "metrics": {
+  "score": 0.9661178173844183,
+  "metrics": {
+   "r2": 0.9661178173844183,
+   "mse": 30765253.925506383,
+   "rmse": 5546.643482819712
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9537292540315674,
+  "joint_tar": 0.9625839866340083,
+  "unimodal_structured": 0.9334939713851448,
+  "unimodal_text": 0.8502105408713789
+ },
+ "diff_vs_csv_joint_tar": 0.0035338307504099165,
+ "runtime_s": {
+  "total": 85.3,
+  "fit": 85.2,
+  "predict": 0.0,
+  "tar_lower_cache": 1.6,
+  "tar_train": 57.3,
+  "tar_encode": 0.7
+ },
+ "tar": {
+  "cache_key": "REG_TEXT_MONTGOMERY_SALARIES/fold1/tar_repro/seed42/07055b3820_5e2794beb2",
+  "cache_hit": false,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "tar_engine/2"
+  },
+  "text_cols": [
+   "date_first_hired",
+   "division",
+   "employee_position_title",
+   "full_name"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.5678098243635572,
+    "n": 6729
+   },
+   "e5_val": {
+    "score": 0.5354438614087587,
+    "n": 747
+   },
+   "test": {
+    "score": 0.5414969569727206,
+    "n": 922
+   },
+   "learner_val": {
+    "score": 0.5476046461616532,
+    "n": 830
+   }
+  },
+  "n_unique_texts": {
+   "date_first_hired": 2264,
+   "division": 694,
+   "employee_position_title": 385,
+   "full_name": 9222
+  },
+  "train": {
+   "epochs_run": 20,
+   "best_epoch": 17,
+   "best_val_loss": 2.627752833257877,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 2.993973587965572,
+     "val_loss": 2.977946990943817,
+     "seconds": 3.0
+    },
+    {
+     "epoch": 2,
+     "train_loss": 2.943315660250206,
+     "val_loss": 2.8804612536347376,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 3,
+     "train_loss": 2.822732330980725,
+     "val_loss": 2.7823414157831685,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 4,
+     "train_loss": 2.748042103226994,
+     "val_loss": 2.7319440161846726,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 5,
+     "train_loss": 2.7030940157181265,
+     "val_loss": 2.7054315960231716,
+     "seconds": 2.9
+    },
+    {
+     "epoch": 6,
+     "train_loss": 2.672067530956997,
+     "val_loss": 2.686864168289675,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 7,
+     "train_loss": 2.651488202095457,
+     "val_loss": 2.6768565825828747,
+     "seconds": 3.0
+    },
+    {
+     "epoch": 8,
+     "train_loss": 2.6329061383743273,
+     "val_loss": 2.664437470187145,
+     "seconds": 2.9
+    },
+    {
+     "epoch": 9,
+     "train_loss": 2.6188698070756855,
+     "val_loss": 2.655406022167589,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 10,
+     "train_loss": 2.6068490216239173,
+     "val_loss": 2.6556204424964056,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 11,
+     "train_loss": 2.595282952876551,
+     "val_loss": 2.644773157724894,
+     "seconds": 2.9
+    },
+    {
+     "epoch": 12,
+     "train_loss": 2.5861253226772427,
+     "val_loss": 2.644295030489185,
+     "seconds": 2.9
+    },
+    {
+     "epoch": 13,
+     "train_loss": 2.5762687748086845,
+     "val_loss": 2.638728009010734,
+     "seconds": 2.9
+    },
+    {
+     "epoch": 14,
+     "train_loss": 2.5664902485963546,
+     "val_loss": 2.63309268651398,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 15,
+     "train_loss": 2.562180333761815,
+     "val_loss": 2.6346926411471694,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 16,
+     "train_loss": 2.5542894644162546,
+     "val_loss": 2.629393111271073,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 17,
+     "train_loss": 2.5466544790065275,
+     "val_loss": 2.627752833257877,
+     "seconds": 2.9
+    },
+    {
+     "epoch": 18,
+     "train_loss": 2.541824716783984,
+     "val_loss": 2.632173010303952,
+     "seconds": 2.9
+    },
+    {
+     "epoch": 19,
+     "train_loss": 2.538583401461593,
+     "val_loss": 2.628270022840385,
+     "seconds": 2.9
+    },
+    {
+     "epoch": 20,
+     "train_loss": 2.5314024337990215,
+     "val_loss": 2.629410981493622,
+     "seconds": 2.8
+    }
+   ],
+   "n_train_cells": 26916,
+   "n_val_cells": 2988,
+   "mean_train_tokens": 13.171979491752118,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 0.62,
+   "truncated_frac": 0.0,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 6729,
+   "e5_val": 747,
+   "test": 922,
+   "learner_val": 830
+  }
+ },
+ "leakage_gap_head_train_minus_test": 0.026312867390836603,
+ "n_train": 8306,
+ "n_test": 922,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-10 22:04:12",
+ "argv": [
+  "--method",
+  "tar_repro",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_MONTGOMERY_SALARIES",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5"
+}

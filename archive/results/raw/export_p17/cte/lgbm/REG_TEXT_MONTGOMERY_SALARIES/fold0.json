@@ -1,0 +1,198 @@
+{
+ "method": "cte",
+ "run_name": "cte",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "lgbm",
+ "learner_model_name": "LightGBM \ud83d\udca1",
+ "dataset": "REG_TEXT_MONTGOMERY_SALARIES",
+ "fold": 0,
+ "task": "REG",
+ "score": 0.98460696749866,
+ "metrics": {
+  "score": 0.98460696749866,
+  "metrics": {
+   "r2": 0.98460696749866,
+   "mse": 13853977.096495174,
+   "rmse": 3722.09310690842
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9790721300098124,
+  "joint_tar": 0.9811580717218736,
+  "unimodal_structured": 0.9681027792435878,
+  "unimodal_text": 0.8761007484824097
+ },
+ "diff_vs_csv_joint_tar": 0.0034488957767863093,
+ "runtime_s": {
+  "total": 6.7,
+  "fit": 6.7,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 8306,
+ "n_test": 922,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-13 20:23:42",
+ "argv": [
+  "--method",
+  "cte",
+  "--learner",
+  "lgbm",
+  "--dataset",
+  "REG_TEXT_MONTGOMERY_SALARIES",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte",
+  "experts": [
+   "lex",
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": true,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 2.23
+  },
+  "expert_cache_hits": {
+   "lex": true,
+   "nbr": true
+  },
+  "lex_alpha": {
+   "chosen": 1.0,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.928863,
+    0.933089,
+    0.930431,
+    0.918757
+   ]
+  },
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 12565
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.9330887388617083,
+     "nbr:date_first_hired": 0.513936172324383,
+     "nbr:division": 0.6084383092580888,
+     "nbr:employee_position_title": 0.8616861724995515,
+     "nbr:full_name": 0.12496137165756972,
+     "nbr:__all__": 0.8553778663412445
+    },
+    "test": {
+     "lex:__all__": 0.9370692369226624,
+     "nbr:date_first_hired": 0.5623490926527785,
+     "nbr:division": 0.607805861498867,
+     "nbr:employee_position_title": 0.8536443198283984,
+     "nbr:full_name": 0.1658183475426443,
+     "nbr:__all__": 0.8618004818410205
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": -0.00398049806095413,
+    "nbr:date_first_hired": -0.0484129203283955,
+    "nbr:division": 0.000632447759221888,
+    "nbr:employee_position_title": 0.008041852671153094,
+    "nbr:full_name": -0.04085697588507457,
+    "nbr:__all__": -0.006422615499776074
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "date_first_hired": 23,
+   "division": 21,
+   "employee_position_title": 21,
+   "full_name": 21
+  },
+  "seconds": {
+   "frozen_embeddings": 0.2,
+   "experts": 2.2
+  },
+  "catboost_importance": null
+ }
+}

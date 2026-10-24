@@ -1,0 +1,232 @@
+{
+ "method": "cte_lex",
+ "run_name": "cte_lex",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "BIN_TEXT_KICKSTARTER_FUNDING",
+ "fold": 0,
+ "task": "BIN",
+ "score": 0.7470886948529412,
+ "metrics": {
+  "score": 0.7470886948529412,
+  "metrics": {
+   "auc": 0.7470886948529412
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.7312293198529412,
+  "joint_tar": 0.74677734375,
+  "unimodal_structured": 0.604416934742647,
+  "unimodal_text": 0.7027814797794117
+ },
+ "diff_vs_csv_joint_tar": 0.00031135110294111534,
+ "runtime_s": {
+  "total": 45.2,
+  "fit": 45.1,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte_lex",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 9998,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-13 20:57:42",
+ "argv": [
+  "--method",
+  "cte_lex",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "BIN_TEXT_KICKSTARTER_FUNDING",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte_lex",
+  "experts": [
+   "lex"
+  ],
+  "mode": "oof",
+  "numeracy": false,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 0.0
+  },
+  "expert_cache_hits": {
+   "lex": true
+  },
+  "lex_alpha": {
+   "chosen": 10.0,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.661245,
+    0.680216,
+    0.699117,
+    0.710643
+   ]
+  },
+  "n_classes": 2,
+  "class_columns": "C-1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 59804
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.7106428987401106
+    },
+    "test": {
+     "lex:__all__": 0.7086293658088236
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": 0.002013532931286921
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "created_at": 1,
+   "deadline": 0,
+   "desc": 0,
+   "keywords": 0,
+   "name": 0
+  },
+  "seconds": {
+   "frozen_embeddings": 1.4,
+   "experts": 0.0
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "created_at_txt_pca_30": 17.237
+   },
+   "pred_share": 0.1724,
+   "group_share": {
+    "structured": 0.0874,
+    "pca": 0.7402,
+    "lex": 0.1724
+   },
+   "top10": [
+    [
+     "created_at_txt_pca_30",
+     17.237
+    ],
+    [
+     "goal",
+     8.713
+    ],
+    [
+     "name_txt_pca_6",
+     4.386
+    ],
+    [
+     "desc_txt_pca_5",
+     2.106
+    ],
+    [
+     "deadline_txt_pca_0",
+     2.06
+    ],
+    [
+     "desc_txt_pca_13",
+     1.469
+    ],
+    [
+     "desc_txt_pca_22",
+     1.314
+    ],
+    [
+     "deadline_txt_pca_1",
+     1.237
+    ],
+    [
+     "desc_txt_pca_8",
+     1.145
+    ],
+    [
+     "name_txt_pca_3",
+     1.036
+    ]
+   ]
+  }
+ }
+}

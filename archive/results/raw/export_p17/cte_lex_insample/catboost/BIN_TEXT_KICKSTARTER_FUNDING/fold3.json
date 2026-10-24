@@ -1,0 +1,235 @@
+{
+ "method": "cte_lex_insample",
+ "run_name": "cte_lex_insample",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "BIN_TEXT_KICKSTARTER_FUNDING",
+ "fold": 3,
+ "task": "BIN",
+ "score": 0.6994864430147059,
+ "metrics": {
+  "score": 0.6994864430147059,
+  "metrics": {
+   "auc": 0.6994864430147059
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.7199241727941176,
+  "joint_tar": 0.7444554227941177,
+  "unimodal_structured": 0.6248569623161766,
+  "unimodal_text": 0.6707961856617647
+ },
+ "diff_vs_csv_joint_tar": -0.04496897977941183,
+ "runtime_s": {
+  "total": 41.1,
+  "fit": 41.0,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte_lex_insample",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 9998,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-14 04:18:41",
+ "argv": [
+  "--method",
+  "cte_lex_insample",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "BIN_TEXT_KICKSTARTER_FUNDING",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte_lex_insample",
+  "experts": [
+   "lex"
+  ],
+  "mode": "insample",
+  "numeracy": false,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "tfidf": 10.89,
+   "ridge": 14.94,
+   "n_tfidf_features": 83537,
+   "numeracy": 0.0
+  },
+  "expert_cache_hits": {
+   "lex": false
+  },
+  "lex_alpha": {
+   "chosen": 10.0,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.647784,
+    0.665444,
+    0.684089,
+    0.696478
+   ]
+  },
+  "n_classes": 2,
+  "class_columns": "C-1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 59810
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.9435913242333424
+    },
+    "test": {
+     "lex:__all__": 0.7088028492647058
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": 0.23478847496863653
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "created_at": 1,
+   "deadline": 0,
+   "desc": 0,
+   "keywords": 0,
+   "name": 0
+  },
+  "seconds": {
+   "frozen_embeddings": 1.3,
+   "experts": 25.8
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "created_at_txt_pca_30": 87.135
+   },
+   "pred_share": 0.8713,
+   "group_share": {
+    "structured": 0.0132,
+    "pca": 0.1155,
+    "lex": 0.8713
+   },
+   "top10": [
+    [
+     "created_at_txt_pca_30",
+     87.135
+    ],
+    [
+     "goal",
+     1.319
+    ],
+    [
+     "deadline_txt_pca_9",
+     1.069
+    ],
+    [
+     "created_at_txt_pca_14",
+     0.683
+    ],
+    [
+     "name_txt_pca_6",
+     0.631
+    ],
+    [
+     "name_txt_pca_23",
+     0.609
+    ],
+    [
+     "name_txt_pca_16",
+     0.412
+    ],
+    [
+     "name_txt_pca_8",
+     0.399
+    ],
+    [
+     "desc_txt_pca_2",
+     0.367
+    ],
+    [
+     "keywords_txt_pca_16",
+     0.345
+    ]
+   ]
+  }
+ }
+}

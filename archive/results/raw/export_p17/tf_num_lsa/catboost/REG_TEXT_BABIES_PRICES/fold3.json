@@ -1,0 +1,282 @@
+{
+ "method": "tf_num_lsa",
+ "run_name": "tf_num_lsa",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_BABIES_PRICES",
+ "fold": 3,
+ "task": "REG",
+ "score": 0.8998001874759982,
+ "metrics": {
+  "score": 0.8998001874759982,
+  "metrics": {
+   "r2": 0.8998001874759982,
+   "mse": 254.4554074858247,
+   "rmse": 15.951658455653591
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.8787229381782433,
+  "joint_tar": 0.8736704582377628,
+  "unimodal_structured": 0.3901707358609085,
+  "unimodal_text": 0.844660368605834
+ },
+ "diff_vs_csv_joint_tar": 0.026129729238235422,
+ "runtime_s": {
+  "total": 87.2,
+  "fit": 87.1,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "tf_num_lsa",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 4577,
+ "n_test": 508,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "c82596a02b507b22d07a6ff5eda81dba73b31ed1",
+  "dirty": false
+ },
+ "timestamp": "2026-10-15 16:57:49",
+ "argv": [
+  "--method",
+  "tf_num_lsa",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_BABIES_PRICES",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "tf_num_lsa",
+  "groups": [
+   "num",
+   "lsa"
+  ],
+  "seconds": {
+   "base": 0.1,
+   "num": 0.8,
+   "lsa": 2.0
+  },
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 5519
+  },
+  "n_extra_columns": {
+   "colors": 50,
+   "company_free": 20,
+   "company_struct": 20,
+   "title": 20
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "colors_txt_pca_30": 0.0,
+    "colors_txt_pca_31": 0.0,
+    "colors_txt_pca_32": 0.0,
+    "colors_txt_pca_33": 0.0,
+    "colors_txt_pca_34": 0.0,
+    "colors_txt_pca_35": 0.0,
+    "colors_txt_pca_36": 0.0,
+    "colors_txt_pca_37": 0.0,
+    "colors_txt_pca_38": 0.0,
+    "colors_txt_pca_39": 0.02,
+    "colors_txt_pca_40": 0.011,
+    "colors_txt_pca_41": 0.0,
+    "colors_txt_pca_42": 0.001,
+    "colors_txt_pca_43": 0.0,
+    "colors_txt_pca_44": 0.0,
+    "colors_txt_pca_45": 0.024,
+    "colors_txt_pca_46": 0.0,
+    "colors_txt_pca_47": 0.0,
+    "colors_txt_pca_48": 0.001,
+    "colors_txt_pca_49": 0.0,
+    "colors_txt_pca_50": 0.196,
+    "colors_txt_pca_51": 1.024,
+    "colors_txt_pca_52": 0.114,
+    "colors_txt_pca_53": 0.459,
+    "colors_txt_pca_54": 2.343,
+    "colors_txt_pca_55": 0.355,
+    "colors_txt_pca_56": 0.267,
+    "colors_txt_pca_57": 0.333,
+    "colors_txt_pca_58": 0.294,
+    "colors_txt_pca_59": 0.772,
+    "colors_txt_pca_60": 0.221,
+    "colors_txt_pca_61": 2.123,
+    "colors_txt_pca_62": 0.311,
+    "colors_txt_pca_63": 3.891,
+    "colors_txt_pca_64": 0.801,
+    "colors_txt_pca_65": 1.191,
+    "colors_txt_pca_66": 1.079,
+    "colors_txt_pca_67": 0.4,
+    "colors_txt_pca_68": 0.378,
+    "colors_txt_pca_69": 1.481,
+    "colors_txt_pca_70": 0.137,
+    "colors_txt_pca_71": 0.126,
+    "colors_txt_pca_72": 0.105,
+    "colors_txt_pca_73": 0.671,
+    "colors_txt_pca_74": 0.932,
+    "colors_txt_pca_75": 0.781,
+    "colors_txt_pca_76": 0.461,
+    "colors_txt_pca_77": 0.867,
+    "colors_txt_pca_78": 0.745,
+    "colors_txt_pca_79": 1.37,
+    "company_free_txt_pca_30": 0.0,
+    "company_free_txt_pca_31": 0.0,
+    "company_free_txt_pca_32": 0.0,
+    "company_free_txt_pca_33": 0.0,
+    "company_free_txt_pca_34": 0.0,
+    "company_free_txt_pca_35": 0.0,
+    "company_free_txt_pca_36": 0.0,
+    "company_free_txt_pca_37": 0.0,
+    "company_free_txt_pca_38": 0.0,
+    "company_free_txt_pca_39": 0.024,
+    "company_free_txt_pca_40": 0.0,
+    "company_free_txt_pca_41": 0.0,
+    "company_free_txt_pca_42": 0.01,
+    "company_free_txt_pca_43": 0.0,
+    "company_free_txt_pca_44": 0.0,
+    "company_free_txt_pca_45": 0.001,
+    "company_free_txt_pca_46": 0.0,
+    "company_free_txt_pca_47": 0.0,
+    "company_free_txt_pca_48": 0.0,
+    "company_free_txt_pca_49": 0.0,
+    "company_struct_txt_pca_30": 0.001,
+    "company_struct_txt_pca_31": 0.001,
+    "company_struct_txt_pca_32": 0.002,
+    "company_struct_txt_pca_33": 0.0,
+    "company_struct_txt_pca_34": 0.0,
+    "company_struct_txt_pca_35": 0.0,
+    "company_struct_txt_pca_36": 0.0,
+    "company_struct_txt_pca_37": 0.0,
+    "company_struct_txt_pca_38": 0.0,
+    "company_struct_txt_pca_39": 0.133,
+    "company_struct_txt_pca_40": 0.135,
+    "company_struct_txt_pca_41": 0.02,
+    "company_struct_txt_pca_42": 0.944,
+    "company_struct_txt_pca_43": 0.586,
+    "company_struct_txt_pca_44": 0.047,
+    "company_struct_txt_pca_45": 0.004,
+    "company_struct_txt_pca_46": 0.0,
+    "company_struct_txt_pca_47": 0.0,
+    "company_struct_txt_pca_48": 0.001,
+    "company_struct_txt_pca_49": 0.0,
+    "title_txt_pca_30": 1.252,
+    "title_txt_pca_31": 2.596,
+    "title_txt_pca_32": 2.434,
+    "title_txt_pca_33": 1.426,
+    "title_txt_pca_34": 0.0,
+    "title_txt_pca_35": 0.0,
+    "title_txt_pca_36": 0.0,
+    "title_txt_pca_37": 0.0,
+    "title_txt_pca_38": 0.0,
+    "title_txt_pca_39": 0.175,
+    "title_txt_pca_40": 0.033,
+    "title_txt_pca_41": 0.009,
+    "title_txt_pca_42": 0.339,
+    "title_txt_pca_43": 0.222,
+    "title_txt_pca_44": 0.551,
+    "title_txt_pca_45": 0.173,
+    "title_txt_pca_46": 0.0,
+    "title_txt_pca_47": 0.0,
+    "title_txt_pca_48": 0.01,
+    "title_txt_pca_49": 0.0
+   },
+   "pred_share": 0.3542,
+   "group_share": {
+    "structured": 0.1544,
+    "pca": 0.4914,
+    "num": 0.1119,
+    "lsa": 0.2423
+   },
+   "top10": [
+    [
+     "category",
+     13.793
+    ],
+    [
+     "company_struct_txt_pca_23",
+     10.765
+    ],
+    [
+     "title_txt_pca_3",
+     4.163
+    ],
+    [
+     "colors_txt_pca_63",
+     3.891
+    ],
+    [
+     "company_struct_txt_pca_26",
+     2.862
+    ],
+    [
+     "title_txt_pca_31",
+     2.596
+    ],
+    [
+     "title_txt_pca_32",
+     2.434
+    ],
+    [
+     "colors_txt_pca_54",
+     2.343
+    ],
+    [
+     "colors_txt_pca_61",
+     2.123
+    ],
+    [
+     "title_txt_pca_10",
+     1.651
+    ]
+   ]
+  }
+ }
+}

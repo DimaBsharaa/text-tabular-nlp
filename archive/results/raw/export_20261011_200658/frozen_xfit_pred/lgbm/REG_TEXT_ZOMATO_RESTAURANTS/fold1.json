@@ -1,0 +1,492 @@
+{
+ "method": "frozen_xfit_pred",
+ "run_name": "frozen_xfit_pred",
+ "engine_version": "stacking/1",
+ "tar_path": "fast",
+ "learner": "lgbm",
+ "learner_model_name": "LightGBM \ud83d\udca1",
+ "dataset": "REG_TEXT_ZOMATO_RESTAURANTS",
+ "fold": 1,
+ "task": "REG",
+ "score": 0.7971381037612516,
+ "metrics": {
+  "score": 0.7971381037612516,
+  "metrics": {
+   "r2": 0.7971381037612516,
+   "mse": 0.038704832630975766,
+   "rmse": 0.1967354381675446
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.7841231949429687,
+  "joint_tar": 0.8063038217651752,
+  "unimodal_structured": 0.5983741318985295,
+  "unimodal_text": 0.7347198774837433
+ },
+ "diff_vs_csv_joint_tar": -0.009165718003923629,
+ "runtime_s": {
+  "total": 148.3,
+  "fit": 148.0,
+  "predict": 0.3,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_key": "REG_TEXT_ZOMATO_RESTAURANTS/fold1/tar_repro/seed42/07055b3820_3970811bb5",
+  "cache_hit": true,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "stacking/1",
+   "method": "frozen_xfit_pred",
+   "base": "tar_repro"
+  },
+  "text_cols": [
+   "address",
+   "cuisines",
+   "dish_liked",
+   "menu_item",
+   "name",
+   "phone",
+   "reviews_list"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.5021257207521621,
+    "n": 8100
+   },
+   "e5_val": {
+    "score": 0.4379780759423979,
+    "n": 900
+   },
+   "test": {
+    "score": 0.4397829018917009,
+    "n": 2000
+   },
+   "learner_val": {
+    "score": 0.4129931243613384,
+    "n": 1000
+   }
+  },
+  "n_unique_texts": {
+   "address": 5906,
+   "cuisines": 1887,
+   "dish_liked": 3349,
+   "menu_item": 2867,
+   "name": 4764,
+   "phone": 6879,
+   "reviews_list": 8732
+  },
+  "train": {
+   "epochs_run": 45,
+   "best_epoch": 42,
+   "best_val_loss": 2.401437322525751,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 2.6576871241884046,
+     "val_loss": 2.615384538741339,
+     "seconds": 12.4
+    },
+    {
+     "epoch": 2,
+     "train_loss": 2.577663292304549,
+     "val_loss": 2.5423216155218697,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 3,
+     "train_loss": 2.5322873834747908,
+     "val_loss": 2.514136467434111,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 4,
+     "train_loss": 2.513348680829245,
+     "val_loss": 2.5063185142335436,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 5,
+     "train_loss": 2.4978178315440185,
+     "val_loss": 2.4916832445538235,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 6,
+     "train_loss": 2.487442684240863,
+     "val_loss": 2.4871487181527274,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 7,
+     "train_loss": 2.4780128876284104,
+     "val_loss": 2.479714396794637,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 8,
+     "train_loss": 2.468960977265023,
+     "val_loss": 2.46998128512549,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 9,
+     "train_loss": 2.4604298570084615,
+     "val_loss": 2.464603268608214,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 10,
+     "train_loss": 2.452172720806519,
+     "val_loss": 2.4594601612999325,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 11,
+     "train_loss": 2.443763973565749,
+     "val_loss": 2.4588647851489838,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 12,
+     "train_loss": 2.437038135949056,
+     "val_loss": 2.457264822853936,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 13,
+     "train_loss": 2.4307185921341024,
+     "val_loss": 2.4499510813516285,
+     "seconds": 12.2
+    },
+    {
+     "epoch": 14,
+     "train_loss": 2.4221566261984475,
+     "val_loss": 2.4492949491833884,
+     "seconds": 12.4
+    },
+    {
+     "epoch": 15,
+     "train_loss": 2.4151501001462314,
+     "val_loss": 2.45058423254225,
+     "seconds": 12.3
+    },
+    {
+     "epoch": 16,
+     "train_loss": 2.408839720401394,
+     "val_loss": 2.4411225938040113,
+     "seconds": 12.5
+    },
+    {
+     "epoch": 17,
+     "train_loss": 2.405073796781913,
+     "val_loss": 2.4339448115939186,
+     "seconds": 12.4
+    },
+    {
+     "epoch": 18,
+     "train_loss": 2.398827132405007,
+     "val_loss": 2.443487350373041,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 19,
+     "train_loss": 2.3916915423108995,
+     "val_loss": 2.432204631169637,
+     "seconds": 12.2
+    },
+    {
+     "epoch": 20,
+     "train_loss": 2.388079888530509,
+     "val_loss": 2.436721109359983,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 21,
+     "train_loss": 2.379994933130039,
+     "val_loss": 2.4279093752966987,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 22,
+     "train_loss": 2.377640648342314,
+     "val_loss": 2.4236032277061828,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 23,
+     "train_loss": 2.370967757680849,
+     "val_loss": 2.424854961728293,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 24,
+     "train_loss": 2.3697817687719165,
+     "val_loss": 2.422703132023887,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 25,
+     "train_loss": 2.3632013203605773,
+     "val_loss": 2.4175895693945506,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 26,
+     "train_loss": 2.358891391434577,
+     "val_loss": 2.4191809828319246,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 27,
+     "train_loss": 2.3546778247638143,
+     "val_loss": 2.4174941887931216,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 28,
+     "train_loss": 2.3511880943173873,
+     "val_loss": 2.42272756485712,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 29,
+     "train_loss": 2.348845828424686,
+     "val_loss": 2.41678789184207,
+     "seconds": 12.2
+    },
+    {
+     "epoch": 30,
+     "train_loss": 2.3437359984463484,
+     "val_loss": 2.4131722768147785,
+     "seconds": 12.2
+    },
+    {
+     "epoch": 31,
+     "train_loss": 2.34178823391176,
+     "val_loss": 2.411168147647192,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 32,
+     "train_loss": 2.3373577035419526,
+     "val_loss": 2.4099309403555735,
+     "seconds": 12.2
+    },
+    {
+     "epoch": 33,
+     "train_loss": 2.3338448420529643,
+     "val_loss": 2.4078708412533714,
+     "seconds": 12.3
+    },
+    {
+     "epoch": 34,
+     "train_loss": 2.3331615759666215,
+     "val_loss": 2.409324506729368,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 35,
+     "train_loss": 2.3285337531881987,
+     "val_loss": 2.407015996206374,
+     "seconds": 12.2
+    },
+    {
+     "epoch": 36,
+     "train_loss": 2.3282007127926674,
+     "val_loss": 2.4069936729612804,
+     "seconds": 12.0
+    },
+    {
+     "epoch": 37,
+     "train_loss": 2.3226493859837714,
+     "val_loss": 2.4119183811308846,
+     "seconds": 12.3
+    },
+    {
+     "epoch": 38,
+     "train_loss": 2.3222924931507682,
+     "val_loss": 2.405393523867168,
+     "seconds": 12.1
+    },
+    {
+     "epoch": 39,
+     "train_loss": 2.3187903795965554,
+     "val_loss": 2.4044405118245926,
+     "seconds": 12.2
+    },
+    {
+     "epoch": 40,
+     "train_loss": 2.316057876640737,
+     "val_loss": 2.4054104197971404,
+     "seconds": 12.3
+    },
+    {
+     "epoch": 41,
+     "train_loss": 2.315699911437127,
+     "val_loss": 2.4043673379080635,
+     "seconds": 12.4
+    },
+    {
+     "epoch": 42,
+     "train_loss": 2.3129525632875096,
+     "val_loss": 2.401437322525751,
+     "seconds": 12.4
+    },
+    {
+     "epoch": 43,
+     "train_loss": 2.312330426564292,
+     "val_loss": 2.402686086836315,
+     "seconds": 12.3
+    },
+    {
+     "epoch": 44,
+     "train_loss": 2.311165457192342,
+     "val_loss": 2.4019142103952076,
+     "seconds": 12.2
+    },
+    {
+     "epoch": 45,
+     "train_loss": 2.308288160060028,
+     "val_loss": 2.404624715683952,
+     "seconds": 12.4
+    }
+   ],
+   "n_train_cells": 56700,
+   "n_val_cells": 6300,
+   "mean_train_tokens": 82.76850088183421,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 11.26,
+   "truncated_frac": 0.1001058201058201,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 8100,
+   "e5_val": 900,
+   "learner_val": 1000,
+   "test": 2000
+  }
+ },
+ "leakage_gap_head_train_minus_test": 0.062342818860461224,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-11 18:52:30",
+ "argv": [
+  "--method",
+  "frozen_xfit_pred",
+  "--learner",
+  "lgbm",
+  "--dataset",
+  "REG_TEXT_ZOMATO_RESTAURANTS",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "stacking/1",
+  "k_folds": 3,
+  "method": "frozen_xfit_pred",
+  "fold_models": [
+   {
+    "fold": 0,
+    "n_train_rows": 6000,
+    "n_heldout": 3000,
+    "cache_key": "REG_TEXT_ZOMATO_RESTAURANTS/fold1/tar_repro/seed42/07055b3820_a7bcc39355",
+    "cache_hit": true,
+    "best_epoch": 39,
+    "train_rows_hash": "7aba0a2f24",
+    "heldout_rows_hash": "6bf17be565"
+   },
+   {
+    "fold": 1,
+    "n_train_rows": 6000,
+    "n_heldout": 3000,
+    "cache_key": "REG_TEXT_ZOMATO_RESTAURANTS/fold1/tar_repro/seed42/07055b3820_5544f904f6",
+    "cache_hit": true,
+    "best_epoch": 38,
+    "train_rows_hash": "c262a413ea",
+    "heldout_rows_hash": "dc087f4469"
+   },
+   {
+    "fold": 2,
+    "n_train_rows": 6000,
+    "n_heldout": 3000,
+    "cache_key": "REG_TEXT_ZOMATO_RESTAURANTS/fold1/tar_repro/seed42/07055b3820_67d26772a3",
+    "cache_hit": true,
+    "best_epoch": 46,
+    "train_rows_hash": "fd6f3426a3",
+    "heldout_rows_hash": "5356e7e04c"
+   }
+  ],
+  "folds_cover_pool": true,
+  "pred_feature_quality": {
+   "train_rows": 0.4135677357714901,
+   "test": 0.41064719098925895,
+   "learner_val": 0.40756787714306975,
+   "gap_train_minus_test": 0.002920544782231138
+  },
+  "n_pred_features_per_col": {
+   "address": 2,
+   "cuisines": 2,
+   "dish_liked": 2,
+   "menu_item": 2,
+   "name": 2,
+   "phone": 2,
+   "reviews_list": 2
+  },
+  "catboost_importance": null
+ }
+}

@@ -1,0 +1,280 @@
+{
+ "method": "cte_nbr",
+ "run_name": "cte_nbr",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_ROTTEN_TOMATOES",
+ "fold": 1,
+ "task": "REG",
+ "score": 0.534078217603412,
+ "metrics": {
+  "score": 0.534078217603412,
+  "metrics": {
+   "r2": 0.534078217603412,
+   "mse": 0.6327351687110728,
+   "rmse": 0.7954465215909067
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.560818438947507,
+  "joint_tar": 0.5769222454363132,
+  "unimodal_structured": 0.1896213122159966,
+  "unimodal_text": 0.5420960783834372
+ },
+ "diff_vs_csv_joint_tar": -0.0428440278329012,
+ "runtime_s": {
+  "total": 150.4,
+  "fit": 150.2,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte_nbr",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 6443,
+ "n_test": 715,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-14 00:52:54",
+ "argv": [
+  "--method",
+  "cte_nbr",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_ROTTEN_TOMATOES",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte_nbr",
+  "experts": [
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": false,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 0.0
+  },
+  "expert_cache_hits": {
+   "nbr": true
+  },
+  "lex_alpha": null,
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 58307
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "nbr:Actors": 0.40791853713016574,
+     "nbr:Cast": 0.4176407909767637,
+     "nbr:Country": 0.08577063062391899,
+     "nbr:Creator": 0.29643018860659087,
+     "nbr:Description": 0.33060459943170023,
+     "nbr:Director": 0.41143856666185297,
+     "nbr:Filming Locations": 0.150129580519657,
+     "nbr:Genre": 0.4271847434634498,
+     "nbr:Language": 0.08833741462381729,
+     "nbr:Name": 0.21960810677390433,
+     "nbr:RatingCount": 0.17987801133209178,
+     "nbr:Release Date": 0.17870957810337157,
+     "nbr:ReviewCount": 0.23023781547779168,
+     "nbr:__all__": 0.6038708626205624
+    },
+    "test": {
+     "nbr:Actors": 0.4473094489926777,
+     "nbr:Cast": 0.4564758363358386,
+     "nbr:Country": 0.11275064949832697,
+     "nbr:Creator": 0.3375327667131039,
+     "nbr:Description": 0.35173058146221503,
+     "nbr:Director": 0.36740773925282455,
+     "nbr:Filming Locations": 0.21531685446517312,
+     "nbr:Genre": 0.4534253301331142,
+     "nbr:Language": 0.20263785870082937,
+     "nbr:Name": 0.17754605395877415,
+     "nbr:RatingCount": 0.19114596435230788,
+     "nbr:Release Date": 0.1447656506782632,
+     "nbr:ReviewCount": 0.20441055872874653,
+     "nbr:__all__": 0.6304125382986213
+    }
+   },
+   "gap_train_minus_test": {
+    "nbr:Actors": -0.03939091186251198,
+    "nbr:Cast": -0.03883504535907489,
+    "nbr:Country": -0.026980018874407985,
+    "nbr:Creator": -0.04110257810651302,
+    "nbr:Description": -0.0211259820305148,
+    "nbr:Director": 0.04403082740902842,
+    "nbr:Filming Locations": -0.06518727394551613,
+    "nbr:Genre": -0.02624058666966439,
+    "nbr:Language": -0.11430044407701208,
+    "nbr:Name": 0.042062052815130174,
+    "nbr:RatingCount": -0.011267953020216104,
+    "nbr:Release Date": 0.03394392742510838,
+    "nbr:ReviewCount": 0.025827256749045152,
+    "nbr:__all__": -0.026541675678058874
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "Actors": 2,
+   "Cast": 1,
+   "Country": 1,
+   "Creator": 1,
+   "Description": 1,
+   "Director": 1,
+   "Filming Locations": 1,
+   "Genre": 1,
+   "Language": 1,
+   "Name": 1,
+   "RatingCount": 1,
+   "Release Date": 1,
+   "ReviewCount": 1
+  },
+  "seconds": {
+   "frozen_embeddings": 0.7,
+   "experts": 0.0
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Actors_txt_pca_30": 1.147,
+    "Actors_txt_pca_31": 18.055,
+    "Cast_txt_pca_30": 1.382,
+    "Country_txt_pca_30": 0.15,
+    "Creator_txt_pca_30": 0.92,
+    "Description_txt_pca_30": 0.722,
+    "Director_txt_pca_30": 4.325,
+    "Filming Locations_txt_pca_30": 0.245,
+    "Genre_txt_pca_30": 4.854,
+    "Language_txt_pca_30": 0.037,
+    "Name_txt_pca_30": 1.108,
+    "RatingCount_txt_pca_30": 1.483,
+    "Release Date_txt_pca_30": 0.655,
+    "ReviewCount_txt_pca_30": 2.641
+   },
+   "pred_share": 0.3772,
+   "group_share": {
+    "structured": 0.048,
+    "pca": 0.5748,
+    "nbr": 0.3772
+   },
+   "top10": [
+    [
+     "Actors_txt_pca_31",
+     18.055
+    ],
+    [
+     "Genre_txt_pca_30",
+     4.854
+    ],
+    [
+     "ReviewCount_txt_pca_1",
+     4.384
+    ],
+    [
+     "Director_txt_pca_30",
+     4.325
+    ],
+    [
+     "ReviewCount_txt_pca_0",
+     3.564
+    ],
+    [
+     "Genre_txt_pca_4",
+     2.835
+    ],
+    [
+     "Duration",
+     2.696
+    ],
+    [
+     "ReviewCount_txt_pca_30",
+     2.641
+    ],
+    [
+     "Year",
+     2.105
+    ],
+    [
+     "Release Date_txt_pca_1",
+     1.799
+    ]
+   ]
+  }
+ }
+}

@@ -1,0 +1,369 @@
+{
+ "method": "frozen_xfit_pred",
+ "run_name": "frozen_xfit_pred",
+ "engine_version": "stacking/1",
+ "tar_path": "fast",
+ "learner": "tabm",
+ "learner_model_name": "TabM \u24c2\ufe0f",
+ "dataset": "REG_TEXT_SCIMAGOJR_IMPACT",
+ "fold": 4,
+ "task": "REG",
+ "score": 0.8817596435546875,
+ "metrics": {
+  "score": 0.8817596435546875,
+  "metrics": {
+   "r2": 0.8817596435546875,
+   "mse": 387.8010559082031,
+   "rmse": 19.692665028080967
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.8807348608970642,
+  "joint_tar": 0.8827437162399292,
+  "unimodal_structured": 0.7333084940910339,
+  "unimodal_text": 0.7942020893096924
+ },
+ "diff_vs_csv_joint_tar": -0.0009840726852416992,
+ "runtime_s": {
+  "total": 26.3,
+  "fit": 25.9,
+  "predict": 0.5,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_key": "REG_TEXT_SCIMAGOJR_IMPACT/fold4/tar_repro/seed42/07055b3820_2f9c63719d",
+  "cache_hit": true,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "stacking/1",
+   "method": "frozen_xfit_pred",
+   "base": "tar_repro"
+  },
+  "text_cols": [
+   "Areas",
+   "Categories",
+   "Citations / Doc  (2years)",
+   "Country",
+   "Coverage",
+   "Issn",
+   "Publisher",
+   "Ref  / Doc ",
+   "SJR",
+   "Title"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.4242911254202645,
+    "n": 8100
+   },
+   "e5_val": {
+    "score": 0.3715020443015058,
+    "n": 900
+   },
+   "test": {
+    "score": 0.435451880694795,
+    "n": 2000
+   },
+   "learner_val": {
+    "score": 0.41308308762369983,
+    "n": 1000
+   }
+  },
+  "n_unique_texts": {
+   "Areas": 799,
+   "Categories": 7724,
+   "Citations / Doc  (2years)": 1076,
+   "Country": 110,
+   "Coverage": 2653,
+   "Issn": 11995,
+   "Publisher": 3962,
+   "Ref  / Doc ": 5794,
+   "SJR": 2041,
+   "Title": 12000
+  },
+  "train": {
+   "epochs_run": 23,
+   "best_epoch": 20,
+   "best_val_loss": 2.694266986846924,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 2.9345117479018223,
+     "val_loss": 2.8232545695834688,
+     "seconds": 8.7
+    },
+    {
+     "epoch": 2,
+     "train_loss": 2.787462521682551,
+     "val_loss": 2.761147285249498,
+     "seconds": 8.5
+    },
+    {
+     "epoch": 3,
+     "train_loss": 2.757488938202093,
+     "val_loss": 2.7432091810438366,
+     "seconds": 8.5
+    },
+    {
+     "epoch": 4,
+     "train_loss": 2.7398972751947097,
+     "val_loss": 2.728628023359511,
+     "seconds": 8.5
+    },
+    {
+     "epoch": 5,
+     "train_loss": 2.728165201187134,
+     "val_loss": 2.718634889814589,
+     "seconds": 8.4
+    },
+    {
+     "epoch": 6,
+     "train_loss": 2.720057114660004,
+     "val_loss": 2.7139141663445367,
+     "seconds": 8.3
+    },
+    {
+     "epoch": 7,
+     "train_loss": 2.713812838990011,
+     "val_loss": 2.714939062966241,
+     "seconds": 8.3
+    },
+    {
+     "epoch": 8,
+     "train_loss": 2.708134757924963,
+     "val_loss": 2.722953190061781,
+     "seconds": 8.4
+    },
+    {
+     "epoch": 9,
+     "train_loss": 2.703266350239883,
+     "val_loss": 2.710596359041002,
+     "seconds": 8.3
+    },
+    {
+     "epoch": 10,
+     "train_loss": 2.7000623921288383,
+     "val_loss": 2.701952748404609,
+     "seconds": 8.4
+    },
+    {
+     "epoch": 11,
+     "train_loss": 2.6959980047955927,
+     "val_loss": 2.7030096480051675,
+     "seconds": 8.4
+    },
+    {
+     "epoch": 12,
+     "train_loss": 2.692507737901476,
+     "val_loss": 2.701162074830797,
+     "seconds": 8.4
+    },
+    {
+     "epoch": 13,
+     "train_loss": 2.6914251334814376,
+     "val_loss": 2.7009666294521755,
+     "seconds": 8.4
+    },
+    {
+     "epoch": 14,
+     "train_loss": 2.6873015834196115,
+     "val_loss": 2.6993941951327853,
+     "seconds": 8.4
+    },
+    {
+     "epoch": 15,
+     "train_loss": 2.685091574633563,
+     "val_loss": 2.698532693862915,
+     "seconds": 8.3
+    },
+    {
+     "epoch": 16,
+     "train_loss": 2.6825957327477727,
+     "val_loss": 2.701602174123128,
+     "seconds": 8.4
+    },
+    {
+     "epoch": 17,
+     "train_loss": 2.679398339471699,
+     "val_loss": 2.697397623485989,
+     "seconds": 8.4
+    },
+    {
+     "epoch": 18,
+     "train_loss": 2.6772722681775507,
+     "val_loss": 2.695886909061008,
+     "seconds": 8.3
+    },
+    {
+     "epoch": 19,
+     "train_loss": 2.6751477553049723,
+     "val_loss": 2.6958520238664416,
+     "seconds": 8.4
+    },
+    {
+     "epoch": 20,
+     "train_loss": 2.673218925287694,
+     "val_loss": 2.694266986846924,
+     "seconds": 8.4
+    },
+    {
+     "epoch": 21,
+     "train_loss": 2.672310469709797,
+     "val_loss": 2.697439170413547,
+     "seconds": 8.4
+    },
+    {
+     "epoch": 22,
+     "train_loss": 2.6686339293350407,
+     "val_loss": 2.7074405199686686,
+     "seconds": 8.4
+    },
+    {
+     "epoch": 23,
+     "train_loss": 2.6681411622129843,
+     "val_loss": 2.6990190018547904,
+     "seconds": 8.5
+    }
+   ],
+   "n_train_cells": 81000,
+   "n_val_cells": 9000,
+   "mean_train_tokens": 13.115938271604938,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 2.28,
+   "truncated_frac": 0.0,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 8100,
+   "e5_val": 900,
+   "learner_val": 1000,
+   "test": 2000
+  }
+ },
+ "leakage_gap_head_train_minus_test": -0.011160755274530532,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-11 20:06:56",
+ "argv": [
+  "--method",
+  "frozen_xfit_pred",
+  "--learner",
+  "tabm",
+  "--dataset",
+  "REG_TEXT_SCIMAGOJR_IMPACT",
+  "--fold",
+  "4",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "stacking/1",
+  "k_folds": 3,
+  "method": "frozen_xfit_pred",
+  "fold_models": [
+   {
+    "fold": 0,
+    "n_train_rows": 6000,
+    "n_heldout": 3000,
+    "cache_key": "REG_TEXT_SCIMAGOJR_IMPACT/fold4/tar_repro/seed42/07055b3820_95dd77c515",
+    "cache_hit": true,
+    "best_epoch": 20,
+    "train_rows_hash": "273d12c563",
+    "heldout_rows_hash": "ac13408018"
+   },
+   {
+    "fold": 1,
+    "n_train_rows": 6000,
+    "n_heldout": 3000,
+    "cache_key": "REG_TEXT_SCIMAGOJR_IMPACT/fold4/tar_repro/seed42/07055b3820_b2ff7c138d",
+    "cache_hit": true,
+    "best_epoch": 13,
+    "train_rows_hash": "e30be1f380",
+    "heldout_rows_hash": "aa1cfe9661"
+   },
+   {
+    "fold": 2,
+    "n_train_rows": 6000,
+    "n_heldout": 3000,
+    "cache_key": "REG_TEXT_SCIMAGOJR_IMPACT/fold4/tar_repro/seed42/07055b3820_a787e71642",
+    "cache_hit": true,
+    "best_epoch": 19,
+    "train_rows_hash": "f2673e40c1",
+    "heldout_rows_hash": "fec8e51143"
+   }
+  ],
+  "folds_cover_pool": true,
+  "pred_feature_quality": {
+   "train_rows": 0.41083344343197525,
+   "test": 0.48437093252895635,
+   "learner_val": 0.45977614099348907,
+   "gap_train_minus_test": -0.0735374890969811
+  },
+  "n_pred_features_per_col": {
+   "Areas": 2,
+   "Categories": 2,
+   "Citations / Doc  (2years)": 2,
+   "Country": 2,
+   "Coverage": 2,
+   "Issn": 2,
+   "Publisher": 2,
+   "Ref  / Doc ": 2,
+   "SJR": 2,
+   "Title": 2
+  },
+  "catboost_importance": null
+ }
+}

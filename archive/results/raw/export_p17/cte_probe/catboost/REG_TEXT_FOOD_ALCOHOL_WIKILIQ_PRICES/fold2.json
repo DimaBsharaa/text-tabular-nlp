@@ -1,0 +1,328 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_FOOD_ALCOHOL_WIKILIQ_PRICES",
+ "fold": 2,
+ "task": "REG",
+ "score": 0.1845998962815708,
+ "metrics": {
+  "score": 0.1845998962815708,
+  "metrics": {
+   "r2": 0.1845998962815708,
+   "mse": 440318.20294538577,
+   "rmse": 663.5647692165293
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 135.7,
+  "fit": 135.5,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 1256,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-19 23:51:34",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_FOOD_ALCOHOL_WIKILIQ_PRICES",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 5.7,
+   "probe": 11.9
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 3.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.748861,
+     0.779879,
+     0.795401,
+     0.791532
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.4,
+    "experts": 5.2
+   }
+  },
+  "probe": {
+   "alpha": 3.0,
+   "oof_metric": [
+    0.7388425851836959,
+    0.7548727032327484,
+    0.7613756665414119,
+    0.7544043380476553
+   ]
+  },
+  "n_extra_columns": {
+   "Brand": 24,
+   "Categories": 21,
+   "Country": 21,
+   "Description": 21,
+   "Name": 21,
+   "Tasting Notes": 21
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Brand_txt_pca_30": 2.297,
+    "Brand_txt_pca_31": 0.86,
+    "Brand_txt_pca_32": 9.24,
+    "Brand_txt_pca_33": 0.0,
+    "Brand_txt_pca_34": 0.0,
+    "Brand_txt_pca_35": 0.0,
+    "Brand_txt_pca_36": 0.0,
+    "Brand_txt_pca_37": 0.0,
+    "Brand_txt_pca_38": 0.0,
+    "Brand_txt_pca_39": 0.0,
+    "Brand_txt_pca_40": 0.0,
+    "Brand_txt_pca_41": 0.0,
+    "Brand_txt_pca_42": 0.019,
+    "Brand_txt_pca_43": 0.0,
+    "Brand_txt_pca_44": 0.0,
+    "Brand_txt_pca_45": 0.063,
+    "Brand_txt_pca_46": 0.114,
+    "Brand_txt_pca_47": 0.0,
+    "Brand_txt_pca_48": 0.002,
+    "Brand_txt_pca_49": 0.0,
+    "Brand_txt_pca_50": 0.0,
+    "Brand_txt_pca_51": 0.0,
+    "Brand_txt_pca_52": 0.0,
+    "Brand_txt_pca_53": 0.506,
+    "Categories_txt_pca_30": 0.1,
+    "Categories_txt_pca_31": 0.0,
+    "Categories_txt_pca_32": 0.0,
+    "Categories_txt_pca_33": 0.0,
+    "Categories_txt_pca_34": 0.0,
+    "Categories_txt_pca_35": 0.0,
+    "Categories_txt_pca_36": 0.0,
+    "Categories_txt_pca_37": 0.0,
+    "Categories_txt_pca_38": 0.0,
+    "Categories_txt_pca_39": 0.0,
+    "Categories_txt_pca_40": 0.003,
+    "Categories_txt_pca_41": 0.0,
+    "Categories_txt_pca_42": 0.0,
+    "Categories_txt_pca_43": 0.0,
+    "Categories_txt_pca_44": 0.0,
+    "Categories_txt_pca_45": 0.0,
+    "Categories_txt_pca_46": 0.02,
+    "Categories_txt_pca_47": 0.0,
+    "Categories_txt_pca_48": 0.0,
+    "Categories_txt_pca_49": 0.007,
+    "Categories_txt_pca_50": 0.0,
+    "Country_txt_pca_30": 0.149,
+    "Country_txt_pca_31": 0.0,
+    "Country_txt_pca_32": 0.0,
+    "Country_txt_pca_33": 0.0,
+    "Country_txt_pca_34": 0.0,
+    "Country_txt_pca_35": 0.0,
+    "Country_txt_pca_36": 0.0,
+    "Country_txt_pca_37": 0.0,
+    "Country_txt_pca_38": 0.0,
+    "Country_txt_pca_39": 0.0,
+    "Country_txt_pca_40": 0.0,
+    "Country_txt_pca_41": 0.0,
+    "Country_txt_pca_42": 0.0,
+    "Country_txt_pca_43": 0.006,
+    "Country_txt_pca_44": 0.002,
+    "Country_txt_pca_45": 0.0,
+    "Country_txt_pca_46": 0.0,
+    "Country_txt_pca_47": 0.0,
+    "Country_txt_pca_48": 0.0,
+    "Country_txt_pca_49": 0.0,
+    "Country_txt_pca_50": 0.0,
+    "Description_txt_pca_30": 0.555,
+    "Description_txt_pca_31": 0.96,
+    "Description_txt_pca_32": 0.05,
+    "Description_txt_pca_33": 0.074,
+    "Description_txt_pca_34": 0.097,
+    "Description_txt_pca_35": 0.115,
+    "Description_txt_pca_36": 0.036,
+    "Description_txt_pca_37": 0.0,
+    "Description_txt_pca_38": 0.0,
+    "Description_txt_pca_39": 0.0,
+    "Description_txt_pca_40": 0.11,
+    "Description_txt_pca_41": 0.023,
+    "Description_txt_pca_42": 0.016,
+    "Description_txt_pca_43": 0.054,
+    "Description_txt_pca_44": 0.093,
+    "Description_txt_pca_45": 0.125,
+    "Description_txt_pca_46": 0.058,
+    "Description_txt_pca_47": 0.0,
+    "Description_txt_pca_48": 0.0,
+    "Description_txt_pca_49": 0.265,
+    "Description_txt_pca_50": 0.0,
+    "Name_txt_pca_30": 8.157,
+    "Name_txt_pca_31": 0.218,
+    "Name_txt_pca_32": 0.963,
+    "Name_txt_pca_33": 0.799,
+    "Name_txt_pca_34": 0.221,
+    "Name_txt_pca_35": 0.108,
+    "Name_txt_pca_36": 0.562,
+    "Name_txt_pca_37": 0.0,
+    "Name_txt_pca_38": 0.0,
+    "Name_txt_pca_39": 0.0,
+    "Name_txt_pca_40": 1.113,
+    "Name_txt_pca_41": 0.054,
+    "Name_txt_pca_42": 0.028,
+    "Name_txt_pca_43": 1.575,
+    "Name_txt_pca_44": 0.782,
+    "Name_txt_pca_45": 0.716,
+    "Name_txt_pca_46": 0.143,
+    "Name_txt_pca_47": 0.0,
+    "Name_txt_pca_48": 0.0,
+    "Name_txt_pca_49": 0.001,
+    "Name_txt_pca_50": 0.0,
+    "Tasting Notes_txt_pca_30": 0.099,
+    "Tasting Notes_txt_pca_31": 0.0,
+    "Tasting Notes_txt_pca_32": 0.0,
+    "Tasting Notes_txt_pca_33": 0.0,
+    "Tasting Notes_txt_pca_34": 0.0,
+    "Tasting Notes_txt_pca_35": 0.0,
+    "Tasting Notes_txt_pca_36": 0.0,
+    "Tasting Notes_txt_pca_37": 0.0,
+    "Tasting Notes_txt_pca_38": 0.0,
+    "Tasting Notes_txt_pca_39": 0.0,
+    "Tasting Notes_txt_pca_40": 0.0,
+    "Tasting Notes_txt_pca_41": 0.0,
+    "Tasting Notes_txt_pca_42": 0.0,
+    "Tasting Notes_txt_pca_43": 0.001,
+    "Tasting Notes_txt_pca_44": 0.0,
+    "Tasting Notes_txt_pca_45": 0.0,
+    "Tasting Notes_txt_pca_46": 0.063,
+    "Tasting Notes_txt_pca_47": 0.0,
+    "Tasting Notes_txt_pca_48": 0.0,
+    "Tasting Notes_txt_pca_49": 0.0,
+    "Tasting Notes_txt_pca_50": 0.0
+   },
+   "pred_share": 0.3162,
+   "group_share": {
+    "structured": 0.1774,
+    "pca": 0.5064,
+    "lex": 0.023,
+    "nbr": 0.1916,
+    "num": 0.0966,
+    "probe": 0.0051
+   },
+   "top10": [
+    [
+     "Years Aged",
+     16.175
+    ],
+    [
+     "Brand_txt_pca_32",
+     9.24
+    ],
+    [
+     "Brand_txt_pca_22",
+     8.658
+    ],
+    [
+     "Name_txt_pca_30",
+     8.157
+    ],
+    [
+     "Name_txt_pca_13",
+     5.028
+    ],
+    [
+     "Description_txt_pca_1",
+     4.413
+    ],
+    [
+     "Brand_txt_pca_3",
+     2.862
+    ],
+    [
+     "Brand_txt_pca_30",
+     2.297
+    ],
+    [
+     "Name_txt_pca_4",
+     2.155
+    ],
+    [
+     "Name_txt_pca_12",
+     1.848
+    ]
+   ]
+  }
+ }
+}

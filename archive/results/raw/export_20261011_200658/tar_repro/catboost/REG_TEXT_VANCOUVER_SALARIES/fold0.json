@@ -1,0 +1,312 @@
+{
+ "method": "tar_repro",
+ "run_name": "tar_repro",
+ "engine_version": "tar_engine/2",
+ "tar_path": "fast",
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_VANCOUVER_SALARIES",
+ "fold": 0,
+ "task": "REG",
+ "score": 0.7946811071410536,
+ "metrics": {
+  "score": 0.7946811071410536,
+  "metrics": {
+   "r2": 0.7946811071410536,
+   "mse": 148359151.2072161,
+   "rmse": 12180.277140000391
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.785138046706261,
+  "joint_tar": 0.7964217990461979,
+  "unimodal_structured": 0.3631206573796622,
+  "unimodal_text": 0.6022260433337469
+ },
+ "diff_vs_csv_joint_tar": -0.0017406919051443648,
+ "runtime_s": {
+  "total": 59.3,
+  "fit": 59.3,
+  "predict": 0.0,
+  "tar_lower_cache": 1.0,
+  "tar_train": 42.7,
+  "tar_encode": 0.4
+ },
+ "tar": {
+  "cache_key": "REG_TEXT_VANCOUVER_SALARIES/fold0/tar_repro/seed42/07055b3820_cde20761bd",
+  "cache_hit": false,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "tar_engine/2"
+  },
+  "text_cols": [
+   "name",
+   "title"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.44650303790274837,
+    "n": 8100
+   },
+   "e5_val": {
+    "score": 0.39283783938449823,
+    "n": 900
+   },
+   "test": {
+    "score": 0.4093826014466161,
+    "n": 2000
+   },
+   "learner_val": {
+    "score": 0.3555005326578562,
+    "n": 1000
+   }
+  },
+  "n_unique_texts": {
+   "name": 5317,
+   "title": 1801
+  },
+  "train": {
+   "epochs_run": 26,
+   "best_epoch": 23,
+   "best_val_loss": 2.812132553524441,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 3.003605672341806,
+     "val_loss": 2.996199878056844,
+     "seconds": 1.9
+    },
+    {
+     "epoch": 2,
+     "train_loss": 2.9901566107479143,
+     "val_loss": 2.9834063731299505,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 3,
+     "train_loss": 2.9627573760939234,
+     "val_loss": 2.931325710084703,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 4,
+     "train_loss": 2.9080868418422745,
+     "val_loss": 2.89032513194614,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 5,
+     "train_loss": 2.8787415597468247,
+     "val_loss": 2.868025240368313,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 6,
+     "train_loss": 2.8603644880836394,
+     "val_loss": 2.8616479301452635,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 7,
+     "train_loss": 2.8476922221242646,
+     "val_loss": 2.8476665380265977,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 8,
+     "train_loss": 2.834462344793626,
+     "val_loss": 2.8430267386966284,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 9,
+     "train_loss": 2.8244195753262367,
+     "val_loss": 2.836421095530192,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 10,
+     "train_loss": 2.816152957280477,
+     "val_loss": 2.833522924847073,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 11,
+     "train_loss": 2.8106956919917354,
+     "val_loss": 2.8337468338012695,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 12,
+     "train_loss": 2.807975882541986,
+     "val_loss": 2.825423821343316,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 13,
+     "train_loss": 2.7974169784122043,
+     "val_loss": 2.824913066228231,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 14,
+     "train_loss": 2.7900644201113853,
+     "val_loss": 2.828683166503906,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 15,
+     "train_loss": 2.7856621085272897,
+     "val_loss": 2.827776055865818,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 16,
+     "train_loss": 2.7826568688286675,
+     "val_loss": 2.8182349321577282,
+     "seconds": 1.7
+    },
+    {
+     "epoch": 17,
+     "train_loss": 2.7767126657933363,
+     "val_loss": 2.8216117223103843,
+     "seconds": 1.7
+    },
+    {
+     "epoch": 18,
+     "train_loss": 2.772367203088454,
+     "val_loss": 2.8207641230689156,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 19,
+     "train_loss": 2.7660187887262415,
+     "val_loss": 2.8165686406029593,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 20,
+     "train_loss": 2.7608607250967143,
+     "val_loss": 2.8190624470180934,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 21,
+     "train_loss": 2.758190062252092,
+     "val_loss": 2.8162475193871392,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 22,
+     "train_loss": 2.755585879690853,
+     "val_loss": 2.8161564837561714,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 23,
+     "train_loss": 2.750144217102616,
+     "val_loss": 2.812132553524441,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 24,
+     "train_loss": 2.7481017498911164,
+     "val_loss": 2.816583841111925,
+     "seconds": 1.7
+    },
+    {
+     "epoch": 25,
+     "train_loss": 2.739947344462077,
+     "val_loss": 2.813744816250271,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 26,
+     "train_loss": 2.7399545715473317,
+     "val_loss": 2.8136417886945937,
+     "seconds": 1.6
+    }
+   ],
+   "n_train_cells": 16200,
+   "n_val_cells": 1800,
+   "mean_train_tokens": 9.72716049382716,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 0.6,
+   "truncated_frac": 0.0,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 8100,
+   "e5_val": 900,
+   "test": 2000,
+   "learner_val": 1000
+  }
+ },
+ "leakage_gap_head_train_minus_test": 0.03712043645613228,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-10 21:41:51",
+ "argv": [
+  "--method",
+  "tar_repro",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_VANCOUVER_SALARIES",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5"
+}

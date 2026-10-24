@@ -1,0 +1,350 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_SOCIAL_ANIME_PLANET_RATING",
+ "fold": 2,
+ "task": "REG",
+ "score": 0.750477002551841,
+ "metrics": {
+  "score": 0.750477002551841,
+  "metrics": {
+   "r2": 0.750477002551841,
+   "mse": 0.19402626230197892,
+   "rmse": 0.44048412264459536
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 153.1,
+  "fit": 152.9,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 1439,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-19 23:20:47",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_SOCIAL_ANIME_PLANET_RATING",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 6.4,
+   "probe": 9.1
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 1.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.750388,
+     0.764781,
+     0.764668,
+     0.745427
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.5,
+    "experts": 5.8
+   }
+  },
+  "probe": {
+   "alpha": 1.0,
+   "oof_metric": [
+    0.7510473400132003,
+    0.7547898889404548,
+    0.7497006413890795,
+    0.7327453392516365
+   ]
+  },
+  "n_extra_columns": {
+   "Alternative Name": 24,
+   "Content Warning": 21,
+   "Name": 21,
+   "Season": 21,
+   "Studios": 21,
+   "Synopsis": 21,
+   "Tags": 21
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Alternative Name_txt_pca_30": 12.034,
+    "Alternative Name_txt_pca_31": 0.166,
+    "Alternative Name_txt_pca_32": 2.732,
+    "Alternative Name_txt_pca_33": 0.005,
+    "Alternative Name_txt_pca_34": 0.002,
+    "Alternative Name_txt_pca_35": 0.014,
+    "Alternative Name_txt_pca_36": 0.01,
+    "Alternative Name_txt_pca_37": 0.0,
+    "Alternative Name_txt_pca_38": 0.006,
+    "Alternative Name_txt_pca_39": 0.0,
+    "Alternative Name_txt_pca_40": 0.0,
+    "Alternative Name_txt_pca_41": 0.0,
+    "Alternative Name_txt_pca_42": 0.045,
+    "Alternative Name_txt_pca_43": 0.059,
+    "Alternative Name_txt_pca_44": 0.0,
+    "Alternative Name_txt_pca_45": 0.078,
+    "Alternative Name_txt_pca_46": 0.148,
+    "Alternative Name_txt_pca_47": 0.003,
+    "Alternative Name_txt_pca_48": 0.047,
+    "Alternative Name_txt_pca_49": 0.004,
+    "Alternative Name_txt_pca_50": 0.0,
+    "Alternative Name_txt_pca_51": 0.018,
+    "Alternative Name_txt_pca_52": 0.0,
+    "Alternative Name_txt_pca_53": 6.714,
+    "Content Warning_txt_pca_30": 0.075,
+    "Content Warning_txt_pca_31": 0.0,
+    "Content Warning_txt_pca_32": 0.0,
+    "Content Warning_txt_pca_33": 0.0,
+    "Content Warning_txt_pca_34": 0.0,
+    "Content Warning_txt_pca_35": 0.0,
+    "Content Warning_txt_pca_36": 0.0,
+    "Content Warning_txt_pca_37": 0.0,
+    "Content Warning_txt_pca_38": 0.0,
+    "Content Warning_txt_pca_39": 0.0,
+    "Content Warning_txt_pca_40": 0.008,
+    "Content Warning_txt_pca_41": 0.036,
+    "Content Warning_txt_pca_42": 0.0,
+    "Content Warning_txt_pca_43": 0.029,
+    "Content Warning_txt_pca_44": 0.03,
+    "Content Warning_txt_pca_45": 0.0,
+    "Content Warning_txt_pca_46": 0.006,
+    "Content Warning_txt_pca_47": 0.0,
+    "Content Warning_txt_pca_48": 0.0,
+    "Content Warning_txt_pca_49": 0.0,
+    "Content Warning_txt_pca_50": 0.0,
+    "Name_txt_pca_30": 1.316,
+    "Name_txt_pca_31": 0.023,
+    "Name_txt_pca_32": 0.02,
+    "Name_txt_pca_33": 0.064,
+    "Name_txt_pca_34": 0.014,
+    "Name_txt_pca_35": 0.01,
+    "Name_txt_pca_36": 0.013,
+    "Name_txt_pca_37": 0.0,
+    "Name_txt_pca_38": 0.0,
+    "Name_txt_pca_39": 0.0,
+    "Name_txt_pca_40": 0.626,
+    "Name_txt_pca_41": 0.063,
+    "Name_txt_pca_42": 0.005,
+    "Name_txt_pca_43": 0.403,
+    "Name_txt_pca_44": 0.321,
+    "Name_txt_pca_45": 0.106,
+    "Name_txt_pca_46": 0.236,
+    "Name_txt_pca_47": 0.015,
+    "Name_txt_pca_48": 0.0,
+    "Name_txt_pca_49": 0.018,
+    "Name_txt_pca_50": 0.0,
+    "Season_txt_pca_30": 0.351,
+    "Season_txt_pca_31": 0.0,
+    "Season_txt_pca_32": 0.138,
+    "Season_txt_pca_33": 0.022,
+    "Season_txt_pca_34": 0.04,
+    "Season_txt_pca_35": 0.0,
+    "Season_txt_pca_36": 0.085,
+    "Season_txt_pca_37": 0.0,
+    "Season_txt_pca_38": 0.0,
+    "Season_txt_pca_39": 0.0,
+    "Season_txt_pca_40": 0.094,
+    "Season_txt_pca_41": 0.0,
+    "Season_txt_pca_42": 0.0,
+    "Season_txt_pca_43": 0.097,
+    "Season_txt_pca_44": 0.051,
+    "Season_txt_pca_45": 0.204,
+    "Season_txt_pca_46": 0.0,
+    "Season_txt_pca_47": 0.0,
+    "Season_txt_pca_48": 0.0,
+    "Season_txt_pca_49": 0.0,
+    "Season_txt_pca_50": 0.0,
+    "Studios_txt_pca_30": 1.239,
+    "Studios_txt_pca_31": 0.0,
+    "Studios_txt_pca_32": 0.0,
+    "Studios_txt_pca_33": 0.003,
+    "Studios_txt_pca_34": 0.0,
+    "Studios_txt_pca_35": 0.0,
+    "Studios_txt_pca_36": 0.0,
+    "Studios_txt_pca_37": 0.0,
+    "Studios_txt_pca_38": 0.0,
+    "Studios_txt_pca_39": 0.0,
+    "Studios_txt_pca_40": 0.03,
+    "Studios_txt_pca_41": 0.022,
+    "Studios_txt_pca_42": 0.0,
+    "Studios_txt_pca_43": 0.042,
+    "Studios_txt_pca_44": 0.103,
+    "Studios_txt_pca_45": 0.01,
+    "Studios_txt_pca_46": 0.009,
+    "Studios_txt_pca_47": 0.001,
+    "Studios_txt_pca_48": 0.0,
+    "Studios_txt_pca_49": 0.0,
+    "Studios_txt_pca_50": 0.0,
+    "Synopsis_txt_pca_30": 0.222,
+    "Synopsis_txt_pca_31": 0.0,
+    "Synopsis_txt_pca_32": 0.027,
+    "Synopsis_txt_pca_33": 0.041,
+    "Synopsis_txt_pca_34": 0.031,
+    "Synopsis_txt_pca_35": 0.0,
+    "Synopsis_txt_pca_36": 0.038,
+    "Synopsis_txt_pca_37": 0.0,
+    "Synopsis_txt_pca_38": 0.001,
+    "Synopsis_txt_pca_39": 0.0,
+    "Synopsis_txt_pca_40": 0.229,
+    "Synopsis_txt_pca_41": 0.097,
+    "Synopsis_txt_pca_42": 0.13,
+    "Synopsis_txt_pca_43": 0.182,
+    "Synopsis_txt_pca_44": 0.219,
+    "Synopsis_txt_pca_45": 0.049,
+    "Synopsis_txt_pca_46": 0.187,
+    "Synopsis_txt_pca_47": 0.016,
+    "Synopsis_txt_pca_48": 0.014,
+    "Synopsis_txt_pca_49": 0.364,
+    "Synopsis_txt_pca_50": 0.0,
+    "Tags_txt_pca_30": 3.865,
+    "Tags_txt_pca_31": 0.0,
+    "Tags_txt_pca_32": 0.0,
+    "Tags_txt_pca_33": 0.0,
+    "Tags_txt_pca_34": 0.0,
+    "Tags_txt_pca_35": 0.0,
+    "Tags_txt_pca_36": 0.0,
+    "Tags_txt_pca_37": 0.0,
+    "Tags_txt_pca_38": 0.0,
+    "Tags_txt_pca_39": 0.0,
+    "Tags_txt_pca_40": 0.289,
+    "Tags_txt_pca_41": 0.163,
+    "Tags_txt_pca_42": 0.0,
+    "Tags_txt_pca_43": 0.5,
+    "Tags_txt_pca_44": 0.292,
+    "Tags_txt_pca_45": 0.034,
+    "Tags_txt_pca_46": 0.388,
+    "Tags_txt_pca_47": 0.0,
+    "Tags_txt_pca_48": 0.0,
+    "Tags_txt_pca_49": 0.026,
+    "Tags_txt_pca_50": 0.0
+   },
+   "pred_share": 0.3547,
+   "group_share": {
+    "structured": 0.2523,
+    "pca": 0.393,
+    "lex": 0.1203,
+    "nbr": 0.0997,
+    "num": 0.0676,
+    "probe": 0.0671
+   },
+   "top10": [
+    [
+     "Number Votes",
+     14.124
+    ],
+    [
+     "Alternative Name_txt_pca_30",
+     12.034
+    ],
+    [
+     "Alternative Name_txt_pca_53",
+     6.714
+    ],
+    [
+     "Tags_txt_pca_30",
+     3.865
+    ],
+    [
+     "Duration",
+     2.965
+    ],
+    [
+     "Alternative Name_txt_pca_32",
+     2.732
+    ],
+    [
+     "StartYear",
+     2.625
+    ],
+    [
+     "Episodes",
+     1.818
+    ],
+    [
+     "Type",
+     1.77
+    ],
+    [
+     "EndYear",
+     1.758
+    ]
+   ]
+  }
+ }
+}

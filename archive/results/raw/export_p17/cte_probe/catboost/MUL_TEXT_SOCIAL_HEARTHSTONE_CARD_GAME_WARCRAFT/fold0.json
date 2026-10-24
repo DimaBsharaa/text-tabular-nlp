@@ -1,0 +1,282 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_SOCIAL_HEARTHSTONE_CARD_GAME_WARCRAFT",
+ "fold": 0,
+ "task": "MUL",
+ "score": 0.9337058097781096,
+ "metrics": {
+  "score": 0.9337058097781096,
+  "metrics": {
+   "auc": 0.9337058097781096,
+   "logloss": 0.694573894236658
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 454.1,
+  "fit": 454.0,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 2529,
+ "n_test": 281,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 00:57:48",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_SOCIAL_HEARTHSTONE_CARD_GAME_WARCRAFT",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 0.8,
+   "probe": 4.1
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 3.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.88597,
+     0.896946,
+     0.901111,
+     0.892556
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.1,
+    "experts": 0.6
+   }
+  },
+  "probe": {
+   "alpha": 1.0,
+   "oof_metric": [
+    0.8570431307265032,
+    0.867662536853014,
+    0.8648835455619933,
+    0.842838828399889
+   ]
+  },
+  "n_extra_columns": {
+   "flavor": 47,
+   "name": 20,
+   "text": 20
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "flavor_txt_pca_30": 1.84,
+    "flavor_txt_pca_31": 1.773,
+    "flavor_txt_pca_32": 5.3,
+    "flavor_txt_pca_33": 1.582,
+    "flavor_txt_pca_34": 2.277,
+    "flavor_txt_pca_35": 2.866,
+    "flavor_txt_pca_36": 3.263,
+    "flavor_txt_pca_37": 2.17,
+    "flavor_txt_pca_38": 2.267,
+    "flavor_txt_pca_39": 0.934,
+    "flavor_txt_pca_40": 0.822,
+    "flavor_txt_pca_41": 2.332,
+    "flavor_txt_pca_42": 1.789,
+    "flavor_txt_pca_43": 0.563,
+    "flavor_txt_pca_44": 0.74,
+    "flavor_txt_pca_45": 0.353,
+    "flavor_txt_pca_46": 0.836,
+    "flavor_txt_pca_47": 0.549,
+    "flavor_txt_pca_48": 0.0,
+    "flavor_txt_pca_49": 0.001,
+    "flavor_txt_pca_50": 0.001,
+    "flavor_txt_pca_51": 0.007,
+    "flavor_txt_pca_52": 0.0,
+    "flavor_txt_pca_53": 0.0,
+    "flavor_txt_pca_54": 0.0,
+    "flavor_txt_pca_55": 0.0,
+    "flavor_txt_pca_56": 0.002,
+    "flavor_txt_pca_57": 0.369,
+    "flavor_txt_pca_58": 0.182,
+    "flavor_txt_pca_59": 0.539,
+    "flavor_txt_pca_60": 0.153,
+    "flavor_txt_pca_61": 0.141,
+    "flavor_txt_pca_62": 0.001,
+    "flavor_txt_pca_63": 0.106,
+    "flavor_txt_pca_64": 0.0,
+    "flavor_txt_pca_65": 0.001,
+    "flavor_txt_pca_66": 0.141,
+    "flavor_txt_pca_67": 0.0,
+    "flavor_txt_pca_68": 1.323,
+    "flavor_txt_pca_69": 1.174,
+    "flavor_txt_pca_70": 1.191,
+    "flavor_txt_pca_71": 1.274,
+    "flavor_txt_pca_72": 1.043,
+    "flavor_txt_pca_73": 1.268,
+    "flavor_txt_pca_74": 1.144,
+    "flavor_txt_pca_75": 0.841,
+    "flavor_txt_pca_76": 1.392,
+    "name_txt_pca_30": 0.0,
+    "name_txt_pca_31": 0.002,
+    "name_txt_pca_32": 0.0,
+    "name_txt_pca_33": 0.0,
+    "name_txt_pca_34": 0.0,
+    "name_txt_pca_35": 0.0,
+    "name_txt_pca_36": 0.0,
+    "name_txt_pca_37": 0.0,
+    "name_txt_pca_38": 0.0,
+    "name_txt_pca_39": 0.229,
+    "name_txt_pca_40": 0.082,
+    "name_txt_pca_41": 0.022,
+    "name_txt_pca_42": 0.19,
+    "name_txt_pca_43": 0.549,
+    "name_txt_pca_44": 0.0,
+    "name_txt_pca_45": 0.008,
+    "name_txt_pca_46": 0.0,
+    "name_txt_pca_47": 0.0,
+    "name_txt_pca_48": 0.0,
+    "name_txt_pca_49": 0.0,
+    "text_txt_pca_30": 0.196,
+    "text_txt_pca_31": 0.355,
+    "text_txt_pca_32": 0.224,
+    "text_txt_pca_33": 0.037,
+    "text_txt_pca_34": 0.0,
+    "text_txt_pca_35": 0.0,
+    "text_txt_pca_36": 0.0,
+    "text_txt_pca_37": 0.0,
+    "text_txt_pca_38": 0.0,
+    "text_txt_pca_39": 0.217,
+    "text_txt_pca_40": 0.197,
+    "text_txt_pca_41": 0.055,
+    "text_txt_pca_42": 0.378,
+    "text_txt_pca_43": 0.375,
+    "text_txt_pca_44": 0.243,
+    "text_txt_pca_45": 0.405,
+    "text_txt_pca_46": 0.0,
+    "text_txt_pca_47": 0.0,
+    "text_txt_pca_48": 0.078,
+    "text_txt_pca_49": 0.0
+   },
+   "pred_share": 0.4839,
+   "group_share": {
+    "structured": 0.1585,
+    "pca": 0.3576,
+    "lex": 0.2334,
+    "nbr": 0.0892,
+    "num": 0.0548,
+    "probe": 0.1065
+   },
+   "top10": [
+    [
+     "set",
+     6.219
+    ],
+    [
+     "flavor_txt_pca_32",
+     5.3
+    ],
+    [
+     "flavor_txt_pca_36",
+     3.263
+    ],
+    [
+     "flavor_txt_pca_35",
+     2.866
+    ],
+    [
+     "type",
+     2.374
+    ],
+    [
+     "flavor_txt_pca_41",
+     2.332
+    ],
+    [
+     "flavor_txt_pca_34",
+     2.277
+    ],
+    [
+     "flavor_txt_pca_38",
+     2.267
+    ],
+    [
+     "rarity",
+     2.254
+    ],
+    [
+     "flavor_txt_pca_37",
+     2.17
+    ]
+   ]
+  }
+ }
+}

@@ -1,0 +1,291 @@
+{
+ "method": "tar_repro",
+ "run_name": "tar_repro",
+ "engine_version": "tar_engine/2",
+ "tar_path": "fast",
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_DATA_SCIENTIST_SALARY",
+ "fold": 2,
+ "task": "MUL",
+ "score": 0.8293126634213319,
+ "metrics": {
+  "score": 0.8293126634213319,
+  "metrics": {
+   "auc": 0.8293126634213319,
+   "logloss": 1.2045265709729194
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.8199022790780385,
+  "joint_tar": 0.8334917817023101,
+  "unimodal_structured": 0.5484346303957249,
+  "unimodal_text": 0.8187421792327861
+ },
+ "diff_vs_csv_joint_tar": -0.004179118280978167,
+ "runtime_s": {
+  "total": 130.1,
+  "fit": 130.0,
+  "predict": 0.1,
+  "tar_lower_cache": 3.8,
+  "tar_train": 89.2,
+  "tar_encode": 1.4
+ },
+ "tar": {
+  "cache_key": "MUL_TEXT_DATA_SCIENTIST_SALARY/fold2/tar_repro/seed42/07055b3820_ef90eb09dc",
+  "cache_hit": false,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "tar_engine/2"
+  },
+  "text_cols": [
+   "experience",
+   "job_description",
+   "job_desig",
+   "key_skills",
+   "location"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.8344932861828956,
+    "n": 8100,
+    "n_unseen_class": 0
+   },
+   "e5_val": {
+    "score": 0.8099761886634439,
+    "n": 900,
+    "n_unseen_class": 0
+   },
+   "test": {
+    "score": 0.8098318860467991,
+    "n": 1584,
+    "n_unseen_class": 0
+   },
+   "learner_val": {
+    "score": 0.8059420623386157,
+    "n": 1000,
+    "n_unseen_class": 0
+   }
+  },
+  "n_unique_texts": {
+   "experience": 124,
+   "job_description": 6327,
+   "job_desig": 8075,
+   "key_skills": 8839,
+   "location": 1153
+  },
+  "train": {
+   "epochs_run": 21,
+   "best_epoch": 18,
+   "best_val_loss": 1.5129787323209976,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 1.7192824228898977,
+     "val_loss": 1.6667048897213406,
+     "seconds": 4.5
+    },
+    {
+     "epoch": 2,
+     "train_loss": 1.599559331258138,
+     "val_loss": 1.5844981303744845,
+     "seconds": 4.4
+    },
+    {
+     "epoch": 3,
+     "train_loss": 1.565351721999086,
+     "val_loss": 1.5609524767133924,
+     "seconds": 4.3
+    },
+    {
+     "epoch": 4,
+     "train_loss": 1.5523272972106934,
+     "val_loss": 1.553247627046373,
+     "seconds": 4.3
+    },
+    {
+     "epoch": 5,
+     "train_loss": 1.5441466733908948,
+     "val_loss": 1.5426246902677747,
+     "seconds": 4.2
+    },
+    {
+     "epoch": 6,
+     "train_loss": 1.5328385715720094,
+     "val_loss": 1.533716473473443,
+     "seconds": 4.2
+    },
+    {
+     "epoch": 7,
+     "train_loss": 1.5277093728383382,
+     "val_loss": 1.533891368760003,
+     "seconds": 4.2
+    },
+    {
+     "epoch": 8,
+     "train_loss": 1.5199001985361547,
+     "val_loss": 1.5329663434558445,
+     "seconds": 4.3
+    },
+    {
+     "epoch": 9,
+     "train_loss": 1.5150126441437521,
+     "val_loss": 1.5227377517488268,
+     "seconds": 4.2
+    },
+    {
+     "epoch": 10,
+     "train_loss": 1.5096574508996656,
+     "val_loss": 1.5267382595274184,
+     "seconds": 4.2
+    },
+    {
+     "epoch": 11,
+     "train_loss": 1.5063213545481364,
+     "val_loss": 1.519631669998169,
+     "seconds": 4.3
+    },
+    {
+     "epoch": 12,
+     "train_loss": 1.501742632465598,
+     "val_loss": 1.5211393669976128,
+     "seconds": 4.2
+    },
+    {
+     "epoch": 13,
+     "train_loss": 1.497536958741553,
+     "val_loss": 1.5183412790298463,
+     "seconds": 4.2
+    },
+    {
+     "epoch": 14,
+     "train_loss": 1.4941916729609173,
+     "val_loss": 1.5154032105339899,
+     "seconds": 4.4
+    },
+    {
+     "epoch": 15,
+     "train_loss": 1.4896161381050392,
+     "val_loss": 1.5149319789674547,
+     "seconds": 4.3
+    },
+    {
+     "epoch": 16,
+     "train_loss": 1.4859490596159004,
+     "val_loss": 1.5157656639946833,
+     "seconds": 4.2
+    },
+    {
+     "epoch": 17,
+     "train_loss": 1.4819789431889852,
+     "val_loss": 1.5148895599577161,
+     "seconds": 4.3
+    },
+    {
+     "epoch": 18,
+     "train_loss": 1.4809808030893774,
+     "val_loss": 1.5129787323209976,
+     "seconds": 4.1
+    },
+    {
+     "epoch": 19,
+     "train_loss": 1.4767660801969928,
+     "val_loss": 1.5139955596923829,
+     "seconds": 4.1
+    },
+    {
+     "epoch": 20,
+     "train_loss": 1.4739889871809218,
+     "val_loss": 1.5158196729024251,
+     "seconds": 4.3
+    },
+    {
+     "epoch": 21,
+     "train_loss": 1.4724285349316066,
+     "val_loss": 1.5145419631534152,
+     "seconds": 4.2
+    }
+   ],
+   "n_train_cells": 40500,
+   "n_val_cells": 4500,
+   "mean_train_tokens": 17.278962962962964,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 1.18,
+   "truncated_frac": 0.0,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 8100,
+   "e5_val": 900,
+   "test": 1584,
+   "learner_val": 1000
+  }
+ },
+ "leakage_gap_head_train_minus_test": 0.024661400136096523,
+ "n_train": 10000,
+ "n_test": 1584,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-11 00:17:28",
+ "argv": [
+  "--method",
+  "tar_repro",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_DATA_SCIENTIST_SALARY",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5"
+}

@@ -1,0 +1,328 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_SOCIAL_FILMTV_MOVIE_RATING_ITALY",
+ "fold": 2,
+ "task": "REG",
+ "score": 0.9864169866596029,
+ "metrics": {
+  "score": 0.9864169866596029,
+  "metrics": {
+   "r2": 0.9864169866596029,
+   "mse": 0.025581762106109896,
+   "rmse": 0.15994299642719556
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 103.1,
+  "fit": 102.4,
+  "predict": 0.7,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 02:48:28",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_SOCIAL_FILMTV_MOVIE_RATING_ITALY",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 10.2,
+   "probe": 12.3
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 3.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.546426,
+     0.569026,
+     0.581885,
+     0.575825
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 1.0,
+    "experts": 9.1
+   }
+  },
+  "probe": {
+   "alpha": 3.0,
+   "oof_metric": [
+    0.5570091113950765,
+    0.5795340250396437,
+    0.5932396319783567,
+    0.5896149175931957
+   ]
+  },
+  "n_extra_columns": {
+   "actors": 24,
+   "country": 21,
+   "description": 21,
+   "directors": 21,
+   "notes": 21,
+   "title": 21
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "actors_txt_pca_30": 0.142,
+    "actors_txt_pca_31": 0.069,
+    "actors_txt_pca_32": 0.028,
+    "actors_txt_pca_33": 0.0,
+    "actors_txt_pca_34": 0.0,
+    "actors_txt_pca_35": 0.0,
+    "actors_txt_pca_36": 0.0,
+    "actors_txt_pca_37": 0.0,
+    "actors_txt_pca_38": 0.0,
+    "actors_txt_pca_39": 0.0,
+    "actors_txt_pca_40": 0.0,
+    "actors_txt_pca_41": 0.0,
+    "actors_txt_pca_42": 0.006,
+    "actors_txt_pca_43": 0.001,
+    "actors_txt_pca_44": 0.0,
+    "actors_txt_pca_45": 0.016,
+    "actors_txt_pca_46": 0.011,
+    "actors_txt_pca_47": 0.0,
+    "actors_txt_pca_48": 0.006,
+    "actors_txt_pca_49": 0.0,
+    "actors_txt_pca_50": 0.0,
+    "actors_txt_pca_51": 0.0,
+    "actors_txt_pca_52": 0.0,
+    "actors_txt_pca_53": 0.172,
+    "country_txt_pca_30": 0.007,
+    "country_txt_pca_31": 0.0,
+    "country_txt_pca_32": 0.0,
+    "country_txt_pca_33": 0.0,
+    "country_txt_pca_34": 0.0,
+    "country_txt_pca_35": 0.0,
+    "country_txt_pca_36": 0.0,
+    "country_txt_pca_37": 0.0,
+    "country_txt_pca_38": 0.0,
+    "country_txt_pca_39": 0.0,
+    "country_txt_pca_40": 0.0,
+    "country_txt_pca_41": 0.0,
+    "country_txt_pca_42": 0.0,
+    "country_txt_pca_43": 0.0,
+    "country_txt_pca_44": 0.002,
+    "country_txt_pca_45": 0.0,
+    "country_txt_pca_46": 0.004,
+    "country_txt_pca_47": 0.0,
+    "country_txt_pca_48": 0.0,
+    "country_txt_pca_49": 0.0,
+    "country_txt_pca_50": 0.0,
+    "description_txt_pca_30": 0.032,
+    "description_txt_pca_31": 0.0,
+    "description_txt_pca_32": 0.012,
+    "description_txt_pca_33": 0.002,
+    "description_txt_pca_34": 0.0,
+    "description_txt_pca_35": 0.026,
+    "description_txt_pca_36": 0.007,
+    "description_txt_pca_37": 0.002,
+    "description_txt_pca_38": 0.0,
+    "description_txt_pca_39": 0.0,
+    "description_txt_pca_40": 0.015,
+    "description_txt_pca_41": 0.005,
+    "description_txt_pca_42": 0.003,
+    "description_txt_pca_43": 0.013,
+    "description_txt_pca_44": 0.006,
+    "description_txt_pca_45": 0.004,
+    "description_txt_pca_46": 0.042,
+    "description_txt_pca_47": 0.0,
+    "description_txt_pca_48": 0.003,
+    "description_txt_pca_49": 0.016,
+    "description_txt_pca_50": 0.0,
+    "directors_txt_pca_30": 0.023,
+    "directors_txt_pca_31": 0.0,
+    "directors_txt_pca_32": 0.0,
+    "directors_txt_pca_33": 0.0,
+    "directors_txt_pca_34": 0.0,
+    "directors_txt_pca_35": 0.0,
+    "directors_txt_pca_36": 0.0,
+    "directors_txt_pca_37": 0.0,
+    "directors_txt_pca_38": 0.0,
+    "directors_txt_pca_39": 0.0,
+    "directors_txt_pca_40": 0.003,
+    "directors_txt_pca_41": 0.001,
+    "directors_txt_pca_42": 0.0,
+    "directors_txt_pca_43": 0.005,
+    "directors_txt_pca_44": 0.001,
+    "directors_txt_pca_45": 0.0,
+    "directors_txt_pca_46": 0.001,
+    "directors_txt_pca_47": 0.0,
+    "directors_txt_pca_48": 0.0,
+    "directors_txt_pca_49": 0.0,
+    "directors_txt_pca_50": 0.0,
+    "notes_txt_pca_30": 0.005,
+    "notes_txt_pca_31": 0.0,
+    "notes_txt_pca_32": 0.001,
+    "notes_txt_pca_33": 0.001,
+    "notes_txt_pca_34": 0.002,
+    "notes_txt_pca_35": 0.0,
+    "notes_txt_pca_36": 0.003,
+    "notes_txt_pca_37": 0.0,
+    "notes_txt_pca_38": 0.0,
+    "notes_txt_pca_39": 0.0,
+    "notes_txt_pca_40": 0.038,
+    "notes_txt_pca_41": 0.0,
+    "notes_txt_pca_42": 0.003,
+    "notes_txt_pca_43": 0.002,
+    "notes_txt_pca_44": 0.018,
+    "notes_txt_pca_45": 0.002,
+    "notes_txt_pca_46": 0.002,
+    "notes_txt_pca_47": 0.0,
+    "notes_txt_pca_48": 0.0,
+    "notes_txt_pca_49": 0.007,
+    "notes_txt_pca_50": 0.0,
+    "title_txt_pca_30": 0.004,
+    "title_txt_pca_31": 0.002,
+    "title_txt_pca_32": 0.001,
+    "title_txt_pca_33": 0.0,
+    "title_txt_pca_34": 0.0,
+    "title_txt_pca_35": 0.0,
+    "title_txt_pca_36": 0.0,
+    "title_txt_pca_37": 0.0,
+    "title_txt_pca_38": 0.0,
+    "title_txt_pca_39": 0.0,
+    "title_txt_pca_40": 0.003,
+    "title_txt_pca_41": 0.001,
+    "title_txt_pca_42": 0.0,
+    "title_txt_pca_43": 0.006,
+    "title_txt_pca_44": 0.009,
+    "title_txt_pca_45": 0.0,
+    "title_txt_pca_46": 0.003,
+    "title_txt_pca_47": 0.0,
+    "title_txt_pca_48": 0.0,
+    "title_txt_pca_49": 0.0,
+    "title_txt_pca_50": 0.0
+   },
+   "pred_share": 0.008,
+   "group_share": {
+    "structured": 0.9736,
+    "pca": 0.0184,
+    "lex": 0.0014,
+    "nbr": 0.0017,
+    "num": 0.0032,
+    "probe": 0.0017
+   },
+   "top10": [
+    [
+     "public_vote",
+     49.306
+    ],
+    [
+     "critics_vote",
+     47.725
+    ],
+    [
+     "actors_txt_pca_53",
+     0.172
+    ],
+    [
+     "actors_txt_pca_30",
+     0.142
+    ],
+    [
+     "country_txt_pca_0",
+     0.107
+    ],
+    [
+     "total_votes",
+     0.097
+    ],
+    [
+     "tension",
+     0.081
+    ],
+    [
+     "rhythm",
+     0.075
+    ],
+    [
+     "actors_txt_pca_31",
+     0.069
+    ],
+    [
+     "description_txt_pca_8",
+     0.053
+    ]
+   ]
+  }
+ }
+}

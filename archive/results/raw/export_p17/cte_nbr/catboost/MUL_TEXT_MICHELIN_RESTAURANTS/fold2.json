@@ -1,0 +1,223 @@
+{
+ "method": "cte_nbr",
+ "run_name": "cte_nbr",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_MICHELIN_RESTAURANTS",
+ "fold": 2,
+ "task": "MUL",
+ "score": 0.9121788630323249,
+ "metrics": {
+  "score": 0.9121788630323249,
+  "metrics": {
+   "auc": 0.9121788630323249,
+   "logloss": 0.6077308897846779
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.908149007205249,
+  "joint_tar": 0.9199266356593956,
+  "unimodal_structured": 0.8789668369619197,
+  "unimodal_text": 0.8618703424281817
+ },
+ "diff_vs_csv_joint_tar": -0.007747772627070715,
+ "runtime_s": {
+  "total": 175.8,
+  "fit": 175.6,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte_nbr",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 1884,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-13 23:42:50",
+ "argv": [
+  "--method",
+  "cte_nbr",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_MICHELIN_RESTAURANTS",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte_nbr",
+  "experts": [
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": false,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 0.0
+  },
+  "expert_cache_hits": {
+   "nbr": true
+  },
+  "lex_alpha": null,
+  "n_classes": 5,
+  "class_columns": "C-1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 41406
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "nbr:__all__": 0.7297816709274219
+    },
+    "test": {
+     "nbr:__all__": 0.7539867404285219
+    }
+   },
+   "gap_train_minus_test": {
+    "nbr:__all__": -0.02420506950110002
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "Address": 4,
+   "Cuisine": 0,
+   "Description": 0,
+   "FacilitiesAndServices": 0,
+   "Location": 0,
+   "Name": 0
+  },
+  "seconds": {
+   "frozen_embeddings": 0.7,
+   "experts": 0.0
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Address_txt_pca_30": 0.926,
+    "Address_txt_pca_31": 0.303,
+    "Address_txt_pca_32": 0.596,
+    "Address_txt_pca_33": 2.123
+   },
+   "pred_share": 0.0395,
+   "group_share": {
+    "structured": 0.3544,
+    "pca": 0.6061,
+    "nbr": 0.0395
+   },
+   "top10": [
+    [
+     "Price",
+     33.919
+    ],
+    [
+     "Description_txt_pca_1",
+     5.279
+    ],
+    [
+     "Address_txt_pca_33",
+     2.123
+    ],
+    [
+     "FacilitiesAndServices_txt_pca_2",
+     1.466
+    ],
+    [
+     "Description_txt_pca_10",
+     1.302
+    ],
+    [
+     "Description_txt_pca_3",
+     1.157
+    ],
+    [
+     "Description_txt_pca_0",
+     1.129
+    ],
+    [
+     "FacilitiesAndServices_txt_pca_1",
+     0.957
+    ],
+    [
+     "Address_txt_pca_30",
+     0.926
+    ],
+    [
+     "Cuisine_txt_pca_1",
+     0.851
+    ]
+   ]
+  }
+ }
+}

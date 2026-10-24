@@ -1,0 +1,218 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_TRANSPORTATION_USED_CAR_SAUDI_ARABIA",
+ "fold": 1,
+ "task": "REG",
+ "score": 0.9229431655525713,
+ "metrics": {
+  "score": 0.9229431655525713,
+  "metrics": {
+   "r2": 0.9229431655525713,
+   "mse": 353201791.11206466,
+   "rmse": 18793.663589413976
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 37.8,
+  "fit": 37.8,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 7232,
+ "n_test": 803,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 03:07:18",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_TRANSPORTATION_USED_CAR_SAUDI_ARABIA",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 0.3,
+   "probe": 0.6
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 3.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.207404,
+     0.208308,
+     0.209069,
+     0.208181
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.0,
+    "experts": 0.3
+   }
+  },
+  "probe": {
+   "alpha": 0.3,
+   "oof_metric": [
+    0.20270825391682837,
+    0.19587583557351623,
+    0.18546904674138173,
+    0.1613828136234886
+   ]
+  },
+  "n_extra_columns": {
+   "Type": 24
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Type_txt_pca_30": 1.601,
+    "Type_txt_pca_31": 0.396,
+    "Type_txt_pca_32": 0.783,
+    "Type_txt_pca_33": 0.009,
+    "Type_txt_pca_34": 0.014,
+    "Type_txt_pca_35": 0.023,
+    "Type_txt_pca_36": 0.022,
+    "Type_txt_pca_37": 0.0,
+    "Type_txt_pca_38": 0.0,
+    "Type_txt_pca_39": 0.0,
+    "Type_txt_pca_40": 0.0,
+    "Type_txt_pca_41": 0.0,
+    "Type_txt_pca_42": 1.471,
+    "Type_txt_pca_43": 1.415,
+    "Type_txt_pca_44": 0.0,
+    "Type_txt_pca_45": 1.106,
+    "Type_txt_pca_46": 5.509,
+    "Type_txt_pca_47": 0.085,
+    "Type_txt_pca_48": 0.003,
+    "Type_txt_pca_49": 0.0,
+    "Type_txt_pca_50": 0.0,
+    "Type_txt_pca_51": 0.0,
+    "Type_txt_pca_52": 0.0,
+    "Type_txt_pca_53": 1.333
+   },
+   "pred_share": 0.1377,
+   "group_share": {
+    "structured": 0.703,
+    "pca": 0.1593,
+    "lex": 0.016,
+    "nbr": 0.0118,
+    "num": 0.0966,
+    "probe": 0.0133
+   },
+   "top10": [
+    [
+     "Negotiable",
+     25.963
+    ],
+    [
+     "Year",
+     18.974
+    ],
+    [
+     "Engine_Size",
+     12.409
+    ],
+    [
+     "Type_txt_pca_46",
+     5.509
+    ],
+    [
+     "Make",
+     4.941
+    ],
+    [
+     "Mileage",
+     3.728
+    ],
+    [
+     "Type_txt_pca_0",
+     2.461
+    ],
+    [
+     "Options",
+     2.227
+    ],
+    [
+     "Type_txt_pca_30",
+     1.601
+    ],
+    [
+     "Type_txt_pca_42",
+     1.471
+    ]
+   ]
+  }
+ }
+}

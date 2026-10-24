@@ -1,0 +1,393 @@
+{
+ "method": "cte_residual",
+ "run_name": "cte_residual",
+ "engine_version": "p6/2",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_MICHELIN_RESTAURANTS",
+ "fold": 0,
+ "task": "MUL",
+ "score": 0.9211335516429745,
+ "metrics": {
+  "score": 0.9211335516429745,
+  "metrics": {
+   "auc": 0.9211335516429745,
+   "logloss": 0.5870742178948758
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.907294109532134,
+  "joint_tar": 0.9191443485650728,
+  "unimodal_structured": 0.878042405404688,
+  "unimodal_text": 0.8642622745146606
+ },
+ "diff_vs_csv_joint_tar": 0.0019892030779017356,
+ "runtime_s": {
+  "total": 518.0,
+  "fit": 517.9,
+  "predict": 0.2,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p6/2",
+   "method": "cte_residual",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 1884,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "d99be740ceb5b6e12eac61876c413e83c70cd11d",
+  "dirty": false
+ },
+ "timestamp": "2026-10-14 16:13:39",
+ "argv": [
+  "--method",
+  "cte_residual",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_MICHELIN_RESTAURANTS",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p6/2",
+  "method": "cte_residual",
+  "p6": {
+   "struct_cols": [
+    "GreenStar",
+    "Latitude",
+    "Longitude",
+    "PhoneNumber",
+    "Price"
+   ],
+   "p6_config": {
+    "struct_iterations": 300,
+    "struct_depth": 6,
+    "struct_learning_rate": 0.1,
+    "inner_folds": 3,
+    "nb_smoothing": 1.0,
+    "seed": 42
+   },
+   "n_struct_fits": 20,
+   "struct_oof_metric": 0.871052,
+   "lexical": "tfidf",
+   "targets": "residual"
+  },
+  "experts": [
+   "lex",
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": true,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "tfidf": 27.88,
+   "ridge": 264.03,
+   "n_tfidf_features": 100000,
+   "knn": 0.78,
+   "numeracy": 9.05
+  },
+  "expert_cache_hits": {
+   "lex": false,
+   "nbr": false
+  },
+  "lex_alpha": {
+   "chosen": 10.0,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.858411,
+    0.878021,
+    0.891451,
+    0.894108
+   ]
+  },
+  "n_classes": 5,
+  "class_columns": "C-1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 41441
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.7906587132906309,
+     "nbr:__all__": 0.6208077099284266
+    },
+    "test": {
+     "lex:__all__": 0.7757811072965044,
+     "nbr:__all__": 0.6317423970386814
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": 0.014877605994126464,
+    "nbr:__all__": -0.010934687110254804
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "Address": 28,
+   "Cuisine": 20,
+   "Description": 20,
+   "FacilitiesAndServices": 20,
+   "Location": 20,
+   "Name": 20
+  },
+  "seconds": {
+   "frozen_embeddings": 0.6,
+   "experts": 301.9
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Address_txt_pca_30": 1.146,
+    "Address_txt_pca_31": 1.494,
+    "Address_txt_pca_32": 1.248,
+    "Address_txt_pca_33": 4.576,
+    "Address_txt_pca_34": 0.586,
+    "Address_txt_pca_35": 0.375,
+    "Address_txt_pca_36": 0.327,
+    "Address_txt_pca_37": 0.913,
+    "Address_txt_pca_38": 0.013,
+    "Address_txt_pca_39": 0.421,
+    "Address_txt_pca_40": 0.911,
+    "Address_txt_pca_41": 0.309,
+    "Address_txt_pca_42": 0.0,
+    "Address_txt_pca_43": 0.012,
+    "Address_txt_pca_44": 0.0,
+    "Address_txt_pca_45": 0.0,
+    "Address_txt_pca_46": 0.0,
+    "Address_txt_pca_47": 0.176,
+    "Address_txt_pca_48": 0.0,
+    "Address_txt_pca_49": 0.014,
+    "Address_txt_pca_50": 0.238,
+    "Address_txt_pca_51": 0.267,
+    "Address_txt_pca_52": 0.241,
+    "Address_txt_pca_53": 0.178,
+    "Address_txt_pca_54": 0.0,
+    "Address_txt_pca_55": 0.0,
+    "Address_txt_pca_56": 0.002,
+    "Address_txt_pca_57": 0.0,
+    "Cuisine_txt_pca_30": 0.0,
+    "Cuisine_txt_pca_31": 0.0,
+    "Cuisine_txt_pca_32": 0.0,
+    "Cuisine_txt_pca_33": 0.0,
+    "Cuisine_txt_pca_34": 0.0,
+    "Cuisine_txt_pca_35": 0.0,
+    "Cuisine_txt_pca_36": 0.0,
+    "Cuisine_txt_pca_37": 0.0,
+    "Cuisine_txt_pca_38": 0.0,
+    "Cuisine_txt_pca_39": 0.161,
+    "Cuisine_txt_pca_40": 0.023,
+    "Cuisine_txt_pca_41": 0.0,
+    "Cuisine_txt_pca_42": 0.038,
+    "Cuisine_txt_pca_43": 0.125,
+    "Cuisine_txt_pca_44": 0.0,
+    "Cuisine_txt_pca_45": 0.046,
+    "Cuisine_txt_pca_46": 0.0,
+    "Cuisine_txt_pca_47": 0.0,
+    "Cuisine_txt_pca_48": 0.002,
+    "Cuisine_txt_pca_49": 0.0,
+    "Description_txt_pca_30": 0.05,
+    "Description_txt_pca_31": 0.033,
+    "Description_txt_pca_32": 0.095,
+    "Description_txt_pca_33": 0.114,
+    "Description_txt_pca_34": 0.001,
+    "Description_txt_pca_35": 0.031,
+    "Description_txt_pca_36": 0.0,
+    "Description_txt_pca_37": 0.0,
+    "Description_txt_pca_38": 0.0,
+    "Description_txt_pca_39": 2.467,
+    "Description_txt_pca_40": 1.016,
+    "Description_txt_pca_41": 0.282,
+    "Description_txt_pca_42": 0.363,
+    "Description_txt_pca_43": 0.214,
+    "Description_txt_pca_44": 0.045,
+    "Description_txt_pca_45": 0.443,
+    "Description_txt_pca_46": 0.008,
+    "Description_txt_pca_47": 0.0,
+    "Description_txt_pca_48": 0.328,
+    "Description_txt_pca_49": 0.0,
+    "FacilitiesAndServices_txt_pca_30": 0.0,
+    "FacilitiesAndServices_txt_pca_31": 0.0,
+    "FacilitiesAndServices_txt_pca_32": 0.0,
+    "FacilitiesAndServices_txt_pca_33": 0.0,
+    "FacilitiesAndServices_txt_pca_34": 0.0,
+    "FacilitiesAndServices_txt_pca_35": 0.0,
+    "FacilitiesAndServices_txt_pca_36": 0.0,
+    "FacilitiesAndServices_txt_pca_37": 0.0,
+    "FacilitiesAndServices_txt_pca_38": 0.0,
+    "FacilitiesAndServices_txt_pca_39": 0.722,
+    "FacilitiesAndServices_txt_pca_40": 0.168,
+    "FacilitiesAndServices_txt_pca_41": 0.0,
+    "FacilitiesAndServices_txt_pca_42": 0.102,
+    "FacilitiesAndServices_txt_pca_43": 0.378,
+    "FacilitiesAndServices_txt_pca_44": 0.0,
+    "FacilitiesAndServices_txt_pca_45": 0.0,
+    "FacilitiesAndServices_txt_pca_46": 0.0,
+    "FacilitiesAndServices_txt_pca_47": 0.0,
+    "FacilitiesAndServices_txt_pca_48": 0.0,
+    "FacilitiesAndServices_txt_pca_49": 0.0,
+    "Location_txt_pca_30": 0.0,
+    "Location_txt_pca_31": 0.0,
+    "Location_txt_pca_32": 0.0,
+    "Location_txt_pca_33": 0.0,
+    "Location_txt_pca_34": 0.0,
+    "Location_txt_pca_35": 0.0,
+    "Location_txt_pca_36": 0.0,
+    "Location_txt_pca_37": 0.0,
+    "Location_txt_pca_38": 0.0,
+    "Location_txt_pca_39": 0.112,
+    "Location_txt_pca_40": 0.025,
+    "Location_txt_pca_41": 0.0,
+    "Location_txt_pca_42": 0.177,
+    "Location_txt_pca_43": 0.144,
+    "Location_txt_pca_44": 0.0,
+    "Location_txt_pca_45": 0.218,
+    "Location_txt_pca_46": 0.0,
+    "Location_txt_pca_47": 0.0,
+    "Location_txt_pca_48": 0.0,
+    "Location_txt_pca_49": 0.0,
+    "Name_txt_pca_30": 0.0,
+    "Name_txt_pca_31": 0.006,
+    "Name_txt_pca_32": 0.003,
+    "Name_txt_pca_33": 0.003,
+    "Name_txt_pca_34": 0.0,
+    "Name_txt_pca_35": 0.0,
+    "Name_txt_pca_36": 0.0,
+    "Name_txt_pca_37": 0.0,
+    "Name_txt_pca_38": 0.0,
+    "Name_txt_pca_39": 0.253,
+    "Name_txt_pca_40": 0.054,
+    "Name_txt_pca_41": 0.004,
+    "Name_txt_pca_42": 0.409,
+    "Name_txt_pca_43": 0.123,
+    "Name_txt_pca_44": 0.0,
+    "Name_txt_pca_45": 0.095,
+    "Name_txt_pca_46": 0.0,
+    "Name_txt_pca_47": 0.0,
+    "Name_txt_pca_48": 0.001,
+    "Name_txt_pca_49": 0.0
+   },
+   "pred_share": 0.2233,
+   "group_share": {
+    "structured": 0.2954,
+    "pca": 0.4812,
+    "lex": 0.0846,
+    "nbr": 0.022,
+    "num": 0.1167
+   },
+   "top10": [
+    [
+     "Price",
+     28.359
+    ],
+    [
+     "Address_txt_pca_33",
+     4.576
+    ],
+    [
+     "Description_txt_pca_39",
+     2.467
+    ],
+    [
+     "Description_txt_pca_1",
+     1.743
+    ],
+    [
+     "Address_txt_pca_31",
+     1.494
+    ],
+    [
+     "Address_txt_pca_32",
+     1.248
+    ],
+    [
+     "Address_txt_pca_30",
+     1.146
+    ],
+    [
+     "Description_txt_pca_40",
+     1.016
+    ],
+    [
+     "Location_txt_pca_0",
+     0.985
+    ],
+    [
+     "Address_txt_pca_37",
+     0.913
+    ]
+   ]
+  }
+ }
+}

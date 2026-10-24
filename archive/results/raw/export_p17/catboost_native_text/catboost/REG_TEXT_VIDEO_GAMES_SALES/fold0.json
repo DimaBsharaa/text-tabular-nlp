@@ -1,0 +1,97 @@
+{
+ "method": "catboost_native_text",
+ "run_name": "catboost_native_text",
+ "engine_version": "p6/2",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_VIDEO_GAMES_SALES",
+ "fold": 0,
+ "task": "REG",
+ "score": 0.28409591042229965,
+ "metrics": {
+  "score": 0.28409591042229965,
+  "metrics": {
+   "r2": 0.28409591042229965,
+   "mse": 1.209071132603585,
+   "rmse": 1.09957770648717
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.4089695328701918,
+  "joint_tar": 0.4998599134924911,
+  "unimodal_structured": -0.0097855861952249,
+  "unimodal_text": 0.4011096276441611
+ },
+ "diff_vs_csv_joint_tar": -0.21576400307019145,
+ "runtime_s": {
+  "total": 353.0,
+  "fit": 353.0,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": null,
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 1659,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "d99be740ceb5b6e12eac61876c413e83c70cd11d",
+  "dirty": false
+ },
+ "timestamp": "2026-10-14 23:09:24",
+ "argv": [
+  "--method",
+  "catboost_native_text",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_VIDEO_GAMES_SALES",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "native_text": {
+  "text_features": [
+   "Name__native_text",
+   "Publisher__native_text"
+  ],
+  "feature_calcers": [
+   "BoW"
+  ],
+  "importance_share": 0.7128
+ }
+}

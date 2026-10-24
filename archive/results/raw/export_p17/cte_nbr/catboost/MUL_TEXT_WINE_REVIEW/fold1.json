@@ -1,0 +1,227 @@
+{
+ "method": "cte_nbr",
+ "run_name": "cte_nbr",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_WINE_REVIEW",
+ "fold": 1,
+ "task": "MUL",
+ "score": 0.9749029188318256,
+ "metrics": {
+  "score": 0.9749029188318256,
+  "metrics": {
+   "auc": 0.9749029188318256,
+   "logloss": 0.8973992612048162
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.974256879502789,
+  "joint_tar": 0.9808372086998622,
+  "unimodal_structured": 0.8633380427541938,
+  "unimodal_text": 0.9715211703231756
+ },
+ "diff_vs_csv_joint_tar": -0.00593428986803668,
+ "runtime_s": {
+  "total": 1250.3,
+  "fit": 1250.2,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte_nbr",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-13 22:59:18",
+ "argv": [
+  "--method",
+  "cte_nbr",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_WINE_REVIEW",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte_nbr",
+  "experts": [
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": false,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 0.0
+  },
+  "expert_cache_hits": {
+   "nbr": true
+  },
+  "lex_alpha": null,
+  "n_classes": 30,
+  "class_columns": "top10+maxp+entropy",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 12105
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "nbr:__all__": 0.9365744838242229
+    },
+    "test": {
+     "nbr:__all__": 0.943596973758166
+    }
+   },
+   "gap_train_minus_test": {
+    "nbr:__all__": -0.007022489933943055
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "description": 12,
+   "province": 0
+  },
+  "seconds": {
+   "frozen_embeddings": 0.3,
+   "experts": 0.0
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "description_txt_pca_30": 6.902,
+    "description_txt_pca_31": 6.745,
+    "description_txt_pca_32": 4.767,
+    "description_txt_pca_33": 3.37,
+    "description_txt_pca_34": 2.55,
+    "description_txt_pca_35": 2.138,
+    "description_txt_pca_36": 1.866,
+    "description_txt_pca_37": 1.732,
+    "description_txt_pca_38": 0.968,
+    "description_txt_pca_39": 1.064,
+    "description_txt_pca_40": 4.343,
+    "description_txt_pca_41": 1.437
+   },
+   "pred_share": 0.3788,
+   "group_share": {
+    "structured": 0.0613,
+    "pca": 0.5599,
+    "nbr": 0.3788
+   },
+   "top10": [
+    [
+     "description_txt_pca_30",
+     6.902
+    ],
+    [
+     "description_txt_pca_31",
+     6.745
+    ],
+    [
+     "description_txt_pca_1",
+     5.092
+    ],
+    [
+     "description_txt_pca_32",
+     4.767
+    ],
+    [
+     "description_txt_pca_40",
+     4.343
+    ],
+    [
+     "description_txt_pca_2",
+     3.729
+    ],
+    [
+     "country",
+     3.404
+    ],
+    [
+     "description_txt_pca_33",
+     3.37
+    ],
+    [
+     "description_txt_pca_34",
+     2.55
+    ],
+    [
+     "price",
+     2.206
+    ]
+   ]
+  }
+ }
+}

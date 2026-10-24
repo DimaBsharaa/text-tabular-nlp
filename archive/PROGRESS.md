@@ -2375,3 +2375,22 @@ Features for the learner = structured columns (upstream preprocessing)
   `f145a76`, 265 runs on the `c63c26e` content. Nothing on the machine changed after the runs.
 - **Reading (unchanged from E58):** the implementation is shown to be equivalent; the E55 check still failed its
   tolerance, and keeping the runs remains the documented deviation of E56.
+
+## E60 — Pre-submission check from a fresh clone; development raw results committed   (2026-10-24)
+- **Fresh clone** of GitHub `3580ebe` in an empty folder, `uv sync --frozen`: `make_results.py`, `paper_assets.py` and
+  `p18_report.py` regenerate `results/*.csv`, `paper/generated/*` and `reports/p18/p18_report.json` byte-identical;
+  `build_results_notebook.py` runs all 19 code cells without error, sources and every text output identical; the
+  paper compiles to the same text; `check_recompute.py` reproduces all 5 learners from `results/raw` and the upstream
+  leaderboard.
+- **Baselines:** all 480 final runs' Joint TAR (`ft`) and Joint Frozen (`all`) references equal the upstream
+  leaderboard files (one row per lookup); those files and all 463 upstream files are identical to `paper_version`.
+- **Any text-tabular CSV:** a synthetic product-review table (not from the benchmark) trains and predicts end to end
+  in both modes (`--learner lgbm` classification; default CatBoost regression, R² 0.66); 100 new rows predicted.
+  Found: when no column passes MulTaBench's text rule (≥ 100 distinct values or ≥ 80% distinct), `train.py` crashed with
+  an AttributeError at saving; it now exits with that rule in a clear message (test `test_csv_without_text_column_explains`).
+- **Regenerable to the raw files:** the 1,927 raw JSONs behind the development rows of `reports/tables/fold_scores.csv`
+  (ablations, our Joint TAR re-implementation, earlier versions; 12.3 MB, from the exports `export_p17` and
+  `export_20261011_200658`) are committed in `archive/results/raw/<export>/`; `scripts/check_fold_scores.py` (and its
+  test) checks all 3,195 rows against their raw JSONs: 0 mismatches.
+- **Readers:** `results/README.md`; a "Reproduce the evaluation" section in the README; the paper's last section is
+  named "Conclusion and summary" as in the course's list of required sections.

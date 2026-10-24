@@ -1,0 +1,245 @@
+{
+ "method": "cte_lex_insample",
+ "run_name": "cte_lex_insample",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_SPOTIFY_GENRES",
+ "fold": 0,
+ "task": "MUL",
+ "score": 0.9585780484734667,
+ "metrics": {
+  "score": 0.9585780484734667,
+  "metrics": {
+   "auc": 0.9585780484734667,
+   "logloss": 2.170258733843289
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9612303646693776,
+  "joint_tar": 0.9649895490937046,
+  "unimodal_structured": 0.9247446904732498,
+  "unimodal_text": 0.9145449879204758
+ },
+ "diff_vs_csv_joint_tar": -0.0064115006202378755,
+ "runtime_s": {
+  "total": 6778.7,
+  "fit": 6778.5,
+  "predict": 0.2,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte_lex_insample",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-14 06:11:18",
+ "argv": [
+  "--method",
+  "cte_lex_insample",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_SPOTIFY_GENRES",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte_lex_insample",
+  "experts": [
+   "lex"
+  ],
+  "mode": "insample",
+  "numeracy": false,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "tfidf": 2.66,
+   "ridge": 305.11,
+   "n_tfidf_features": 71000,
+   "numeracy": 0.0
+  },
+  "expert_cache_hits": {
+   "lex": false
+  },
+  "lex_alpha": {
+   "chosen": 10.0,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.823311,
+    0.842424,
+    0.861285,
+    0.879461
+   ]
+  },
+  "n_classes": 114,
+  "class_columns": "top10+maxp+entropy",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 27231
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.9994656329326762
+    },
+    "test": {
+     "lex:__all__": 0.8827957680449229
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": 0.11666986488775333
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "album_name": 12,
+   "artists": 0,
+   "track_name": 0
+  },
+  "seconds": {
+   "frozen_embeddings": 0.4,
+   "experts": 307.8
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "album_name_txt_pca_30": 0.636,
+    "album_name_txt_pca_31": 0.621,
+    "album_name_txt_pca_32": 0.644,
+    "album_name_txt_pca_33": 0.522,
+    "album_name_txt_pca_34": 0.48,
+    "album_name_txt_pca_35": 0.632,
+    "album_name_txt_pca_36": 0.572,
+    "album_name_txt_pca_37": 0.918,
+    "album_name_txt_pca_38": 0.722,
+    "album_name_txt_pca_39": 0.714,
+    "album_name_txt_pca_40": 3.355,
+    "album_name_txt_pca_41": 1.978
+   },
+   "pred_share": 0.1179,
+   "group_share": {
+    "structured": 0.3163,
+    "pca": 0.5657,
+    "lex": 0.1179
+   },
+   "top10": [
+    [
+     "popularity",
+     9.43
+    ],
+    [
+     "acousticness",
+     3.922
+    ],
+    [
+     "instrumentalness",
+     3.704
+    ],
+    [
+     "album_name_txt_pca_40",
+     3.355
+    ],
+    [
+     "danceability",
+     3.154
+    ],
+    [
+     "track_name_txt_pca_1",
+     2.081
+    ],
+    [
+     "duration_ms",
+     2.063
+    ],
+    [
+     "energy",
+     2.017
+    ],
+    [
+     "album_name_txt_pca_41",
+     1.978
+    ],
+    [
+     "artists_txt_pca_1",
+     1.935
+    ]
+   ]
+  }
+ }
+}

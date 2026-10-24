@@ -1,0 +1,161 @@
+{
+ "method": "frozen0",
+ "run_name": "frozen0",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "BIN_TEXT_FAKE_JOB_POSTING",
+ "fold": 3,
+ "task": "BIN",
+ "score": 0.9341664708646615,
+ "metrics": {
+  "score": 0.9341664708646615,
+  "metrics": {
+   "auc": 0.9341664708646615
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9289385573308272,
+  "joint_tar": 0.9197897086466164,
+  "unimodal_structured": 0.695084880169173,
+  "unimodal_text": 0.930201480263158
+ },
+ "diff_vs_csv_joint_tar": 0.01437676221804518,
+ "runtime_s": {
+  "total": 33.0,
+  "fit": 32.9,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "frozen0",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 9998,
+ "n_test": 1272,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "c82596a02b507b22d07a6ff5eda81dba73b31ed1",
+  "dirty": false
+ },
+ "timestamp": "2026-10-15 16:39:33",
+ "argv": [
+  "--method",
+  "frozen0",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "BIN_TEXT_FAKE_JOB_POSTING",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "frozen0",
+  "groups": [],
+  "seconds": {
+   "base": 0.2
+  },
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 19613
+  },
+  "n_extra_columns": {
+   "description": 0,
+   "salary_range": 0,
+   "title": 0
+  },
+  "catboost_importance": {
+   "pred_columns": {},
+   "pred_share": 0.0,
+   "group_share": {
+    "structured": 0.0295,
+    "pca": 0.9705
+   },
+   "top10": [
+    [
+     "description_txt_pca_3",
+     6.291
+    ],
+    [
+     "description_txt_pca_1",
+     6.09
+    ],
+    [
+     "description_txt_pca_0",
+     4.157
+    ],
+    [
+     "description_txt_pca_4",
+     3.979
+    ],
+    [
+     "title_txt_pca_2",
+     3.837
+    ],
+    [
+     "description_txt_pca_9",
+     3.316
+    ],
+    [
+     "description_txt_pca_7",
+     2.94
+    ],
+    [
+     "required_experience",
+     2.847
+    ],
+    [
+     "description_txt_pca_19",
+     2.493
+    ],
+    [
+     "description_txt_pca_16",
+     2.415
+    ]
+   ]
+  }
+ }
+}

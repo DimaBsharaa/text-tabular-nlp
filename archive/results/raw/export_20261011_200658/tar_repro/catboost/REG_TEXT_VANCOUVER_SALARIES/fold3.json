@@ -1,0 +1,240 @@
+{
+ "method": "tar_repro",
+ "run_name": "tar_repro",
+ "engine_version": "tar_engine/2",
+ "tar_path": "fast",
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_VANCOUVER_SALARIES",
+ "fold": 3,
+ "task": "REG",
+ "score": 0.7854536859251497,
+ "metrics": {
+  "score": 0.7854536859251497,
+  "metrics": {
+   "r2": 0.7854536859251497,
+   "mse": 157900994.6587264,
+   "rmse": 12565.866251823883
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.7703527630771544,
+  "joint_tar": 0.7881958632925768,
+  "unimodal_structured": 0.3349827520183843,
+  "unimodal_text": 0.5723346746111205
+ },
+ "diff_vs_csv_joint_tar": -0.002742177367427101,
+ "runtime_s": {
+  "total": 39.2,
+  "fit": 39.1,
+  "predict": 0.0,
+  "tar_lower_cache": 1.0,
+  "tar_train": 23.1,
+  "tar_encode": 0.4
+ },
+ "tar": {
+  "cache_key": "REG_TEXT_VANCOUVER_SALARIES/fold3/tar_repro/seed42/07055b3820_79045a221d",
+  "cache_hit": false,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "tar_engine/2"
+  },
+  "text_cols": [
+   "name",
+   "title"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.3477775152575102,
+    "n": 8100
+   },
+   "e5_val": {
+    "score": 0.3299966851688495,
+    "n": 900
+   },
+   "test": {
+    "score": 0.3448048650290393,
+    "n": 2000
+   },
+   "learner_val": {
+    "score": 0.3461127600786166,
+    "n": 1000
+   }
+  },
+  "n_unique_texts": {
+   "name": 5275,
+   "title": 1801
+  },
+  "train": {
+   "epochs_run": 14,
+   "best_epoch": 11,
+   "best_val_loss": 2.854014139175415,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 3.0021281212936213,
+     "val_loss": 2.995922835667928,
+     "seconds": 1.9
+    },
+    {
+     "epoch": 2,
+     "train_loss": 2.9896033055105327,
+     "val_loss": 2.985614866680569,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 3,
+     "train_loss": 2.9647476059713482,
+     "val_loss": 2.9466054365370007,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 4,
+     "train_loss": 2.913438309328056,
+     "val_loss": 2.90824223836263,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 5,
+     "train_loss": 2.8829024387877666,
+     "val_loss": 2.890109729766846,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 6,
+     "train_loss": 2.864372912041935,
+     "val_loss": 2.87499631245931,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 7,
+     "train_loss": 2.8484053330362578,
+     "val_loss": 2.8694037352667916,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 8,
+     "train_loss": 2.8383273182386235,
+     "val_loss": 2.8763913112216524,
+     "seconds": 1.7
+    },
+    {
+     "epoch": 9,
+     "train_loss": 2.8259914766711955,
+     "val_loss": 2.8592987230088975,
+     "seconds": 1.7
+    },
+    {
+     "epoch": 10,
+     "train_loss": 2.8176622287138007,
+     "val_loss": 2.8648141532474094,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 11,
+     "train_loss": 2.810881894311787,
+     "val_loss": 2.854014139175415,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 12,
+     "train_loss": 2.8033631720366303,
+     "val_loss": 2.855980052947998,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 13,
+     "train_loss": 2.797424675859051,
+     "val_loss": 2.8563628991444907,
+     "seconds": 1.6
+    },
+    {
+     "epoch": 14,
+     "train_loss": 2.792490323620078,
+     "val_loss": 2.857031627231174,
+     "seconds": 1.6
+    }
+   ],
+   "n_train_cells": 16200,
+   "n_val_cells": 1800,
+   "mean_train_tokens": 9.734012345679012,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 0.62,
+   "truncated_frac": 0.0,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 8100,
+   "e5_val": 900,
+   "test": 2000,
+   "learner_val": 1000
+  }
+ },
+ "leakage_gap_head_train_minus_test": 0.00297265022847093,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-10 21:44:31",
+ "argv": [
+  "--method",
+  "tar_repro",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_VANCOUVER_SALARIES",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5"
+}

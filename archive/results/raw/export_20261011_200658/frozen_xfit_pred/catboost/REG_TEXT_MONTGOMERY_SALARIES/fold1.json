@@ -1,0 +1,387 @@
+{
+ "method": "frozen_xfit_pred",
+ "run_name": "frozen_xfit_pred",
+ "engine_version": "stacking/1",
+ "tar_path": "fast",
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_MONTGOMERY_SALARIES",
+ "fold": 1,
+ "task": "REG",
+ "score": 0.9666788820327595,
+ "metrics": {
+  "score": 0.9666788820327595,
+  "metrics": {
+   "r2": 0.9666788820327595,
+   "mse": 30255803.38122806,
+   "rmse": 5500.527554810362
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9537292540315674,
+  "joint_tar": 0.9625839866340083,
+  "unimodal_structured": 0.9334939713851448,
+  "unimodal_text": 0.8502105408713789
+ },
+ "diff_vs_csv_joint_tar": 0.004094895398751186,
+ "runtime_s": {
+  "total": 231.6,
+  "fit": 231.5,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_key": "REG_TEXT_MONTGOMERY_SALARIES/fold1/tar_repro/seed42/07055b3820_5e2794beb2",
+  "cache_hit": true,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "stacking/1",
+   "method": "frozen_xfit_pred",
+   "base": "tar_repro"
+  },
+  "text_cols": [
+   "date_first_hired",
+   "division",
+   "employee_position_title",
+   "full_name"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.5678098243635572,
+    "n": 6729
+   },
+   "e5_val": {
+    "score": 0.5354438614087587,
+    "n": 747
+   },
+   "test": {
+    "score": 0.5414969569727206,
+    "n": 922
+   },
+   "learner_val": {
+    "score": 0.5476046461616532,
+    "n": 830
+   }
+  },
+  "n_unique_texts": {
+   "date_first_hired": 2264,
+   "division": 694,
+   "employee_position_title": 385,
+   "full_name": 9222
+  },
+  "train": {
+   "epochs_run": 20,
+   "best_epoch": 17,
+   "best_val_loss": 2.627752833257877,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 2.993973587965572,
+     "val_loss": 2.977946990943817,
+     "seconds": 3.0
+    },
+    {
+     "epoch": 2,
+     "train_loss": 2.943315660250206,
+     "val_loss": 2.8804612536347376,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 3,
+     "train_loss": 2.822732330980725,
+     "val_loss": 2.7823414157831685,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 4,
+     "train_loss": 2.748042103226994,
+     "val_loss": 2.7319440161846726,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 5,
+     "train_loss": 2.7030940157181265,
+     "val_loss": 2.7054315960231716,
+     "seconds": 2.9
+    },
+    {
+     "epoch": 6,
+     "train_loss": 2.672067530956997,
+     "val_loss": 2.686864168289675,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 7,
+     "train_loss": 2.651488202095457,
+     "val_loss": 2.6768565825828747,
+     "seconds": 3.0
+    },
+    {
+     "epoch": 8,
+     "train_loss": 2.6329061383743273,
+     "val_loss": 2.664437470187145,
+     "seconds": 2.9
+    },
+    {
+     "epoch": 9,
+     "train_loss": 2.6188698070756855,
+     "val_loss": 2.655406022167589,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 10,
+     "train_loss": 2.6068490216239173,
+     "val_loss": 2.6556204424964056,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 11,
+     "train_loss": 2.595282952876551,
+     "val_loss": 2.644773157724894,
+     "seconds": 2.9
+    },
+    {
+     "epoch": 12,
+     "train_loss": 2.5861253226772427,
+     "val_loss": 2.644295030489185,
+     "seconds": 2.9
+    },
+    {
+     "epoch": 13,
+     "train_loss": 2.5762687748086845,
+     "val_loss": 2.638728009010734,
+     "seconds": 2.9
+    },
+    {
+     "epoch": 14,
+     "train_loss": 2.5664902485963546,
+     "val_loss": 2.63309268651398,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 15,
+     "train_loss": 2.562180333761815,
+     "val_loss": 2.6346926411471694,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 16,
+     "train_loss": 2.5542894644162546,
+     "val_loss": 2.629393111271073,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 17,
+     "train_loss": 2.5466544790065275,
+     "val_loss": 2.627752833257877,
+     "seconds": 2.9
+    },
+    {
+     "epoch": 18,
+     "train_loss": 2.541824716783984,
+     "val_loss": 2.632173010303952,
+     "seconds": 2.9
+    },
+    {
+     "epoch": 19,
+     "train_loss": 2.538583401461593,
+     "val_loss": 2.628270022840385,
+     "seconds": 2.9
+    },
+    {
+     "epoch": 20,
+     "train_loss": 2.5314024337990215,
+     "val_loss": 2.629410981493622,
+     "seconds": 2.8
+    }
+   ],
+   "n_train_cells": 26916,
+   "n_val_cells": 2988,
+   "mean_train_tokens": 13.171979491752118,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 0.62,
+   "truncated_frac": 0.0,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 6729,
+   "e5_val": 747,
+   "learner_val": 830,
+   "test": 922
+  }
+ },
+ "leakage_gap_head_train_minus_test": 0.026312867390836603,
+ "n_train": 8306,
+ "n_test": 922,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-11 05:07:24",
+ "argv": [
+  "--method",
+  "frozen_xfit_pred",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_MONTGOMERY_SALARIES",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "stacking/1",
+  "k_folds": 3,
+  "method": "frozen_xfit_pred",
+  "fold_models": [
+   {
+    "fold": 0,
+    "n_train_rows": 4984,
+    "n_heldout": 2492,
+    "cache_key": "REG_TEXT_MONTGOMERY_SALARIES/fold1/tar_repro/seed42/07055b3820_1c0a6416cc",
+    "cache_hit": false,
+    "best_epoch": 42,
+    "train_rows_hash": "90c85c49e4",
+    "heldout_rows_hash": "e42398e70c"
+   },
+   {
+    "fold": 1,
+    "n_train_rows": 4984,
+    "n_heldout": 2492,
+    "cache_key": "REG_TEXT_MONTGOMERY_SALARIES/fold1/tar_repro/seed42/07055b3820_b137f4853e",
+    "cache_hit": false,
+    "best_epoch": 28,
+    "train_rows_hash": "323069e2a0",
+    "heldout_rows_hash": "5ff0dbb2e3"
+   },
+   {
+    "fold": 2,
+    "n_train_rows": 4984,
+    "n_heldout": 2492,
+    "cache_key": "REG_TEXT_MONTGOMERY_SALARIES/fold1/tar_repro/seed42/07055b3820_6df0d2abe8",
+    "cache_hit": false,
+    "best_epoch": 24,
+    "train_rows_hash": "403fcfe336",
+    "heldout_rows_hash": "294ed5b2ca"
+   }
+  ],
+  "folds_cover_pool": true,
+  "pred_feature_quality": {
+   "train_rows": 0.6100119768654761,
+   "test": 0.6302158642595191,
+   "learner_val": 0.6000348224151067,
+   "gap_train_minus_test": -0.020203887394042996
+  },
+  "n_pred_features_per_col": {
+   "date_first_hired": 2,
+   "division": 2,
+   "employee_position_title": 2,
+   "full_name": 2
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "date_first_hired_txt_pca_30": 1.533,
+    "date_first_hired_txt_pca_31": 0.063,
+    "division_txt_pca_30": 0.648,
+    "division_txt_pca_31": 0.028,
+    "employee_position_title_txt_pca_30": 19.356,
+    "employee_position_title_txt_pca_31": 3.543,
+    "full_name_txt_pca_30": 0.032,
+    "full_name_txt_pca_31": 0.031
+   },
+   "pred_share": 0.2524,
+   "top10": [
+    [
+     "2016_gross_pay_received",
+     49.498
+    ],
+    [
+     "employee_position_title_txt_pca_30",
+     19.356
+    ],
+    [
+     "2016_overtime_pay",
+     10.307
+    ],
+    [
+     "assignment_category",
+     3.84
+    ],
+    [
+     "employee_position_title_txt_pca_31",
+     3.543
+    ],
+    [
+     "date_first_hired_txt_pca_30",
+     1.533
+    ],
+    [
+     "employee_position_title_txt_pca_11",
+     0.738
+    ],
+    [
+     "division_txt_pca_30",
+     0.648
+    ],
+    [
+     "employee_position_title_txt_pca_19",
+     0.578
+    ],
+    [
+     "employee_position_title_txt_pca_26",
+     0.537
+    ]
+   ]
+  }
+ }
+}

@@ -1,0 +1,284 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_HOUSES_SAN_FRANCISCO_PERMITS_APPLICATIONS",
+ "fold": 2,
+ "task": "REG",
+ "score": 0.5747026022188042,
+ "metrics": {
+  "score": 0.5747026022188042,
+  "metrics": {
+   "r2": 0.5747026022188042,
+   "mse": 2714.319602088943,
+   "rmse": 52.099132450444344
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 75.9,
+  "fit": 75.8,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 02:13:12",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_HOUSES_SAN_FRANCISCO_PERMITS_APPLICATIONS",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 5.3,
+   "probe": 7.2
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 3.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.658491,
+     0.682105,
+     0.693608,
+     0.692253
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.3,
+    "experts": 4.8
+   }
+  },
+  "probe": {
+   "alpha": 1.0,
+   "oof_metric": [
+    0.6582540872335381,
+    0.6627918974257886,
+    0.6601158195634755,
+    0.6473747904553503
+   ]
+  },
+  "n_extra_columns": {
+   "Block": 24,
+   "Description": 21,
+   "Lot": 21,
+   "Street Name": 21
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Block_txt_pca_30": 3.419,
+    "Block_txt_pca_31": 0.077,
+    "Block_txt_pca_32": 0.289,
+    "Block_txt_pca_33": 0.0,
+    "Block_txt_pca_34": 0.119,
+    "Block_txt_pca_35": 0.077,
+    "Block_txt_pca_36": 0.164,
+    "Block_txt_pca_37": 0.0,
+    "Block_txt_pca_38": 0.0,
+    "Block_txt_pca_39": 0.0,
+    "Block_txt_pca_40": 0.0,
+    "Block_txt_pca_41": 0.0,
+    "Block_txt_pca_42": 0.0,
+    "Block_txt_pca_43": 0.0,
+    "Block_txt_pca_44": 0.0,
+    "Block_txt_pca_45": 0.0,
+    "Block_txt_pca_46": 0.0,
+    "Block_txt_pca_47": 0.0,
+    "Block_txt_pca_48": 0.0,
+    "Block_txt_pca_49": 0.0,
+    "Block_txt_pca_50": 0.0,
+    "Block_txt_pca_51": 0.0,
+    "Block_txt_pca_52": 0.0,
+    "Block_txt_pca_53": 0.796,
+    "Description_txt_pca_30": 6.602,
+    "Description_txt_pca_31": 0.006,
+    "Description_txt_pca_32": 0.0,
+    "Description_txt_pca_33": 0.146,
+    "Description_txt_pca_34": 0.0,
+    "Description_txt_pca_35": 0.0,
+    "Description_txt_pca_36": 0.0,
+    "Description_txt_pca_37": 0.0,
+    "Description_txt_pca_38": 0.0,
+    "Description_txt_pca_39": 0.0,
+    "Description_txt_pca_40": 0.544,
+    "Description_txt_pca_41": 0.119,
+    "Description_txt_pca_42": 0.022,
+    "Description_txt_pca_43": 0.168,
+    "Description_txt_pca_44": 0.0,
+    "Description_txt_pca_45": 0.069,
+    "Description_txt_pca_46": 0.107,
+    "Description_txt_pca_47": 0.0,
+    "Description_txt_pca_48": 0.0,
+    "Description_txt_pca_49": 0.0,
+    "Description_txt_pca_50": 0.0,
+    "Lot_txt_pca_30": 0.0,
+    "Lot_txt_pca_31": 0.0,
+    "Lot_txt_pca_32": 0.0,
+    "Lot_txt_pca_33": 0.0,
+    "Lot_txt_pca_34": 0.0,
+    "Lot_txt_pca_35": 0.0,
+    "Lot_txt_pca_36": 0.0,
+    "Lot_txt_pca_37": 0.0,
+    "Lot_txt_pca_38": 0.0,
+    "Lot_txt_pca_39": 0.0,
+    "Lot_txt_pca_40": 0.0,
+    "Lot_txt_pca_41": 0.0,
+    "Lot_txt_pca_42": 0.0,
+    "Lot_txt_pca_43": 0.0,
+    "Lot_txt_pca_44": 0.0,
+    "Lot_txt_pca_45": 0.0,
+    "Lot_txt_pca_46": 0.0,
+    "Lot_txt_pca_47": 0.0,
+    "Lot_txt_pca_48": 0.0,
+    "Lot_txt_pca_49": 0.0,
+    "Lot_txt_pca_50": 0.0,
+    "Street Name_txt_pca_30": 0.648,
+    "Street Name_txt_pca_31": 0.0,
+    "Street Name_txt_pca_32": 0.0,
+    "Street Name_txt_pca_33": 0.0,
+    "Street Name_txt_pca_34": 0.0,
+    "Street Name_txt_pca_35": 0.0,
+    "Street Name_txt_pca_36": 0.0,
+    "Street Name_txt_pca_37": 0.0,
+    "Street Name_txt_pca_38": 0.0,
+    "Street Name_txt_pca_39": 0.0,
+    "Street Name_txt_pca_40": 0.0,
+    "Street Name_txt_pca_41": 0.0,
+    "Street Name_txt_pca_42": 0.0,
+    "Street Name_txt_pca_43": 0.0,
+    "Street Name_txt_pca_44": 0.11,
+    "Street Name_txt_pca_45": 0.048,
+    "Street Name_txt_pca_46": 0.0,
+    "Street Name_txt_pca_47": 0.0,
+    "Street Name_txt_pca_48": 0.0,
+    "Street Name_txt_pca_49": 0.0,
+    "Street Name_txt_pca_50": 0.0
+   },
+   "pred_share": 0.1353,
+   "group_share": {
+    "structured": 0.6324,
+    "pca": 0.2323,
+    "lex": 0.0342,
+    "nbr": 0.0762,
+    "num": 0.017,
+    "probe": 0.008
+   },
+   "top10": [
+    [
+     "Permit Type Definition",
+     33.294
+    ],
+    [
+     "Site Permit",
+     8.906
+    ],
+    [
+     "Permit Type",
+     7.833
+    ],
+    [
+     "Description_txt_pca_30",
+     6.602
+    ],
+    [
+     "Block_txt_pca_30",
+     3.419
+    ],
+    [
+     "Current Status",
+     3.111
+    ],
+    [
+     "Structural Notification",
+     2.946
+    ],
+    [
+     "Description_txt_pca_2",
+     2.137
+    ],
+    [
+     "Revised Cost",
+     1.823
+    ],
+    [
+     "Estimated Cost",
+     1.502
+    ]
+   ]
+  }
+ }
+}

@@ -1,0 +1,157 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "lgbm",
+ "learner_model_name": "LightGBM \ud83d\udca1",
+ "dataset": "REG_TEXT_ROTTEN_TOMATOES",
+ "fold": 3,
+ "task": "REG",
+ "score": 0.5434764978676967,
+ "metrics": {
+  "score": 0.5434764978676967,
+  "metrics": {
+   "r2": 0.5434764978676967,
+   "mse": 0.6851695464624925,
+   "rmse": 0.8277496882889733
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.4704162635804926,
+  "joint_tar": 0.5086470626537736,
+  "unimodal_structured": 0.1357106410552028,
+  "unimodal_text": 0.469273674762618
+ },
+ "diff_vs_csv_joint_tar": 0.03482943521392312,
+ "runtime_s": {
+  "total": 34.3,
+  "fit": 34.3,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 6443,
+ "n_test": 715,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "aff5dab39d60ca016363b4d331384a20357e9d6a",
+  "dirty": false
+ },
+ "timestamp": "2026-10-19 08:41:13",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "lgbm",
+  "--dataset",
+  "REG_TEXT_ROTTEN_TOMATOES",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 10.3,
+   "probe": 16.0
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 3.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.613722,
+     0.627863,
+     0.63339,
+     0.621368
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 5.6,
+    "experts": 4.6
+   }
+  },
+  "probe": {
+   "alpha": 3.0,
+   "oof_metric": [
+    0.6884127083403695,
+    0.712228260393291,
+    0.7180073766340841,
+    0.7021830318177206
+   ]
+  },
+  "n_extra_columns": {
+   "Actors": 24,
+   "Cast": 21,
+   "Country": 21,
+   "Creator": 21,
+   "Description": 21,
+   "Director": 21,
+   "Filming Locations": 21,
+   "Genre": 21,
+   "Language": 21,
+   "Name": 21,
+   "RatingCount": 21,
+   "Release Date": 21,
+   "ReviewCount": 21
+  },
+  "catboost_importance": null
+ }
+}

@@ -1,0 +1,341 @@
+{
+ "method": "cte_nb",
+ "run_name": "cte_nb",
+ "engine_version": "p6/2",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_BABIES_PRICES",
+ "fold": 4,
+ "task": "REG",
+ "score": 0.881969183171555,
+ "metrics": {
+  "score": 0.881969183171555,
+  "metrics": {
+   "r2": 0.881969183171555,
+   "mse": 209.27099342047907,
+   "rmse": 14.466201762054858
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.8319699081523556,
+  "joint_tar": 0.8710307314839416,
+  "unimodal_structured": 0.3464486319712149,
+  "unimodal_text": 0.7994721824203754
+ },
+ "diff_vs_csv_joint_tar": 0.010938451687613426,
+ "runtime_s": {
+  "total": 70.6,
+  "fit": 70.6,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p6/2",
+   "method": "cte_nb",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 4577,
+ "n_test": 508,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "d99be740ceb5b6e12eac61876c413e83c70cd11d",
+  "dirty": false
+ },
+ "timestamp": "2026-10-14 10:51:57",
+ "argv": [
+  "--method",
+  "cte_nb",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_BABIES_PRICES",
+  "--fold",
+  "4",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p6/2",
+  "method": "cte_nb",
+  "p6": {
+   "lexical": "tfidf",
+   "targets": "y"
+  },
+  "experts": [
+   "lex",
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": true,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 0.79
+  },
+  "expert_cache_hits": {
+   "lex": true,
+   "nbr": true
+  },
+  "lex_alpha": {
+   "chosen": 0.3,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.923723,
+    0.918271,
+    0.904275,
+    0.877291
+   ]
+  },
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 5519
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.9237227312011165,
+     "nbr:colors": 0.07727684313381733,
+     "nbr:company_free": 0.1684711925091939,
+     "nbr:company_struct": 0.7133369891432507,
+     "nbr:title": 0.865861540122594,
+     "nbr:__all__": 0.7949988231663785
+    },
+    "test": {
+     "lex:__all__": 0.9325787176865682,
+     "nbr:colors": 0.11645617517207438,
+     "nbr:company_free": 0.2211326149522071,
+     "nbr:company_struct": 0.7123343885617647,
+     "nbr:title": 0.8773720722482672,
+     "nbr:__all__": 0.8128098811542898
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": -0.008855986485451717,
+    "nbr:colors": -0.03917933203825705,
+    "nbr:company_free": -0.052661422443013195,
+    "nbr:company_struct": 0.0010026005814860461,
+    "nbr:title": -0.011510532125673212,
+    "nbr:__all__": -0.017811057987911272
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "colors": 23,
+   "company_free": 21,
+   "company_struct": 21,
+   "title": 21
+  },
+  "seconds": {
+   "frozen_embeddings": 0.1,
+   "experts": 2.5
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "colors_txt_pca_30": 45.59,
+    "colors_txt_pca_31": 3.724,
+    "colors_txt_pca_32": 0.14,
+    "colors_txt_pca_33": 0.0,
+    "colors_txt_pca_34": 0.0,
+    "colors_txt_pca_35": 0.0,
+    "colors_txt_pca_36": 0.0,
+    "colors_txt_pca_37": 0.0,
+    "colors_txt_pca_38": 0.0,
+    "colors_txt_pca_39": 0.0,
+    "colors_txt_pca_40": 0.0,
+    "colors_txt_pca_41": 0.0,
+    "colors_txt_pca_42": 0.016,
+    "colors_txt_pca_43": 0.003,
+    "colors_txt_pca_44": 0.0,
+    "colors_txt_pca_45": 0.043,
+    "colors_txt_pca_46": 0.0,
+    "colors_txt_pca_47": 0.0,
+    "colors_txt_pca_48": 0.01,
+    "colors_txt_pca_49": 0.0,
+    "colors_txt_pca_50": 0.0,
+    "colors_txt_pca_51": 0.001,
+    "colors_txt_pca_52": 0.0,
+    "company_free_txt_pca_30": 0.129,
+    "company_free_txt_pca_31": 0.0,
+    "company_free_txt_pca_32": 0.0,
+    "company_free_txt_pca_33": 0.002,
+    "company_free_txt_pca_34": 0.0,
+    "company_free_txt_pca_35": 0.0,
+    "company_free_txt_pca_36": 0.0,
+    "company_free_txt_pca_37": 0.0,
+    "company_free_txt_pca_38": 0.0,
+    "company_free_txt_pca_39": 0.0,
+    "company_free_txt_pca_40": 0.072,
+    "company_free_txt_pca_41": 0.011,
+    "company_free_txt_pca_42": 0.0,
+    "company_free_txt_pca_43": 0.006,
+    "company_free_txt_pca_44": 0.004,
+    "company_free_txt_pca_45": 0.0,
+    "company_free_txt_pca_46": 0.001,
+    "company_free_txt_pca_47": 0.0,
+    "company_free_txt_pca_48": 0.0,
+    "company_free_txt_pca_49": 0.002,
+    "company_free_txt_pca_50": 0.0,
+    "company_struct_txt_pca_30": 1.455,
+    "company_struct_txt_pca_31": 0.001,
+    "company_struct_txt_pca_32": 0.003,
+    "company_struct_txt_pca_33": 0.002,
+    "company_struct_txt_pca_34": 0.005,
+    "company_struct_txt_pca_35": 0.0,
+    "company_struct_txt_pca_36": 0.0,
+    "company_struct_txt_pca_37": 0.0,
+    "company_struct_txt_pca_38": 0.0,
+    "company_struct_txt_pca_39": 0.0,
+    "company_struct_txt_pca_40": 0.183,
+    "company_struct_txt_pca_41": 0.071,
+    "company_struct_txt_pca_42": 0.014,
+    "company_struct_txt_pca_43": 0.136,
+    "company_struct_txt_pca_44": 0.336,
+    "company_struct_txt_pca_45": 0.142,
+    "company_struct_txt_pca_46": 0.001,
+    "company_struct_txt_pca_47": 0.0,
+    "company_struct_txt_pca_48": 0.0,
+    "company_struct_txt_pca_49": 0.0,
+    "company_struct_txt_pca_50": 0.0,
+    "title_txt_pca_30": 10.668,
+    "title_txt_pca_31": 0.075,
+    "title_txt_pca_32": 1.017,
+    "title_txt_pca_33": 1.057,
+    "title_txt_pca_34": 0.831,
+    "title_txt_pca_35": 0.0,
+    "title_txt_pca_36": 0.0,
+    "title_txt_pca_37": 0.0,
+    "title_txt_pca_38": 0.0,
+    "title_txt_pca_39": 0.0,
+    "title_txt_pca_40": 0.166,
+    "title_txt_pca_41": 0.043,
+    "title_txt_pca_42": 0.0,
+    "title_txt_pca_43": 0.439,
+    "title_txt_pca_44": 0.652,
+    "title_txt_pca_45": 0.503,
+    "title_txt_pca_46": 0.286,
+    "title_txt_pca_47": 0.0,
+    "title_txt_pca_48": 0.0,
+    "title_txt_pca_49": 0.004,
+    "title_txt_pca_50": 0.0
+   },
+   "pred_share": 0.6784,
+   "group_share": {
+    "structured": 0.0447,
+    "pca": 0.2769,
+    "lex": 0.4559,
+    "nbr": 0.1612,
+    "num": 0.0613
+   },
+   "top10": [
+    [
+     "colors_txt_pca_30",
+     45.59
+    ],
+    [
+     "title_txt_pca_30",
+     10.668
+    ],
+    [
+     "colors_txt_pca_31",
+     3.724
+    ],
+    [
+     "category",
+     3.032
+    ],
+    [
+     "company_struct_txt_pca_30",
+     1.455
+    ],
+    [
+     "title_txt_pca_33",
+     1.057
+    ],
+    [
+     "title_txt_pca_32",
+     1.017
+    ],
+    [
+     "company_struct_txt_pca_2",
+     0.996
+    ],
+    [
+     "title_txt_pca_3",
+     0.98
+    ],
+    [
+     "title_txt_pca_5",
+     0.951
+    ]
+   ]
+  }
+ }
+}

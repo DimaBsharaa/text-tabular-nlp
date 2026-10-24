@@ -1,0 +1,228 @@
+{
+ "method": "cte_nbr",
+ "run_name": "cte_nbr",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_SPOTIFY_GENRES",
+ "fold": 2,
+ "task": "MUL",
+ "score": 0.9620916731263663,
+ "metrics": {
+  "score": 0.9620916731263663,
+  "metrics": {
+   "auc": 0.9620916731263663,
+   "logloss": 2.066508985337566
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9599136226972744,
+  "joint_tar": 0.9636580978001128,
+  "unimodal_structured": 0.921759856168363,
+  "unimodal_text": 0.917603086490382
+ },
+ "diff_vs_csv_joint_tar": -0.0015664246737464582,
+ "runtime_s": {
+  "total": 6751.7,
+  "fit": 6751.5,
+  "predict": 0.2,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte_nbr",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-14 01:00:48",
+ "argv": [
+  "--method",
+  "cte_nbr",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_SPOTIFY_GENRES",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte_nbr",
+  "experts": [
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": false,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 0.0
+  },
+  "expert_cache_hits": {
+   "nbr": true
+  },
+  "lex_alpha": null,
+  "n_classes": 114,
+  "class_columns": "top10+maxp+entropy",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 27232
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "nbr:__all__": 0.7929312005948133
+    },
+    "test": {
+     "nbr:__all__": 0.8318555712066843
+    }
+   },
+   "gap_train_minus_test": {
+    "nbr:__all__": -0.03892437061187104
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "album_name": 12,
+   "artists": 0,
+   "track_name": 0
+  },
+  "seconds": {
+   "frozen_embeddings": 0.5,
+   "experts": 0.0
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "album_name_txt_pca_30": 0.224,
+    "album_name_txt_pca_31": 0.407,
+    "album_name_txt_pca_32": 0.208,
+    "album_name_txt_pca_33": 0.146,
+    "album_name_txt_pca_34": 0.424,
+    "album_name_txt_pca_35": 0.116,
+    "album_name_txt_pca_36": 0.37,
+    "album_name_txt_pca_37": 0.213,
+    "album_name_txt_pca_38": 0.209,
+    "album_name_txt_pca_39": 0.281,
+    "album_name_txt_pca_40": 1.2,
+    "album_name_txt_pca_41": 1.535
+   },
+   "pred_share": 0.0533,
+   "group_share": {
+    "structured": 0.3366,
+    "pca": 0.6101,
+    "nbr": 0.0533
+   },
+   "top10": [
+    [
+     "popularity",
+     10.129
+    ],
+    [
+     "acousticness",
+     4.454
+    ],
+    [
+     "danceability",
+     3.541
+    ],
+    [
+     "instrumentalness",
+     3.52
+    ],
+    [
+     "artists_txt_pca_0",
+     2.437
+    ],
+    [
+     "duration_ms",
+     2.069
+    ],
+    [
+     "album_name_txt_pca_1",
+     2.043
+    ],
+    [
+     "energy",
+     2.014
+    ],
+    [
+     "loudness",
+     1.934
+    ],
+    [
+     "artists_txt_pca_2",
+     1.84
+    ]
+   ]
+  }
+ }
+}

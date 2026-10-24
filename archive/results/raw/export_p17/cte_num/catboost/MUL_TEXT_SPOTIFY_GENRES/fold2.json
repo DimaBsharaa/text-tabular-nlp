@@ -1,0 +1,266 @@
+{
+ "method": "cte_num",
+ "run_name": "cte_num",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_SPOTIFY_GENRES",
+ "fold": 2,
+ "task": "MUL",
+ "score": 0.962243414187467,
+ "metrics": {
+  "score": 0.962243414187467,
+  "metrics": {
+   "auc": 0.962243414187467,
+   "logloss": 2.0594642619081616
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9599136226972744,
+  "joint_tar": 0.9636580978001128,
+  "unimodal_structured": 0.921759856168363,
+  "unimodal_text": 0.917603086490382
+ },
+ "diff_vs_csv_joint_tar": -0.0014146836126458506,
+ "runtime_s": {
+  "total": 7455.3,
+  "fit": 7455.0,
+  "predict": 0.3,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte_num",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-14 03:43:52",
+ "argv": [
+  "--method",
+  "cte_num",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_SPOTIFY_GENRES",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte_num",
+  "experts": [],
+  "mode": "oof",
+  "numeracy": true,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 1.09
+  },
+  "expert_cache_hits": {},
+  "lex_alpha": null,
+  "n_classes": 114,
+  "class_columns": "top10+maxp+entropy",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 27232
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {},
+    "test": {}
+   },
+   "gap_train_minus_test": {},
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "album_name": 20,
+   "artists": 20,
+   "track_name": 20
+  },
+  "seconds": {
+   "frozen_embeddings": 0.4,
+   "experts": 1.1
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "album_name_txt_pca_30": 0.049,
+    "album_name_txt_pca_31": 0.059,
+    "album_name_txt_pca_32": 0.018,
+    "album_name_txt_pca_33": 0.097,
+    "album_name_txt_pca_34": 0.0,
+    "album_name_txt_pca_35": 0.02,
+    "album_name_txt_pca_36": 0.0,
+    "album_name_txt_pca_37": 0.0,
+    "album_name_txt_pca_38": 0.0,
+    "album_name_txt_pca_39": 0.539,
+    "album_name_txt_pca_40": 0.151,
+    "album_name_txt_pca_41": 0.042,
+    "album_name_txt_pca_42": 0.418,
+    "album_name_txt_pca_43": 0.313,
+    "album_name_txt_pca_44": 0.078,
+    "album_name_txt_pca_45": 0.165,
+    "album_name_txt_pca_46": 0.001,
+    "album_name_txt_pca_47": 0.002,
+    "album_name_txt_pca_48": 0.017,
+    "album_name_txt_pca_49": 0.0,
+    "artists_txt_pca_30": 0.0,
+    "artists_txt_pca_31": 0.006,
+    "artists_txt_pca_32": 0.001,
+    "artists_txt_pca_33": 0.003,
+    "artists_txt_pca_34": 0.0,
+    "artists_txt_pca_35": 0.0,
+    "artists_txt_pca_36": 0.006,
+    "artists_txt_pca_37": 0.0,
+    "artists_txt_pca_38": 0.0,
+    "artists_txt_pca_39": 0.498,
+    "artists_txt_pca_40": 0.558,
+    "artists_txt_pca_41": 0.005,
+    "artists_txt_pca_42": 0.944,
+    "artists_txt_pca_43": 0.812,
+    "artists_txt_pca_44": 0.005,
+    "artists_txt_pca_45": 1.031,
+    "artists_txt_pca_46": 0.001,
+    "artists_txt_pca_47": 0.0,
+    "artists_txt_pca_48": 0.005,
+    "artists_txt_pca_49": 0.0,
+    "track_name_txt_pca_30": 0.024,
+    "track_name_txt_pca_31": 0.057,
+    "track_name_txt_pca_32": 0.011,
+    "track_name_txt_pca_33": 0.005,
+    "track_name_txt_pca_34": 0.004,
+    "track_name_txt_pca_35": 0.016,
+    "track_name_txt_pca_36": 0.0,
+    "track_name_txt_pca_37": 0.0,
+    "track_name_txt_pca_38": 0.0,
+    "track_name_txt_pca_39": 0.214,
+    "track_name_txt_pca_40": 0.302,
+    "track_name_txt_pca_41": 0.032,
+    "track_name_txt_pca_42": 0.237,
+    "track_name_txt_pca_43": 0.794,
+    "track_name_txt_pca_44": 0.026,
+    "track_name_txt_pca_45": 0.163,
+    "track_name_txt_pca_46": 0.002,
+    "track_name_txt_pca_47": 0.0,
+    "track_name_txt_pca_48": 0.022,
+    "track_name_txt_pca_49": 0.0
+   },
+   "pred_share": 0.0775,
+   "group_share": {
+    "structured": 0.3319,
+    "pca": 0.5906,
+    "num": 0.0775
+   },
+   "top10": [
+    [
+     "popularity",
+     9.173
+    ],
+    [
+     "acousticness",
+     3.854
+    ],
+    [
+     "instrumentalness",
+     3.704
+    ],
+    [
+     "danceability",
+     3.548
+    ],
+    [
+     "track_name_txt_pca_1",
+     2.981
+    ],
+    [
+     "artists_txt_pca_0",
+     2.718
+    ],
+    [
+     "loudness",
+     2.449
+    ],
+    [
+     "energy",
+     2.333
+    ],
+    [
+     "album_name_txt_pca_1",
+     2.277
+    ],
+    [
+     "duration_ms",
+     2.224
+    ]
+   ]
+  }
+ }
+}

@@ -1,0 +1,166 @@
+{
+ "method": "frozen0",
+ "run_name": "frozen0",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_MERCARI_MARKETPLACE",
+ "fold": 1,
+ "task": "REG",
+ "score": 0.4110616947723794,
+ "metrics": {
+  "score": 0.4110616947723794,
+  "metrics": {
+   "r2": 0.4110616947723794,
+   "mse": 0.31938823020688767,
+   "rmse": 0.5651444330495414
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.4116059748370106,
+  "joint_tar": 0.4112123503094925,
+  "unimodal_structured": 0.0841432323372065,
+  "unimodal_text": 0.3811165661272694
+ },
+ "diff_vs_csv_joint_tar": -0.00015065553711307578,
+ "runtime_s": {
+  "total": 83.6,
+  "fit": 83.5,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "frozen0",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "c82596a02b507b22d07a6ff5eda81dba73b31ed1",
+  "dirty": false
+ },
+ "timestamp": "2026-10-15 16:41:48",
+ "argv": [
+  "--method",
+  "frozen0",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_MERCARI_MARKETPLACE",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "frozen0",
+  "groups": [],
+  "seconds": {
+   "base": 0.6
+  },
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 25006
+  },
+  "n_extra_columns": {
+   "brand_name": 0,
+   "cat2": 0,
+   "cat3": 0,
+   "category_name": 0,
+   "item_description": 0,
+   "name": 0
+  },
+  "catboost_importance": {
+   "pred_columns": {},
+   "pred_share": 0.0,
+   "group_share": {
+    "structured": 0.0574,
+    "pca": 0.9426
+   },
+   "top10": [
+    [
+     "shipping",
+     3.565
+    ],
+    [
+     "cat2_txt_pca_6",
+     2.61
+    ],
+    [
+     "cat2_txt_pca_1",
+     2.312
+    ],
+    [
+     "item_condition_id",
+     2.116
+    ],
+    [
+     "name_txt_pca_3",
+     1.914
+    ],
+    [
+     "name_txt_pca_4",
+     1.883
+    ],
+    [
+     "name_txt_pca_6",
+     1.593
+    ],
+    [
+     "brand_name_txt_pca_0",
+     1.567
+    ],
+    [
+     "item_description_txt_pca_2",
+     1.527
+    ],
+    [
+     "item_description_txt_pca_5",
+     1.289
+    ]
+   ]
+  }
+ }
+}

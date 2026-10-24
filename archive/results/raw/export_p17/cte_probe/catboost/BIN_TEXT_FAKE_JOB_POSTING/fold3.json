@@ -1,0 +1,265 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "BIN_TEXT_FAKE_JOB_POSTING",
+ "fold": 3,
+ "task": "BIN",
+ "score": 0.9720101033834586,
+ "metrics": {
+  "score": 0.9720101033834586,
+  "metrics": {
+   "auc": 0.9720101033834586
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9289385573308272,
+  "joint_tar": 0.9197897086466164,
+  "unimodal_structured": 0.695084880169173,
+  "unimodal_text": 0.930201480263158
+ },
+ "diff_vs_csv_joint_tar": 0.05222039473684226,
+ "runtime_s": {
+  "total": 48.0,
+  "fit": 48.0,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 9998,
+ "n_test": 1272,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "96082deb0d891e2ee657e35f4fbae0bee93b17e3",
+  "dirty": false
+ },
+ "timestamp": "2026-10-15 21:34:25",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "BIN_TEXT_FAKE_JOB_POSTING",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 14.1,
+   "probe": 4.9
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 1.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.920112,
+     0.92183,
+     0.921059,
+     0.916658
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.3,
+    "experts": 13.7
+   }
+  },
+  "probe": {
+   "alpha": 1.0,
+   "oof_metric": [
+    0.8839061004120562,
+    0.8853184356871254,
+    0.8815700150356985,
+    0.8702413214608337
+   ]
+  },
+  "n_extra_columns": {
+   "description": 24,
+   "salary_range": 21,
+   "title": 21
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "description_txt_pca_30": 24.871,
+    "description_txt_pca_31": 4.543,
+    "description_txt_pca_32": 10.356,
+    "description_txt_pca_33": 0.086,
+    "description_txt_pca_34": 0.435,
+    "description_txt_pca_35": 0.404,
+    "description_txt_pca_36": 0.117,
+    "description_txt_pca_37": 0.098,
+    "description_txt_pca_38": 0.059,
+    "description_txt_pca_39": 0.085,
+    "description_txt_pca_40": 0.13,
+    "description_txt_pca_41": 0.0,
+    "description_txt_pca_42": 0.456,
+    "description_txt_pca_43": 0.677,
+    "description_txt_pca_44": 0.352,
+    "description_txt_pca_45": 1.186,
+    "description_txt_pca_46": 0.84,
+    "description_txt_pca_47": 0.599,
+    "description_txt_pca_48": 1.375,
+    "description_txt_pca_49": 0.08,
+    "description_txt_pca_50": 0.116,
+    "description_txt_pca_51": 0.615,
+    "description_txt_pca_52": 0.0,
+    "description_txt_pca_53": 2.353,
+    "salary_range_txt_pca_30": 0.84,
+    "salary_range_txt_pca_31": 0.161,
+    "salary_range_txt_pca_32": 0.179,
+    "salary_range_txt_pca_33": 0.026,
+    "salary_range_txt_pca_34": 0.05,
+    "salary_range_txt_pca_35": 0.003,
+    "salary_range_txt_pca_36": 0.0,
+    "salary_range_txt_pca_37": 0.0,
+    "salary_range_txt_pca_38": 0.0,
+    "salary_range_txt_pca_39": 0.0,
+    "salary_range_txt_pca_40": 0.0,
+    "salary_range_txt_pca_41": 0.043,
+    "salary_range_txt_pca_42": 0.0,
+    "salary_range_txt_pca_43": 0.332,
+    "salary_range_txt_pca_44": 0.003,
+    "salary_range_txt_pca_45": 0.049,
+    "salary_range_txt_pca_46": 0.192,
+    "salary_range_txt_pca_47": 0.0,
+    "salary_range_txt_pca_48": 0.0,
+    "salary_range_txt_pca_49": 0.217,
+    "salary_range_txt_pca_50": 0.005,
+    "title_txt_pca_30": 1.358,
+    "title_txt_pca_31": 0.008,
+    "title_txt_pca_32": 0.198,
+    "title_txt_pca_33": 0.123,
+    "title_txt_pca_34": 0.137,
+    "title_txt_pca_35": 0.002,
+    "title_txt_pca_36": 0.001,
+    "title_txt_pca_37": 0.009,
+    "title_txt_pca_38": 0.004,
+    "title_txt_pca_39": 0.0,
+    "title_txt_pca_40": 0.313,
+    "title_txt_pca_41": 0.102,
+    "title_txt_pca_42": 0.005,
+    "title_txt_pca_43": 0.349,
+    "title_txt_pca_44": 0.247,
+    "title_txt_pca_45": 0.044,
+    "title_txt_pca_46": 0.34,
+    "title_txt_pca_47": 0.008,
+    "title_txt_pca_48": 0.001,
+    "title_txt_pca_49": 0.006,
+    "title_txt_pca_50": 0.0
+   },
+   "pred_share": 0.5519,
+   "group_share": {
+    "structured": 0.0006,
+    "pca": 0.4475,
+    "lex": 0.2487,
+    "nbr": 0.171,
+    "num": 0.1087,
+    "probe": 0.0235
+   },
+   "top10": [
+    [
+     "description_txt_pca_30",
+     24.871
+    ],
+    [
+     "description_txt_pca_32",
+     10.356
+    ],
+    [
+     "description_txt_pca_31",
+     4.543
+    ],
+    [
+     "description_txt_pca_3",
+     2.874
+    ],
+    [
+     "description_txt_pca_9",
+     2.826
+    ],
+    [
+     "description_txt_pca_53",
+     2.353
+    ],
+    [
+     "description_txt_pca_12",
+     1.796
+    ],
+    [
+     "description_txt_pca_14",
+     1.747
+    ],
+    [
+     "description_txt_pca_48",
+     1.375
+    ],
+    [
+     "title_txt_pca_30",
+     1.358
+    ]
+   ]
+  }
+ }
+}

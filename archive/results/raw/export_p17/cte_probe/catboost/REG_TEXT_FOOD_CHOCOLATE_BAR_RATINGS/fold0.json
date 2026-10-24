@@ -1,0 +1,240 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_FOOD_CHOCOLATE_BAR_RATINGS",
+ "fold": 0,
+ "task": "REG",
+ "score": 0.2703697802868309,
+ "metrics": {
+  "score": 0.2703697802868309,
+  "metrics": {
+   "r2": 0.2703697802868309,
+   "mse": 0.17659506113653217,
+   "rmse": 0.42023215147883697
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 25.3,
+  "fit": 25.3,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 1616,
+ "n_test": 179,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 01:43:47",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_FOOD_CHOCOLATE_BAR_RATINGS",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 0.2,
+   "probe": 0.4
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 3.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.347063,
+     0.360493,
+     0.366427,
+     0.358768
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.0,
+    "experts": 0.2
+   }
+  },
+  "probe": {
+   "alpha": 0.3,
+   "oof_metric": [
+    0.31441860314051495,
+    0.31307076635107983,
+    0.3061250148066148,
+    0.29238475308056716
+   ]
+  },
+  "n_extra_columns": {
+   "Company  (Maker if known)": 24,
+   "Specific Bean Origin or Bar Name": 21
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Company  (Maker if known)_txt_pca_30": 4.56,
+    "Company  (Maker if known)_txt_pca_31": 8.05,
+    "Company  (Maker if known)_txt_pca_32": 4.185,
+    "Company  (Maker if known)_txt_pca_33": 0.002,
+    "Company  (Maker if known)_txt_pca_34": 0.001,
+    "Company  (Maker if known)_txt_pca_35": 0.0,
+    "Company  (Maker if known)_txt_pca_36": 0.0,
+    "Company  (Maker if known)_txt_pca_37": 0.0,
+    "Company  (Maker if known)_txt_pca_38": 0.0,
+    "Company  (Maker if known)_txt_pca_39": 0.0,
+    "Company  (Maker if known)_txt_pca_40": 0.0,
+    "Company  (Maker if known)_txt_pca_41": 0.0,
+    "Company  (Maker if known)_txt_pca_42": 0.782,
+    "Company  (Maker if known)_txt_pca_43": 0.081,
+    "Company  (Maker if known)_txt_pca_44": 0.066,
+    "Company  (Maker if known)_txt_pca_45": 0.801,
+    "Company  (Maker if known)_txt_pca_46": 0.469,
+    "Company  (Maker if known)_txt_pca_47": 0.0,
+    "Company  (Maker if known)_txt_pca_48": 0.122,
+    "Company  (Maker if known)_txt_pca_49": 0.0,
+    "Company  (Maker if known)_txt_pca_50": 0.0,
+    "Company  (Maker if known)_txt_pca_51": 0.001,
+    "Company  (Maker if known)_txt_pca_52": 0.0,
+    "Company  (Maker if known)_txt_pca_53": 1.577,
+    "Specific Bean Origin or Bar Name_txt_pca_30": 2.023,
+    "Specific Bean Origin or Bar Name_txt_pca_31": 0.031,
+    "Specific Bean Origin or Bar Name_txt_pca_32": 0.077,
+    "Specific Bean Origin or Bar Name_txt_pca_33": 0.1,
+    "Specific Bean Origin or Bar Name_txt_pca_34": 0.122,
+    "Specific Bean Origin or Bar Name_txt_pca_35": 0.044,
+    "Specific Bean Origin or Bar Name_txt_pca_36": 0.089,
+    "Specific Bean Origin or Bar Name_txt_pca_37": 0.0,
+    "Specific Bean Origin or Bar Name_txt_pca_38": 0.0,
+    "Specific Bean Origin or Bar Name_txt_pca_39": 0.0,
+    "Specific Bean Origin or Bar Name_txt_pca_40": 0.393,
+    "Specific Bean Origin or Bar Name_txt_pca_41": 0.165,
+    "Specific Bean Origin or Bar Name_txt_pca_42": 0.076,
+    "Specific Bean Origin or Bar Name_txt_pca_43": 0.795,
+    "Specific Bean Origin or Bar Name_txt_pca_44": 1.473,
+    "Specific Bean Origin or Bar Name_txt_pca_45": 0.141,
+    "Specific Bean Origin or Bar Name_txt_pca_46": 0.608,
+    "Specific Bean Origin or Bar Name_txt_pca_47": 0.0,
+    "Specific Bean Origin or Bar Name_txt_pca_48": 0.0,
+    "Specific Bean Origin or Bar Name_txt_pca_49": 0.0,
+    "Specific Bean Origin or Bar Name_txt_pca_50": 0.0
+   },
+   "pred_share": 0.2683,
+   "group_share": {
+    "structured": 0.1439,
+    "pca": 0.5877,
+    "lex": 0.0456,
+    "nbr": 0.1426,
+    "num": 0.0644,
+    "probe": 0.0158
+   },
+   "top10": [
+    [
+     "Company  (Maker if known)_txt_pca_31",
+     8.05
+    ],
+    [
+     "Cocoa Percent",
+     7.386
+    ],
+    [
+     "Company  (Maker if known)_txt_pca_30",
+     4.56
+    ],
+    [
+     "Company  (Maker if known)_txt_pca_32",
+     4.185
+    ],
+    [
+     "REF",
+     2.898
+    ],
+    [
+     "Review Date",
+     2.099
+    ],
+    [
+     "Specific Bean Origin or Bar Name_txt_pca_8",
+     2.051
+    ],
+    [
+     "Specific Bean Origin or Bar Name_txt_pca_30",
+     2.023
+    ],
+    [
+     "Specific Bean Origin or Bar Name_txt_pca_0",
+     2.007
+    ],
+    [
+     "Company  (Maker if known)_txt_pca_53",
+     1.577
+    ]
+   ]
+  }
+ }
+}

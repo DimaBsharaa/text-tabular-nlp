@@ -1,0 +1,309 @@
+{
+ "method": "frozen_xfit_pred",
+ "run_name": "frozen_xfit_pred",
+ "engine_version": "stacking/1",
+ "tar_path": "fast",
+ "learner": "tabm",
+ "learner_model_name": "TabM \u24c2\ufe0f",
+ "dataset": "MUL_TEXT_DATA_SCIENTIST_SALARY",
+ "fold": 3,
+ "task": "MUL",
+ "score": 0.8366145051258883,
+ "metrics": {
+  "score": 0.8366145051258883,
+  "metrics": {
+   "auc": 0.8366145051258883,
+   "logloss": 1.177099700757841
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.8358325182917402,
+  "joint_tar": 0.8376299153630358,
+  "unimodal_structured": 0.5625223141404816,
+  "unimodal_text": 0.8340780576126714
+ },
+ "diff_vs_csv_joint_tar": -0.0010154102371474627,
+ "runtime_s": {
+  "total": 15.9,
+  "fit": 15.6,
+  "predict": 0.2,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_key": "MUL_TEXT_DATA_SCIENTIST_SALARY/fold3/tar_repro/seed42/07055b3820_ffeab2c82a",
+  "cache_hit": true,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "stacking/1",
+   "method": "frozen_xfit_pred",
+   "base": "tar_repro"
+  },
+  "text_cols": [
+   "experience",
+   "job_description",
+   "job_desig",
+   "key_skills",
+   "location"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.8225355315861683,
+    "n": 8100,
+    "n_unseen_class": 0
+   },
+   "e5_val": {
+    "score": 0.7936014230545961,
+    "n": 900,
+    "n_unseen_class": 0
+   },
+   "test": {
+    "score": 0.8069683650772328,
+    "n": 1584,
+    "n_unseen_class": 0
+   },
+   "learner_val": {
+    "score": 0.8057853622806385,
+    "n": 1000,
+    "n_unseen_class": 0
+   }
+  },
+  "n_unique_texts": {
+   "experience": 124,
+   "job_description": 6338,
+   "job_desig": 8097,
+   "key_skills": 8869,
+   "location": 1131
+  },
+  "train": {
+   "epochs_run": 15,
+   "best_epoch": 12,
+   "best_val_loss": 1.5557332668304444,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 1.7213358881326368,
+     "val_loss": 1.6709458565182156,
+     "seconds": 4.5
+    },
+    {
+     "epoch": 2,
+     "train_loss": 1.6060028790485712,
+     "val_loss": 1.6005644698672825,
+     "seconds": 4.3
+    },
+    {
+     "epoch": 3,
+     "train_loss": 1.569097384535236,
+     "val_loss": 1.5916755437850951,
+     "seconds": 4.2
+    },
+    {
+     "epoch": 4,
+     "train_loss": 1.55327602600757,
+     "val_loss": 1.5781133937835694,
+     "seconds": 4.2
+    },
+    {
+     "epoch": 5,
+     "train_loss": 1.5446229031527483,
+     "val_loss": 1.57710253683726,
+     "seconds": 4.3
+    },
+    {
+     "epoch": 6,
+     "train_loss": 1.5373492620020737,
+     "val_loss": 1.5753788335588244,
+     "seconds": 4.2
+    },
+    {
+     "epoch": 7,
+     "train_loss": 1.529048030923914,
+     "val_loss": 1.566272749265035,
+     "seconds": 4.2
+    },
+    {
+     "epoch": 8,
+     "train_loss": 1.522513586656547,
+     "val_loss": 1.5713738151126437,
+     "seconds": 4.3
+    },
+    {
+     "epoch": 9,
+     "train_loss": 1.5168387499915228,
+     "val_loss": 1.561320890320672,
+     "seconds": 4.2
+    },
+    {
+     "epoch": 10,
+     "train_loss": 1.5128523158202936,
+     "val_loss": 1.562121825642056,
+     "seconds": 4.2
+    },
+    {
+     "epoch": 11,
+     "train_loss": 1.5102766105863783,
+     "val_loss": 1.5590527453952365,
+     "seconds": 4.3
+    },
+    {
+     "epoch": 12,
+     "train_loss": 1.5032577099505766,
+     "val_loss": 1.5557332668304444,
+     "seconds": 4.2
+    },
+    {
+     "epoch": 13,
+     "train_loss": 1.5002478238918162,
+     "val_loss": 1.5613313438627454,
+     "seconds": 4.2
+    },
+    {
+     "epoch": 14,
+     "train_loss": 1.4961941969482988,
+     "val_loss": 1.559216636551751,
+     "seconds": 4.3
+    },
+    {
+     "epoch": 15,
+     "train_loss": 1.4926157517374297,
+     "val_loss": 1.5640286333296034,
+     "seconds": 4.3
+    }
+   ],
+   "n_train_cells": 40500,
+   "n_val_cells": 4500,
+   "mean_train_tokens": 17.266395061728396,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 1.18,
+   "truncated_frac": 0.0,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 8100,
+   "e5_val": 900,
+   "learner_val": 1000,
+   "test": 1584
+  }
+ },
+ "leakage_gap_head_train_minus_test": 0.015567166508935526,
+ "n_train": 10000,
+ "n_test": 1584,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-11 19:37:03",
+ "argv": [
+  "--method",
+  "frozen_xfit_pred",
+  "--learner",
+  "tabm",
+  "--dataset",
+  "MUL_TEXT_DATA_SCIENTIST_SALARY",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "stacking/1",
+  "k_folds": 3,
+  "method": "frozen_xfit_pred",
+  "fold_models": [
+   {
+    "fold": 0,
+    "n_train_rows": 6000,
+    "n_heldout": 3000,
+    "cache_key": "MUL_TEXT_DATA_SCIENTIST_SALARY/fold3/tar_repro/seed42/07055b3820_dfae962fc9",
+    "cache_hit": true,
+    "best_epoch": 9,
+    "train_rows_hash": "221c2b2515",
+    "heldout_rows_hash": "bd54e8f6f8"
+   },
+   {
+    "fold": 1,
+    "n_train_rows": 6000,
+    "n_heldout": 3000,
+    "cache_key": "MUL_TEXT_DATA_SCIENTIST_SALARY/fold3/tar_repro/seed42/07055b3820_1b8e07dadd",
+    "cache_hit": true,
+    "best_epoch": 17,
+    "train_rows_hash": "561c43ca36",
+    "heldout_rows_hash": "594144d226"
+   },
+   {
+    "fold": 2,
+    "n_train_rows": 6000,
+    "n_heldout": 3000,
+    "cache_key": "MUL_TEXT_DATA_SCIENTIST_SALARY/fold3/tar_repro/seed42/07055b3820_7124c7327f",
+    "cache_hit": true,
+    "best_epoch": 16,
+    "train_rows_hash": "03f53521e0",
+    "heldout_rows_hash": "5a26f1ce95"
+   }
+  ],
+  "folds_cover_pool": true,
+  "pred_feature_quality": {
+   "train_rows": 0.7916577258760799,
+   "test": 0.8051857208307794,
+   "learner_val": 0.8041959916204878,
+   "gap_train_minus_test": -0.013527994954699585
+  },
+  "n_pred_features_per_col": {
+   "experience": 5,
+   "job_description": 5,
+   "job_desig": 5,
+   "key_skills": 5,
+   "location": 5
+  },
+  "catboost_importance": null
+ }
+}

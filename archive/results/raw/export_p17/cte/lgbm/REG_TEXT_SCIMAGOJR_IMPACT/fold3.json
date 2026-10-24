@@ -1,0 +1,222 @@
+{
+ "method": "cte",
+ "run_name": "cte",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "lgbm",
+ "learner_model_name": "LightGBM \ud83d\udca1",
+ "dataset": "REG_TEXT_SCIMAGOJR_IMPACT",
+ "fold": 3,
+ "task": "REG",
+ "score": 0.8447538508684895,
+ "metrics": {
+  "score": 0.8447538508684895,
+  "metrics": {
+   "r2": 0.8447538508684895,
+   "mse": 467.12426006230737,
+   "rmse": 21.61305762871851
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.8496250062268041,
+  "joint_tar": 0.8564442353329362,
+  "unimodal_structured": 0.7064060600601711,
+  "unimodal_text": 0.7254308833291031
+ },
+ "diff_vs_csv_joint_tar": -0.011690384464446701,
+ "runtime_s": {
+  "total": 13.2,
+  "fit": 13.1,
+  "predict": 0.2,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-13 20:31:15",
+ "argv": [
+  "--method",
+  "cte",
+  "--learner",
+  "lgbm",
+  "--dataset",
+  "REG_TEXT_SCIMAGOJR_IMPACT",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte",
+  "experts": [
+   "lex",
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": true,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 4.58
+  },
+  "expert_cache_hits": {
+   "lex": true,
+   "nbr": true
+  },
+  "lex_alpha": {
+   "chosen": 1.0,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.906724,
+    0.912961,
+    0.909855,
+    0.895074
+   ]
+  },
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 48174
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.9129613744398768,
+     "nbr:Areas": 0.3887362544509242,
+     "nbr:Categories": 0.7397115034298719,
+     "nbr:Citations / Doc  (2years)": 0.7351548073142423,
+     "nbr:Country": 0.4677262417361775,
+     "nbr:Coverage": 0.7618368566497622,
+     "nbr:Issn": 0.496754805085076,
+     "nbr:Publisher": 0.6215917588801085,
+     "nbr:Ref  / Doc ": 0.2441511002638637,
+     "nbr:SJR": 0.7344064632158295,
+     "nbr:Title": 0.5362898304794974,
+     "nbr:__all__": 0.8307843685289422
+    },
+    "test": {
+     "lex:__all__": 0.9127327751970922,
+     "nbr:Areas": 0.3782394152611945,
+     "nbr:Categories": 0.7515136988501039,
+     "nbr:Citations / Doc  (2years)": 0.7345320141921597,
+     "nbr:Country": 0.4656904502831237,
+     "nbr:Coverage": 0.7624732108557806,
+     "nbr:Issn": 0.49102214478842265,
+     "nbr:Publisher": 0.6418156429486653,
+     "nbr:Ref  / Doc ": 0.26603839314640015,
+     "nbr:SJR": 0.7373236048006978,
+     "nbr:Title": 0.537290288928481,
+     "nbr:__all__": 0.8363420863266398
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": 0.00022859924278462174,
+    "nbr:Areas": 0.010496839189729712,
+    "nbr:Categories": -0.011802195420231976,
+    "nbr:Citations / Doc  (2years)": 0.0006227931220825766,
+    "nbr:Country": 0.00203579145305377,
+    "nbr:Coverage": -0.0006363542060183747,
+    "nbr:Issn": 0.005732660296653369,
+    "nbr:Publisher": -0.020223884068556797,
+    "nbr:Ref  / Doc ": -0.021887292882536463,
+    "nbr:SJR": -0.0029171415848683324,
+    "nbr:Title": -0.0010004584489835544,
+    "nbr:__all__": -0.005557717797697537
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "Areas": 23,
+   "Categories": 21,
+   "Citations / Doc  (2years)": 21,
+   "Country": 21,
+   "Coverage": 21,
+   "Issn": 21,
+   "Publisher": 21,
+   "Ref  / Doc ": 21,
+   "SJR": 21,
+   "Title": 21
+  },
+  "seconds": {
+   "frozen_embeddings": 0.7,
+   "experts": 4.6
+  },
+  "catboost_importance": null
+ }
+}

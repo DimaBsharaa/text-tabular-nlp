@@ -1,0 +1,312 @@
+{
+ "method": "frozen_xfit_pred",
+ "run_name": "frozen_xfit_pred",
+ "engine_version": "stacking/1",
+ "tar_path": "fast",
+ "learner": "lgbm",
+ "learner_model_name": "LightGBM \ud83d\udca1",
+ "dataset": "REG_TEXT_ROTTEN_TOMATOES",
+ "fold": 0,
+ "task": "REG",
+ "score": 0.5183660155789115,
+ "metrics": {
+  "score": 0.5183660155789115,
+  "metrics": {
+   "r2": 0.5183660155789115,
+   "mse": 0.7210389687085247,
+   "rmse": 0.849140134906203
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.5008822390088339,
+  "joint_tar": 0.4892815319954625,
+  "unimodal_structured": 0.1849923244075169,
+  "unimodal_text": 0.4582347085768717
+ },
+ "diff_vs_csv_joint_tar": 0.029084483583449006,
+ "runtime_s": {
+  "total": 23.7,
+  "fit": 23.6,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_key": "REG_TEXT_ROTTEN_TOMATOES/fold0/tar_repro/seed42/07055b3820_ce68ccda62",
+  "cache_hit": true,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "stacking/1",
+   "method": "frozen_xfit_pred",
+   "base": "tar_repro"
+  },
+  "text_cols": [
+   "Actors",
+   "Cast",
+   "Country",
+   "Creator",
+   "Description",
+   "Director",
+   "Filming Locations",
+   "Genre",
+   "Language",
+   "Name",
+   "RatingCount",
+   "Release Date",
+   "ReviewCount"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.2071289645945984,
+    "n": 5220
+   },
+   "e5_val": {
+    "score": 0.19072856513013536,
+    "n": 579
+   },
+   "test": {
+    "score": 0.16824196043319872,
+    "n": 715
+   },
+   "learner_val": {
+    "score": 0.15358740582848696,
+    "n": 644
+   }
+  },
+  "n_unique_texts": {
+   "Actors": 7000,
+   "Cast": 7093,
+   "Country": 393,
+   "Creator": 5983,
+   "Description": 7088,
+   "Director": 3586,
+   "Filming Locations": 3155,
+   "Genre": 628,
+   "Language": 500,
+   "Name": 6975,
+   "RatingCount": 5902,
+   "Release Date": 4711,
+   "ReviewCount": 5293
+  },
+  "train": {
+   "epochs_run": 12,
+   "best_epoch": 9,
+   "best_val_loss": 2.898909319820229,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 2.963313771980616,
+     "val_loss": 2.9569319780721472,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 2,
+     "train_loss": 2.941154135429434,
+     "val_loss": 2.9206829783418224,
+     "seconds": 7.2
+    },
+    {
+     "epoch": 3,
+     "train_loss": 2.91763246920198,
+     "val_loss": 2.912132806696866,
+     "seconds": 7.3
+    },
+    {
+     "epoch": 4,
+     "train_loss": 2.9090535945257114,
+     "val_loss": 2.9066829835654286,
+     "seconds": 7.2
+    },
+    {
+     "epoch": 5,
+     "train_loss": 2.9024692746484804,
+     "val_loss": 2.9057768205888754,
+     "seconds": 7.3
+    },
+    {
+     "epoch": 6,
+     "train_loss": 2.8969042317339566,
+     "val_loss": 2.9033307529341514,
+     "seconds": 7.3
+    },
+    {
+     "epoch": 7,
+     "train_loss": 2.8911576515589004,
+     "val_loss": 2.9011278103052645,
+     "seconds": 7.2
+    },
+    {
+     "epoch": 8,
+     "train_loss": 2.8855703257052836,
+     "val_loss": 2.9007310064978946,
+     "seconds": 7.3
+    },
+    {
+     "epoch": 9,
+     "train_loss": 2.8806731844102953,
+     "val_loss": 2.898909319820229,
+     "seconds": 7.2
+    },
+    {
+     "epoch": 10,
+     "train_loss": 2.8749809940269553,
+     "val_loss": 2.9003719861912542,
+     "seconds": 7.3
+    },
+    {
+     "epoch": 11,
+     "train_loss": 2.8696147498218774,
+     "val_loss": 2.9006854622142635,
+     "seconds": 7.3
+    },
+    {
+     "epoch": 12,
+     "train_loss": 2.864114063495104,
+     "val_loss": 2.9018433314166696,
+     "seconds": 7.3
+    }
+   ],
+   "n_train_cells": 67860,
+   "n_val_cells": 7527,
+   "mean_train_tokens": 17.42407898614795,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 2.49,
+   "truncated_frac": 0.0,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 5220,
+   "e5_val": 579,
+   "learner_val": 644,
+   "test": 715
+  }
+ },
+ "leakage_gap_head_train_minus_test": 0.038887004161399674,
+ "n_train": 6443,
+ "n_test": 715,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-11 19:01:14",
+ "argv": [
+  "--method",
+  "frozen_xfit_pred",
+  "--learner",
+  "lgbm",
+  "--dataset",
+  "REG_TEXT_ROTTEN_TOMATOES",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "stacking/1",
+  "k_folds": 3,
+  "method": "frozen_xfit_pred",
+  "fold_models": [
+   {
+    "fold": 0,
+    "n_train_rows": 3866,
+    "n_heldout": 1933,
+    "cache_key": "REG_TEXT_ROTTEN_TOMATOES/fold0/tar_repro/seed42/07055b3820_4ba7556b80",
+    "cache_hit": true,
+    "best_epoch": 6,
+    "train_rows_hash": "3448f9d68a",
+    "heldout_rows_hash": "bb770ea583"
+   },
+   {
+    "fold": 1,
+    "n_train_rows": 3866,
+    "n_heldout": 1933,
+    "cache_key": "REG_TEXT_ROTTEN_TOMATOES/fold0/tar_repro/seed42/07055b3820_4d672b94e9",
+    "cache_hit": true,
+    "best_epoch": 9,
+    "train_rows_hash": "31f6adfe29",
+    "heldout_rows_hash": "ce36bbd29c"
+   },
+   {
+    "fold": 2,
+    "n_train_rows": 3866,
+    "n_heldout": 1933,
+    "cache_key": "REG_TEXT_ROTTEN_TOMATOES/fold0/tar_repro/seed42/07055b3820_ddb6e774a5",
+    "cache_hit": true,
+    "best_epoch": 7,
+    "train_rows_hash": "4bd31f48be",
+    "heldout_rows_hash": "ab446b3de6"
+   }
+  ],
+  "folds_cover_pool": true,
+  "pred_feature_quality": {
+   "train_rows": 0.16514558465431284,
+   "test": 0.16340391885139893,
+   "learner_val": 0.13512035598748684,
+   "gap_train_minus_test": 0.0017416658029139054
+  },
+  "n_pred_features_per_col": {
+   "Actors": 2,
+   "Cast": 2,
+   "Country": 2,
+   "Creator": 2,
+   "Description": 2,
+   "Director": 2,
+   "Filming Locations": 2,
+   "Genre": 2,
+   "Language": 2,
+   "Name": 2,
+   "RatingCount": 2,
+   "Release Date": 2,
+   "ReviewCount": 2
+  },
+  "catboost_importance": null
+ }
+}

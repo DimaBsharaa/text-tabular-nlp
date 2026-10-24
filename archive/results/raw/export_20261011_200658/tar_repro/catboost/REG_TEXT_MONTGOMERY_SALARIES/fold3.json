@@ -1,0 +1,286 @@
+{
+ "method": "tar_repro",
+ "run_name": "tar_repro",
+ "engine_version": "tar_engine/2",
+ "tar_path": "fast",
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_MONTGOMERY_SALARIES",
+ "fold": 3,
+ "task": "REG",
+ "score": 0.9830980897379807,
+ "metrics": {
+  "score": 0.9830980897379807,
+  "metrics": {
+   "r2": 0.9830980897379807,
+   "mse": 13785631.264609579,
+   "rmse": 3712.9006537489768
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9786893870889656,
+  "joint_tar": 0.9829117872130656,
+  "unimodal_structured": 0.9636295732633292,
+  "unimodal_text": 0.8846844669942707
+ },
+ "diff_vs_csv_joint_tar": 0.00018630252491513843,
+ "runtime_s": {
+  "total": 84.9,
+  "fit": 84.9,
+  "predict": 0.0,
+  "tar_lower_cache": 1.7,
+  "tar_train": 57.5,
+  "tar_encode": 0.7
+ },
+ "tar": {
+  "cache_key": "REG_TEXT_MONTGOMERY_SALARIES/fold3/tar_repro/seed42/07055b3820_cb176cd21e",
+  "cache_hit": false,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "tar_engine/2"
+  },
+  "text_cols": [
+   "date_first_hired",
+   "division",
+   "employee_position_title",
+   "full_name"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.5724414003586568,
+    "n": 6729
+   },
+   "e5_val": {
+    "score": 0.5555683223881356,
+    "n": 747
+   },
+   "test": {
+    "score": 0.552587550336022,
+    "n": 922
+   },
+   "learner_val": {
+    "score": 0.5446482692817871,
+    "n": 830
+   }
+  },
+  "n_unique_texts": {
+   "date_first_hired": 2264,
+   "division": 694,
+   "employee_position_title": 385,
+   "full_name": 9222
+  },
+  "train": {
+   "epochs_run": 21,
+   "best_epoch": 18,
+   "best_val_loss": 2.599241543645999,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 2.995414351545377,
+     "val_loss": 2.979102855386185,
+     "seconds": 2.9
+    },
+    {
+     "epoch": 2,
+     "train_loss": 2.9442562476577794,
+     "val_loss": 2.874604921264342,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 3,
+     "train_loss": 2.8270957500765594,
+     "val_loss": 2.781459134266558,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 4,
+     "train_loss": 2.750980265481739,
+     "val_loss": 2.7354747214949273,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 5,
+     "train_loss": 2.7078074420750946,
+     "val_loss": 2.7041910428758285,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 6,
+     "train_loss": 2.678497484878651,
+     "val_loss": 2.679240811461585,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 7,
+     "train_loss": 2.6577647664887465,
+     "val_loss": 2.6643993516204505,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 8,
+     "train_loss": 2.6394827767314166,
+     "val_loss": 2.650485118549352,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 9,
+     "train_loss": 2.6220438033585953,
+     "val_loss": 2.637383116296975,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 10,
+     "train_loss": 2.61008076873997,
+     "val_loss": 2.6324976773625877,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 11,
+     "train_loss": 2.599441697930914,
+     "val_loss": 2.623227960453774,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 12,
+     "train_loss": 2.5922284379262663,
+     "val_loss": 2.6211021093320017,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 13,
+     "train_loss": 2.583676364521407,
+     "val_loss": 2.6113121771269854,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 14,
+     "train_loss": 2.5740879152802236,
+     "val_loss": 2.610246662793549,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 15,
+     "train_loss": 2.5665065194508494,
+     "val_loss": 2.61012735009353,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 16,
+     "train_loss": 2.5615702682378334,
+     "val_loss": 2.6065621028144355,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 17,
+     "train_loss": 2.5549551054208623,
+     "val_loss": 2.603935643851039,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 18,
+     "train_loss": 2.548512358388392,
+     "val_loss": 2.599241543645999,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 19,
+     "train_loss": 2.5423330604844043,
+     "val_loss": 2.6015154906863986,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 20,
+     "train_loss": 2.5384353845536505,
+     "val_loss": 2.6034491253665175,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 21,
+     "train_loss": 2.5332052940811405,
+     "val_loss": 2.5995545240450735,
+     "seconds": 2.7
+    }
+   ],
+   "n_train_cells": 26916,
+   "n_val_cells": 2988,
+   "mean_train_tokens": 13.181267647495913,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 0.62,
+   "truncated_frac": 0.0,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 6729,
+   "e5_val": 747,
+   "test": 922,
+   "learner_val": 830
+  }
+ },
+ "leakage_gap_head_train_minus_test": 0.019853850022634734,
+ "n_train": 8306,
+ "n_test": 922,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-10 22:07:15",
+ "argv": [
+  "--method",
+  "tar_repro",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_MONTGOMERY_SALARIES",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5"
+}

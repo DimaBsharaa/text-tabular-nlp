@@ -1,0 +1,200 @@
+{
+ "method": "cte",
+ "run_name": "cte",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "lgbm",
+ "learner_model_name": "LightGBM \ud83d\udca1",
+ "dataset": "BIN_TEXT_KICKSTARTER_FUNDING",
+ "fold": 4,
+ "task": "BIN",
+ "score": 0.739245174632353,
+ "metrics": {
+  "score": 0.739245174632353,
+  "metrics": {
+   "auc": 0.739245174632353
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.7006755514705881,
+  "joint_tar": 0.7223678768382353,
+  "unimodal_structured": 0.5852786075367646,
+  "unimodal_text": 0.6734731158088235
+ },
+ "diff_vs_csv_joint_tar": 0.01687729779411762,
+ "runtime_s": {
+  "total": 11.4,
+  "fit": 11.3,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 9998,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-13 20:24:48",
+ "argv": [
+  "--method",
+  "cte",
+  "--learner",
+  "lgbm",
+  "--dataset",
+  "BIN_TEXT_KICKSTARTER_FUNDING",
+  "--fold",
+  "4",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte",
+  "experts": [
+   "lex",
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": true,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 4.32
+  },
+  "expert_cache_hits": {
+   "lex": true,
+   "nbr": true
+  },
+  "lex_alpha": {
+   "chosen": 10.0,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.661261,
+    0.679029,
+    0.696925,
+    0.707728
+   ]
+  },
+  "n_classes": 2,
+  "class_columns": "C-1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 59823
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.7077275400196015,
+     "nbr:created_at": 0.5500219024757468,
+     "nbr:deadline": 0.5687129809809242,
+     "nbr:desc": 0.64683990739031,
+     "nbr:keywords": 0.6116850134227234,
+     "nbr:name": 0.6369649020638325,
+     "nbr:__all__": 0.6326880388619802
+    },
+    "test": {
+     "lex:__all__": 0.7099172794117646,
+     "nbr:created_at": 0.5402033547794118,
+     "nbr:deadline": 0.5705687040441176,
+     "nbr:desc": 0.6536810661764706,
+     "nbr:keywords": 0.6287005974264706,
+     "nbr:name": 0.6449586397058823,
+     "nbr:__all__": 0.6441038602941176
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": -0.002189739392163159,
+    "nbr:created_at": 0.009818547696334945,
+    "nbr:deadline": -0.0018557230631934818,
+    "nbr:desc": -0.006841158786160539,
+    "nbr:keywords": -0.017015584003747142,
+    "nbr:name": -0.007993737642049803,
+    "nbr:__all__": -0.011415821432137374
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "created_at": 23,
+   "deadline": 21,
+   "desc": 21,
+   "keywords": 21,
+   "name": 21
+  },
+  "seconds": {
+   "frozen_embeddings": 0.9,
+   "experts": 4.3
+  },
+  "catboost_importance": null
+ }
+}

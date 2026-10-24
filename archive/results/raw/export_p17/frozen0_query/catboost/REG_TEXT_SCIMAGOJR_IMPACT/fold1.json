@@ -1,0 +1,170 @@
+{
+ "method": "frozen0_query",
+ "run_name": "frozen0_query",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_SCIMAGOJR_IMPACT",
+ "fold": 1,
+ "task": "REG",
+ "score": 0.8727192556141508,
+ "metrics": {
+  "score": 0.8727192556141508,
+  "metrics": {
+   "r2": 0.8727192556141508,
+   "mse": 454.8174265651512,
+   "rmse": 21.32644899098655
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.872139025378756,
+  "joint_tar": 0.8803044356444832,
+  "unimodal_structured": 0.7821970460559335,
+  "unimodal_text": 0.7473901216264887
+ },
+ "diff_vs_csv_joint_tar": -0.0075851800303324834,
+ "runtime_s": {
+  "total": 159.6,
+  "fit": 159.5,
+  "predict": 0.2,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "frozen0_query",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "d5d75d7c617d0dba506955489e46acdff90e62a5",
+  "dirty": false
+ },
+ "timestamp": "2026-10-16 13:15:04",
+ "argv": [
+  "--method",
+  "frozen0_query",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_SCIMAGOJR_IMPACT",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "frozen0_query",
+  "groups": [],
+  "seconds": {
+   "base": 0.9
+  },
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 48294
+  },
+  "n_extra_columns": {
+   "Areas": 0,
+   "Categories": 0,
+   "Citations / Doc  (2years)": 0,
+   "Country": 0,
+   "Coverage": 0,
+   "Issn": 0,
+   "Publisher": 0,
+   "Ref  / Doc ": 0,
+   "SJR": 0,
+   "Title": 0
+  },
+  "catboost_importance": {
+   "pred_columns": {},
+   "pred_share": 0.0,
+   "group_share": {
+    "structured": 0.4958,
+    "pca": 0.5042
+   },
+   "top10": [
+    [
+     "Total Citations (3years)",
+     27.795
+    ],
+    [
+     "Rank",
+     17.134
+    ],
+    [
+     "Coverage_txt_pca_0",
+     8.38
+    ],
+    [
+     "Coverage_txt_pca_1",
+     4.407
+    ],
+    [
+     "Issn_txt_pca_0",
+     4.326
+    ],
+    [
+     "SJR_txt_pca_0",
+     1.478
+    ],
+    [
+     "Coverage_txt_pca_13",
+     1.239
+    ],
+    [
+     "Total Docs  (3years)",
+     1.119
+    ],
+    [
+     "Citable Docs  (3years)",
+     1.018
+    ],
+    [
+     "Country_txt_pca_2",
+     0.856
+    ]
+   ]
+  }
+ }
+}

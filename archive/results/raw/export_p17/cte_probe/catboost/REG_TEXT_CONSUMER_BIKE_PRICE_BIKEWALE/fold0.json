@@ -1,0 +1,240 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_CONSUMER_BIKE_PRICE_BIKEWALE",
+ "fold": 0,
+ "task": "REG",
+ "score": 0.6372078012181752,
+ "metrics": {
+  "score": 0.6372078012181752,
+  "metrics": {
+   "r2": 0.6372078012181752,
+   "mse": 4147903505.081227,
+   "rmse": 64404.219621708224
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 17.8,
+  "fit": 17.7,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 8103,
+ "n_test": 900,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 01:02:52",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_CONSUMER_BIKE_PRICE_BIKEWALE",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 1.1,
+   "probe": 2.0
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 1.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.797931,
+     0.798605,
+     0.797521,
+     0.790424
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.0,
+    "experts": 1.0
+   }
+  },
+  "probe": {
+   "alpha": 0.3,
+   "oof_metric": [
+    0.7745849192085251,
+    0.752778028483005,
+    0.7272859083807423,
+    0.6878076581278761
+   ]
+  },
+  "n_extra_columns": {
+   "bike_name": 24,
+   "color": 21
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "bike_name_txt_pca_30": 32.629,
+    "bike_name_txt_pca_31": 2.991,
+    "bike_name_txt_pca_32": 9.741,
+    "bike_name_txt_pca_33": 0.007,
+    "bike_name_txt_pca_34": 0.776,
+    "bike_name_txt_pca_35": 0.626,
+    "bike_name_txt_pca_36": 1.221,
+    "bike_name_txt_pca_37": 0.0,
+    "bike_name_txt_pca_38": 0.103,
+    "bike_name_txt_pca_39": 0.0,
+    "bike_name_txt_pca_40": 0.0,
+    "bike_name_txt_pca_41": 0.0,
+    "bike_name_txt_pca_42": 0.178,
+    "bike_name_txt_pca_43": 0.148,
+    "bike_name_txt_pca_44": 0.0,
+    "bike_name_txt_pca_45": 1.151,
+    "bike_name_txt_pca_46": 0.386,
+    "bike_name_txt_pca_47": 0.944,
+    "bike_name_txt_pca_48": 0.037,
+    "bike_name_txt_pca_49": 0.0,
+    "bike_name_txt_pca_50": 0.0,
+    "bike_name_txt_pca_51": 0.0,
+    "bike_name_txt_pca_52": 0.0,
+    "bike_name_txt_pca_53": 13.627,
+    "color_txt_pca_30": 0.218,
+    "color_txt_pca_31": 0.0,
+    "color_txt_pca_32": 0.0,
+    "color_txt_pca_33": 0.0,
+    "color_txt_pca_34": 0.0,
+    "color_txt_pca_35": 0.0,
+    "color_txt_pca_36": 0.0,
+    "color_txt_pca_37": 0.0,
+    "color_txt_pca_38": 0.0,
+    "color_txt_pca_39": 0.0,
+    "color_txt_pca_40": 0.04,
+    "color_txt_pca_41": 0.0,
+    "color_txt_pca_42": 0.0,
+    "color_txt_pca_43": 0.0,
+    "color_txt_pca_44": 0.005,
+    "color_txt_pca_45": 0.0,
+    "color_txt_pca_46": 0.0,
+    "color_txt_pca_47": 0.0,
+    "color_txt_pca_48": 0.0,
+    "color_txt_pca_49": 0.0,
+    "color_txt_pca_50": 0.0
+   },
+   "pred_share": 0.6483,
+   "group_share": {
+    "structured": 0.1151,
+    "pca": 0.2367,
+    "lex": 0.3263,
+    "nbr": 0.1295,
+    "num": 0.0562,
+    "probe": 0.1363
+   },
+   "top10": [
+    [
+     "bike_name_txt_pca_30",
+     32.629
+    ],
+    [
+     "bike_name_txt_pca_53",
+     13.627
+    ],
+    [
+     "bike_name_txt_pca_32",
+     9.741
+    ],
+    [
+     "km_driven",
+     7.033
+    ],
+    [
+     "model_year",
+     3.602
+    ],
+    [
+     "bike_name_txt_pca_31",
+     2.991
+    ],
+    [
+     "bike_name_txt_pca_24",
+     2.637
+    ],
+    [
+     "bike_name_txt_pca_1",
+     2.151
+    ],
+    [
+     "bike_name_txt_pca_23",
+     2.144
+    ],
+    [
+     "bike_name_txt_pca_2",
+     1.664
+    ]
+   ]
+  }
+ }
+}

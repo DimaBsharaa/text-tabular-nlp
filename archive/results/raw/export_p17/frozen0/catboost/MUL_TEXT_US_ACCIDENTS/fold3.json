@@ -1,0 +1,168 @@
+{
+ "method": "frozen0",
+ "run_name": "frozen0",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_US_ACCIDENTS",
+ "fold": 3,
+ "task": "MUL",
+ "score": 0.963553606756975,
+ "metrics": {
+  "score": 0.963553606756975,
+  "metrics": {
+   "auc": 0.963553606756975,
+   "logloss": 0.24727299718064938
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9639137799928856,
+  "joint_tar": 0.972321314297206,
+  "unimodal_structured": 0.8468514508227157,
+  "unimodal_text": 0.9572918984831336
+ },
+ "diff_vs_csv_joint_tar": -0.00876770754023104,
+ "runtime_s": {
+  "total": 329.8,
+  "fit": 329.6,
+  "predict": 0.2,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "frozen0",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "c82596a02b507b22d07a6ff5eda81dba73b31ed1",
+  "dirty": false
+ },
+ "timestamp": "2026-10-15 16:01:53",
+ "argv": [
+  "--method",
+  "frozen0",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_US_ACCIDENTS",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "frozen0",
+  "groups": [],
+  "seconds": {
+   "base": 1.6
+  },
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 63678
+  },
+  "n_extra_columns": {
+   "Airport_Code": 0,
+   "City": 0,
+   "County": 0,
+   "Description": 0,
+   "End_Time": 0,
+   "Start_Time": 0,
+   "Street": 0,
+   "Weather_Timestamp": 0,
+   "Zipcode": 0
+  },
+  "catboost_importance": {
+   "pred_columns": {},
+   "pred_share": 0.0,
+   "group_share": {
+    "structured": 0.196,
+    "pca": 0.804
+   },
+   "top10": [
+    [
+     "Description_txt_pca_0",
+     8.257
+    ],
+    [
+     "Description_txt_pca_2",
+     4.857
+    ],
+    [
+     "Source",
+     4.758
+    ],
+    [
+     "Description_txt_pca_3",
+     4.521
+    ],
+    [
+     "Distance(mi)",
+     4.283
+    ],
+    [
+     "End_Lng",
+     3.806
+    ],
+    [
+     "Start_Time_txt_pca_1",
+     3.363
+    ],
+    [
+     "End_Lat",
+     3.239
+    ],
+    [
+     "End_Time_txt_pca_1",
+     2.867
+    ],
+    [
+     "Description_txt_pca_4",
+     2.365
+    ]
+   ]
+  }
+ }
+}

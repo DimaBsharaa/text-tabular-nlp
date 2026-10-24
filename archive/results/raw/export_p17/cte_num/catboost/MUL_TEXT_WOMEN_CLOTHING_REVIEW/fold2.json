@@ -1,0 +1,245 @@
+{
+ "method": "cte_num",
+ "run_name": "cte_num",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_WOMEN_CLOTHING_REVIEW",
+ "fold": 2,
+ "task": "MUL",
+ "score": 0.9068204644838277,
+ "metrics": {
+  "score": 0.9068204644838277,
+  "metrics": {
+   "auc": 0.9068204644838277,
+   "logloss": 0.6704696440972686
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9078194101256664,
+  "joint_tar": 0.914315039362484,
+  "unimodal_structured": 0.781681759053801,
+  "unimodal_text": 0.8893184550828319
+ },
+ "diff_vs_csv_joint_tar": -0.007494574878656346,
+ "runtime_s": {
+  "total": 124.9,
+  "fit": 124.8,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte_num",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 1878,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-14 01:12:58",
+ "argv": [
+  "--method",
+  "cte_num",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_WOMEN_CLOTHING_REVIEW",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte_num",
+  "experts": [],
+  "mode": "oof",
+  "numeracy": true,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 3.61
+  },
+  "expert_cache_hits": {},
+  "lex_alpha": null,
+  "n_classes": 5,
+  "class_columns": "C-1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 18998
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {},
+    "test": {}
+   },
+   "gap_train_minus_test": {},
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "Review Text": 20,
+   "Title": 20
+  },
+  "seconds": {
+   "frozen_embeddings": 0.3,
+   "experts": 3.6
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Review Text_txt_pca_30": 0.003,
+    "Review Text_txt_pca_31": 0.136,
+    "Review Text_txt_pca_32": 0.212,
+    "Review Text_txt_pca_33": 0.304,
+    "Review Text_txt_pca_34": 0.0,
+    "Review Text_txt_pca_35": 0.0,
+    "Review Text_txt_pca_36": 0.004,
+    "Review Text_txt_pca_37": 0.003,
+    "Review Text_txt_pca_38": 0.002,
+    "Review Text_txt_pca_39": 0.294,
+    "Review Text_txt_pca_40": 0.223,
+    "Review Text_txt_pca_41": 0.316,
+    "Review Text_txt_pca_42": 0.783,
+    "Review Text_txt_pca_43": 0.449,
+    "Review Text_txt_pca_44": 0.124,
+    "Review Text_txt_pca_45": 0.673,
+    "Review Text_txt_pca_46": 0.377,
+    "Review Text_txt_pca_47": 0.0,
+    "Review Text_txt_pca_48": 0.758,
+    "Review Text_txt_pca_49": 0.0,
+    "Title_txt_pca_30": 0.0,
+    "Title_txt_pca_31": 0.001,
+    "Title_txt_pca_32": 0.005,
+    "Title_txt_pca_33": 0.0,
+    "Title_txt_pca_34": 0.0,
+    "Title_txt_pca_35": 0.0,
+    "Title_txt_pca_36": 0.0,
+    "Title_txt_pca_37": 0.0,
+    "Title_txt_pca_38": 0.0,
+    "Title_txt_pca_39": 0.159,
+    "Title_txt_pca_40": 0.23,
+    "Title_txt_pca_41": 0.114,
+    "Title_txt_pca_42": 0.583,
+    "Title_txt_pca_43": 0.389,
+    "Title_txt_pca_44": 0.003,
+    "Title_txt_pca_45": 0.109,
+    "Title_txt_pca_46": 0.153,
+    "Title_txt_pca_47": 0.001,
+    "Title_txt_pca_48": 0.048,
+    "Title_txt_pca_49": 0.0
+   },
+   "pred_share": 0.0646,
+   "group_share": {
+    "structured": 0.1803,
+    "pca": 0.7552,
+    "num": 0.0646
+   },
+   "top10": [
+    [
+     "Recommended IND",
+     14.077
+    ],
+    [
+     "Review Text_txt_pca_0",
+     8.41
+    ],
+    [
+     "Review Text_txt_pca_1",
+     4.491
+    ],
+    [
+     "Review Text_txt_pca_3",
+     4.156
+    ],
+    [
+     "Review Text_txt_pca_7",
+     3.892
+    ],
+    [
+     "Title_txt_pca_1",
+     3.699
+    ],
+    [
+     "Title_txt_pca_0",
+     3.423
+    ],
+    [
+     "Review Text_txt_pca_9",
+     2.337
+    ],
+    [
+     "Review Text_txt_pca_8",
+     1.727
+    ],
+    [
+     "Review Text_txt_pca_4",
+     1.713
+    ]
+   ]
+  }
+ }
+}

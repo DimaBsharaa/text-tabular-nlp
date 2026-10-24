@@ -1,0 +1,365 @@
+{
+ "method": "cte_residual",
+ "run_name": "cte_residual",
+ "engine_version": "p6/2",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_BABIES_PRICES",
+ "fold": 4,
+ "task": "REG",
+ "score": 0.8747393772090835,
+ "metrics": {
+  "score": 0.8747393772090835,
+  "metrics": {
+   "r2": 0.8747393772090835,
+   "mse": 222.08958365528875,
+   "rmse": 14.902670353171231
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.8319699081523556,
+  "joint_tar": 0.8710307314839416,
+  "unimodal_structured": 0.3464486319712149,
+  "unimodal_text": 0.7994721824203754
+ },
+ "diff_vs_csv_joint_tar": 0.003708645725141846,
+ "runtime_s": {
+  "total": 103.5,
+  "fit": 103.5,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p6/2",
+   "method": "cte_residual",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 4577,
+ "n_test": 508,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "d99be740ceb5b6e12eac61876c413e83c70cd11d",
+  "dirty": false
+ },
+ "timestamp": "2026-10-14 14:19:55",
+ "argv": [
+  "--method",
+  "cte_residual",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_BABIES_PRICES",
+  "--fold",
+  "4",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p6/2",
+  "method": "cte_residual",
+  "p6": {
+   "struct_cols": [
+    "category",
+    "fabrics",
+    "height",
+    "is_discounted",
+    "length",
+    "materials",
+    "weight",
+    "width"
+   ],
+   "p6_config": {
+    "struct_iterations": 300,
+    "struct_depth": 6,
+    "struct_learning_rate": 0.1,
+    "inner_folds": 3,
+    "nb_smoothing": 1.0,
+    "seed": 42
+   },
+   "n_struct_fits": 20,
+   "struct_oof_metric": 0.642418,
+   "lexical": "tfidf",
+   "targets": "residual"
+  },
+  "experts": [
+   "lex",
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": true,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "tfidf": 1.6,
+   "ridge": 32.9,
+   "n_tfidf_features": 20174,
+   "knn": 0.82,
+   "numeracy": 0.81
+  },
+  "expert_cache_hits": {
+   "lex": false,
+   "nbr": false
+  },
+  "lex_alpha": {
+   "chosen": 0.3,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.90606,
+    0.901565,
+    0.887929,
+    0.860349
+   ]
+  },
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 5519
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.708416769359761,
+     "nbr:colors": 0.02069241060127118,
+     "nbr:company_free": 0.13384906802493496,
+     "nbr:company_struct": 0.5851471729634392,
+     "nbr:title": 0.7010360244966526,
+     "nbr:__all__": 0.6759560511459765
+    },
+    "test": {
+     "lex:__all__": 0.7150799435601604,
+     "nbr:colors": 0.09411201179324953,
+     "nbr:company_free": 0.1973737765109983,
+     "nbr:company_struct": 0.5868504448294398,
+     "nbr:title": 0.7314944721381289,
+     "nbr:__all__": 0.6914954041837942
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": -0.006663174200399413,
+    "nbr:colors": -0.07341960119197835,
+    "nbr:company_free": -0.06352470848606334,
+    "nbr:company_struct": -0.0017032718660006108,
+    "nbr:title": -0.030458447641476316,
+    "nbr:__all__": -0.015539353037817727
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "colors": 23,
+   "company_free": 21,
+   "company_struct": 21,
+   "title": 21
+  },
+  "seconds": {
+   "frozen_embeddings": 0.1,
+   "experts": 36.2
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "colors_txt_pca_30": 22.161,
+    "colors_txt_pca_31": 3.487,
+    "colors_txt_pca_32": 0.11,
+    "colors_txt_pca_33": 0.0,
+    "colors_txt_pca_34": 0.0,
+    "colors_txt_pca_35": 0.0,
+    "colors_txt_pca_36": 0.0,
+    "colors_txt_pca_37": 0.0,
+    "colors_txt_pca_38": 0.0,
+    "colors_txt_pca_39": 0.0,
+    "colors_txt_pca_40": 0.0,
+    "colors_txt_pca_41": 0.0,
+    "colors_txt_pca_42": 0.012,
+    "colors_txt_pca_43": 0.007,
+    "colors_txt_pca_44": 0.0,
+    "colors_txt_pca_45": 0.0,
+    "colors_txt_pca_46": 0.0,
+    "colors_txt_pca_47": 0.0,
+    "colors_txt_pca_48": 0.006,
+    "colors_txt_pca_49": 0.0,
+    "colors_txt_pca_50": 0.0,
+    "colors_txt_pca_51": 0.0,
+    "colors_txt_pca_52": 0.0,
+    "company_free_txt_pca_30": 0.174,
+    "company_free_txt_pca_31": 0.0,
+    "company_free_txt_pca_32": 0.0,
+    "company_free_txt_pca_33": 0.0,
+    "company_free_txt_pca_34": 0.0,
+    "company_free_txt_pca_35": 0.0,
+    "company_free_txt_pca_36": 0.0,
+    "company_free_txt_pca_37": 0.0,
+    "company_free_txt_pca_38": 0.0,
+    "company_free_txt_pca_39": 0.0,
+    "company_free_txt_pca_40": 0.022,
+    "company_free_txt_pca_41": 0.0,
+    "company_free_txt_pca_42": 0.0,
+    "company_free_txt_pca_43": 0.001,
+    "company_free_txt_pca_44": 0.002,
+    "company_free_txt_pca_45": 0.0,
+    "company_free_txt_pca_46": 0.002,
+    "company_free_txt_pca_47": 0.0,
+    "company_free_txt_pca_48": 0.0,
+    "company_free_txt_pca_49": 0.005,
+    "company_free_txt_pca_50": 0.0,
+    "company_struct_txt_pca_30": 1.468,
+    "company_struct_txt_pca_31": 0.002,
+    "company_struct_txt_pca_32": 0.007,
+    "company_struct_txt_pca_33": 0.004,
+    "company_struct_txt_pca_34": 0.003,
+    "company_struct_txt_pca_35": 0.0,
+    "company_struct_txt_pca_36": 0.0,
+    "company_struct_txt_pca_37": 0.0,
+    "company_struct_txt_pca_38": 0.0,
+    "company_struct_txt_pca_39": 0.0,
+    "company_struct_txt_pca_40": 0.247,
+    "company_struct_txt_pca_41": 0.131,
+    "company_struct_txt_pca_42": 0.009,
+    "company_struct_txt_pca_43": 0.312,
+    "company_struct_txt_pca_44": 0.158,
+    "company_struct_txt_pca_45": 0.074,
+    "company_struct_txt_pca_46": 0.014,
+    "company_struct_txt_pca_47": 0.0,
+    "company_struct_txt_pca_48": 0.0,
+    "company_struct_txt_pca_49": 0.0,
+    "company_struct_txt_pca_50": 0.0,
+    "title_txt_pca_30": 11.008,
+    "title_txt_pca_31": 0.463,
+    "title_txt_pca_32": 1.331,
+    "title_txt_pca_33": 0.623,
+    "title_txt_pca_34": 0.867,
+    "title_txt_pca_35": 0.0,
+    "title_txt_pca_36": 0.0,
+    "title_txt_pca_37": 0.0,
+    "title_txt_pca_38": 0.0,
+    "title_txt_pca_39": 0.0,
+    "title_txt_pca_40": 0.237,
+    "title_txt_pca_41": 0.076,
+    "title_txt_pca_42": 0.0,
+    "title_txt_pca_43": 0.447,
+    "title_txt_pca_44": 0.44,
+    "title_txt_pca_45": 0.682,
+    "title_txt_pca_46": 0.167,
+    "title_txt_pca_47": 0.0,
+    "title_txt_pca_48": 0.0,
+    "title_txt_pca_49": 0.013,
+    "title_txt_pca_50": 0.0
+   },
+   "pred_share": 0.4477,
+   "group_share": {
+    "structured": 0.2211,
+    "pca": 0.3312,
+    "lex": 0.2216,
+    "nbr": 0.1625,
+    "num": 0.0636
+   },
+   "top10": [
+    [
+     "colors_txt_pca_30",
+     22.161
+    ],
+    [
+     "category",
+     19.51
+    ],
+    [
+     "title_txt_pca_30",
+     11.008
+    ],
+    [
+     "company_struct_txt_pca_27",
+     8.545
+    ],
+    [
+     "colors_txt_pca_31",
+     3.487
+    ],
+    [
+     "title_txt_pca_3",
+     1.975
+    ],
+    [
+     "company_struct_txt_pca_30",
+     1.468
+    ],
+    [
+     "title_txt_pca_32",
+     1.331
+    ],
+    [
+     "is_discounted",
+     1.235
+    ],
+    [
+     "company_struct_txt_pca_23",
+     1.193
+    ]
+   ]
+  }
+ }
+}

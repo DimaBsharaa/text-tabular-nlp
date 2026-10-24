@@ -1,0 +1,153 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "lgbm",
+ "learner_model_name": "LightGBM \ud83d\udca1",
+ "dataset": "REG_TEXT_SCIMAGOJR_IMPACT",
+ "fold": 0,
+ "task": "REG",
+ "score": 0.8792745118370358,
+ "metrics": {
+  "score": 0.8792745118370358,
+  "metrics": {
+   "r2": 0.8792745118370358,
+   "mse": 342.0072186034365,
+   "rmse": 18.49343717656176
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.8738286471337704,
+  "joint_tar": 0.8766275432996259,
+  "unimodal_structured": 0.7391444653563342,
+  "unimodal_text": 0.7902184105458121
+ },
+ "diff_vs_csv_joint_tar": 0.002646968537409866,
+ "runtime_s": {
+  "total": 42.1,
+  "fit": 41.9,
+  "predict": 0.2,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "aff5dab39d60ca016363b4d331384a20357e9d6a",
+  "dirty": false
+ },
+ "timestamp": "2026-10-19 08:40:28",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "lgbm",
+  "--dataset",
+  "REG_TEXT_SCIMAGOJR_IMPACT",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 18.5,
+   "probe": 16.3
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 1.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.912947,
+     0.917276,
+     0.912848,
+     0.897125
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 13.2,
+    "experts": 5.2
+   }
+  },
+  "probe": {
+   "alpha": 0.3,
+   "oof_metric": [
+    0.9280124077332806,
+    0.9278232174605386,
+    0.92618236305823,
+    0.9217069458995356
+   ]
+  },
+  "n_extra_columns": {
+   "Areas": 24,
+   "Categories": 21,
+   "Citations / Doc  (2years)": 21,
+   "Coverage": 21,
+   "Issn": 21,
+   "Publisher": 21,
+   "Ref  / Doc ": 21,
+   "SJR": 21,
+   "Title": 21
+  },
+  "catboost_importance": null
+ }
+}

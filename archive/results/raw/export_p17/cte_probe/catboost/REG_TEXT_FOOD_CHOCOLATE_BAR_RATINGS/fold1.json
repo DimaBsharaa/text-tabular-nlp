@@ -1,0 +1,240 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_FOOD_CHOCOLATE_BAR_RATINGS",
+ "fold": 1,
+ "task": "REG",
+ "score": 0.28852555002457003,
+ "metrics": {
+  "score": 0.28852555002457003,
+  "metrics": {
+   "r2": 0.28852555002457003,
+   "mse": 0.16647460709004228,
+   "rmse": 0.40801299867779
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 32.8,
+  "fit": 32.8,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 1616,
+ "n_test": 179,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 01:44:38",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_FOOD_CHOCOLATE_BAR_RATINGS",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 0.3,
+   "probe": 0.5
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 3.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.306585,
+     0.326993,
+     0.335966,
+     0.329722
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.0,
+    "experts": 0.2
+   }
+  },
+  "probe": {
+   "alpha": 1.0,
+   "oof_metric": [
+    0.29898125067445397,
+    0.30498757636933177,
+    0.2987437970770543,
+    0.28473147079695627
+   ]
+  },
+  "n_extra_columns": {
+   "Company  (Maker if known)": 24,
+   "Specific Bean Origin or Bar Name": 21
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Company  (Maker if known)_txt_pca_30": 4.532,
+    "Company  (Maker if known)_txt_pca_31": 6.524,
+    "Company  (Maker if known)_txt_pca_32": 4.034,
+    "Company  (Maker if known)_txt_pca_33": 0.0,
+    "Company  (Maker if known)_txt_pca_34": 0.001,
+    "Company  (Maker if known)_txt_pca_35": 0.0,
+    "Company  (Maker if known)_txt_pca_36": 0.0,
+    "Company  (Maker if known)_txt_pca_37": 0.0,
+    "Company  (Maker if known)_txt_pca_38": 0.0,
+    "Company  (Maker if known)_txt_pca_39": 0.0,
+    "Company  (Maker if known)_txt_pca_40": 0.0,
+    "Company  (Maker if known)_txt_pca_41": 0.0,
+    "Company  (Maker if known)_txt_pca_42": 0.585,
+    "Company  (Maker if known)_txt_pca_43": 0.262,
+    "Company  (Maker if known)_txt_pca_44": 0.03,
+    "Company  (Maker if known)_txt_pca_45": 0.5,
+    "Company  (Maker if known)_txt_pca_46": 0.47,
+    "Company  (Maker if known)_txt_pca_47": 0.0,
+    "Company  (Maker if known)_txt_pca_48": 0.208,
+    "Company  (Maker if known)_txt_pca_49": 0.0,
+    "Company  (Maker if known)_txt_pca_50": 0.0,
+    "Company  (Maker if known)_txt_pca_51": 0.0,
+    "Company  (Maker if known)_txt_pca_52": 0.0,
+    "Company  (Maker if known)_txt_pca_53": 2.204,
+    "Specific Bean Origin or Bar Name_txt_pca_30": 2.19,
+    "Specific Bean Origin or Bar Name_txt_pca_31": 0.102,
+    "Specific Bean Origin or Bar Name_txt_pca_32": 0.047,
+    "Specific Bean Origin or Bar Name_txt_pca_33": 0.025,
+    "Specific Bean Origin or Bar Name_txt_pca_34": 0.255,
+    "Specific Bean Origin or Bar Name_txt_pca_35": 0.058,
+    "Specific Bean Origin or Bar Name_txt_pca_36": 0.051,
+    "Specific Bean Origin or Bar Name_txt_pca_37": 0.0,
+    "Specific Bean Origin or Bar Name_txt_pca_38": 0.0,
+    "Specific Bean Origin or Bar Name_txt_pca_39": 0.003,
+    "Specific Bean Origin or Bar Name_txt_pca_40": 0.727,
+    "Specific Bean Origin or Bar Name_txt_pca_41": 0.139,
+    "Specific Bean Origin or Bar Name_txt_pca_42": 0.087,
+    "Specific Bean Origin or Bar Name_txt_pca_43": 0.654,
+    "Specific Bean Origin or Bar Name_txt_pca_44": 1.109,
+    "Specific Bean Origin or Bar Name_txt_pca_45": 0.119,
+    "Specific Bean Origin or Bar Name_txt_pca_46": 0.43,
+    "Specific Bean Origin or Bar Name_txt_pca_47": 0.0,
+    "Specific Bean Origin or Bar Name_txt_pca_48": 0.0,
+    "Specific Bean Origin or Bar Name_txt_pca_49": 0.002,
+    "Specific Bean Origin or Bar Name_txt_pca_50": 0.0
+   },
+   "pred_share": 0.2535,
+   "group_share": {
+    "structured": 0.139,
+    "pca": 0.6075,
+    "lex": 0.0453,
+    "nbr": 0.1275,
+    "num": 0.0587,
+    "probe": 0.022
+   },
+   "top10": [
+    [
+     "Company  (Maker if known)_txt_pca_31",
+     6.524
+    ],
+    [
+     "Cocoa Percent",
+     5.755
+    ],
+    [
+     "Company  (Maker if known)_txt_pca_30",
+     4.532
+    ],
+    [
+     "Company  (Maker if known)_txt_pca_32",
+     4.034
+    ],
+    [
+     "REF",
+     3.922
+    ],
+    [
+     "Specific Bean Origin or Bar Name_txt_pca_0",
+     2.822
+    ],
+    [
+     "Review Date",
+     2.267
+    ],
+    [
+     "Company  (Maker if known)_txt_pca_53",
+     2.204
+    ],
+    [
+     "Specific Bean Origin or Bar Name_txt_pca_30",
+     2.19
+    ],
+    [
+     "Specific Bean Origin or Bar Name_txt_pca_8",
+     2.016
+    ]
+   ]
+  }
+ }
+}

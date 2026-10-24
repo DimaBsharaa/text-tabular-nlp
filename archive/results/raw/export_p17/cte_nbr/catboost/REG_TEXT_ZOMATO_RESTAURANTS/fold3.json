@@ -1,0 +1,250 @@
+{
+ "method": "cte_nbr",
+ "run_name": "cte_nbr",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_ZOMATO_RESTAURANTS",
+ "fold": 3,
+ "task": "REG",
+ "score": 0.8349591691445599,
+ "metrics": {
+  "score": 0.8349591691445599,
+  "metrics": {
+   "r2": 0.8349591691445599,
+   "mse": 0.032637614847243056,
+   "rmse": 0.18065883550837766
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.827531384749283,
+  "joint_tar": 0.843279425352054,
+  "unimodal_structured": 0.5926217992735753,
+  "unimodal_text": 0.8113946902399404
+ },
+ "diff_vs_csv_joint_tar": -0.008320256207494103,
+ "runtime_s": {
+  "total": 79.0,
+  "fit": 78.7,
+  "predict": 0.3,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte_nbr",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-14 00:44:59",
+ "argv": [
+  "--method",
+  "cte_nbr",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_ZOMATO_RESTAURANTS",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte_nbr",
+  "experts": [
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": false,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 0.0
+  },
+  "expert_cache_hits": {
+   "nbr": true
+  },
+  "lex_alpha": null,
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 34446
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "nbr:address": 0.7536790618627822,
+     "nbr:cuisines": 0.5767766665679377,
+     "nbr:dish_liked": 0.7697071813003346,
+     "nbr:menu_item": 0.20484613268990445,
+     "nbr:name": 0.7800845688132569,
+     "nbr:phone": 0.7464166731388358,
+     "nbr:reviews_list": 0.7950198330752221,
+     "nbr:__all__": 0.8502809626279175
+    },
+    "test": {
+     "nbr:address": 0.7801227644120523,
+     "nbr:cuisines": 0.6023417596239118,
+     "nbr:dish_liked": 0.8324547963646501,
+     "nbr:menu_item": 0.24952705950434417,
+     "nbr:name": 0.8198739871188234,
+     "nbr:phone": 0.766798057020819,
+     "nbr:reviews_list": 0.8208039095180795,
+     "nbr:__all__": 0.8765783787205949
+    }
+   },
+   "gap_train_minus_test": {
+    "nbr:address": -0.026443702549270087,
+    "nbr:cuisines": -0.025565093055974097,
+    "nbr:dish_liked": -0.06274761506431559,
+    "nbr:menu_item": -0.04468092681443972,
+    "nbr:name": -0.03978941830556648,
+    "nbr:phone": -0.020381383881983295,
+    "nbr:reviews_list": -0.025784076442857407,
+    "nbr:__all__": -0.026297416092677328
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "address": 2,
+   "cuisines": 1,
+   "dish_liked": 1,
+   "menu_item": 1,
+   "name": 1,
+   "phone": 1,
+   "reviews_list": 1
+  },
+  "seconds": {
+   "frozen_embeddings": 1.1,
+   "experts": 0.0
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "address_txt_pca_30": 17.474,
+    "address_txt_pca_31": 5.13,
+    "cuisines_txt_pca_30": 0.585,
+    "dish_liked_txt_pca_30": 10.465,
+    "menu_item_txt_pca_30": 0.013,
+    "name_txt_pca_30": 11.423,
+    "phone_txt_pca_30": 10.105,
+    "reviews_list_txt_pca_30": 7.829
+   },
+   "pred_share": 0.6302,
+   "group_share": {
+    "structured": 0.0669,
+    "pca": 0.3028,
+    "nbr": 0.6302
+   },
+   "top10": [
+    [
+     "address_txt_pca_30",
+     17.474
+    ],
+    [
+     "name_txt_pca_30",
+     11.423
+    ],
+    [
+     "dish_liked_txt_pca_30",
+     10.465
+    ],
+    [
+     "phone_txt_pca_30",
+     10.105
+    ],
+    [
+     "reviews_list_txt_pca_30",
+     7.829
+    ],
+    [
+     "votes",
+     5.639
+    ],
+    [
+     "address_txt_pca_31",
+     5.13
+    ],
+    [
+     "reviews_list_txt_pca_10",
+     2.179
+    ],
+    [
+     "reviews_list_txt_pca_9",
+     1.298
+    ],
+    [
+     "reviews_list_txt_pca_12",
+     1.181
+    ]
+   ]
+  }
+ }
+}

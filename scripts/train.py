@@ -105,6 +105,10 @@ def main(argv=None) -> dict:
                               micro_batch_size=256, lower_cache_dir=None,
                               cache_dir=a.cache_dir or join(a.out_dir, "_cache"))
     model, learner_cls, x_train, y_train, x_test, y_test, t0 = (rx.fit_learner(args) if a.dataset else fit_csv(a, args))
+    if not model.text_features:
+        raise SystemExit("no column was detected as free text (MulTaBench's rule, multabench/preprocessing/feat_types.py: "
+                         "a non-numeric column with at least 100 distinct values or at least 80% distinct values); "
+                         "this method needs at least one text column")
     t_fit = time.time() - t0
     metrics = model.score_all_metrics(X=x_test, y=y_test)
     fit_time_pred = np.asarray(model.predict(x_test))

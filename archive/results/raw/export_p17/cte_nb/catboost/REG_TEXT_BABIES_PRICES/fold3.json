@@ -1,0 +1,341 @@
+{
+ "method": "cte_nb",
+ "run_name": "cte_nb",
+ "engine_version": "p6/2",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_BABIES_PRICES",
+ "fold": 3,
+ "task": "REG",
+ "score": 0.9156494868605831,
+ "metrics": {
+  "score": 0.9156494868605831,
+  "metrics": {
+   "r2": 0.9156494868605831,
+   "mse": 214.20643064963224,
+   "rmse": 14.635792791975167
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.8787229381782433,
+  "joint_tar": 0.8736704582377628,
+  "unimodal_structured": 0.3901707358609085,
+  "unimodal_text": 0.844660368605834
+ },
+ "diff_vs_csv_joint_tar": 0.041979028622820325,
+ "runtime_s": {
+  "total": 67.8,
+  "fit": 67.8,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p6/2",
+   "method": "cte_nb",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 4577,
+ "n_test": 508,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "d99be740ceb5b6e12eac61876c413e83c70cd11d",
+  "dirty": false
+ },
+ "timestamp": "2026-10-14 10:51:55",
+ "argv": [
+  "--method",
+  "cte_nb",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_BABIES_PRICES",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p6/2",
+  "method": "cte_nb",
+  "p6": {
+   "lexical": "tfidf",
+   "targets": "y"
+  },
+  "experts": [
+   "lex",
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": true,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 0.82
+  },
+  "expert_cache_hits": {
+   "lex": true,
+   "nbr": true
+  },
+  "lex_alpha": {
+   "chosen": 0.3,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.926952,
+    0.921149,
+    0.906663,
+    0.880262
+   ]
+  },
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 5519
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.9269524541203292,
+     "nbr:colors": 0.10185680144227482,
+     "nbr:company_free": 0.2091631885797505,
+     "nbr:company_struct": 0.7092579915195572,
+     "nbr:title": 0.8723398269434022,
+     "nbr:__all__": 0.7995064101267717
+    },
+    "test": {
+     "lex:__all__": 0.9216544919657494,
+     "nbr:colors": 0.13289939087315472,
+     "nbr:company_free": 0.16506821107229908,
+     "nbr:company_struct": 0.7118675414680788,
+     "nbr:title": 0.8718402529838013,
+     "nbr:__all__": 0.8049397396945797
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": 0.005297962154579783,
+    "nbr:colors": -0.031042589430879897,
+    "nbr:company_free": 0.04409497750745142,
+    "nbr:company_struct": -0.0026095499485216944,
+    "nbr:title": 0.0004995739596008741,
+    "nbr:__all__": -0.005433329567807954
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "colors": 23,
+   "company_free": 21,
+   "company_struct": 21,
+   "title": 21
+  },
+  "seconds": {
+   "frozen_embeddings": 0.1,
+   "experts": 2.5
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "colors_txt_pca_30": 50.721,
+    "colors_txt_pca_31": 3.871,
+    "colors_txt_pca_32": 0.224,
+    "colors_txt_pca_33": 0.0,
+    "colors_txt_pca_34": 0.0,
+    "colors_txt_pca_35": 0.0,
+    "colors_txt_pca_36": 0.0,
+    "colors_txt_pca_37": 0.0,
+    "colors_txt_pca_38": 0.0,
+    "colors_txt_pca_39": 0.0,
+    "colors_txt_pca_40": 0.0,
+    "colors_txt_pca_41": 0.0,
+    "colors_txt_pca_42": 0.004,
+    "colors_txt_pca_43": 0.023,
+    "colors_txt_pca_44": 0.0,
+    "colors_txt_pca_45": 0.001,
+    "colors_txt_pca_46": 0.0,
+    "colors_txt_pca_47": 0.0,
+    "colors_txt_pca_48": 0.01,
+    "colors_txt_pca_49": 0.0,
+    "colors_txt_pca_50": 0.0,
+    "colors_txt_pca_51": 0.021,
+    "colors_txt_pca_52": 0.0,
+    "company_free_txt_pca_30": 0.258,
+    "company_free_txt_pca_31": 0.0,
+    "company_free_txt_pca_32": 0.0,
+    "company_free_txt_pca_33": 0.0,
+    "company_free_txt_pca_34": 0.0,
+    "company_free_txt_pca_35": 0.0,
+    "company_free_txt_pca_36": 0.0,
+    "company_free_txt_pca_37": 0.0,
+    "company_free_txt_pca_38": 0.0,
+    "company_free_txt_pca_39": 0.0,
+    "company_free_txt_pca_40": 0.04,
+    "company_free_txt_pca_41": 0.011,
+    "company_free_txt_pca_42": 0.002,
+    "company_free_txt_pca_43": 0.053,
+    "company_free_txt_pca_44": 0.02,
+    "company_free_txt_pca_45": 0.0,
+    "company_free_txt_pca_46": 0.03,
+    "company_free_txt_pca_47": 0.0,
+    "company_free_txt_pca_48": 0.0,
+    "company_free_txt_pca_49": 0.0,
+    "company_free_txt_pca_50": 0.0,
+    "company_struct_txt_pca_30": 1.418,
+    "company_struct_txt_pca_31": 0.0,
+    "company_struct_txt_pca_32": 0.012,
+    "company_struct_txt_pca_33": 0.014,
+    "company_struct_txt_pca_34": 0.007,
+    "company_struct_txt_pca_35": 0.0,
+    "company_struct_txt_pca_36": 0.0,
+    "company_struct_txt_pca_37": 0.0,
+    "company_struct_txt_pca_38": 0.0,
+    "company_struct_txt_pca_39": 0.0,
+    "company_struct_txt_pca_40": 0.141,
+    "company_struct_txt_pca_41": 0.061,
+    "company_struct_txt_pca_42": 0.011,
+    "company_struct_txt_pca_43": 0.299,
+    "company_struct_txt_pca_44": 0.135,
+    "company_struct_txt_pca_45": 0.165,
+    "company_struct_txt_pca_46": 0.03,
+    "company_struct_txt_pca_47": 0.0,
+    "company_struct_txt_pca_48": 0.0,
+    "company_struct_txt_pca_49": 0.0,
+    "company_struct_txt_pca_50": 0.0,
+    "title_txt_pca_30": 8.198,
+    "title_txt_pca_31": 0.236,
+    "title_txt_pca_32": 0.465,
+    "title_txt_pca_33": 0.521,
+    "title_txt_pca_34": 0.585,
+    "title_txt_pca_35": 0.0,
+    "title_txt_pca_36": 0.0,
+    "title_txt_pca_37": 0.0,
+    "title_txt_pca_38": 0.0,
+    "title_txt_pca_39": 0.0,
+    "title_txt_pca_40": 0.143,
+    "title_txt_pca_41": 0.213,
+    "title_txt_pca_42": 0.002,
+    "title_txt_pca_43": 0.552,
+    "title_txt_pca_44": 0.158,
+    "title_txt_pca_45": 0.208,
+    "title_txt_pca_46": 0.48,
+    "title_txt_pca_47": 0.0,
+    "title_txt_pca_48": 0.0,
+    "title_txt_pca_49": 0.024,
+    "title_txt_pca_50": 0.0
+   },
+   "pred_share": 0.6937,
+   "group_share": {
+    "structured": 0.0484,
+    "pca": 0.2579,
+    "lex": 0.5072,
+    "nbr": 0.1397,
+    "num": 0.0468
+   },
+   "top10": [
+    [
+     "colors_txt_pca_30",
+     50.721
+    ],
+    [
+     "title_txt_pca_30",
+     8.198
+    ],
+    [
+     "colors_txt_pca_31",
+     3.871
+    ],
+    [
+     "category",
+     3.316
+    ],
+    [
+     "company_struct_txt_pca_30",
+     1.418
+    ],
+    [
+     "title_txt_pca_24",
+     0.959
+    ],
+    [
+     "title_txt_pca_2",
+     0.947
+    ],
+    [
+     "title_txt_pca_6",
+     0.893
+    ],
+    [
+     "is_discounted",
+     0.888
+    ],
+    [
+     "title_txt_pca_3",
+     0.876
+    ]
+   ]
+  }
+ }
+}

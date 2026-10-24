@@ -1,0 +1,318 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "BIN_TEXT_FINANCIAL_CONSUMER_COMPLAINT",
+ "fold": 2,
+ "task": "BIN",
+ "score": 0.91088199296334,
+ "metrics": {
+  "score": 0.91088199296334,
+  "metrics": {
+   "auc": 0.91088199296334,
+   "logloss": 0.5670926027727405
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 784.1,
+  "fit": 783.9,
+  "predict": 0.2,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 00:22:23",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "BIN_TEXT_FINANCIAL_CONSUMER_COMPLAINT",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 4.7,
+   "probe": 53.0
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 10.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.723602,
+     0.747619,
+     0.772522,
+     0.799216
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.3,
+    "experts": 4.2
+   }
+  },
+  "probe": {
+   "alpha": 10.0,
+   "oof_metric": [
+    0.7717177217273252,
+    0.7909970215892455,
+    0.8084795464406607,
+    0.8194423684431738
+   ]
+  },
+  "n_extra_columns": {
+   "Company": 41,
+   "Consumer complaint narrative": 20,
+   "Issue": 20,
+   "Sub-issue": 20,
+   "ZIP code": 20
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Company_txt_pca_30": 1.248,
+    "Company_txt_pca_31": 2.055,
+    "Company_txt_pca_32": 1.794,
+    "Company_txt_pca_33": 0.614,
+    "Company_txt_pca_34": 0.972,
+    "Company_txt_pca_35": 1.041,
+    "Company_txt_pca_36": 0.826,
+    "Company_txt_pca_37": 1.423,
+    "Company_txt_pca_38": 1.138,
+    "Company_txt_pca_39": 1.676,
+    "Company_txt_pca_40": 0.121,
+    "Company_txt_pca_41": 0.123,
+    "Company_txt_pca_42": 0.11,
+    "Company_txt_pca_43": 0.056,
+    "Company_txt_pca_44": 0.0,
+    "Company_txt_pca_45": 0.0,
+    "Company_txt_pca_46": 0.0,
+    "Company_txt_pca_47": 0.0,
+    "Company_txt_pca_48": 0.0,
+    "Company_txt_pca_49": 0.0,
+    "Company_txt_pca_50": 0.0,
+    "Company_txt_pca_51": 0.0,
+    "Company_txt_pca_52": 0.0,
+    "Company_txt_pca_53": 0.24,
+    "Company_txt_pca_54": 0.234,
+    "Company_txt_pca_55": 0.006,
+    "Company_txt_pca_56": 0.343,
+    "Company_txt_pca_57": 0.483,
+    "Company_txt_pca_58": 0.0,
+    "Company_txt_pca_59": 0.454,
+    "Company_txt_pca_60": 0.0,
+    "Company_txt_pca_61": 0.0,
+    "Company_txt_pca_62": 0.0,
+    "Company_txt_pca_63": 0.0,
+    "Company_txt_pca_64": 2.269,
+    "Company_txt_pca_65": 1.521,
+    "Company_txt_pca_66": 1.425,
+    "Company_txt_pca_67": 0.563,
+    "Company_txt_pca_68": 0.634,
+    "Company_txt_pca_69": 0.786,
+    "Company_txt_pca_70": 0.731,
+    "Consumer complaint narrative_txt_pca_30": 0.013,
+    "Consumer complaint narrative_txt_pca_31": 0.05,
+    "Consumer complaint narrative_txt_pca_32": 0.035,
+    "Consumer complaint narrative_txt_pca_33": 0.02,
+    "Consumer complaint narrative_txt_pca_34": 0.013,
+    "Consumer complaint narrative_txt_pca_35": 0.021,
+    "Consumer complaint narrative_txt_pca_36": 0.0,
+    "Consumer complaint narrative_txt_pca_37": 0.004,
+    "Consumer complaint narrative_txt_pca_38": 0.0,
+    "Consumer complaint narrative_txt_pca_39": 0.081,
+    "Consumer complaint narrative_txt_pca_40": 0.052,
+    "Consumer complaint narrative_txt_pca_41": 0.024,
+    "Consumer complaint narrative_txt_pca_42": 0.086,
+    "Consumer complaint narrative_txt_pca_43": 0.096,
+    "Consumer complaint narrative_txt_pca_44": 0.086,
+    "Consumer complaint narrative_txt_pca_45": 0.146,
+    "Consumer complaint narrative_txt_pca_46": 0.017,
+    "Consumer complaint narrative_txt_pca_47": 0.003,
+    "Consumer complaint narrative_txt_pca_48": 0.088,
+    "Consumer complaint narrative_txt_pca_49": 0.0,
+    "Issue_txt_pca_30": 0.0,
+    "Issue_txt_pca_31": 0.0,
+    "Issue_txt_pca_32": 0.0,
+    "Issue_txt_pca_33": 0.0,
+    "Issue_txt_pca_34": 0.0,
+    "Issue_txt_pca_35": 0.0,
+    "Issue_txt_pca_36": 0.0,
+    "Issue_txt_pca_37": 0.0,
+    "Issue_txt_pca_38": 0.0,
+    "Issue_txt_pca_39": 0.215,
+    "Issue_txt_pca_40": 0.084,
+    "Issue_txt_pca_41": 0.0,
+    "Issue_txt_pca_42": 0.188,
+    "Issue_txt_pca_43": 0.073,
+    "Issue_txt_pca_44": 0.0,
+    "Issue_txt_pca_45": 0.162,
+    "Issue_txt_pca_46": 0.0,
+    "Issue_txt_pca_47": 0.0,
+    "Issue_txt_pca_48": 0.02,
+    "Issue_txt_pca_49": 0.0,
+    "Sub-issue_txt_pca_30": 0.0,
+    "Sub-issue_txt_pca_31": 0.0,
+    "Sub-issue_txt_pca_32": 0.0,
+    "Sub-issue_txt_pca_33": 0.0,
+    "Sub-issue_txt_pca_34": 0.0,
+    "Sub-issue_txt_pca_35": 0.0,
+    "Sub-issue_txt_pca_36": 0.0,
+    "Sub-issue_txt_pca_37": 0.0,
+    "Sub-issue_txt_pca_38": 0.0,
+    "Sub-issue_txt_pca_39": 0.071,
+    "Sub-issue_txt_pca_40": 0.154,
+    "Sub-issue_txt_pca_41": 0.0,
+    "Sub-issue_txt_pca_42": 0.36,
+    "Sub-issue_txt_pca_43": 0.171,
+    "Sub-issue_txt_pca_44": 0.0,
+    "Sub-issue_txt_pca_45": 0.025,
+    "Sub-issue_txt_pca_46": 0.0,
+    "Sub-issue_txt_pca_47": 0.0,
+    "Sub-issue_txt_pca_48": 0.119,
+    "Sub-issue_txt_pca_49": 0.0,
+    "ZIP code_txt_pca_30": 0.014,
+    "ZIP code_txt_pca_31": 0.313,
+    "ZIP code_txt_pca_32": 0.21,
+    "ZIP code_txt_pca_33": 0.052,
+    "ZIP code_txt_pca_34": 0.0,
+    "ZIP code_txt_pca_35": 0.0,
+    "ZIP code_txt_pca_36": 0.0,
+    "ZIP code_txt_pca_37": 0.0,
+    "ZIP code_txt_pca_38": 0.0,
+    "ZIP code_txt_pca_39": 0.025,
+    "ZIP code_txt_pca_40": 0.0,
+    "ZIP code_txt_pca_41": 0.0,
+    "ZIP code_txt_pca_42": 0.011,
+    "ZIP code_txt_pca_43": 0.0,
+    "ZIP code_txt_pca_44": 0.0,
+    "ZIP code_txt_pca_45": 0.0,
+    "ZIP code_txt_pca_46": 0.0,
+    "ZIP code_txt_pca_47": 0.0,
+    "ZIP code_txt_pca_48": 0.0,
+    "ZIP code_txt_pca_49": 0.0
+   },
+   "pred_share": 0.2599,
+   "group_share": {
+    "structured": 0.2107,
+    "pca": 0.5293,
+    "lex": 0.0855,
+    "nbr": 0.0465,
+    "num": 0.0486,
+    "probe": 0.0793
+   },
+   "top10": [
+    [
+     "Date received_total_seconds",
+     4.512
+    ],
+    [
+     "Date sent to company_total_seconds",
+     4.216
+    ],
+    [
+     "Company_txt_pca_64",
+     2.269
+    ],
+    [
+     "Company_txt_pca_31",
+     2.055
+    ],
+    [
+     "Date sent to company_year",
+     1.897
+    ],
+    [
+     "Consumer disputed?",
+     1.866
+    ],
+    [
+     "Company_txt_pca_32",
+     1.794
+    ],
+    [
+     "Company_txt_pca_39",
+     1.676
+    ],
+    [
+     "Company_txt_pca_65",
+     1.521
+    ],
+    [
+     "Company_txt_pca_66",
+     1.425
+    ]
+   ]
+  }
+ }
+}

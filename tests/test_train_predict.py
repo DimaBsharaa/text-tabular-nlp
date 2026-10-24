@@ -159,6 +159,19 @@ def test_csv_mode(tmp_path):
     assert np.allclose(pred.to_numpy(), pd.read_csv(out / "test_predictions.csv").to_numpy(), atol=1e-6)
 
 
+def test_csv_without_text_column_explains(tmp_path):
+    """A table whose string columns are all categorical (few distinct values) gets a clear message, not a crash."""
+    import train
+    rng = np.random.default_rng(0)
+    n = 300
+    df = pd.DataFrame({"colour": rng.choice(["red", "green", "blue"], n), "size": rng.normal(0, 1, n),
+                       "label": rng.integers(0, 2, n)})
+    df.to_csv(tmp_path / "table.csv", index=False)
+    with pytest.raises(SystemExit, match="free text"):
+        train.main(["--csv", str(tmp_path / "table.csv"), "--target", "label", "--out_dir", str(tmp_path / "m"),
+                    "--learner", "lgbm"])
+
+
 @pytest.mark.parametrize("learner,fmt,fname", [("lgbm", "joblib", "learner_model.joblib"),
                                                 ("tabm", "joblib", "learner_model.joblib"),
                                                 ("tabpfnv2", "tabpfn", "learner_model.tabpfn_fit"),

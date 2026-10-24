@@ -1,0 +1,242 @@
+{
+ "method": "cte_lex_insample",
+ "run_name": "cte_lex_insample",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_US_ACCIDENTS",
+ "fold": 1,
+ "task": "MUL",
+ "score": 0.9643033856616543,
+ "metrics": {
+  "score": 0.9643033856616543,
+  "metrics": {
+   "auc": 0.9643033856616543,
+   "logloss": 0.2551066103104387
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9685235995808974,
+  "joint_tar": 0.9732713101140912,
+  "unimodal_structured": 0.872126999742042,
+  "unimodal_text": 0.9626922545637836
+ },
+ "diff_vs_csv_joint_tar": -0.008967924452436882,
+ "runtime_s": {
+  "total": 372.2,
+  "fit": 372.0,
+  "predict": 0.2,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte_lex_insample",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-14 05:08:53",
+ "argv": [
+  "--method",
+  "cte_lex_insample",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_US_ACCIDENTS",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte_lex_insample",
+  "experts": [
+   "lex"
+  ],
+  "mode": "insample",
+  "numeracy": false,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "tfidf": 9.39,
+   "ridge": 57.03,
+   "n_tfidf_features": 78792,
+   "numeracy": 0.0
+  },
+  "expert_cache_hits": {
+   "lex": false
+  },
+  "lex_alpha": {
+   "chosen": 10.0,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.938209,
+    0.947941,
+    0.95357,
+    0.954099
+   ]
+  },
+  "n_classes": 4,
+  "class_columns": "C-1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 63775
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.9879906245437031
+    },
+    "test": {
+     "lex:__all__": 0.9634338413917205
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": 0.02455678315198262
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "Airport_Code": 3,
+   "City": 0,
+   "County": 0,
+   "Description": 0,
+   "End_Time": 0,
+   "Start_Time": 0,
+   "Street": 0,
+   "Weather_Timestamp": 0,
+   "Zipcode": 0
+  },
+  "seconds": {
+   "frozen_embeddings": 1.7,
+   "experts": 66.4
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Airport_Code_txt_pca_30": 17.354,
+    "Airport_Code_txt_pca_31": 15.776,
+    "Airport_Code_txt_pca_32": 8.088
+   },
+   "pred_share": 0.4122,
+   "group_share": {
+    "structured": 0.0777,
+    "pca": 0.5101,
+    "lex": 0.4122
+   },
+   "top10": [
+    [
+     "Airport_Code_txt_pca_30",
+     17.354
+    ],
+    [
+     "Airport_Code_txt_pca_31",
+     15.776
+    ],
+    [
+     "Airport_Code_txt_pca_32",
+     8.088
+    ],
+    [
+     "Description_txt_pca_0",
+     3.994
+    ],
+    [
+     "Source",
+     3.245
+    ],
+    [
+     "Description_txt_pca_1",
+     2.577
+    ],
+    [
+     "Description_txt_pca_2",
+     1.9
+    ],
+    [
+     "Start_Time_txt_pca_1",
+     1.861
+    ],
+    [
+     "Description_txt_pca_3",
+     1.418
+    ],
+    [
+     "End_Lng",
+     1.271
+    ]
+   ]
+  }
+ }
+}

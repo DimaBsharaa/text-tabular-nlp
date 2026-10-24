@@ -1,0 +1,165 @@
+{
+ "method": "frozen0",
+ "run_name": "frozen0",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_MICHELIN_RESTAURANTS",
+ "fold": 4,
+ "task": "MUL",
+ "score": 0.9035516526781432,
+ "metrics": {
+  "score": 0.9035516526781432,
+  "metrics": {
+   "auc": 0.9035516526781432,
+   "logloss": 0.6350231144353098
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9026785542316892,
+  "joint_tar": 0.914715014598658,
+  "unimodal_structured": 0.8719339980308469,
+  "unimodal_text": 0.8596564905201252
+ },
+ "diff_vs_csv_joint_tar": -0.011163361920514814,
+ "runtime_s": {
+  "total": 203.3,
+  "fit": 203.2,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "frozen0",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 1884,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "c82596a02b507b22d07a6ff5eda81dba73b31ed1",
+  "dirty": false
+ },
+ "timestamp": "2026-10-15 16:21:49",
+ "argv": [
+  "--method",
+  "frozen0",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_MICHELIN_RESTAURANTS",
+  "--fold",
+  "4",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "frozen0",
+  "groups": [],
+  "seconds": {
+   "base": 0.6
+  },
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 41390
+  },
+  "n_extra_columns": {
+   "Address": 0,
+   "Cuisine": 0,
+   "Description": 0,
+   "FacilitiesAndServices": 0,
+   "Location": 0,
+   "Name": 0
+  },
+  "catboost_importance": {
+   "pred_columns": {},
+   "pred_share": 0.0,
+   "group_share": {
+    "structured": 0.2452,
+    "pca": 0.7548
+   },
+   "top10": [
+    [
+     "Price",
+     23.276
+    ],
+    [
+     "Description_txt_pca_1",
+     3.908
+    ],
+    [
+     "FacilitiesAndServices_txt_pca_2",
+     1.726
+    ],
+    [
+     "Description_txt_pca_3",
+     1.633
+    ],
+    [
+     "Description_txt_pca_9",
+     1.255
+    ],
+    [
+     "Cuisine_txt_pca_1",
+     1.059
+    ],
+    [
+     "Description_txt_pca_13",
+     0.868
+    ],
+    [
+     "Description_txt_pca_2",
+     0.842
+    ],
+    [
+     "Description_txt_pca_27",
+     0.832
+    ],
+    [
+     "Location_txt_pca_0",
+     0.831
+    ]
+   ]
+  }
+ }
+}

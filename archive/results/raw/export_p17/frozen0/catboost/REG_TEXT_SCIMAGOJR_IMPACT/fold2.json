@@ -1,0 +1,169 @@
+{
+ "method": "frozen0",
+ "run_name": "frozen0",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_SCIMAGOJR_IMPACT",
+ "fold": 2,
+ "task": "REG",
+ "score": 0.8537746016249137,
+ "metrics": {
+  "score": 0.8537746016249137,
+  "metrics": {
+   "r2": 0.8537746016249137,
+   "mse": 607.3998168805349,
+   "rmse": 24.645482687107894
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.8584330993415799,
+  "joint_tar": 0.8644552660952114,
+  "unimodal_structured": 0.7707391065038487,
+  "unimodal_text": 0.7213918596263205
+ },
+ "diff_vs_csv_joint_tar": -0.010680664470297696,
+ "runtime_s": {
+  "total": 153.7,
+  "fit": 153.5,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "frozen0",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "c82596a02b507b22d07a6ff5eda81dba73b31ed1",
+  "dirty": false
+ },
+ "timestamp": "2026-10-15 16:25:42",
+ "argv": [
+  "--method",
+  "frozen0",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_SCIMAGOJR_IMPACT",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "frozen0",
+  "groups": [],
+  "seconds": {
+   "base": 0.8
+  },
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 48210
+  },
+  "n_extra_columns": {
+   "Areas": 0,
+   "Categories": 0,
+   "Citations / Doc  (2years)": 0,
+   "Coverage": 0,
+   "Issn": 0,
+   "Publisher": 0,
+   "Ref  / Doc ": 0,
+   "SJR": 0,
+   "Title": 0
+  },
+  "catboost_importance": {
+   "pred_columns": {},
+   "pred_share": 0.0,
+   "group_share": {
+    "structured": 0.4961,
+    "pca": 0.5039
+   },
+   "top10": [
+    [
+     "Total Citations (3years)",
+     28.634
+    ],
+    [
+     "Rank",
+     13.684
+    ],
+    [
+     "Coverage_txt_pca_0",
+     8.627
+    ],
+    [
+     "Coverage_txt_pca_1",
+     6.829
+    ],
+    [
+     "SJR_txt_pca_0",
+     1.971
+    ],
+    [
+     "Issn_txt_pca_0",
+     1.728
+    ],
+    [
+     "Total Docs  (3years)",
+     1.711
+    ],
+    [
+     "Overton",
+     1.637
+    ],
+    [
+     "Region",
+     1.391
+    ],
+    [
+     "Coverage_txt_pca_12",
+     1.071
+    ]
+   ]
+  }
+ }
+}

@@ -1,0 +1,218 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_PROFESSIONAL_ML_DS_AI_JOBS_SALARIES",
+ "fold": 2,
+ "task": "REG",
+ "score": 0.43130850305621893,
+ "metrics": {
+  "score": 0.43130850305621893,
+  "metrics": {
+   "r2": 0.43130850305621893,
+   "mse": 7826330573.632324,
+   "rmse": 88466.55059191765
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 43.9,
+  "fit": 43.8,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 02:33:08",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_PROFESSIONAL_ML_DS_AI_JOBS_SALARIES",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 0.4,
+   "probe": 1.0
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 10.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.431684,
+     0.433532,
+     0.434164,
+     0.434331
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.0,
+    "experts": 0.4
+   }
+  },
+  "probe": {
+   "alpha": 0.3,
+   "oof_metric": [
+    0.4309883434470365,
+    0.42875940721335787,
+    0.4232880518213832,
+    0.4110760002231362
+   ]
+  },
+  "n_extra_columns": {
+   "job_title": 24
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "job_title_txt_pca_30": 2.704,
+    "job_title_txt_pca_31": 1.138,
+    "job_title_txt_pca_32": 2.076,
+    "job_title_txt_pca_33": 0.0,
+    "job_title_txt_pca_34": 0.0,
+    "job_title_txt_pca_35": 0.0,
+    "job_title_txt_pca_36": 0.0,
+    "job_title_txt_pca_37": 0.0,
+    "job_title_txt_pca_38": 0.0,
+    "job_title_txt_pca_39": 0.0,
+    "job_title_txt_pca_40": 0.0,
+    "job_title_txt_pca_41": 0.0,
+    "job_title_txt_pca_42": 0.33,
+    "job_title_txt_pca_43": 0.088,
+    "job_title_txt_pca_44": 0.0,
+    "job_title_txt_pca_45": 0.059,
+    "job_title_txt_pca_46": 0.156,
+    "job_title_txt_pca_47": 0.0,
+    "job_title_txt_pca_48": 0.0,
+    "job_title_txt_pca_49": 0.0,
+    "job_title_txt_pca_50": 0.0,
+    "job_title_txt_pca_51": 0.0,
+    "job_title_txt_pca_52": 0.0,
+    "job_title_txt_pca_53": 2.085
+   },
+   "pred_share": 0.0864,
+   "group_share": {
+    "structured": 0.6099,
+    "pca": 0.3037,
+    "lex": 0.027,
+    "nbr": 0.0321,
+    "num": 0.0063,
+    "probe": 0.0209
+   },
+   "top10": [
+    [
+     "salary_currency",
+     46.166
+    ],
+    [
+     "company_size",
+     4.822
+    ],
+    [
+     "job_title_txt_pca_4",
+     3.724
+    ],
+    [
+     "experience_level",
+     3.645
+    ],
+    [
+     "job_title_txt_pca_12",
+     3.441
+    ],
+    [
+     "job_title_txt_pca_17",
+     3.196
+    ],
+    [
+     "job_title_txt_pca_22",
+     3.079
+    ],
+    [
+     "remote_ratio",
+     3.041
+    ],
+    [
+     "job_title_txt_pca_30",
+     2.704
+    ],
+    [
+     "job_title_txt_pca_53",
+     2.085
+    ]
+   ]
+  }
+ }
+}

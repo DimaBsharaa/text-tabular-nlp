@@ -1,0 +1,210 @@
+{
+ "method": "cte",
+ "run_name": "cte",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "lgbm",
+ "learner_model_name": "LightGBM \ud83d\udca1",
+ "dataset": "REG_TEXT_ZOMATO_RESTAURANTS",
+ "fold": 4,
+ "task": "REG",
+ "score": 0.8597562877338125,
+ "metrics": {
+  "score": 0.8597562877338125,
+  "metrics": {
+   "r2": 0.8597562877338125,
+   "mse": 0.028313491377770065,
+   "rmse": 0.16826613259289602
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.7702431362552823,
+  "joint_tar": 0.8073511444607427,
+  "unimodal_structured": 0.579290480217981,
+  "unimodal_text": 0.7222859645195684
+ },
+ "diff_vs_csv_joint_tar": 0.052405143273069776,
+ "runtime_s": {
+  "total": 76.0,
+  "fit": 75.8,
+  "predict": 0.2,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-13 20:30:28",
+ "argv": [
+  "--method",
+  "cte",
+  "--learner",
+  "lgbm",
+  "--dataset",
+  "REG_TEXT_ZOMATO_RESTAURANTS",
+  "--fold",
+  "4",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte",
+  "experts": [
+   "lex",
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": true,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 62.03
+  },
+  "expert_cache_hits": {
+   "lex": true,
+   "nbr": true
+  },
+  "lex_alpha": {
+   "chosen": 0.3,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.888867,
+    0.883931,
+    0.867571,
+    0.833915
+   ]
+  },
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 34588
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.8888665782215361,
+     "nbr:address": 0.7507094093302836,
+     "nbr:cuisines": 0.5676729386782684,
+     "nbr:dish_liked": 0.7658505423735609,
+     "nbr:menu_item": 0.19708040515315528,
+     "nbr:name": 0.7652394674950929,
+     "nbr:phone": 0.7350331184682513,
+     "nbr:reviews_list": 0.7948699616840003,
+     "nbr:__all__": 0.8463822545627067
+    },
+    "test": {
+     "lex:__all__": 0.9115677899989003,
+     "nbr:address": 0.7896987967241079,
+     "nbr:cuisines": 0.5892325993030517,
+     "nbr:dish_liked": 0.8146975727205632,
+     "nbr:menu_item": 0.22305825847593008,
+     "nbr:name": 0.8081631866975723,
+     "nbr:phone": 0.7544665167065082,
+     "nbr:reviews_list": 0.8008553265631162,
+     "nbr:__all__": 0.8587191839873477
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": -0.022701211777364172,
+    "nbr:address": -0.03898938739382429,
+    "nbr:cuisines": -0.021559660624783317,
+    "nbr:dish_liked": -0.04884703034700233,
+    "nbr:menu_item": -0.025977853322774802,
+    "nbr:name": -0.04292371920247939,
+    "nbr:phone": -0.01943339823825696,
+    "nbr:reviews_list": -0.00598536487911594,
+    "nbr:__all__": -0.012336929424641041
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "address": 23,
+   "cuisines": 21,
+   "dish_liked": 21,
+   "menu_item": 21,
+   "name": 21,
+   "phone": 21,
+   "reviews_list": 21
+  },
+  "seconds": {
+   "frozen_embeddings": 0.9,
+   "experts": 62.1
+  },
+  "catboost_importance": null
+ }
+}

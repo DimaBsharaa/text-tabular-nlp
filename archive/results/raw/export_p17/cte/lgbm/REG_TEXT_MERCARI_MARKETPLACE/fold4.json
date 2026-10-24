@@ -1,0 +1,206 @@
+{
+ "method": "cte",
+ "run_name": "cte",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "lgbm",
+ "learner_model_name": "LightGBM \ud83d\udca1",
+ "dataset": "REG_TEXT_MERCARI_MARKETPLACE",
+ "fold": 4,
+ "task": "REG",
+ "score": 0.4921277477363233,
+ "metrics": {
+  "score": 0.4921277477363233,
+  "metrics": {
+   "r2": 0.4921277477363233,
+   "mse": 0.2807491666736191,
+   "rmse": 0.5298576853020244
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.4352046273260259,
+  "joint_tar": 0.4392493628614996,
+  "unimodal_structured": 0.1140903130890972,
+  "unimodal_text": 0.3983570756523955
+ },
+ "diff_vs_csv_joint_tar": 0.05287838487482366,
+ "runtime_s": {
+  "total": 9.5,
+  "fit": 9.5,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-13 20:29:04",
+ "argv": [
+  "--method",
+  "cte",
+  "--learner",
+  "lgbm",
+  "--dataset",
+  "REG_TEXT_MERCARI_MARKETPLACE",
+  "--fold",
+  "4",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte",
+  "experts": [
+   "lex",
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": true,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 3.93
+  },
+  "expert_cache_hits": {
+   "lex": true,
+   "nbr": true
+  },
+  "lex_alpha": {
+   "chosen": 3.0,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.60613,
+    0.630655,
+    0.63489,
+    0.611945
+   ]
+  },
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 24983
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.6348895079993961,
+     "nbr:brand_name": 0.37158164645420155,
+     "nbr:cat2": 0.33072446431508057,
+     "nbr:cat3": 0.40571293187885393,
+     "nbr:category_name": 0.4189874821697131,
+     "nbr:item_description": 0.3759848458298274,
+     "nbr:name": 0.5168444970709288,
+     "nbr:__all__": 0.5375708363516201
+    },
+    "test": {
+     "lex:__all__": 0.6225900896302666,
+     "nbr:brand_name": 0.3745284464944119,
+     "nbr:cat2": 0.31410025597425,
+     "nbr:cat3": 0.3882138253623023,
+     "nbr:category_name": 0.39461681697698847,
+     "nbr:item_description": 0.3631969529079431,
+     "nbr:name": 0.4926625691823085,
+     "nbr:__all__": 0.5380477669147647
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": 0.012299418369129511,
+    "nbr:brand_name": -0.0029468000402103622,
+    "nbr:cat2": 0.01662420834083056,
+    "nbr:cat3": 0.01749910651655162,
+    "nbr:category_name": 0.024370665192724628,
+    "nbr:item_description": 0.012787892921884259,
+    "nbr:name": 0.024181927888620336,
+    "nbr:__all__": -0.00047693056314468407
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "brand_name": 23,
+   "cat2": 21,
+   "cat3": 21,
+   "category_name": 21,
+   "item_description": 21,
+   "name": 21
+  },
+  "seconds": {
+   "frozen_embeddings": 0.6,
+   "experts": 3.9
+  },
+  "catboost_importance": null
+ }
+}

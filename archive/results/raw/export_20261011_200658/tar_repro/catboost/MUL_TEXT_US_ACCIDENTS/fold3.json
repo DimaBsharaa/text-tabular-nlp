@@ -1,0 +1,305 @@
+{
+ "method": "tar_repro",
+ "run_name": "tar_repro",
+ "engine_version": "tar_engine/2",
+ "tar_path": "fast",
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_US_ACCIDENTS",
+ "fold": 3,
+ "task": "MUL",
+ "score": 0.9754964228563692,
+ "metrics": {
+  "score": 0.9754964228563692,
+  "metrics": {
+   "auc": 0.9754964228563692,
+   "logloss": 0.2157730012203996
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9639137799928856,
+  "joint_tar": 0.972321314297206,
+  "unimodal_structured": 0.8468514508227157,
+  "unimodal_text": 0.9572918984831336
+ },
+ "diff_vs_csv_joint_tar": 0.0031751085591631423,
+ "runtime_s": {
+  "total": 256.8,
+  "fit": 256.6,
+  "predict": 0.2,
+  "tar_lower_cache": 8.5,
+  "tar_train": 167.3,
+  "tar_encode": 3.5
+ },
+ "tar": {
+  "cache_key": "MUL_TEXT_US_ACCIDENTS/fold3/tar_repro/seed42/07055b3820_58af7c479a",
+  "cache_hit": false,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "tar_engine/2"
+  },
+  "text_cols": [
+   "Airport_Code",
+   "City",
+   "County",
+   "Description",
+   "End_Time",
+   "Start_Time",
+   "Street",
+   "Weather_Timestamp",
+   "Zipcode"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.9688348255119328,
+    "n": 8100,
+    "n_unseen_class": 0
+   },
+   "e5_val": {
+    "score": 0.949558778640544,
+    "n": 900,
+    "n_unseen_class": 0
+   },
+   "test": {
+    "score": 0.9474850238743757,
+    "n": 2000,
+    "n_unseen_class": 0
+   },
+   "learner_val": {
+    "score": 0.94891103538148,
+    "n": 1000,
+    "n_unseen_class": 0
+   }
+  },
+  "n_unique_texts": {
+   "Airport_Code": 1062,
+   "City": 2741,
+   "County": 760,
+   "Description": 11788,
+   "End_Time": 10791,
+   "Start_Time": 10783,
+   "Street": 6752,
+   "Weather_Timestamp": 11424,
+   "Zipcode": 7577
+  },
+  "train": {
+   "epochs_run": 22,
+   "best_epoch": 19,
+   "best_val_loss": 0.533577952031736,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 0.6485494574924883,
+     "val_loss": 0.5970773071860089,
+     "seconds": 8.0
+    },
+    {
+     "epoch": 2,
+     "train_loss": 0.5789564247533617,
+     "val_loss": 0.5698861035741406,
+     "seconds": 7.5
+    },
+    {
+     "epoch": 3,
+     "train_loss": 0.5604478002829153,
+     "val_loss": 0.5576217323173711,
+     "seconds": 7.5
+    },
+    {
+     "epoch": 4,
+     "train_loss": 0.5498012561145633,
+     "val_loss": 0.550807641737255,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 5,
+     "train_loss": 0.5441117015975656,
+     "val_loss": 0.5488156277529987,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 6,
+     "train_loss": 0.5405165358662442,
+     "val_loss": 0.5445051284189577,
+     "seconds": 7.7
+    },
+    {
+     "epoch": 7,
+     "train_loss": 0.5365834385213865,
+     "val_loss": 0.5437749677013468,
+     "seconds": 7.8
+    },
+    {
+     "epoch": 8,
+     "train_loss": 0.5347732105258397,
+     "val_loss": 0.5402806861165129,
+     "seconds": 8.0
+    },
+    {
+     "epoch": 9,
+     "train_loss": 0.531921665453453,
+     "val_loss": 0.5412487072929923,
+     "seconds": 7.8
+    },
+    {
+     "epoch": 10,
+     "train_loss": 0.529991567805716,
+     "val_loss": 0.5395497839097624,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 11,
+     "train_loss": 0.5272892910282961,
+     "val_loss": 0.540159288711018,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 12,
+     "train_loss": 0.5260170134758917,
+     "val_loss": 0.538651802731149,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 13,
+     "train_loss": 0.5242122398000032,
+     "val_loss": 0.537369055405811,
+     "seconds": 7.5
+    },
+    {
+     "epoch": 14,
+     "train_loss": 0.522725827640385,
+     "val_loss": 0.5362192081742817,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 15,
+     "train_loss": 0.521681070565278,
+     "val_loss": 0.5355984348868147,
+     "seconds": 7.5
+    },
+    {
+     "epoch": 16,
+     "train_loss": 0.5208872195595904,
+     "val_loss": 0.5368127868646457,
+     "seconds": 7.5
+    },
+    {
+     "epoch": 17,
+     "train_loss": 0.5193017815427525,
+     "val_loss": 0.5384900841595214,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 18,
+     "train_loss": 0.5182083410282193,
+     "val_loss": 0.53487030516804,
+     "seconds": 7.5
+    },
+    {
+     "epoch": 19,
+     "train_loss": 0.5162689576403268,
+     "val_loss": 0.533577952031736,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 20,
+     "train_loss": 0.5161276708823336,
+     "val_loss": 0.5347670946334615,
+     "seconds": 7.5
+    },
+    {
+     "epoch": 21,
+     "train_loss": 0.5150190408840591,
+     "val_loss": 0.5336097756984793,
+     "seconds": 7.4
+    },
+    {
+     "epoch": 22,
+     "train_loss": 0.5134697936007189,
+     "val_loss": 0.534626437506558,
+     "seconds": 7.5
+    }
+   ],
+   "n_train_cells": 72900,
+   "n_val_cells": 8100,
+   "mean_train_tokens": 14.06130315500686,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 1.86,
+   "truncated_frac": 0.0,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 8100,
+   "e5_val": 900,
+   "test": 2000,
+   "learner_val": 1000
+  }
+ },
+ "leakage_gap_head_train_minus_test": 0.021349801637557064,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-11 00:52:29",
+ "argv": [
+  "--method",
+  "tar_repro",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_US_ACCIDENTS",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5"
+}

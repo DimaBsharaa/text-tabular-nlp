@@ -1,0 +1,245 @@
+{
+ "method": "cte_nbr",
+ "run_name": "cte_nbr",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_MERCARI_MARKETPLACE",
+ "fold": 0,
+ "task": "REG",
+ "score": 0.4797249966231738,
+ "metrics": {
+  "score": 0.4797249966231738,
+  "metrics": {
+   "r2": 0.4797249966231738,
+   "mse": 0.29686917298081267,
+   "rmse": 0.5448570206768126
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.4382207232143293,
+  "joint_tar": 0.4612186913471114,
+  "unimodal_structured": 0.1087059457300435,
+  "unimodal_text": 0.3963784815506662
+ },
+ "diff_vs_csv_joint_tar": 0.018506305276062396,
+ "runtime_s": {
+  "total": 98.5,
+  "fit": 98.4,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte_nbr",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-14 00:31:17",
+ "argv": [
+  "--method",
+  "cte_nbr",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_MERCARI_MARKETPLACE",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte_nbr",
+  "experts": [
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": false,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 0.0
+  },
+  "expert_cache_hits": {
+   "nbr": true
+  },
+  "lex_alpha": null,
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 24962
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "nbr:brand_name": 0.36367715714066806,
+     "nbr:cat2": 0.3034296003634989,
+     "nbr:cat3": 0.3877739019910881,
+     "nbr:category_name": 0.40847436636010465,
+     "nbr:item_description": 0.3861750755888925,
+     "nbr:name": 0.5134751695492477,
+     "nbr:__all__": 0.5280894709909099
+    },
+    "test": {
+     "nbr:brand_name": 0.34818592125561515,
+     "nbr:cat2": 0.30311620579337545,
+     "nbr:cat3": 0.39969549848379604,
+     "nbr:category_name": 0.40843872260919223,
+     "nbr:item_description": 0.38624977119316234,
+     "nbr:name": 0.5295799334444408,
+     "nbr:__all__": 0.5361779698514648
+    }
+   },
+   "gap_train_minus_test": {
+    "nbr:brand_name": 0.015491235885052912,
+    "nbr:cat2": 0.00031339457012347083,
+    "nbr:cat3": -0.011921596492707964,
+    "nbr:category_name": 3.564375091241745e-05,
+    "nbr:item_description": -7.469560426981436e-05,
+    "nbr:name": -0.016104763895193108,
+    "nbr:__all__": -0.00808849886055496
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "brand_name": 2,
+   "cat2": 1,
+   "cat3": 1,
+   "category_name": 1,
+   "item_description": 1,
+   "name": 1
+  },
+  "seconds": {
+   "frozen_embeddings": 0.7,
+   "experts": 0.0
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "brand_name_txt_pca_30": 8.702,
+    "brand_name_txt_pca_31": 4.403,
+    "cat2_txt_pca_30": 0.783,
+    "cat3_txt_pca_30": 0.973,
+    "category_name_txt_pca_30": 1.005,
+    "item_description_txt_pca_30": 3.418,
+    "name_txt_pca_30": 7.198
+   },
+   "pred_share": 0.2648,
+   "group_share": {
+    "structured": 0.0633,
+    "pca": 0.6719,
+    "nbr": 0.2648
+   },
+   "top10": [
+    [
+     "brand_name_txt_pca_30",
+     8.702
+    ],
+    [
+     "name_txt_pca_30",
+     7.198
+    ],
+    [
+     "brand_name_txt_pca_31",
+     4.403
+    ],
+    [
+     "shipping",
+     3.862
+    ],
+    [
+     "item_description_txt_pca_30",
+     3.418
+    ],
+    [
+     "item_condition_id",
+     2.405
+    ],
+    [
+     "item_description_txt_pca_2",
+     1.515
+    ],
+    [
+     "item_description_txt_pca_11",
+     1.489
+    ],
+    [
+     "item_description_txt_pca_22",
+     1.31
+    ],
+    [
+     "item_description_txt_pca_5",
+     1.239
+    ]
+   ]
+  }
+ }
+}

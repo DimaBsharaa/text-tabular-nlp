@@ -1,0 +1,291 @@
+{
+ "method": "cte_nb",
+ "run_name": "cte_nb",
+ "engine_version": "p6/2",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_VIDEO_GAMES_SALES",
+ "fold": 0,
+ "task": "REG",
+ "score": 0.514249942700733,
+ "metrics": {
+  "score": 0.514249942700733,
+  "metrics": {
+   "r2": 0.514249942700733,
+   "mse": 0.8203701871399045,
+   "rmse": 0.9057428924037464
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.4089695328701918,
+  "joint_tar": 0.4998599134924911,
+  "unimodal_structured": -0.0097855861952249,
+  "unimodal_text": 0.4011096276441611
+ },
+ "diff_vs_csv_joint_tar": 0.014390029208241895,
+ "runtime_s": {
+  "total": 68.7,
+  "fit": 68.7,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p6/2",
+   "method": "cte_nb",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 1659,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "d99be740ceb5b6e12eac61876c413e83c70cd11d",
+  "dirty": false
+ },
+ "timestamp": "2026-10-14 11:20:11",
+ "argv": [
+  "--method",
+  "cte_nb",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_VIDEO_GAMES_SALES",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p6/2",
+  "method": "cte_nb",
+  "p6": {
+   "lexical": "tfidf",
+   "targets": "y"
+  },
+  "experts": [
+   "lex",
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": true,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 1.16
+  },
+  "expert_cache_hits": {
+   "lex": true,
+   "nbr": true
+  },
+  "lex_alpha": {
+   "chosen": 3.0,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.541014,
+    0.573263,
+    0.588673,
+    0.583481
+   ]
+  },
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 9247
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.5886727368255193,
+     "nbr:Name": 0.46926379249527533,
+     "nbr:Publisher": 0.4519211486114141,
+     "nbr:__all__": 0.5589169526038873
+    },
+    "test": {
+     "lex:__all__": 0.5894105195977121,
+     "nbr:Name": 0.5034764815894511,
+     "nbr:Publisher": 0.44407596596022414,
+     "nbr:__all__": 0.5787484805787702
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": -0.0007377827721927188,
+    "nbr:Name": -0.0342126890941758,
+    "nbr:Publisher": 0.007845182651189941,
+    "nbr:__all__": -0.019831527974882857
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "Name": 23,
+   "Publisher": 21
+  },
+  "seconds": {
+   "frozen_embeddings": 5.9,
+   "experts": 3.9
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Name_txt_pca_30": 22.818,
+    "Name_txt_pca_31": 4.562,
+    "Name_txt_pca_32": 10.657,
+    "Name_txt_pca_33": 0.002,
+    "Name_txt_pca_34": 0.001,
+    "Name_txt_pca_35": 0.116,
+    "Name_txt_pca_36": 0.001,
+    "Name_txt_pca_37": 0.0,
+    "Name_txt_pca_38": 0.001,
+    "Name_txt_pca_39": 0.0,
+    "Name_txt_pca_40": 0.0,
+    "Name_txt_pca_41": 0.0,
+    "Name_txt_pca_42": 0.37,
+    "Name_txt_pca_43": 0.286,
+    "Name_txt_pca_44": 0.022,
+    "Name_txt_pca_45": 1.871,
+    "Name_txt_pca_46": 0.72,
+    "Name_txt_pca_47": 0.092,
+    "Name_txt_pca_48": 0.47,
+    "Name_txt_pca_49": 0.002,
+    "Name_txt_pca_50": 0.0,
+    "Name_txt_pca_51": 0.002,
+    "Name_txt_pca_52": 0.0,
+    "Publisher_txt_pca_30": 2.015,
+    "Publisher_txt_pca_31": 0.0,
+    "Publisher_txt_pca_32": 0.01,
+    "Publisher_txt_pca_33": 0.006,
+    "Publisher_txt_pca_34": 0.004,
+    "Publisher_txt_pca_35": 0.0,
+    "Publisher_txt_pca_36": 0.0,
+    "Publisher_txt_pca_37": 0.0,
+    "Publisher_txt_pca_38": 0.0,
+    "Publisher_txt_pca_39": 0.0,
+    "Publisher_txt_pca_40": 0.036,
+    "Publisher_txt_pca_41": 0.0,
+    "Publisher_txt_pca_42": 0.0,
+    "Publisher_txt_pca_43": 0.059,
+    "Publisher_txt_pca_44": 0.029,
+    "Publisher_txt_pca_45": 0.002,
+    "Publisher_txt_pca_46": 0.011,
+    "Publisher_txt_pca_47": 0.0,
+    "Publisher_txt_pca_48": 0.0,
+    "Publisher_txt_pca_49": 0.0,
+    "Publisher_txt_pca_50": 0.0
+   },
+   "pred_share": 0.4416,
+   "group_share": {
+    "structured": 0.1163,
+    "pca": 0.4421,
+    "lex": 0.2282,
+    "nbr": 0.1723,
+    "num": 0.0411
+   },
+   "top10": [
+    [
+     "Name_txt_pca_30",
+     22.818
+    ],
+    [
+     "Name_txt_pca_32",
+     10.657
+    ],
+    [
+     "Platform",
+     7.687
+    ],
+    [
+     "Name_txt_pca_12",
+     6.089
+    ],
+    [
+     "Name_txt_pca_6",
+     5.537
+    ],
+    [
+     "Name_txt_pca_31",
+     4.562
+    ],
+    [
+     "Year",
+     3.195
+    ],
+    [
+     "Name_txt_pca_20",
+     2.563
+    ],
+    [
+     "Publisher_txt_pca_30",
+     2.015
+    ],
+    [
+     "Name_txt_pca_2",
+     1.961
+    ]
+   ]
+  }
+ }
+}

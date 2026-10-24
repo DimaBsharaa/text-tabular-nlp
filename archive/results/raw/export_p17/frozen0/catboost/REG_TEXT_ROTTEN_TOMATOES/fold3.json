@@ -1,0 +1,173 @@
+{
+ "method": "frozen0",
+ "run_name": "frozen0",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_ROTTEN_TOMATOES",
+ "fold": 3,
+ "task": "REG",
+ "score": 0.5019198071316113,
+ "metrics": {
+  "score": 0.5019198071316113,
+  "metrics": {
+   "r2": 0.5019198071316113,
+   "mse": 0.7475395642406218,
+   "rmse": 0.8646037035779004
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.5048879616738908,
+  "joint_tar": 0.5250140277639388,
+  "unimodal_structured": 0.1769612993330063,
+  "unimodal_text": 0.4911629392134078
+ },
+ "diff_vs_csv_joint_tar": -0.023094220632327467,
+ "runtime_s": {
+  "total": 187.7,
+  "fit": 187.6,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "frozen0",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 6443,
+ "n_test": 715,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "c82596a02b507b22d07a6ff5eda81dba73b31ed1",
+  "dirty": false
+ },
+ "timestamp": "2026-10-15 16:33:26",
+ "argv": [
+  "--method",
+  "frozen0",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_ROTTEN_TOMATOES",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "frozen0",
+  "groups": [],
+  "seconds": {
+   "base": 0.6
+  },
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 58307
+  },
+  "n_extra_columns": {
+   "Actors": 0,
+   "Cast": 0,
+   "Country": 0,
+   "Creator": 0,
+   "Description": 0,
+   "Director": 0,
+   "Filming Locations": 0,
+   "Genre": 0,
+   "Language": 0,
+   "Name": 0,
+   "RatingCount": 0,
+   "Release Date": 0,
+   "ReviewCount": 0
+  },
+  "catboost_importance": {
+   "pred_columns": {},
+   "pred_share": 0.0,
+   "group_share": {
+    "structured": 0.1243,
+    "pca": 0.8757
+   },
+   "top10": [
+    [
+     "Year",
+     6.717
+    ],
+    [
+     "Duration",
+     5.711
+    ],
+    [
+     "Genre_txt_pca_4",
+     4.822
+    ],
+    [
+     "ReviewCount_txt_pca_1",
+     4.076
+    ],
+    [
+     "ReviewCount_txt_pca_0",
+     3.75
+    ],
+    [
+     "Genre_txt_pca_1",
+     3.639
+    ],
+    [
+     "Genre_txt_pca_0",
+     2.384
+    ],
+    [
+     "Genre_txt_pca_9",
+     1.692
+    ],
+    [
+     "ReviewCount_txt_pca_2",
+     1.472
+    ],
+    [
+     "Release Date_txt_pca_1",
+     1.422
+    ]
+   ]
+  }
+ }
+}

@@ -1,0 +1,259 @@
+{
+ "method": "tf_num_lsa",
+ "run_name": "tf_num_lsa",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "BIN_TEXT_FAKE_JOB_POSTING",
+ "fold": 0,
+ "task": "BIN",
+ "score": 0.9144736842105263,
+ "metrics": {
+  "score": 0.9144736842105263,
+  "metrics": {
+   "auc": 0.9144736842105263
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.8926221804511278,
+  "joint_tar": 0.9265008223684212,
+  "unimodal_structured": 0.6949380286654135,
+  "unimodal_text": 0.8868215460526315
+ },
+ "diff_vs_csv_joint_tar": -0.012027138157894912,
+ "runtime_s": {
+  "total": 114.5,
+  "fit": 114.4,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "tf_num_lsa",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 9998,
+ "n_test": 1272,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "c82596a02b507b22d07a6ff5eda81dba73b31ed1",
+  "dirty": false
+ },
+ "timestamp": "2026-10-15 16:38:50",
+ "argv": [
+  "--method",
+  "tf_num_lsa",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "BIN_TEXT_FAKE_JOB_POSTING",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "tf_num_lsa",
+  "groups": [
+   "num",
+   "lsa"
+  ],
+  "seconds": {
+   "base": 7.6,
+   "num": 11.1,
+   "lsa": 47.4
+  },
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 19662
+  },
+  "n_extra_columns": {
+   "description": 50,
+   "salary_range": 20,
+   "title": 20
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "description_txt_pca_30": 0.127,
+    "description_txt_pca_31": 0.994,
+    "description_txt_pca_32": 1.538,
+    "description_txt_pca_33": 0.37,
+    "description_txt_pca_34": 0.055,
+    "description_txt_pca_35": 0.201,
+    "description_txt_pca_36": 0.125,
+    "description_txt_pca_37": 0.253,
+    "description_txt_pca_38": 0.023,
+    "description_txt_pca_39": 0.316,
+    "description_txt_pca_40": 1.49,
+    "description_txt_pca_41": 0.642,
+    "description_txt_pca_42": 0.89,
+    "description_txt_pca_43": 1.105,
+    "description_txt_pca_44": 2.446,
+    "description_txt_pca_45": 1.85,
+    "description_txt_pca_46": 0.092,
+    "description_txt_pca_47": 0.165,
+    "description_txt_pca_48": 1.523,
+    "description_txt_pca_49": 0.0,
+    "description_txt_pca_50": 0.421,
+    "description_txt_pca_51": 2.199,
+    "description_txt_pca_52": 1.253,
+    "description_txt_pca_53": 2.874,
+    "description_txt_pca_54": 1.457,
+    "description_txt_pca_55": 0.351,
+    "description_txt_pca_56": 2.509,
+    "description_txt_pca_57": 1.59,
+    "description_txt_pca_58": 0.9,
+    "description_txt_pca_59": 0.232,
+    "description_txt_pca_60": 0.818,
+    "description_txt_pca_61": 0.501,
+    "description_txt_pca_62": 1.113,
+    "description_txt_pca_63": 0.524,
+    "description_txt_pca_64": 0.467,
+    "description_txt_pca_65": 1.007,
+    "description_txt_pca_66": 0.827,
+    "description_txt_pca_67": 0.619,
+    "description_txt_pca_68": 0.252,
+    "description_txt_pca_69": 0.856,
+    "description_txt_pca_70": 0.259,
+    "description_txt_pca_71": 0.438,
+    "description_txt_pca_72": 0.116,
+    "description_txt_pca_73": 0.477,
+    "description_txt_pca_74": 1.076,
+    "description_txt_pca_75": 0.071,
+    "description_txt_pca_76": 0.385,
+    "description_txt_pca_77": 0.784,
+    "description_txt_pca_78": 1.015,
+    "description_txt_pca_79": 0.627,
+    "salary_range_txt_pca_30": 0.258,
+    "salary_range_txt_pca_31": 0.307,
+    "salary_range_txt_pca_32": 0.054,
+    "salary_range_txt_pca_33": 0.109,
+    "salary_range_txt_pca_34": 0.033,
+    "salary_range_txt_pca_35": 0.041,
+    "salary_range_txt_pca_36": 0.0,
+    "salary_range_txt_pca_37": 0.0,
+    "salary_range_txt_pca_38": 0.0,
+    "salary_range_txt_pca_39": 0.029,
+    "salary_range_txt_pca_40": 0.036,
+    "salary_range_txt_pca_41": 0.0,
+    "salary_range_txt_pca_42": 0.123,
+    "salary_range_txt_pca_43": 0.0,
+    "salary_range_txt_pca_44": 0.0,
+    "salary_range_txt_pca_45": 0.07,
+    "salary_range_txt_pca_46": 0.0,
+    "salary_range_txt_pca_47": 0.0,
+    "salary_range_txt_pca_48": 0.122,
+    "salary_range_txt_pca_49": 0.068,
+    "title_txt_pca_30": 0.017,
+    "title_txt_pca_31": 0.086,
+    "title_txt_pca_32": 0.219,
+    "title_txt_pca_33": 0.213,
+    "title_txt_pca_34": 0.003,
+    "title_txt_pca_35": 0.0,
+    "title_txt_pca_36": 0.069,
+    "title_txt_pca_37": 0.038,
+    "title_txt_pca_38": 0.0,
+    "title_txt_pca_39": 0.369,
+    "title_txt_pca_40": 0.244,
+    "title_txt_pca_41": 0.0,
+    "title_txt_pca_42": 0.317,
+    "title_txt_pca_43": 0.583,
+    "title_txt_pca_44": 0.099,
+    "title_txt_pca_45": 0.156,
+    "title_txt_pca_46": 0.013,
+    "title_txt_pca_47": 0.0,
+    "title_txt_pca_48": 0.049,
+    "title_txt_pca_49": 0.0
+   },
+   "pred_share": 0.4395,
+   "group_share": {
+    "structured": 0.021,
+    "pca": 0.5395,
+    "num": 0.1793,
+    "lsa": 0.2602
+   },
+   "top10": [
+    [
+     "description_txt_pca_3",
+     4.756
+    ],
+    [
+     "description_txt_pca_0",
+     3.028
+    ],
+    [
+     "description_txt_pca_53",
+     2.874
+    ],
+    [
+     "description_txt_pca_1",
+     2.716
+    ],
+    [
+     "description_txt_pca_9",
+     2.595
+    ],
+    [
+     "description_txt_pca_56",
+     2.509
+    ],
+    [
+     "description_txt_pca_44",
+     2.446
+    ],
+    [
+     "description_txt_pca_51",
+     2.199
+    ],
+    [
+     "description_txt_pca_4",
+     1.927
+    ],
+    [
+     "title_txt_pca_2",
+     1.881
+    ]
+   ]
+  }
+ }
+}

@@ -1,0 +1,240 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_TRANSPORTATION_USED_CAR_PAKISTAN",
+ "fold": 1,
+ "task": "REG",
+ "score": 0.96740774364923,
+ "metrics": {
+  "score": 0.96740774364923,
+  "metrics": {
+   "r2": 0.96740774364923,
+   "mse": 448355326376.5485,
+   "rmse": 669593.4037731767
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 51.1,
+  "fit": 51.0,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 00:32:16",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_TRANSPORTATION_USED_CAR_PAKISTAN",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 1.2,
+   "probe": 2.1
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 0.3,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.925351,
+     0.924866,
+     0.922691,
+     0.916164
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.1,
+    "experts": 1.1
+   }
+  },
+  "probe": {
+   "alpha": 0.3,
+   "oof_metric": [
+    0.9097735453959896,
+    0.8972347665025067,
+    0.881146010680322,
+    0.854222313144565
+   ]
+  },
+  "n_extra_columns": {
+   "Model": 24,
+   "Version": 21
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Model_txt_pca_30": 28.703,
+    "Model_txt_pca_31": 4.917,
+    "Model_txt_pca_32": 6.933,
+    "Model_txt_pca_33": 0.0,
+    "Model_txt_pca_34": 0.058,
+    "Model_txt_pca_35": 0.071,
+    "Model_txt_pca_36": 0.088,
+    "Model_txt_pca_37": 0.0,
+    "Model_txt_pca_38": 0.0,
+    "Model_txt_pca_39": 0.0,
+    "Model_txt_pca_40": 0.0,
+    "Model_txt_pca_41": 0.0,
+    "Model_txt_pca_42": 0.0,
+    "Model_txt_pca_43": 0.0,
+    "Model_txt_pca_44": 0.0,
+    "Model_txt_pca_45": 0.06,
+    "Model_txt_pca_46": 0.031,
+    "Model_txt_pca_47": 0.045,
+    "Model_txt_pca_48": 0.005,
+    "Model_txt_pca_49": 0.0,
+    "Model_txt_pca_50": 0.0,
+    "Model_txt_pca_51": 0.0,
+    "Model_txt_pca_52": 0.0,
+    "Model_txt_pca_53": 4.995,
+    "Version_txt_pca_30": 8.126,
+    "Version_txt_pca_31": 1.102,
+    "Version_txt_pca_32": 1.575,
+    "Version_txt_pca_33": 0.812,
+    "Version_txt_pca_34": 0.098,
+    "Version_txt_pca_35": 0.0,
+    "Version_txt_pca_36": 0.0,
+    "Version_txt_pca_37": 0.0,
+    "Version_txt_pca_38": 0.0,
+    "Version_txt_pca_39": 0.0,
+    "Version_txt_pca_40": 0.012,
+    "Version_txt_pca_41": 0.18,
+    "Version_txt_pca_42": 0.0,
+    "Version_txt_pca_43": 0.116,
+    "Version_txt_pca_44": 0.025,
+    "Version_txt_pca_45": 0.705,
+    "Version_txt_pca_46": 1.009,
+    "Version_txt_pca_47": 0.0,
+    "Version_txt_pca_48": 0.0,
+    "Version_txt_pca_49": 0.001,
+    "Version_txt_pca_50": 0.0
+   },
+   "pred_share": 0.5967,
+   "group_share": {
+    "structured": 0.234,
+    "pca": 0.1693,
+    "lex": 0.287,
+    "nbr": 0.1998,
+    "num": 0.0599,
+    "probe": 0.05
+   },
+   "top10": [
+    [
+     "Model_txt_pca_30",
+     28.703
+    ],
+    [
+     "Make_Year",
+     13.11
+    ],
+    [
+     "Version_txt_pca_30",
+     8.126
+    ],
+    [
+     "CC",
+     6.936
+    ],
+    [
+     "Model_txt_pca_32",
+     6.933
+    ],
+    [
+     "Model_txt_pca_53",
+     4.995
+    ],
+    [
+     "Model_txt_pca_31",
+     4.917
+    ],
+    [
+     "Version_txt_pca_19",
+     2.064
+    ],
+    [
+     "Mileage",
+     2.012
+    ],
+    [
+     "Version_txt_pca_32",
+     1.575
+    ]
+   ]
+  }
+ }
+}

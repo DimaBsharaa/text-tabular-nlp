@@ -1,0 +1,398 @@
+{
+ "method": "frozen_xfit_pred",
+ "run_name": "frozen_xfit_pred",
+ "engine_version": "stacking/1",
+ "tar_path": "fast",
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_BOOK_PRICE",
+ "fold": 1,
+ "task": "REG",
+ "score": 0.5762570835836807,
+ "metrics": {
+  "score": 0.5762570835836807,
+  "metrics": {
+   "r2": 0.5762570835836807,
+   "mse": 0.04078398156433198,
+   "rmse": 0.20195044333779508
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.5796265495618038,
+  "joint_tar": 0.5799502074859735,
+  "unimodal_structured": 0.1985946254287753,
+  "unimodal_text": 0.5691865552366293
+ },
+ "diff_vs_csv_joint_tar": -0.0036931239022928164,
+ "runtime_s": {
+  "total": 185.1,
+  "fit": 185.0,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_key": "REG_TEXT_BOOK_PRICE/fold1/tar_repro/seed42/07055b3820_d2093e2d26",
+  "cache_hit": true,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "stacking/1",
+   "method": "frozen_xfit_pred",
+   "base": "tar_repro"
+  },
+  "text_cols": [
+   "Author",
+   "Edition",
+   "Genre",
+   "Synopsis",
+   "Title"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.42756588664961825,
+    "n": 3638
+   },
+   "e5_val": {
+    "score": 0.31774091983564834,
+    "n": 404
+   },
+   "test": {
+    "score": 0.3727594349790828,
+    "n": 498
+   },
+   "learner_val": {
+    "score": 0.37668601407974045,
+    "n": 449
+   }
+  },
+  "n_unique_texts": {
+   "Author": 3102,
+   "Edition": 2934,
+   "Genre": 320,
+   "Synopsis": 4556,
+   "Title": 4574
+  },
+  "train": {
+   "epochs_run": 21,
+   "best_epoch": 18,
+   "best_val_loss": 2.8558414355362998,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 3.0014620087577986,
+     "val_loss": 2.9938870175050036,
+     "seconds": 3.4
+    },
+    {
+     "epoch": 2,
+     "train_loss": 2.990312676327513,
+     "val_loss": 2.9835503549859075,
+     "seconds": 3.2
+    },
+    {
+     "epoch": 3,
+     "train_loss": 2.9667962189884616,
+     "val_loss": 2.941940420925027,
+     "seconds": 3.1
+    },
+    {
+     "epoch": 4,
+     "train_loss": 2.909634118659474,
+     "val_loss": 2.9106478771360793,
+     "seconds": 3.1
+    },
+    {
+     "epoch": 5,
+     "train_loss": 2.882979587331586,
+     "val_loss": 2.8983051748559028,
+     "seconds": 3.1
+    },
+    {
+     "epoch": 6,
+     "train_loss": 2.8652496957857574,
+     "val_loss": 2.895408063831896,
+     "seconds": 3.2
+    },
+    {
+     "epoch": 7,
+     "train_loss": 2.846535492153073,
+     "val_loss": 2.8916387822368357,
+     "seconds": 3.1
+    },
+    {
+     "epoch": 8,
+     "train_loss": 2.833629194441046,
+     "val_loss": 2.8812779544603706,
+     "seconds": 3.1
+    },
+    {
+     "epoch": 9,
+     "train_loss": 2.8229156828372277,
+     "val_loss": 2.8866583488955357,
+     "seconds": 3.1
+    },
+    {
+     "epoch": 10,
+     "train_loss": 2.8090359525538986,
+     "val_loss": 2.872647708949476,
+     "seconds": 3.2
+    },
+    {
+     "epoch": 11,
+     "train_loss": 2.800772534103561,
+     "val_loss": 2.8694031337700268,
+     "seconds": 3.1
+    },
+    {
+     "epoch": 12,
+     "train_loss": 2.789442923280025,
+     "val_loss": 2.865995983558126,
+     "seconds": 3.1
+    },
+    {
+     "epoch": 13,
+     "train_loss": 2.777986434188893,
+     "val_loss": 2.863546653313212,
+     "seconds": 3.2
+    },
+    {
+     "epoch": 14,
+     "train_loss": 2.7693274784769706,
+     "val_loss": 2.8599069184595995,
+     "seconds": 3.2
+    },
+    {
+     "epoch": 15,
+     "train_loss": 2.760262228670587,
+     "val_loss": 2.870668683193698,
+     "seconds": 3.2
+    },
+    {
+     "epoch": 16,
+     "train_loss": 2.755581314318648,
+     "val_loss": 2.8647844309854036,
+     "seconds": 3.2
+    },
+    {
+     "epoch": 17,
+     "train_loss": 2.7454037729497136,
+     "val_loss": 2.8584423287080067,
+     "seconds": 3.3
+    },
+    {
+     "epoch": 18,
+     "train_loss": 2.7369151311762194,
+     "val_loss": 2.8558414355362998,
+     "seconds": 3.3
+    },
+    {
+     "epoch": 19,
+     "train_loss": 2.730298155044841,
+     "val_loss": 2.860783026478078,
+     "seconds": 3.3
+    },
+    {
+     "epoch": 20,
+     "train_loss": 2.722231340801539,
+     "val_loss": 2.8579328730554865,
+     "seconds": 3.3
+    },
+    {
+     "epoch": 21,
+     "train_loss": 2.7151230945503273,
+     "val_loss": 2.861363139010892,
+     "seconds": 3.2
+    }
+   ],
+   "n_train_cells": 18190,
+   "n_val_cells": 2020,
+   "mean_train_tokens": 53.06157229246839,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 11.26,
+   "truncated_frac": 0.003738317757009346,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 3638,
+   "e5_val": 404,
+   "learner_val": 449,
+   "test": 498
+  }
+ },
+ "leakage_gap_head_train_minus_test": 0.05480645167053544,
+ "n_train": 4491,
+ "n_test": 498,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-11 04:48:10",
+ "argv": [
+  "--method",
+  "frozen_xfit_pred",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_BOOK_PRICE",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "stacking/1",
+  "k_folds": 3,
+  "method": "frozen_xfit_pred",
+  "fold_models": [
+   {
+    "fold": 0,
+    "n_train_rows": 2694,
+    "n_heldout": 1348,
+    "cache_key": "REG_TEXT_BOOK_PRICE/fold1/tar_repro/seed42/07055b3820_faa50456f7",
+    "cache_hit": false,
+    "best_epoch": 13,
+    "train_rows_hash": "865bd262c1",
+    "heldout_rows_hash": "7a20aa877d"
+   },
+   {
+    "fold": 1,
+    "n_train_rows": 2695,
+    "n_heldout": 1347,
+    "cache_key": "REG_TEXT_BOOK_PRICE/fold1/tar_repro/seed42/07055b3820_ecf02a50e9",
+    "cache_hit": false,
+    "best_epoch": 17,
+    "train_rows_hash": "081165cf63",
+    "heldout_rows_hash": "e66ba8401a"
+   },
+   {
+    "fold": 2,
+    "n_train_rows": 2695,
+    "n_heldout": 1347,
+    "cache_key": "REG_TEXT_BOOK_PRICE/fold1/tar_repro/seed42/07055b3820_f318efbdb6",
+    "cache_hit": false,
+    "best_epoch": 17,
+    "train_rows_hash": "9d3f8e080c",
+    "heldout_rows_hash": "0f52d65c52"
+   }
+  ],
+  "folds_cover_pool": true,
+  "pred_feature_quality": {
+   "train_rows": 0.3330580430045109,
+   "test": 0.32926509949773897,
+   "learner_val": 0.3633485466832246,
+   "gap_train_minus_test": 0.003792943506771951
+  },
+  "n_pred_features_per_col": {
+   "Author": 2,
+   "Edition": 2,
+   "Genre": 2,
+   "Synopsis": 2,
+   "Title": 2
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Author_txt_pca_30": 2.258,
+    "Author_txt_pca_31": 0.64,
+    "Edition_txt_pca_30": 3.032,
+    "Edition_txt_pca_31": 0.862,
+    "Genre_txt_pca_30": 1.266,
+    "Genre_txt_pca_31": 0.687,
+    "Synopsis_txt_pca_30": 14.101,
+    "Synopsis_txt_pca_31": 1.183,
+    "Title_txt_pca_30": 1.185,
+    "Title_txt_pca_31": 0.418
+   },
+   "pred_share": 0.2563,
+   "top10": [
+    [
+     "Synopsis_txt_pca_30",
+     14.101
+    ],
+    [
+     "Edition_txt_pca_30",
+     3.032
+    ],
+    [
+     "Edition_txt_pca_20",
+     2.898
+    ],
+    [
+     "Reviews",
+     2.265
+    ],
+    [
+     "Author_txt_pca_30",
+     2.258
+    ],
+    [
+     "Ratings",
+     1.821
+    ],
+    [
+     "Genre_txt_pca_30",
+     1.266
+    ],
+    [
+     "Title_txt_pca_30",
+     1.185
+    ],
+    [
+     "Synopsis_txt_pca_31",
+     1.183
+    ],
+    [
+     "Title_txt_pca_10",
+     1.023
+    ]
+   ]
+  }
+ }
+}

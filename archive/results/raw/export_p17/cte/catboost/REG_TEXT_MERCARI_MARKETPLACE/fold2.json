@@ -1,0 +1,391 @@
+{
+ "method": "cte",
+ "run_name": "cte",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_MERCARI_MARKETPLACE",
+ "fold": 2,
+ "task": "REG",
+ "score": 0.5314093957314423,
+ "metrics": {
+  "score": 0.5314093957314423,
+  "metrics": {
+   "r2": 0.5314093957314423,
+   "mse": 0.2838650317214225,
+   "rmse": 0.5327898569993825
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.4674362776138222,
+  "joint_tar": 0.4833542965093771,
+  "unimodal_structured": 0.1068834192375991,
+  "unimodal_text": 0.4246561514666197
+ },
+ "diff_vs_csv_joint_tar": 0.04805509922206519,
+ "runtime_s": {
+  "total": 137.4,
+  "fit": 137.3,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-13 19:56:52",
+ "argv": [
+  "--method",
+  "cte",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_MERCARI_MARKETPLACE",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte",
+  "experts": [
+   "lex",
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": true,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "tfidf": 10.83,
+   "ridge": 21.2,
+   "n_tfidf_features": 86820,
+   "knn": 0.96,
+   "numeracy": 4.62
+  },
+  "expert_cache_hits": {
+   "lex": false,
+   "nbr": false
+  },
+  "lex_alpha": {
+   "chosen": 3.0,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.611336,
+    0.634873,
+    0.639269,
+    0.618335
+   ]
+  },
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 17552,
+   "cached": 7412
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.639269444310434,
+     "nbr:brand_name": 0.3349428286219535,
+     "nbr:cat2": 0.30561619202615986,
+     "nbr:cat3": 0.414494559273533,
+     "nbr:category_name": 0.41565401589138645,
+     "nbr:item_description": 0.37883469973711803,
+     "nbr:name": 0.5195983592854605,
+     "nbr:__all__": 0.5354332387746317
+    },
+    "test": {
+     "lex:__all__": 0.6579148471427754,
+     "nbr:brand_name": 0.36597263952516135,
+     "nbr:cat2": 0.2956683778095963,
+     "nbr:cat3": 0.41278607333408945,
+     "nbr:category_name": 0.4258563674847592,
+     "nbr:item_description": 0.4155562682253494,
+     "nbr:name": 0.5516859227605266,
+     "nbr:__all__": 0.5633359871358476
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": -0.018645402832341396,
+    "nbr:brand_name": -0.031029810903207833,
+    "nbr:cat2": 0.009947814216563544,
+    "nbr:cat3": 0.0017084859394435603,
+    "nbr:category_name": -0.010202351593372738,
+    "nbr:item_description": -0.03672156848823138,
+    "nbr:name": -0.03208756347506614,
+    "nbr:__all__": -0.02790274836121598
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "brand_name": 23,
+   "cat2": 21,
+   "cat3": 21,
+   "category_name": 21,
+   "item_description": 21,
+   "name": 21
+  },
+  "seconds": {
+   "frozen_embeddings": 11.8,
+   "experts": 37.8
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "brand_name_txt_pca_30": 20.532,
+    "brand_name_txt_pca_31": 2.166,
+    "brand_name_txt_pca_32": 1.726,
+    "brand_name_txt_pca_33": 0.0,
+    "brand_name_txt_pca_34": 0.0,
+    "brand_name_txt_pca_35": 0.002,
+    "brand_name_txt_pca_36": 0.0,
+    "brand_name_txt_pca_37": 0.0,
+    "brand_name_txt_pca_38": 0.0,
+    "brand_name_txt_pca_39": 0.0,
+    "brand_name_txt_pca_40": 0.0,
+    "brand_name_txt_pca_41": 0.0,
+    "brand_name_txt_pca_42": 0.057,
+    "brand_name_txt_pca_43": 0.038,
+    "brand_name_txt_pca_44": 0.0,
+    "brand_name_txt_pca_45": 0.076,
+    "brand_name_txt_pca_46": 0.087,
+    "brand_name_txt_pca_47": 0.002,
+    "brand_name_txt_pca_48": 0.008,
+    "brand_name_txt_pca_49": 0.002,
+    "brand_name_txt_pca_50": 0.0,
+    "brand_name_txt_pca_51": 0.019,
+    "brand_name_txt_pca_52": 0.0,
+    "cat2_txt_pca_30": 0.389,
+    "cat2_txt_pca_31": 0.005,
+    "cat2_txt_pca_32": 0.0,
+    "cat2_txt_pca_33": 0.0,
+    "cat2_txt_pca_34": 0.0,
+    "cat2_txt_pca_35": 0.0,
+    "cat2_txt_pca_36": 0.0,
+    "cat2_txt_pca_37": 0.0,
+    "cat2_txt_pca_38": 0.0,
+    "cat2_txt_pca_39": 0.0,
+    "cat2_txt_pca_40": 0.108,
+    "cat2_txt_pca_41": 0.1,
+    "cat2_txt_pca_42": 0.0,
+    "cat2_txt_pca_43": 0.059,
+    "cat2_txt_pca_44": 0.034,
+    "cat2_txt_pca_45": 0.0,
+    "cat2_txt_pca_46": 0.036,
+    "cat2_txt_pca_47": 0.0,
+    "cat2_txt_pca_48": 0.0,
+    "cat2_txt_pca_49": 0.0,
+    "cat2_txt_pca_50": 0.0,
+    "cat3_txt_pca_30": 0.494,
+    "cat3_txt_pca_31": 0.0,
+    "cat3_txt_pca_32": 0.0,
+    "cat3_txt_pca_33": 0.0,
+    "cat3_txt_pca_34": 0.0,
+    "cat3_txt_pca_35": 0.0,
+    "cat3_txt_pca_36": 0.0,
+    "cat3_txt_pca_37": 0.0,
+    "cat3_txt_pca_38": 0.0,
+    "cat3_txt_pca_39": 0.0,
+    "cat3_txt_pca_40": 0.058,
+    "cat3_txt_pca_41": 0.018,
+    "cat3_txt_pca_42": 0.0,
+    "cat3_txt_pca_43": 0.115,
+    "cat3_txt_pca_44": 0.074,
+    "cat3_txt_pca_45": 0.0,
+    "cat3_txt_pca_46": 0.03,
+    "cat3_txt_pca_47": 0.0,
+    "cat3_txt_pca_48": 0.0,
+    "cat3_txt_pca_49": 0.0,
+    "cat3_txt_pca_50": 0.0,
+    "category_name_txt_pca_30": 0.972,
+    "category_name_txt_pca_31": 0.0,
+    "category_name_txt_pca_32": 0.0,
+    "category_name_txt_pca_33": 0.0,
+    "category_name_txt_pca_34": 0.0,
+    "category_name_txt_pca_35": 0.0,
+    "category_name_txt_pca_36": 0.0,
+    "category_name_txt_pca_37": 0.0,
+    "category_name_txt_pca_38": 0.0,
+    "category_name_txt_pca_39": 0.0,
+    "category_name_txt_pca_40": 0.223,
+    "category_name_txt_pca_41": 0.019,
+    "category_name_txt_pca_42": 0.0,
+    "category_name_txt_pca_43": 0.029,
+    "category_name_txt_pca_44": 0.379,
+    "category_name_txt_pca_45": 0.012,
+    "category_name_txt_pca_46": 0.081,
+    "category_name_txt_pca_47": 0.0,
+    "category_name_txt_pca_48": 0.0,
+    "category_name_txt_pca_49": 0.069,
+    "category_name_txt_pca_50": 0.0,
+    "item_description_txt_pca_30": 1.679,
+    "item_description_txt_pca_31": 0.428,
+    "item_description_txt_pca_32": 0.495,
+    "item_description_txt_pca_33": 0.745,
+    "item_description_txt_pca_34": 0.292,
+    "item_description_txt_pca_35": 0.0,
+    "item_description_txt_pca_36": 0.062,
+    "item_description_txt_pca_37": 0.021,
+    "item_description_txt_pca_38": 0.019,
+    "item_description_txt_pca_39": 0.04,
+    "item_description_txt_pca_40": 0.501,
+    "item_description_txt_pca_41": 0.294,
+    "item_description_txt_pca_42": 0.076,
+    "item_description_txt_pca_43": 0.333,
+    "item_description_txt_pca_44": 0.52,
+    "item_description_txt_pca_45": 0.509,
+    "item_description_txt_pca_46": 0.188,
+    "item_description_txt_pca_47": 0.083,
+    "item_description_txt_pca_48": 0.0,
+    "item_description_txt_pca_49": 0.576,
+    "item_description_txt_pca_50": 0.0,
+    "name_txt_pca_30": 4.439,
+    "name_txt_pca_31": 0.214,
+    "name_txt_pca_32": 0.267,
+    "name_txt_pca_33": 0.249,
+    "name_txt_pca_34": 0.283,
+    "name_txt_pca_35": 0.0,
+    "name_txt_pca_36": 0.005,
+    "name_txt_pca_37": 0.0,
+    "name_txt_pca_38": 0.004,
+    "name_txt_pca_39": 0.0,
+    "name_txt_pca_40": 0.615,
+    "name_txt_pca_41": 0.094,
+    "name_txt_pca_42": 0.015,
+    "name_txt_pca_43": 0.807,
+    "name_txt_pca_44": 0.781,
+    "name_txt_pca_45": 0.487,
+    "name_txt_pca_46": 0.265,
+    "name_txt_pca_47": 0.052,
+    "name_txt_pca_48": 0.0,
+    "name_txt_pca_49": 0.0,
+    "name_txt_pca_50": 0.0
+   },
+   "pred_share": 0.4346,
+   "group_share": {
+    "structured": 0.063,
+    "pca": 0.5024,
+    "lex": 0.2053,
+    "nbr": 0.1187,
+    "num": 0.1106
+   },
+   "top10": [
+    [
+     "brand_name_txt_pca_30",
+     20.532
+    ],
+    [
+     "name_txt_pca_30",
+     4.439
+    ],
+    [
+     "shipping",
+     3.987
+    ],
+    [
+     "item_condition_id",
+     2.204
+    ],
+    [
+     "brand_name_txt_pca_31",
+     2.166
+    ],
+    [
+     "brand_name_txt_pca_32",
+     1.726
+    ],
+    [
+     "item_description_txt_pca_30",
+     1.679
+    ],
+    [
+     "name_txt_pca_1",
+     1.114
+    ],
+    [
+     "category_name_txt_pca_30",
+     0.972
+    ],
+    [
+     "name_txt_pca_3",
+     0.913
+    ]
+   ]
+  }
+ }
+}

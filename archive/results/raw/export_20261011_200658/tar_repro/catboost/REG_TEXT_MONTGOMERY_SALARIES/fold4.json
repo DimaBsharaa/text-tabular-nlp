@@ -1,0 +1,334 @@
+{
+ "method": "tar_repro",
+ "run_name": "tar_repro",
+ "engine_version": "tar_engine/2",
+ "tar_path": "fast",
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_MONTGOMERY_SALARIES",
+ "fold": 4,
+ "task": "REG",
+ "score": 0.9705473705435466,
+ "metrics": {
+  "score": 0.9705473705435466,
+  "metrics": {
+   "r2": 0.9705473705435466,
+   "mse": 24485663.764410414,
+   "rmse": 4948.299077906509
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9695559785599054,
+  "joint_tar": 0.971873183731494,
+  "unimodal_structured": 0.9500178966741476,
+  "unimodal_text": 0.8812381850887367
+ },
+ "diff_vs_csv_joint_tar": -0.0013258131879474444,
+ "runtime_s": {
+  "total": 105.4,
+  "fit": 105.3,
+  "predict": 0.1,
+  "tar_lower_cache": 1.6,
+  "tar_train": 77.8,
+  "tar_encode": 0.7
+ },
+ "tar": {
+  "cache_key": "REG_TEXT_MONTGOMERY_SALARIES/fold4/tar_repro/seed42/07055b3820_045d7b2977",
+  "cache_hit": false,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "tar_engine/2"
+  },
+  "text_cols": [
+   "date_first_hired",
+   "division",
+   "employee_position_title",
+   "full_name"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.5937014775143963,
+    "n": 6729
+   },
+   "e5_val": {
+    "score": 0.5668785571826702,
+    "n": 747
+   },
+   "test": {
+    "score": 0.5480747668111079,
+    "n": 922
+   },
+   "learner_val": {
+    "score": 0.5497301525769012,
+    "n": 830
+   }
+  },
+  "n_unique_texts": {
+   "date_first_hired": 2264,
+   "division": 694,
+   "employee_position_title": 385,
+   "full_name": 9222
+  },
+  "train": {
+   "epochs_run": 29,
+   "best_epoch": 26,
+   "best_val_loss": 2.564476132552467,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 2.994377348784051,
+     "val_loss": 2.9804911147478914,
+     "seconds": 2.9
+    },
+    {
+     "epoch": 2,
+     "train_loss": 2.94221593791901,
+     "val_loss": 2.882244937391166,
+     "seconds": 2.6
+    },
+    {
+     "epoch": 3,
+     "train_loss": 2.823724015256168,
+     "val_loss": 2.782418447645154,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 4,
+     "train_loss": 2.752171418096038,
+     "val_loss": 2.7259334930613974,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 5,
+     "train_loss": 2.706465418722499,
+     "val_loss": 2.6903736808373426,
+     "seconds": 2.6
+    },
+    {
+     "epoch": 6,
+     "train_loss": 2.677372710243131,
+     "val_loss": 2.6676440746429932,
+     "seconds": 2.6
+    },
+    {
+     "epoch": 7,
+     "train_loss": 2.6551192790371716,
+     "val_loss": 2.648668284397049,
+     "seconds": 2.6
+    },
+    {
+     "epoch": 8,
+     "train_loss": 2.638740441688972,
+     "val_loss": 2.63813268579792,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 9,
+     "train_loss": 2.62283327682604,
+     "val_loss": 2.6207862608882797,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 10,
+     "train_loss": 2.6098703252452498,
+     "val_loss": 2.614480041914995,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 11,
+     "train_loss": 2.6007204260934533,
+     "val_loss": 2.609924798669266,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 12,
+     "train_loss": 2.5904758464423767,
+     "val_loss": 2.5989563372559656,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 13,
+     "train_loss": 2.5800376577245516,
+     "val_loss": 2.5927981407926426,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 14,
+     "train_loss": 2.5715237110609603,
+     "val_loss": 2.5907014571678846,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 15,
+     "train_loss": 2.5642726418875994,
+     "val_loss": 2.5871856033881824,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 16,
+     "train_loss": 2.556500066954768,
+     "val_loss": 2.585271581269332,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 17,
+     "train_loss": 2.5516442852541816,
+     "val_loss": 2.5822408429111343,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 18,
+     "train_loss": 2.5460749435679912,
+     "val_loss": 2.5791826407753002,
+     "seconds": 2.8
+    },
+    {
+     "epoch": 19,
+     "train_loss": 2.5390059145089685,
+     "val_loss": 2.575678948258141,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 20,
+     "train_loss": 2.533705420542975,
+     "val_loss": 2.575892717484011,
+     "seconds": 2.6
+    },
+    {
+     "epoch": 21,
+     "train_loss": 2.5292234838868093,
+     "val_loss": 2.5708876913650287,
+     "seconds": 2.6
+    },
+    {
+     "epoch": 22,
+     "train_loss": 2.5238353239159506,
+     "val_loss": 2.5723877613802992,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 23,
+     "train_loss": 2.5197139580335883,
+     "val_loss": 2.5712698105986975,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 24,
+     "train_loss": 2.516634373275818,
+     "val_loss": 2.5692536109582167,
+     "seconds": 2.6
+    },
+    {
+     "epoch": 25,
+     "train_loss": 2.511493737496705,
+     "val_loss": 2.5662322548658176,
+     "seconds": 2.6
+    },
+    {
+     "epoch": 26,
+     "train_loss": 2.508822136354723,
+     "val_loss": 2.564476132552467,
+     "seconds": 2.6
+    },
+    {
+     "epoch": 27,
+     "train_loss": 2.5056390605367547,
+     "val_loss": 2.565082844640995,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 28,
+     "train_loss": 2.503038089791597,
+     "val_loss": 2.5646256835585137,
+     "seconds": 2.7
+    },
+    {
+     "epoch": 29,
+     "train_loss": 2.497687681129808,
+     "val_loss": 2.566429109458464,
+     "seconds": 2.7
+    }
+   ],
+   "n_train_cells": 26916,
+   "n_val_cells": 2988,
+   "mean_train_tokens": 13.176177738148313,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 0.62,
+   "truncated_frac": 0.0,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 6729,
+   "e5_val": 747,
+   "test": 922,
+   "learner_val": 830
+  }
+ },
+ "leakage_gap_head_train_minus_test": 0.04562671070328839,
+ "n_train": 8306,
+ "n_test": 922,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-10 22:09:09",
+ "argv": [
+  "--method",
+  "tar_repro",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_MONTGOMERY_SALARIES",
+  "--fold",
+  "4",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5"
+}

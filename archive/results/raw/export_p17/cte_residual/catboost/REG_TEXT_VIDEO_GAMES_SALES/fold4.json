@@ -1,0 +1,310 @@
+{
+ "method": "cte_residual",
+ "run_name": "cte_residual",
+ "engine_version": "p6/2",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_VIDEO_GAMES_SALES",
+ "fold": 4,
+ "task": "REG",
+ "score": 0.2932493919281528,
+ "metrics": {
+  "score": 0.2932493919281528,
+  "metrics": {
+   "r2": 0.2932493919281528,
+   "mse": 1.5976107739476981,
+   "rmse": 1.2639662867132564
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.0767464449682782,
+  "joint_tar": 0.2154825694609345,
+  "unimodal_structured": 0.0275314645895898,
+  "unimodal_text": 0.0144956501537206
+ },
+ "diff_vs_csv_joint_tar": 0.0777668224672183,
+ "runtime_s": {
+  "total": 77.9,
+  "fit": 77.9,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p6/2",
+   "method": "cte_residual",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 1659,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "d99be740ceb5b6e12eac61876c413e83c70cd11d",
+  "dirty": false
+ },
+ "timestamp": "2026-10-14 15:10:31",
+ "argv": [
+  "--method",
+  "cte_residual",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_VIDEO_GAMES_SALES",
+  "--fold",
+  "4",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p6/2",
+  "method": "cte_residual",
+  "p6": {
+   "struct_cols": [
+    "Genre",
+    "Platform",
+    "Year"
+   ],
+   "p6_config": {
+    "struct_iterations": 300,
+    "struct_depth": 6,
+    "struct_learning_rate": 0.1,
+    "inner_folds": 3,
+    "nb_smoothing": 1.0,
+    "seed": 42
+   },
+   "n_struct_fits": 20,
+   "struct_oof_metric": 0.422746,
+   "lexical": "tfidf",
+   "targets": "residual"
+  },
+  "experts": [
+   "lex",
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": true,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "tfidf": 2.04,
+   "ridge": 21.27,
+   "n_tfidf_features": 41199,
+   "knn": 0.91,
+   "numeracy": 1.17
+  },
+  "expert_cache_hits": {
+   "lex": false,
+   "nbr": false
+  },
+  "lex_alpha": {
+   "chosen": 3.0,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.609204,
+    0.64431,
+    0.65799,
+    0.645948
+   ]
+  },
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 9289
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.5449588541644614,
+     "nbr:Name": 0.44439228542237025,
+     "nbr:Publisher": 0.4478034998210678,
+     "nbr:__all__": 0.5123169634895033
+    },
+    "test": {
+     "lex:__all__": 0.549184463584762,
+     "nbr:Name": 0.49191856448137,
+     "nbr:Publisher": 0.4616442595238608,
+     "nbr:__all__": 0.5374054798394223
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": -0.004225609420300591,
+    "nbr:Name": -0.047526279058999754,
+    "nbr:Publisher": -0.01384075970279297,
+    "nbr:__all__": -0.025088516349919043
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "Name": 23,
+   "Publisher": 21
+  },
+  "seconds": {
+   "frozen_embeddings": 0.1,
+   "experts": 25.5
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Name_txt_pca_30": 8.704,
+    "Name_txt_pca_31": 4.17,
+    "Name_txt_pca_32": 15.514,
+    "Name_txt_pca_33": 0.187,
+    "Name_txt_pca_34": 0.003,
+    "Name_txt_pca_35": 0.02,
+    "Name_txt_pca_36": 0.028,
+    "Name_txt_pca_37": 0.003,
+    "Name_txt_pca_38": 0.002,
+    "Name_txt_pca_39": 0.0,
+    "Name_txt_pca_40": 0.0,
+    "Name_txt_pca_41": 0.0,
+    "Name_txt_pca_42": 0.263,
+    "Name_txt_pca_43": 0.033,
+    "Name_txt_pca_44": 0.073,
+    "Name_txt_pca_45": 1.147,
+    "Name_txt_pca_46": 1.242,
+    "Name_txt_pca_47": 0.112,
+    "Name_txt_pca_48": 0.116,
+    "Name_txt_pca_49": 0.097,
+    "Name_txt_pca_50": 0.001,
+    "Name_txt_pca_51": 0.02,
+    "Name_txt_pca_52": 0.0,
+    "Publisher_txt_pca_30": 1.307,
+    "Publisher_txt_pca_31": 0.0,
+    "Publisher_txt_pca_32": 0.002,
+    "Publisher_txt_pca_33": 0.0,
+    "Publisher_txt_pca_34": 0.001,
+    "Publisher_txt_pca_35": 0.0,
+    "Publisher_txt_pca_36": 0.0,
+    "Publisher_txt_pca_37": 0.0,
+    "Publisher_txt_pca_38": 0.0,
+    "Publisher_txt_pca_39": 0.0,
+    "Publisher_txt_pca_40": 0.034,
+    "Publisher_txt_pca_41": 0.051,
+    "Publisher_txt_pca_42": 0.0,
+    "Publisher_txt_pca_43": 0.01,
+    "Publisher_txt_pca_44": 0.102,
+    "Publisher_txt_pca_45": 0.0,
+    "Publisher_txt_pca_46": 0.001,
+    "Publisher_txt_pca_47": 0.0,
+    "Publisher_txt_pca_48": 0.0,
+    "Publisher_txt_pca_49": 0.0,
+    "Publisher_txt_pca_50": 0.0
+   },
+   "pred_share": 0.3325,
+   "group_share": {
+    "structured": 0.1112,
+    "pca": 0.5564,
+    "lex": 0.087,
+    "nbr": 0.2099,
+    "num": 0.0355
+   },
+   "top10": [
+    [
+     "Name_txt_pca_32",
+     15.514
+    ],
+    [
+     "Name_txt_pca_6",
+     13.132
+    ],
+    [
+     "Name_txt_pca_30",
+     8.704
+    ],
+    [
+     "Platform",
+     8.22
+    ],
+    [
+     "Name_txt_pca_1",
+     5.63
+    ],
+    [
+     "Name_txt_pca_31",
+     4.17
+    ],
+    [
+     "Name_txt_pca_12",
+     3.261
+    ],
+    [
+     "Name_txt_pca_7",
+     2.254
+    ],
+    [
+     "Year",
+     2.06
+    ],
+    [
+     "Name_txt_pca_19",
+     1.874
+    ]
+   ]
+  }
+ }
+}

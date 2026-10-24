@@ -1,0 +1,163 @@
+{
+ "method": "frozen0",
+ "run_name": "frozen0",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "BIN_TEXT_KICKSTARTER_FUNDING",
+ "fold": 3,
+ "task": "BIN",
+ "score": 0.7117015165441176,
+ "metrics": {
+  "score": 0.7117015165441176,
+  "metrics": {
+   "auc": 0.7117015165441176
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.7199241727941176,
+  "joint_tar": 0.7444554227941177,
+  "unimodal_structured": 0.6248569623161766,
+  "unimodal_text": 0.6707961856617647
+ },
+ "diff_vs_csv_joint_tar": -0.032753906250000075,
+ "runtime_s": {
+  "total": 43.5,
+  "fit": 43.4,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "frozen0",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 9998,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "c82596a02b507b22d07a6ff5eda81dba73b31ed1",
+  "dirty": false
+ },
+ "timestamp": "2026-10-15 16:52:26",
+ "argv": [
+  "--method",
+  "frozen0",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "BIN_TEXT_KICKSTARTER_FUNDING",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "frozen0",
+  "groups": [],
+  "seconds": {
+   "base": 1.2
+  },
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 59810
+  },
+  "n_extra_columns": {
+   "created_at": 0,
+   "deadline": 0,
+   "desc": 0,
+   "keywords": 0,
+   "name": 0
+  },
+  "catboost_importance": {
+   "pred_columns": {},
+   "pred_share": 0.0,
+   "group_share": {
+    "structured": 0.0741,
+    "pca": 0.9259
+   },
+   "top10": [
+    [
+     "goal",
+     7.0
+    ],
+    [
+     "name_txt_pca_6",
+     5.188
+    ],
+    [
+     "desc_txt_pca_6",
+     2.291
+    ],
+    [
+     "name_txt_pca_5",
+     2.038
+    ],
+    [
+     "desc_txt_pca_2",
+     1.959
+    ],
+    [
+     "desc_txt_pca_8",
+     1.834
+    ],
+    [
+     "desc_txt_pca_22",
+     1.624
+    ],
+    [
+     "desc_txt_pca_4",
+     1.602
+    ],
+    [
+     "desc_txt_pca_29",
+     1.54
+    ],
+    [
+     "created_at_txt_pca_5",
+     1.484
+    ]
+   ]
+  }
+ }
+}

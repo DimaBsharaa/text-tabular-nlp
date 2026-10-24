@@ -1,0 +1,304 @@
+{
+ "method": "cte",
+ "run_name": "cte",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_WINE_REVIEW",
+ "fold": 3,
+ "task": "MUL",
+ "score": 0.9809086664941439,
+ "metrics": {
+  "score": 0.9809086664941439,
+  "metrics": {
+   "auc": 0.9809086664941439,
+   "logloss": 0.811890084377232
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9739780145521624,
+  "joint_tar": 0.9820413538206678,
+  "unimodal_structured": 0.8548362202887065,
+  "unimodal_text": 0.9710420329731444
+ },
+ "diff_vs_csv_joint_tar": -0.00113268732652394,
+ "runtime_s": {
+  "total": 1618.6,
+  "fit": 1618.5,
+  "predict": 0.2,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-13 17:31:12",
+ "argv": [
+  "--method",
+  "cte",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_WINE_REVIEW",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte",
+  "experts": [
+   "lex",
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": true,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "tfidf": 6.25,
+   "ridge": 255.33,
+   "n_tfidf_features": 90365,
+   "knn": 0.19,
+   "numeracy": 3.07
+  },
+  "expert_cache_hits": {
+   "lex": false,
+   "nbr": false
+  },
+  "lex_alpha": {
+   "chosen": 10.0,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.936815,
+    0.945229,
+    0.953474,
+    0.959741
+   ]
+  },
+  "n_classes": 30,
+  "class_columns": "top10+maxp+entropy",
+  "frozen_embedding_cache": {
+   "encoded": 8423,
+   "cached": 3685
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.9538395278252381,
+     "nbr:__all__": 0.9347644022469082
+    },
+    "test": {
+     "lex:__all__": 0.9543715765544615,
+     "nbr:__all__": 0.9320817983787502
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": -0.0005320487292234111,
+    "nbr:__all__": 0.0026826038681579956
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "description": 44,
+   "province": 20
+  },
+  "seconds": {
+   "frozen_embeddings": 8.9,
+   "experts": 265.1
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "description_txt_pca_30": 5.743,
+    "description_txt_pca_31": 6.388,
+    "description_txt_pca_32": 3.735,
+    "description_txt_pca_33": 4.001,
+    "description_txt_pca_34": 1.964,
+    "description_txt_pca_35": 1.802,
+    "description_txt_pca_36": 2.567,
+    "description_txt_pca_37": 1.635,
+    "description_txt_pca_38": 1.68,
+    "description_txt_pca_39": 1.26,
+    "description_txt_pca_40": 1.861,
+    "description_txt_pca_41": 0.849,
+    "description_txt_pca_42": 1.239,
+    "description_txt_pca_43": 1.317,
+    "description_txt_pca_44": 1.76,
+    "description_txt_pca_45": 1.295,
+    "description_txt_pca_46": 1.156,
+    "description_txt_pca_47": 1.559,
+    "description_txt_pca_48": 1.156,
+    "description_txt_pca_49": 1.068,
+    "description_txt_pca_50": 0.978,
+    "description_txt_pca_51": 0.773,
+    "description_txt_pca_52": 1.093,
+    "description_txt_pca_53": 1.025,
+    "description_txt_pca_54": 0.068,
+    "description_txt_pca_55": 0.062,
+    "description_txt_pca_56": 0.0,
+    "description_txt_pca_57": 0.065,
+    "description_txt_pca_58": 0.003,
+    "description_txt_pca_59": 0.013,
+    "description_txt_pca_60": 0.0,
+    "description_txt_pca_61": 0.0,
+    "description_txt_pca_62": 0.084,
+    "description_txt_pca_63": 0.229,
+    "description_txt_pca_64": 0.144,
+    "description_txt_pca_65": 0.072,
+    "description_txt_pca_66": 0.37,
+    "description_txt_pca_67": 0.783,
+    "description_txt_pca_68": 0.143,
+    "description_txt_pca_69": 0.654,
+    "description_txt_pca_70": 0.001,
+    "description_txt_pca_71": 0.0,
+    "description_txt_pca_72": 0.288,
+    "description_txt_pca_73": 0.0,
+    "province_txt_pca_30": 0.0,
+    "province_txt_pca_31": 0.0,
+    "province_txt_pca_32": 0.0,
+    "province_txt_pca_33": 0.0,
+    "province_txt_pca_34": 0.0,
+    "province_txt_pca_35": 0.0,
+    "province_txt_pca_36": 0.0,
+    "province_txt_pca_37": 0.0,
+    "province_txt_pca_38": 0.0,
+    "province_txt_pca_39": 0.312,
+    "province_txt_pca_40": 0.21,
+    "province_txt_pca_41": 0.0,
+    "province_txt_pca_42": 0.307,
+    "province_txt_pca_43": 0.087,
+    "province_txt_pca_44": 0.0,
+    "province_txt_pca_45": 0.0,
+    "province_txt_pca_46": 0.0,
+    "province_txt_pca_47": 0.0,
+    "province_txt_pca_48": 0.001,
+    "province_txt_pca_49": 0.0
+   },
+   "pred_share": 0.518,
+   "group_share": {
+    "structured": 0.072,
+    "pca": 0.4101,
+    "lex": 0.3348,
+    "nbr": 0.1442,
+    "num": 0.0389
+   },
+   "top10": [
+    [
+     "description_txt_pca_31",
+     6.388
+    ],
+    [
+     "description_txt_pca_30",
+     5.743
+    ],
+    [
+     "country",
+     5.126
+    ],
+    [
+     "description_txt_pca_33",
+     4.001
+    ],
+    [
+     "description_txt_pca_32",
+     3.735
+    ],
+    [
+     "description_txt_pca_36",
+     2.567
+    ],
+    [
+     "description_txt_pca_2",
+     2.163
+    ],
+    [
+     "province_txt_pca_2",
+     2.081
+    ],
+    [
+     "description_txt_pca_1",
+     2.045
+    ],
+    [
+     "description_txt_pca_34",
+     1.964
+    ]
+   ]
+  }
+ }
+}

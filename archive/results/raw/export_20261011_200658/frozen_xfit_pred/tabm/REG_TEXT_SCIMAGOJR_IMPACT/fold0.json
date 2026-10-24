@@ -1,0 +1,390 @@
+{
+ "method": "frozen_xfit_pred",
+ "run_name": "frozen_xfit_pred",
+ "engine_version": "stacking/1",
+ "tar_path": "fast",
+ "learner": "tabm",
+ "learner_model_name": "TabM \u24c2\ufe0f",
+ "dataset": "REG_TEXT_SCIMAGOJR_IMPACT",
+ "fold": 0,
+ "task": "REG",
+ "score": 0.8933725357055664,
+ "metrics": {
+  "score": 0.8933725357055664,
+  "metrics": {
+   "r2": 0.8933725357055664,
+   "mse": 302.0684509277344,
+   "rmse": 17.380116539532594
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.8902333974838257,
+  "joint_tar": 0.8820919394493103,
+  "unimodal_structured": 0.7683716416358948,
+  "unimodal_text": 0.8129218816757202
+ },
+ "diff_vs_csv_joint_tar": 0.011280596256256104,
+ "runtime_s": {
+  "total": 25.0,
+  "fit": 24.6,
+  "predict": 0.4,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_key": "REG_TEXT_SCIMAGOJR_IMPACT/fold0/tar_repro/seed42/07055b3820_508674ffe6",
+  "cache_hit": true,
+  "config": {
+   "model_name": "intfloat/e5-small-v2",
+   "lora_rank": 16,
+   "text_layers": 3,
+   "lora_dropout": 0.1,
+   "learning_rate": 0.0001,
+   "epochs": 50,
+   "patience": 3,
+   "weight_decay": 0.001,
+   "batch_size": 256,
+   "max_grad_norm": 1.0,
+   "max_length": 512,
+   "n_bins": 20,
+   "fp16": true,
+   "seed": 42,
+   "fast": true,
+   "bucket_chunk_batches": 50,
+   "engine_version": "stacking/1",
+   "method": "frozen_xfit_pred",
+   "base": "tar_repro"
+  },
+  "text_cols": [
+   "Areas",
+   "Categories",
+   "Citations / Doc  (2years)",
+   "Coverage",
+   "Issn",
+   "Publisher",
+   "Ref  / Doc ",
+   "SJR",
+   "Title"
+  ],
+  "head_quality": {
+   "e5_train": {
+    "score": 0.46827438585933523,
+    "n": 8100
+   },
+   "e5_val": {
+    "score": 0.4957787097119336,
+    "n": 900
+   },
+   "test": {
+    "score": 0.5102783099968775,
+    "n": 2000
+   },
+   "learner_val": {
+    "score": 0.34231889381578506,
+    "n": 1000
+   }
+  },
+  "n_unique_texts": {
+   "Areas": 784,
+   "Categories": 7711,
+   "Citations / Doc  (2years)": 1068,
+   "Coverage": 2656,
+   "Issn": 11998,
+   "Publisher": 3917,
+   "Ref  / Doc ": 5828,
+   "SJR": 2073,
+   "Title": 11999
+  },
+  "train": {
+   "epochs_run": 27,
+   "best_epoch": 24,
+   "best_val_loss": 2.6807404492225175,
+   "history": [
+    {
+     "epoch": 1,
+     "train_loss": 2.9261125006237476,
+     "val_loss": 2.803060978665764,
+     "seconds": 7.8
+    },
+    {
+     "epoch": 2,
+     "train_loss": 2.772650183951086,
+     "val_loss": 2.7465262388300014,
+     "seconds": 7.7
+    },
+    {
+     "epoch": 3,
+     "train_loss": 2.740218534901309,
+     "val_loss": 2.7247387410387582,
+     "seconds": 7.7
+    },
+    {
+     "epoch": 4,
+     "train_loss": 2.721440183315094,
+     "val_loss": 2.7157533590293226,
+     "seconds": 7.8
+    },
+    {
+     "epoch": 5,
+     "train_loss": 2.70915456868657,
+     "val_loss": 2.7044947800812897,
+     "seconds": 7.8
+    },
+    {
+     "epoch": 6,
+     "train_loss": 2.7006858746014504,
+     "val_loss": 2.7028509203592934,
+     "seconds": 7.9
+    },
+    {
+     "epoch": 7,
+     "train_loss": 2.6935531256064795,
+     "val_loss": 2.6964248448831065,
+     "seconds": 8.0
+    },
+    {
+     "epoch": 8,
+     "train_loss": 2.6877536988618114,
+     "val_loss": 2.693775574837202,
+     "seconds": 7.7
+    },
+    {
+     "epoch": 9,
+     "train_loss": 2.6839614137406214,
+     "val_loss": 2.692944058900998,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 10,
+     "train_loss": 2.6778222961451945,
+     "val_loss": 2.6906092586046384,
+     "seconds": 7.7
+    },
+    {
+     "epoch": 11,
+     "train_loss": 2.6748678520710216,
+     "val_loss": 2.693507894468896,
+     "seconds": 7.7
+    },
+    {
+     "epoch": 12,
+     "train_loss": 2.671148175643795,
+     "val_loss": 2.6874119405393246,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 13,
+     "train_loss": 2.668659339520176,
+     "val_loss": 2.6912139832531965,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 14,
+     "train_loss": 2.6644906061012885,
+     "val_loss": 2.6878425766509255,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 15,
+     "train_loss": 2.6616694702467636,
+     "val_loss": 2.6848744425361537,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 16,
+     "train_loss": 2.658767632116833,
+     "val_loss": 2.6839026074350616,
+     "seconds": 7.5
+    },
+    {
+     "epoch": 17,
+     "train_loss": 2.6571071144648215,
+     "val_loss": 2.6937847953372533,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 18,
+     "train_loss": 2.654008827745833,
+     "val_loss": 2.682459723625654,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 19,
+     "train_loss": 2.650843886060152,
+     "val_loss": 2.6829431752805357,
+     "seconds": 7.5
+    },
+    {
+     "epoch": 20,
+     "train_loss": 2.648892949003578,
+     "val_loss": 2.685281916135623,
+     "seconds": 7.7
+    },
+    {
+     "epoch": 21,
+     "train_loss": 2.6458391589490473,
+     "val_loss": 2.6821136672408494,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 22,
+     "train_loss": 2.6465864167782507,
+     "val_loss": 2.6896995133529473,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 23,
+     "train_loss": 2.6431912660402523,
+     "val_loss": 2.6840898250061787,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 24,
+     "train_loss": 2.64075088168695,
+     "val_loss": 2.6807404492225175,
+     "seconds": 7.5
+    },
+    {
+     "epoch": 25,
+     "train_loss": 2.640573247901697,
+     "val_loss": 2.6816809581238545,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 26,
+     "train_loss": 2.6376397174604964,
+     "val_loss": 2.688650979053827,
+     "seconds": 7.6
+    },
+    {
+     "epoch": 27,
+     "train_loss": 2.636133554416756,
+     "val_loss": 2.6829031242558985,
+     "seconds": 7.5
+    }
+   ],
+   "n_train_cells": 72900,
+   "n_val_cells": 8100,
+   "mean_train_tokens": 13.698847736625515,
+   "micro_batch_size_used": 256,
+   "fast_path": true,
+   "bucketed_batches": true,
+   "peak_gpu_gb": 2.49,
+   "truncated_frac": 0.0,
+   "fp16": true
+  },
+  "split_sizes": {
+   "e5_train": 8100,
+   "e5_val": 900,
+   "learner_val": 1000,
+   "test": 2000
+  }
+ },
+ "leakage_gap_head_train_minus_test": -0.04200392413754228,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/tar_cache"
+ },
+ "git": {
+  "commit": "c2078f207a9443ccf1c6aa43557f7fa2c95af615",
+  "dirty": false
+ },
+ "timestamp": "2026-10-11 20:04:39",
+ "argv": [
+  "--method",
+  "frozen_xfit_pred",
+  "--learner",
+  "tabm",
+  "--dataset",
+  "REG_TEXT_SCIMAGOJR_IMPACT",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_full",
+  "--cache_dir",
+  "/content/tar_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "stacking/1",
+  "k_folds": 3,
+  "method": "frozen_xfit_pred",
+  "fold_models": [
+   {
+    "fold": 0,
+    "n_train_rows": 6000,
+    "n_heldout": 3000,
+    "cache_key": "REG_TEXT_SCIMAGOJR_IMPACT/fold0/tar_repro/seed42/07055b3820_1fe5db56a7",
+    "cache_hit": true,
+    "best_epoch": 21,
+    "train_rows_hash": "bae94fcbf4",
+    "heldout_rows_hash": "998cdad426"
+   },
+   {
+    "fold": 1,
+    "n_train_rows": 6000,
+    "n_heldout": 3000,
+    "cache_key": "REG_TEXT_SCIMAGOJR_IMPACT/fold0/tar_repro/seed42/07055b3820_d3a0a48da6",
+    "cache_hit": true,
+    "best_epoch": 14,
+    "train_rows_hash": "aeb3301692",
+    "heldout_rows_hash": "8425257a14"
+   },
+   {
+    "fold": 2,
+    "n_train_rows": 6000,
+    "n_heldout": 3000,
+    "cache_key": "REG_TEXT_SCIMAGOJR_IMPACT/fold0/tar_repro/seed42/07055b3820_a9b22edbab",
+    "cache_hit": true,
+    "best_epoch": 13,
+    "train_rows_hash": "0fc6c94304",
+    "heldout_rows_hash": "447c4b752a"
+   }
+  ],
+  "folds_cover_pool": true,
+  "pred_feature_quality": {
+   "train_rows": 0.5007955604326318,
+   "test": 0.5376316123982228,
+   "learner_val": 0.3800231537482911,
+   "gap_train_minus_test": -0.03683605196559092
+  },
+  "n_pred_features_per_col": {
+   "Areas": 2,
+   "Categories": 2,
+   "Citations / Doc  (2years)": 2,
+   "Coverage": 2,
+   "Issn": 2,
+   "Publisher": 2,
+   "Ref  / Doc ": 2,
+   "SJR": 2,
+   "Title": 2
+  },
+  "catboost_importance": null
+ }
+}

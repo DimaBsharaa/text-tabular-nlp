@@ -1,0 +1,240 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_SPORTS_NBA_DRAFT_VALUE_OVER_REPLACEMENT",
+ "fold": 0,
+ "task": "REG",
+ "score": 0.9938163164620337,
+ "metrics": {
+  "score": 0.9938163164620337,
+  "metrics": {
+   "r2": 0.9938163164620337,
+   "mse": 0.8063834290478532,
+   "rmse": 0.897988546167407
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 37.7,
+  "fit": 37.7,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 1503,
+ "n_test": 166,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 03:04:40",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_SPORTS_NBA_DRAFT_VALUE_OVER_REPLACEMENT",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 0.2,
+   "probe": 0.5
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 10.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.022786,
+     0.028241,
+     0.031486,
+     0.033432
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.0,
+    "experts": 0.1
+   }
+  },
+  "probe": {
+   "alpha": 3.0,
+   "oof_metric": [
+    0.25170689244092154,
+    0.2812940160695783,
+    0.2949638887914607,
+    0.2912595277025013
+   ]
+  },
+  "n_extra_columns": {
+   "college": 24,
+   "player": 21
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "college_txt_pca_30": 0.023,
+    "college_txt_pca_31": 0.19,
+    "college_txt_pca_32": 0.157,
+    "college_txt_pca_33": 0.0,
+    "college_txt_pca_34": 0.0,
+    "college_txt_pca_35": 0.0,
+    "college_txt_pca_36": 0.0,
+    "college_txt_pca_37": 0.0,
+    "college_txt_pca_38": 0.0,
+    "college_txt_pca_39": 0.0,
+    "college_txt_pca_40": 0.0,
+    "college_txt_pca_41": 0.0,
+    "college_txt_pca_42": 0.028,
+    "college_txt_pca_43": 0.04,
+    "college_txt_pca_44": 0.0,
+    "college_txt_pca_45": 0.107,
+    "college_txt_pca_46": 0.112,
+    "college_txt_pca_47": 0.0,
+    "college_txt_pca_48": 0.002,
+    "college_txt_pca_49": 0.0,
+    "college_txt_pca_50": 0.0,
+    "college_txt_pca_51": 0.002,
+    "college_txt_pca_52": 0.034,
+    "college_txt_pca_53": 0.075,
+    "player_txt_pca_30": 0.184,
+    "player_txt_pca_31": 0.0,
+    "player_txt_pca_32": 0.0,
+    "player_txt_pca_33": 0.0,
+    "player_txt_pca_34": 0.0,
+    "player_txt_pca_35": 0.0,
+    "player_txt_pca_36": 0.0,
+    "player_txt_pca_37": 0.0,
+    "player_txt_pca_38": 0.0,
+    "player_txt_pca_39": 0.0,
+    "player_txt_pca_40": 0.019,
+    "player_txt_pca_41": 0.004,
+    "player_txt_pca_42": 0.001,
+    "player_txt_pca_43": 0.007,
+    "player_txt_pca_44": 0.217,
+    "player_txt_pca_45": 0.0,
+    "player_txt_pca_46": 0.077,
+    "player_txt_pca_47": 0.0,
+    "player_txt_pca_48": 0.0,
+    "player_txt_pca_49": 0.0,
+    "player_txt_pca_50": 0.0
+   },
+   "pred_share": 0.0128,
+   "group_share": {
+    "structured": 0.8979,
+    "pca": 0.0893,
+    "lex": 0.0002,
+    "nbr": 0.0053,
+    "num": 0.0065,
+    "probe": 0.0008
+   },
+   "top10": [
+    [
+     "win_shares",
+     52.013
+    ],
+    [
+     "box_plus_minus",
+     21.23
+    ],
+    [
+     "years_active",
+     4.132
+    ],
+    [
+     "average_minutes_played",
+     3.699
+    ],
+    [
+     "average_assists",
+     3.569
+    ],
+    [
+     "points_per_game",
+     1.862
+    ],
+    [
+     "win_shares_per_48_minutes",
+     1.426
+    ],
+    [
+     "player_txt_pca_4",
+     1.068
+    ],
+    [
+     "overall_pick",
+     0.593
+    ],
+    [
+     "player_txt_pca_2",
+     0.58
+    ]
+   ]
+  }
+ }
+}

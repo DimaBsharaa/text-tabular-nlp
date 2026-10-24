@@ -1,0 +1,260 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "BIN_TEXT_TRANSPORTATION_OSHA_ACCIDENT_INJURY_DATA",
+ "fold": 2,
+ "task": "BIN",
+ "score": 0.6254687075446065,
+ "metrics": {
+  "score": 0.6254687075446065,
+  "metrics": {
+   "auc": 0.6254687075446065
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 45.1,
+  "fit": 45.0,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 4361,
+ "n_test": 486,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 00:40:03",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "BIN_TEXT_TRANSPORTATION_OSHA_ACCIDENT_INJURY_DATA",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 3.2,
+   "probe": 2.3
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 10.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.564917,
+     0.568622,
+     0.572488,
+     0.575368
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.2,
+    "experts": 2.9
+   }
+  },
+  "probe": {
+   "alpha": 1.0,
+   "oof_metric": [
+    0.5764943162514551,
+    0.5788409163060368,
+    0.578480147259492,
+    0.5747964321319765
+   ]
+  },
+  "n_extra_columns": {
+   "Abstract Text": 24,
+   "Event Description": 21,
+   "Event Keywords": 21
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Abstract Text_txt_pca_30": 1.965,
+    "Abstract Text_txt_pca_31": 1.191,
+    "Abstract Text_txt_pca_32": 0.793,
+    "Abstract Text_txt_pca_33": 0.496,
+    "Abstract Text_txt_pca_34": 2.417,
+    "Abstract Text_txt_pca_35": 0.117,
+    "Abstract Text_txt_pca_36": 0.622,
+    "Abstract Text_txt_pca_37": 0.378,
+    "Abstract Text_txt_pca_38": 0.194,
+    "Abstract Text_txt_pca_39": 0.0,
+    "Abstract Text_txt_pca_40": 0.0,
+    "Abstract Text_txt_pca_41": 0.0,
+    "Abstract Text_txt_pca_42": 0.445,
+    "Abstract Text_txt_pca_43": 0.485,
+    "Abstract Text_txt_pca_44": 0.086,
+    "Abstract Text_txt_pca_45": 0.539,
+    "Abstract Text_txt_pca_46": 0.585,
+    "Abstract Text_txt_pca_47": 0.674,
+    "Abstract Text_txt_pca_48": 0.546,
+    "Abstract Text_txt_pca_49": 0.001,
+    "Abstract Text_txt_pca_50": 0.0,
+    "Abstract Text_txt_pca_51": 0.887,
+    "Abstract Text_txt_pca_52": 0.0,
+    "Abstract Text_txt_pca_53": 1.934,
+    "Event Description_txt_pca_30": 1.389,
+    "Event Description_txt_pca_31": 0.007,
+    "Event Description_txt_pca_32": 0.011,
+    "Event Description_txt_pca_33": 0.032,
+    "Event Description_txt_pca_34": 0.041,
+    "Event Description_txt_pca_35": 0.0,
+    "Event Description_txt_pca_36": 0.0,
+    "Event Description_txt_pca_37": 0.0,
+    "Event Description_txt_pca_38": 0.0,
+    "Event Description_txt_pca_39": 0.0,
+    "Event Description_txt_pca_40": 0.448,
+    "Event Description_txt_pca_41": 0.144,
+    "Event Description_txt_pca_42": 0.0,
+    "Event Description_txt_pca_43": 0.327,
+    "Event Description_txt_pca_44": 0.562,
+    "Event Description_txt_pca_45": 0.014,
+    "Event Description_txt_pca_46": 0.285,
+    "Event Description_txt_pca_47": 0.0,
+    "Event Description_txt_pca_48": 0.001,
+    "Event Description_txt_pca_49": 0.064,
+    "Event Description_txt_pca_50": 0.0,
+    "Event Keywords_txt_pca_30": 0.809,
+    "Event Keywords_txt_pca_31": 0.0,
+    "Event Keywords_txt_pca_32": 0.0,
+    "Event Keywords_txt_pca_33": 0.0,
+    "Event Keywords_txt_pca_34": 0.0,
+    "Event Keywords_txt_pca_35": 0.0,
+    "Event Keywords_txt_pca_36": 0.0,
+    "Event Keywords_txt_pca_37": 0.0,
+    "Event Keywords_txt_pca_38": 0.0,
+    "Event Keywords_txt_pca_39": 0.0,
+    "Event Keywords_txt_pca_40": 0.742,
+    "Event Keywords_txt_pca_41": 0.567,
+    "Event Keywords_txt_pca_42": 0.0,
+    "Event Keywords_txt_pca_43": 0.667,
+    "Event Keywords_txt_pca_44": 0.836,
+    "Event Keywords_txt_pca_45": 0.0,
+    "Event Keywords_txt_pca_46": 0.451,
+    "Event Keywords_txt_pca_47": 0.0,
+    "Event Keywords_txt_pca_48": 0.0,
+    "Event Keywords_txt_pca_49": 0.0,
+    "Event Keywords_txt_pca_50": 0.0
+   },
+   "pred_share": 0.2175,
+   "group_share": {
+    "structured": 0.0727,
+    "pca": 0.7098,
+    "lex": 0.0197,
+    "nbr": 0.0418,
+    "num": 0.1367,
+    "probe": 0.0193
+   },
+   "top10": [
+    [
+     "Abstract Text_txt_pca_34",
+     2.417
+    ],
+    [
+     "Abstract Text_txt_pca_30",
+     1.965
+    ],
+    [
+     "Abstract Text_txt_pca_53",
+     1.934
+    ],
+    [
+     "Abstract Text_txt_pca_11",
+     1.833
+    ],
+    [
+     "Event Keywords_txt_pca_15",
+     1.649
+    ],
+    [
+     "Abstract Text_txt_pca_1",
+     1.397
+    ],
+    [
+     "Event Description_txt_pca_30",
+     1.389
+    ],
+    [
+     "Abstract Text_txt_pca_29",
+     1.313
+    ],
+    [
+     "Abstract Text_txt_pca_14",
+     1.282
+    ],
+    [
+     "Abstract Text_txt_pca_15",
+     1.256
+    ]
+   ]
+  }
+ }
+}

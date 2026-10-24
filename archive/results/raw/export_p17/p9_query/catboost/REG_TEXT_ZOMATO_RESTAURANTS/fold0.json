@@ -1,0 +1,341 @@
+{
+ "method": "p9_query",
+ "run_name": "p9_query",
+ "engine_version": "p9/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_ZOMATO_RESTAURANTS",
+ "fold": 0,
+ "task": "REG",
+ "score": 0.8543237782001974,
+ "metrics": {
+  "score": 0.8543237782001974,
+  "metrics": {
+   "r2": 0.8543237782001974,
+   "mse": 0.027714128749246343,
+   "rmse": 0.16647561007320666
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.818909584764638,
+  "joint_tar": 0.8414018717604228,
+  "unimodal_structured": 0.5750196112814945,
+  "unimodal_text": 0.7981423142055579
+ },
+ "diff_vs_csv_joint_tar": 0.012921906439774644,
+ "runtime_s": {
+  "total": 431.9,
+  "fit": 431.7,
+  "predict": 0.2,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p9/1",
+   "method": "p9_query",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "d5d75d7c617d0dba506955489e46acdff90e62a5",
+  "dirty": false
+ },
+ "timestamp": "2026-10-16 12:06:56",
+ "argv": [
+  "--method",
+  "p9_query",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_ZOMATO_RESTAURANTS",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p9/1",
+  "method": "p9_query",
+  "spec": {
+   "test_mode": "full",
+   "repeats": 1,
+   "prompt": false,
+   "rff": false,
+   "nb": false,
+   "query": true
+  },
+  "frozen_embedding_cache": {
+   "encoded": 34419,
+   "cached": 0
+  },
+  "seconds": {
+   "embeddings": 171.1,
+   "lex": 113.1,
+   "nbr": 1.5,
+   "probe": 7.0
+  },
+  "lex": {
+   "alpha": 0.3,
+   "oof_metric": [
+    0.89082,
+    0.887358,
+    0.871524,
+    0.835905
+   ]
+  },
+  "probe": {
+   "alpha": 0.3,
+   "oof_metric": [
+    0.828377,
+    0.826595,
+    0.819127,
+    0.805185
+   ]
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "address_txt_pca_30": 31.727,
+    "address_txt_pca_31": 8.967,
+    "address_txt_pca_32": 3.43,
+    "address_txt_pca_33": 0.074,
+    "address_txt_pca_34": 0.034,
+    "address_txt_pca_35": 0.033,
+    "address_txt_pca_36": 0.098,
+    "address_txt_pca_37": 0.0,
+    "address_txt_pca_38": 0.0,
+    "address_txt_pca_39": 0.0,
+    "address_txt_pca_40": 0.0,
+    "address_txt_pca_41": 0.0,
+    "address_txt_pca_42": 0.09,
+    "address_txt_pca_43": 0.022,
+    "address_txt_pca_44": 0.0,
+    "address_txt_pca_45": 0.117,
+    "address_txt_pca_46": 0.072,
+    "address_txt_pca_47": 0.035,
+    "address_txt_pca_48": 0.022,
+    "address_txt_pca_49": 0.0,
+    "address_txt_pca_50": 0.0,
+    "address_txt_pca_51": 0.071,
+    "address_txt_pca_52": 0.0,
+    "address_txt_pca_53": 4.315,
+    "cuisines_txt_pca_30": 0.174,
+    "cuisines_txt_pca_31": 0.0,
+    "cuisines_txt_pca_32": 0.0,
+    "cuisines_txt_pca_33": 0.0,
+    "cuisines_txt_pca_34": 0.0,
+    "cuisines_txt_pca_35": 0.0,
+    "cuisines_txt_pca_36": 0.0,
+    "cuisines_txt_pca_37": 0.0,
+    "cuisines_txt_pca_38": 0.0,
+    "cuisines_txt_pca_39": 0.0,
+    "cuisines_txt_pca_40": 0.03,
+    "cuisines_txt_pca_41": 0.019,
+    "cuisines_txt_pca_42": 0.0,
+    "cuisines_txt_pca_43": 0.051,
+    "cuisines_txt_pca_44": 0.199,
+    "cuisines_txt_pca_45": 0.0,
+    "cuisines_txt_pca_46": 0.126,
+    "cuisines_txt_pca_47": 0.0,
+    "cuisines_txt_pca_48": 0.0,
+    "cuisines_txt_pca_49": 0.036,
+    "cuisines_txt_pca_50": 0.001,
+    "dish_liked_txt_pca_30": 5.149,
+    "dish_liked_txt_pca_31": 0.0,
+    "dish_liked_txt_pca_32": 0.0,
+    "dish_liked_txt_pca_33": 0.0,
+    "dish_liked_txt_pca_34": 0.0,
+    "dish_liked_txt_pca_35": 0.0,
+    "dish_liked_txt_pca_36": 0.0,
+    "dish_liked_txt_pca_37": 0.0,
+    "dish_liked_txt_pca_38": 0.0,
+    "dish_liked_txt_pca_39": 0.0,
+    "dish_liked_txt_pca_40": 0.208,
+    "dish_liked_txt_pca_41": 0.067,
+    "dish_liked_txt_pca_42": 0.0,
+    "dish_liked_txt_pca_43": 0.05,
+    "dish_liked_txt_pca_44": 0.495,
+    "dish_liked_txt_pca_45": 0.0,
+    "dish_liked_txt_pca_46": 0.16,
+    "dish_liked_txt_pca_47": 0.0,
+    "dish_liked_txt_pca_48": 0.0,
+    "dish_liked_txt_pca_49": 0.277,
+    "dish_liked_txt_pca_50": 0.0,
+    "menu_item_txt_pca_30": 0.091,
+    "menu_item_txt_pca_31": 0.009,
+    "menu_item_txt_pca_32": 0.1,
+    "menu_item_txt_pca_33": 0.001,
+    "menu_item_txt_pca_34": 0.006,
+    "menu_item_txt_pca_35": 0.0,
+    "menu_item_txt_pca_36": 0.0,
+    "menu_item_txt_pca_37": 0.0,
+    "menu_item_txt_pca_38": 0.0,
+    "menu_item_txt_pca_39": 0.0,
+    "menu_item_txt_pca_40": 0.026,
+    "menu_item_txt_pca_41": 0.025,
+    "menu_item_txt_pca_42": 0.0,
+    "menu_item_txt_pca_43": 0.005,
+    "menu_item_txt_pca_44": 0.0,
+    "menu_item_txt_pca_45": 0.008,
+    "menu_item_txt_pca_46": 0.024,
+    "menu_item_txt_pca_47": 0.003,
+    "menu_item_txt_pca_48": 0.0,
+    "menu_item_txt_pca_49": 0.0,
+    "menu_item_txt_pca_50": 0.0,
+    "name_txt_pca_30": 10.166,
+    "name_txt_pca_31": 0.004,
+    "name_txt_pca_32": 0.0,
+    "name_txt_pca_33": 0.007,
+    "name_txt_pca_34": 0.0,
+    "name_txt_pca_35": 0.0,
+    "name_txt_pca_36": 0.0,
+    "name_txt_pca_37": 0.0,
+    "name_txt_pca_38": 0.0,
+    "name_txt_pca_39": 0.0,
+    "name_txt_pca_40": 0.097,
+    "name_txt_pca_41": 0.049,
+    "name_txt_pca_42": 0.0,
+    "name_txt_pca_43": 0.038,
+    "name_txt_pca_44": 0.035,
+    "name_txt_pca_45": 0.004,
+    "name_txt_pca_46": 0.017,
+    "name_txt_pca_47": 0.0,
+    "name_txt_pca_48": 0.0,
+    "name_txt_pca_49": 0.001,
+    "name_txt_pca_50": 0.0,
+    "phone_txt_pca_30": 3.266,
+    "phone_txt_pca_31": 0.027,
+    "phone_txt_pca_32": 0.0,
+    "phone_txt_pca_33": 0.023,
+    "phone_txt_pca_34": 0.003,
+    "phone_txt_pca_35": 0.0,
+    "phone_txt_pca_36": 0.0,
+    "phone_txt_pca_37": 0.0,
+    "phone_txt_pca_38": 0.0,
+    "phone_txt_pca_39": 0.0,
+    "phone_txt_pca_40": 0.021,
+    "phone_txt_pca_41": 0.043,
+    "phone_txt_pca_42": 0.0,
+    "phone_txt_pca_43": 0.025,
+    "phone_txt_pca_44": 0.0,
+    "phone_txt_pca_45": 0.0,
+    "phone_txt_pca_46": 0.026,
+    "phone_txt_pca_47": 0.0,
+    "phone_txt_pca_48": 0.0,
+    "phone_txt_pca_49": 0.019,
+    "phone_txt_pca_50": 0.0,
+    "reviews_list_txt_pca_30": 4.516,
+    "reviews_list_txt_pca_31": 0.0,
+    "reviews_list_txt_pca_32": 1.207,
+    "reviews_list_txt_pca_33": 0.407,
+    "reviews_list_txt_pca_34": 0.36,
+    "reviews_list_txt_pca_35": 0.019,
+    "reviews_list_txt_pca_36": 0.045,
+    "reviews_list_txt_pca_37": 0.0,
+    "reviews_list_txt_pca_38": 0.0,
+    "reviews_list_txt_pca_39": 0.014,
+    "reviews_list_txt_pca_40": 0.218,
+    "reviews_list_txt_pca_41": 0.072,
+    "reviews_list_txt_pca_42": 0.021,
+    "reviews_list_txt_pca_43": 0.107,
+    "reviews_list_txt_pca_44": 0.044,
+    "reviews_list_txt_pca_45": 0.009,
+    "reviews_list_txt_pca_46": 0.173,
+    "reviews_list_txt_pca_47": 0.294,
+    "reviews_list_txt_pca_48": 0.0,
+    "reviews_list_txt_pca_49": 0.109,
+    "reviews_list_txt_pca_50": 0.0
+   },
+   "pred_share": 0.7793,
+   "group_share": {
+    "structured": 0.0568,
+    "pca": 0.1639,
+    "lex": 0.3173,
+    "nbr": 0.3576,
+    "num": 0.0613,
+    "probe": 0.0431
+   },
+   "top10": [
+    [
+     "address_txt_pca_30",
+     31.727
+    ],
+    [
+     "name_txt_pca_30",
+     10.166
+    ],
+    [
+     "address_txt_pca_31",
+     8.967
+    ],
+    [
+     "dish_liked_txt_pca_30",
+     5.149
+    ],
+    [
+     "votes",
+     4.695
+    ],
+    [
+     "reviews_list_txt_pca_30",
+     4.516
+    ],
+    [
+     "address_txt_pca_53",
+     4.315
+    ],
+    [
+     "address_txt_pca_32",
+     3.43
+    ],
+    [
+     "phone_txt_pca_30",
+     3.266
+    ],
+    [
+     "reviews_list_txt_pca_32",
+     1.207
+    ]
+   ]
+  }
+ }
+}

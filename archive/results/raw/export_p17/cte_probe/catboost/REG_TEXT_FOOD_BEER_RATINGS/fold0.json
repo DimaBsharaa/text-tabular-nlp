@@ -1,0 +1,306 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_FOOD_BEER_RATINGS",
+ "fold": 0,
+ "task": "REG",
+ "score": 0.9016567401111462,
+ "metrics": {
+  "score": 0.9016567401111462,
+  "metrics": {
+   "r2": 0.9016567401111462,
+   "mse": 0.01712095232109497,
+   "rmse": 0.1308470569829332
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 56.0,
+  "fit": 56.0,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 2878,
+ "n_test": 319,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 01:38:01",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_FOOD_BEER_RATINGS",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 1.9,
+   "probe": 1.7
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 3.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.615031,
+     0.635566,
+     0.640292,
+     0.616247
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.2,
+    "experts": 1.7
+   }
+  },
+  "probe": {
+   "alpha": 1.0,
+   "oof_metric": [
+    0.5537410185145872,
+    0.5685621274481713,
+    0.5634895576927691,
+    0.5325314862008147
+   ]
+  },
+  "n_extra_columns": {
+   "Beer Name (Full)": 24,
+   "Brewery": 21,
+   "Description": 21,
+   "Name": 21,
+   "Style": 21
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Beer Name (Full)_txt_pca_30": 0.139,
+    "Beer Name (Full)_txt_pca_31": 0.086,
+    "Beer Name (Full)_txt_pca_32": 0.207,
+    "Beer Name (Full)_txt_pca_33": 0.0,
+    "Beer Name (Full)_txt_pca_34": 0.007,
+    "Beer Name (Full)_txt_pca_35": 0.0,
+    "Beer Name (Full)_txt_pca_36": 0.0,
+    "Beer Name (Full)_txt_pca_37": 0.0,
+    "Beer Name (Full)_txt_pca_38": 0.0,
+    "Beer Name (Full)_txt_pca_39": 0.0,
+    "Beer Name (Full)_txt_pca_40": 0.0,
+    "Beer Name (Full)_txt_pca_41": 0.0,
+    "Beer Name (Full)_txt_pca_42": 0.068,
+    "Beer Name (Full)_txt_pca_43": 0.036,
+    "Beer Name (Full)_txt_pca_44": 0.0,
+    "Beer Name (Full)_txt_pca_45": 0.048,
+    "Beer Name (Full)_txt_pca_46": 0.119,
+    "Beer Name (Full)_txt_pca_47": 0.0,
+    "Beer Name (Full)_txt_pca_48": 0.014,
+    "Beer Name (Full)_txt_pca_49": 0.0,
+    "Beer Name (Full)_txt_pca_50": 0.0,
+    "Beer Name (Full)_txt_pca_51": 0.035,
+    "Beer Name (Full)_txt_pca_52": 0.0,
+    "Beer Name (Full)_txt_pca_53": 0.232,
+    "Brewery_txt_pca_30": 0.306,
+    "Brewery_txt_pca_31": 0.0,
+    "Brewery_txt_pca_32": 0.0,
+    "Brewery_txt_pca_33": 0.0,
+    "Brewery_txt_pca_34": 0.003,
+    "Brewery_txt_pca_35": 0.0,
+    "Brewery_txt_pca_36": 0.0,
+    "Brewery_txt_pca_37": 0.0,
+    "Brewery_txt_pca_38": 0.0,
+    "Brewery_txt_pca_39": 0.0,
+    "Brewery_txt_pca_40": 0.071,
+    "Brewery_txt_pca_41": 0.013,
+    "Brewery_txt_pca_42": 0.035,
+    "Brewery_txt_pca_43": 0.004,
+    "Brewery_txt_pca_44": 0.03,
+    "Brewery_txt_pca_45": 0.0,
+    "Brewery_txt_pca_46": 0.025,
+    "Brewery_txt_pca_47": 0.0,
+    "Brewery_txt_pca_48": 0.0,
+    "Brewery_txt_pca_49": 0.03,
+    "Brewery_txt_pca_50": 0.0,
+    "Description_txt_pca_30": 0.088,
+    "Description_txt_pca_31": 0.0,
+    "Description_txt_pca_32": 0.003,
+    "Description_txt_pca_33": 0.038,
+    "Description_txt_pca_34": 0.043,
+    "Description_txt_pca_35": 0.001,
+    "Description_txt_pca_36": 0.001,
+    "Description_txt_pca_37": 0.0,
+    "Description_txt_pca_38": 0.0,
+    "Description_txt_pca_39": 0.0,
+    "Description_txt_pca_40": 0.067,
+    "Description_txt_pca_41": 0.015,
+    "Description_txt_pca_42": 0.028,
+    "Description_txt_pca_43": 0.051,
+    "Description_txt_pca_44": 0.0,
+    "Description_txt_pca_45": 0.004,
+    "Description_txt_pca_46": 0.037,
+    "Description_txt_pca_47": 0.002,
+    "Description_txt_pca_48": 0.004,
+    "Description_txt_pca_49": 0.026,
+    "Description_txt_pca_50": 0.0,
+    "Name_txt_pca_30": 0.095,
+    "Name_txt_pca_31": 0.009,
+    "Name_txt_pca_32": 0.0,
+    "Name_txt_pca_33": 0.008,
+    "Name_txt_pca_34": 0.008,
+    "Name_txt_pca_35": 0.0,
+    "Name_txt_pca_36": 0.0,
+    "Name_txt_pca_37": 0.0,
+    "Name_txt_pca_38": 0.0,
+    "Name_txt_pca_39": 0.002,
+    "Name_txt_pca_40": 0.029,
+    "Name_txt_pca_41": 0.012,
+    "Name_txt_pca_42": 0.0,
+    "Name_txt_pca_43": 0.042,
+    "Name_txt_pca_44": 0.01,
+    "Name_txt_pca_45": 0.003,
+    "Name_txt_pca_46": 0.002,
+    "Name_txt_pca_47": 0.0,
+    "Name_txt_pca_48": 0.0,
+    "Name_txt_pca_49": 0.003,
+    "Name_txt_pca_50": 0.0,
+    "Style_txt_pca_30": 0.45,
+    "Style_txt_pca_31": 0.0,
+    "Style_txt_pca_32": 0.0,
+    "Style_txt_pca_33": 0.0,
+    "Style_txt_pca_34": 0.0,
+    "Style_txt_pca_35": 0.0,
+    "Style_txt_pca_36": 0.0,
+    "Style_txt_pca_37": 0.0,
+    "Style_txt_pca_38": 0.0,
+    "Style_txt_pca_39": 0.0,
+    "Style_txt_pca_40": 0.112,
+    "Style_txt_pca_41": 0.03,
+    "Style_txt_pca_42": 0.0,
+    "Style_txt_pca_43": 0.174,
+    "Style_txt_pca_44": 0.092,
+    "Style_txt_pca_45": 0.0,
+    "Style_txt_pca_46": 0.137,
+    "Style_txt_pca_47": 0.0,
+    "Style_txt_pca_48": 0.0,
+    "Style_txt_pca_49": 0.0,
+    "Style_txt_pca_50": 0.0
+   },
+   "pred_share": 0.0313,
+   "group_share": {
+    "structured": 0.841,
+    "pca": 0.1276,
+    "lex": 0.0014,
+    "nbr": 0.0123,
+    "num": 0.0153,
+    "probe": 0.0023
+   },
+   "top10": [
+    [
+     "review_taste",
+     44.801
+    ],
+    [
+     "review_palate",
+     25.208
+    ],
+    [
+     "review_aroma",
+     3.192
+    ],
+    [
+     "ABV",
+     2.109
+    ],
+    [
+     "number_of_reviews",
+     1.844
+    ],
+    [
+     "Alcohol",
+     1.689
+    ],
+    [
+     "review_appearance",
+     1.614
+    ],
+    [
+     "Sweet",
+     0.819
+    ],
+    [
+     "Hoppy",
+     0.526
+    ],
+    [
+     "Malty",
+     0.507
+    ]
+   ]
+  }
+ }
+}

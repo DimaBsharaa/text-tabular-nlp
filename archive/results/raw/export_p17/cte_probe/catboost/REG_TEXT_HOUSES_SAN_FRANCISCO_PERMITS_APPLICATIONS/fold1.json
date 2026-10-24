@@ -1,0 +1,284 @@
+{
+ "method": "cte_probe",
+ "run_name": "cte_probe",
+ "engine_version": "p7/1",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_HOUSES_SAN_FRANCISCO_PERMITS_APPLICATIONS",
+ "fold": 1,
+ "task": "REG",
+ "score": 0.5665851648787277,
+ "metrics": {
+  "score": 0.5665851648787277,
+  "metrics": {
+   "r2": 0.5665851648787277,
+   "mse": 3599.671928360085,
+   "rmse": 59.99726600737808
+  }
+ },
+ "reference": {},
+ "diff_vs_csv_joint_tar": null,
+ "runtime_s": {
+  "total": 95.0,
+  "fit": 94.8,
+  "predict": 0.2,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p7/1",
+   "method": "cte_probe",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "febfedf5818d973f7e1850f6539b3c75171e4520",
+  "dirty": false
+ },
+ "timestamp": "2026-10-20 02:08:18",
+ "argv": [
+  "--method",
+  "cte_probe",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_HOUSES_SAN_FRANCISCO_PERMITS_APPLICATIONS",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p7/1",
+  "method": "cte_probe",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 4.1,
+   "probe": 6.6
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 10.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.651749,
+     0.675325,
+     0.687685,
+     0.688326
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.4,
+    "experts": 3.6
+   }
+  },
+  "probe": {
+   "alpha": 1.0,
+   "oof_metric": [
+    0.6546487151576277,
+    0.6587052346088097,
+    0.6567370480702528,
+    0.6451122836348374
+   ]
+  },
+  "n_extra_columns": {
+   "Block": 24,
+   "Description": 21,
+   "Lot": 21,
+   "Street Name": 21
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Block_txt_pca_30": 2.24,
+    "Block_txt_pca_31": 0.439,
+    "Block_txt_pca_32": 1.254,
+    "Block_txt_pca_33": 0.0,
+    "Block_txt_pca_34": 0.012,
+    "Block_txt_pca_35": 0.47,
+    "Block_txt_pca_36": 0.109,
+    "Block_txt_pca_37": 0.0,
+    "Block_txt_pca_38": 0.0,
+    "Block_txt_pca_39": 0.0,
+    "Block_txt_pca_40": 0.0,
+    "Block_txt_pca_41": 0.0,
+    "Block_txt_pca_42": 0.0,
+    "Block_txt_pca_43": 0.0,
+    "Block_txt_pca_44": 0.0,
+    "Block_txt_pca_45": 0.0,
+    "Block_txt_pca_46": 0.0,
+    "Block_txt_pca_47": 0.0,
+    "Block_txt_pca_48": 0.0,
+    "Block_txt_pca_49": 0.0,
+    "Block_txt_pca_50": 0.0,
+    "Block_txt_pca_51": 0.0,
+    "Block_txt_pca_52": 0.0,
+    "Block_txt_pca_53": 1.912,
+    "Description_txt_pca_30": 7.529,
+    "Description_txt_pca_31": 0.065,
+    "Description_txt_pca_32": 0.031,
+    "Description_txt_pca_33": 0.173,
+    "Description_txt_pca_34": 0.128,
+    "Description_txt_pca_35": 0.03,
+    "Description_txt_pca_36": 0.128,
+    "Description_txt_pca_37": 0.0,
+    "Description_txt_pca_38": 0.0,
+    "Description_txt_pca_39": 0.0,
+    "Description_txt_pca_40": 0.45,
+    "Description_txt_pca_41": 0.53,
+    "Description_txt_pca_42": 0.037,
+    "Description_txt_pca_43": 0.284,
+    "Description_txt_pca_44": 0.0,
+    "Description_txt_pca_45": 0.067,
+    "Description_txt_pca_46": 0.223,
+    "Description_txt_pca_47": 0.0,
+    "Description_txt_pca_48": 0.0,
+    "Description_txt_pca_49": 0.236,
+    "Description_txt_pca_50": 0.0,
+    "Lot_txt_pca_30": 0.059,
+    "Lot_txt_pca_31": 0.0,
+    "Lot_txt_pca_32": 0.054,
+    "Lot_txt_pca_33": 0.123,
+    "Lot_txt_pca_34": 0.049,
+    "Lot_txt_pca_35": 0.0,
+    "Lot_txt_pca_36": 0.0,
+    "Lot_txt_pca_37": 0.0,
+    "Lot_txt_pca_38": 0.0,
+    "Lot_txt_pca_39": 0.0,
+    "Lot_txt_pca_40": 0.0,
+    "Lot_txt_pca_41": 0.0,
+    "Lot_txt_pca_42": 0.0,
+    "Lot_txt_pca_43": 0.001,
+    "Lot_txt_pca_44": 0.0,
+    "Lot_txt_pca_45": 0.0,
+    "Lot_txt_pca_46": 0.0,
+    "Lot_txt_pca_47": 0.0,
+    "Lot_txt_pca_48": 0.0,
+    "Lot_txt_pca_49": 0.0,
+    "Lot_txt_pca_50": 0.0,
+    "Street Name_txt_pca_30": 0.139,
+    "Street Name_txt_pca_31": 0.0,
+    "Street Name_txt_pca_32": 0.206,
+    "Street Name_txt_pca_33": 0.182,
+    "Street Name_txt_pca_34": 0.093,
+    "Street Name_txt_pca_35": 0.0,
+    "Street Name_txt_pca_36": 0.0,
+    "Street Name_txt_pca_37": 0.0,
+    "Street Name_txt_pca_38": 0.0,
+    "Street Name_txt_pca_39": 0.0,
+    "Street Name_txt_pca_40": 0.033,
+    "Street Name_txt_pca_41": 0.004,
+    "Street Name_txt_pca_42": 0.0,
+    "Street Name_txt_pca_43": 0.502,
+    "Street Name_txt_pca_44": 0.078,
+    "Street Name_txt_pca_45": 0.0,
+    "Street Name_txt_pca_46": 0.0,
+    "Street Name_txt_pca_47": 0.0,
+    "Street Name_txt_pca_48": 0.0,
+    "Street Name_txt_pca_49": 0.0,
+    "Street Name_txt_pca_50": 0.0
+   },
+   "pred_share": 0.1787,
+   "group_share": {
+    "structured": 0.4826,
+    "pca": 0.3386,
+    "lex": 0.0224,
+    "nbr": 0.0942,
+    "num": 0.043,
+    "probe": 0.0191
+   },
+   "top10": [
+    [
+     "Permit Type Definition",
+     31.72
+    ],
+    [
+     "Description_txt_pca_30",
+     7.529
+    ],
+    [
+     "Site Permit",
+     3.495
+    ],
+    [
+     "Permit Type",
+     2.937
+    ],
+    [
+     "Current Status",
+     2.495
+    ],
+    [
+     "Block_txt_pca_30",
+     2.24
+    ],
+    [
+     "Block_txt_pca_53",
+     1.912
+    ],
+    [
+     "Structural Notification",
+     1.711
+    ],
+    [
+     "Description_txt_pca_2",
+     1.646
+    ],
+    [
+     "Revised Cost",
+     1.544
+    ]
+   ]
+  }
+ }
+}

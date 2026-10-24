@@ -1,0 +1,234 @@
+{
+ "method": "cte",
+ "run_name": "cte",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "lgbm",
+ "learner_model_name": "LightGBM \ud83d\udca1",
+ "dataset": "REG_TEXT_ROTTEN_TOMATOES",
+ "fold": 4,
+ "task": "REG",
+ "score": 0.5080211209833823,
+ "metrics": {
+  "score": 0.5080211209833823,
+  "metrics": {
+   "r2": 0.5080211209833823,
+   "mse": 0.7146875190122157,
+   "rmse": 0.8453919321901622
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.4339268096427079,
+  "joint_tar": 0.45776099543032,
+  "unimodal_structured": 0.1570477030714514,
+  "unimodal_text": 0.4304781123720428
+ },
+ "diff_vs_csv_joint_tar": 0.05026012555306225,
+ "runtime_s": {
+  "total": 13.6,
+  "fit": 13.6,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 6443,
+ "n_test": 715,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-13 20:30:41",
+ "argv": [
+  "--method",
+  "cte",
+  "--learner",
+  "lgbm",
+  "--dataset",
+  "REG_TEXT_ROTTEN_TOMATOES",
+  "--fold",
+  "4",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte",
+  "experts": [
+   "lex",
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": true,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 4.08
+  },
+  "expert_cache_hits": {
+   "lex": true,
+   "nbr": true
+  },
+  "lex_alpha": {
+   "chosen": 3.0,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.619811,
+    0.63456,
+    0.640165,
+    0.628001
+   ]
+  },
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 58307
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.6401646583245519,
+     "nbr:Actors": 0.4167248368950703,
+     "nbr:Cast": 0.44024394173121767,
+     "nbr:Country": 0.08254946577964768,
+     "nbr:Creator": 0.3010190869648243,
+     "nbr:Description": 0.3303896531629223,
+     "nbr:Director": 0.41632303263288467,
+     "nbr:Filming Locations": 0.17500251636890224,
+     "nbr:Genre": 0.45788403393717275,
+     "nbr:Language": 0.116436256179404,
+     "nbr:Name": 0.22675515007025782,
+     "nbr:RatingCount": 0.16552148534685843,
+     "nbr:Release Date": 0.18122581498189277,
+     "nbr:ReviewCount": 0.21637097689176918,
+     "nbr:__all__": 0.6137847117295636
+    },
+    "test": {
+     "lex:__all__": 0.6055023075536382,
+     "nbr:Actors": 0.4658507942447186,
+     "nbr:Cast": 0.42890900156278405,
+     "nbr:Country": 0.1758014511798003,
+     "nbr:Creator": 0.2898962272534021,
+     "nbr:Description": 0.27478814714240246,
+     "nbr:Director": 0.4081374982816513,
+     "nbr:Filming Locations": 0.18291295667679788,
+     "nbr:Genre": 0.35351891972271976,
+     "nbr:Language": 0.12724299737703654,
+     "nbr:Name": 0.16829115224781996,
+     "nbr:RatingCount": 0.17722107823216451,
+     "nbr:Release Date": 0.14715874170075438,
+     "nbr:ReviewCount": 0.2597923316032377,
+     "nbr:__all__": 0.5821589559806131
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": 0.03466235077091373,
+    "nbr:Actors": -0.04912595734964831,
+    "nbr:Cast": 0.011334940168433616,
+    "nbr:Country": -0.09325198540015263,
+    "nbr:Creator": 0.01112285971142224,
+    "nbr:Description": 0.05560150602051983,
+    "nbr:Director": 0.00818553435123337,
+    "nbr:Filming Locations": -0.007910440307895644,
+    "nbr:Genre": 0.10436511421445299,
+    "nbr:Language": -0.010806741197632544,
+    "nbr:Name": 0.05846399782243786,
+    "nbr:RatingCount": -0.011699592885306087,
+    "nbr:Release Date": 0.034067073281138394,
+    "nbr:ReviewCount": -0.043421354711468546,
+    "nbr:__all__": 0.031625755748950546
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "Actors": 23,
+   "Cast": 21,
+   "Country": 21,
+   "Creator": 21,
+   "Description": 21,
+   "Director": 21,
+   "Filming Locations": 21,
+   "Genre": 21,
+   "Language": 21,
+   "Name": 21,
+   "RatingCount": 21,
+   "Release Date": 21,
+   "ReviewCount": 21
+  },
+  "seconds": {
+   "frozen_embeddings": 0.7,
+   "experts": 4.1
+  },
+  "catboost_importance": null
+ }
+}

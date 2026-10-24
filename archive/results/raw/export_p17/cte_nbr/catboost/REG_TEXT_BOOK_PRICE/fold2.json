@@ -1,0 +1,240 @@
+{
+ "method": "cte_nbr",
+ "run_name": "cte_nbr",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_BOOK_PRICE",
+ "fold": 2,
+ "task": "REG",
+ "score": 0.5697835971649089,
+ "metrics": {
+  "score": 0.5697835971649089,
+  "metrics": {
+   "r2": 0.5697835971649089,
+   "mse": 0.042739289818091025,
+   "rmse": 0.2067348297169372
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.5350050182155878,
+  "joint_tar": 0.568201935447767,
+  "unimodal_structured": 0.2113499066931911,
+  "unimodal_text": 0.5190993295840437
+ },
+ "diff_vs_csv_joint_tar": 0.0015816617171419134,
+ "runtime_s": {
+  "total": 30.5,
+  "fit": 30.4,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte_nbr",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 4491,
+ "n_test": 498,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-13 23:02:17",
+ "argv": [
+  "--method",
+  "cte_nbr",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_BOOK_PRICE",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte_nbr",
+  "experts": [
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": false,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 0.0
+  },
+  "expert_cache_hits": {
+   "nbr": true
+  },
+  "lex_alpha": null,
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 15486
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "nbr:Author": 0.5532557631346514,
+     "nbr:Edition": 0.32015188837223646,
+     "nbr:Genre": 0.43871639103864735,
+     "nbr:Synopsis": 0.6449990023495573,
+     "nbr:Title": 0.5877834326180881,
+     "nbr:__all__": 0.644433559145175
+    },
+    "test": {
+     "nbr:Author": 0.5249251075689457,
+     "nbr:Edition": 0.28571876220412284,
+     "nbr:Genre": 0.4786687224626886,
+     "nbr:Synopsis": 0.6340120488669626,
+     "nbr:Title": 0.5122871587499666,
+     "nbr:__all__": 0.6438446324128683
+    }
+   },
+   "gap_train_minus_test": {
+    "nbr:Author": 0.028330655565705687,
+    "nbr:Edition": 0.034433126168113615,
+    "nbr:Genre": -0.039952331424041254,
+    "nbr:Synopsis": 0.010986953482594708,
+    "nbr:Title": 0.07549627386812152,
+    "nbr:__all__": 0.0005889267323067049
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "Author": 2,
+   "Edition": 1,
+   "Genre": 1,
+   "Synopsis": 1,
+   "Title": 1
+  },
+  "seconds": {
+   "frozen_embeddings": 0.2,
+   "experts": 0.0
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Author_txt_pca_30": 7.786,
+    "Author_txt_pca_31": 11.372,
+    "Edition_txt_pca_30": 1.407,
+    "Genre_txt_pca_30": 0.676,
+    "Synopsis_txt_pca_30": 10.664,
+    "Title_txt_pca_30": 4.467
+   },
+   "pred_share": 0.3637,
+   "group_share": {
+    "structured": 0.0563,
+    "pca": 0.58,
+    "nbr": 0.3637
+   },
+   "top10": [
+    [
+     "Author_txt_pca_31",
+     11.372
+    ],
+    [
+     "Synopsis_txt_pca_30",
+     10.664
+    ],
+    [
+     "Author_txt_pca_30",
+     7.786
+    ],
+    [
+     "Edition_txt_pca_20",
+     7.484
+    ],
+    [
+     "Title_txt_pca_30",
+     4.467
+    ],
+    [
+     "Reviews",
+     2.926
+    ],
+    [
+     "Ratings",
+     2.181
+    ],
+    [
+     "Synopsis_txt_pca_7",
+     1.953
+    ],
+    [
+     "Edition_txt_pca_30",
+     1.407
+    ],
+    [
+     "Synopsis_txt_pca_17",
+     1.405
+    ]
+   ]
+  }
+ }
+}

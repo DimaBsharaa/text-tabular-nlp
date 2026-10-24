@@ -1,0 +1,202 @@
+{
+ "method": "cte",
+ "run_name": "cte",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "lgbm",
+ "learner_model_name": "LightGBM \ud83d\udca1",
+ "dataset": "REG_TEXT_BOOK_PRICE",
+ "fold": 3,
+ "task": "REG",
+ "score": 0.5650575263451973,
+ "metrics": {
+  "score": 0.5650575263451973,
+  "metrics": {
+   "r2": 0.5650575263451973,
+   "mse": 0.05418808025133262,
+   "rmse": 0.23278333327653125
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.4763947578458926,
+  "joint_tar": 0.5333497744699142,
+  "unimodal_structured": 0.1390448086401293,
+  "unimodal_text": 0.4763409082791352
+ },
+ "diff_vs_csv_joint_tar": 0.031707751875283186,
+ "runtime_s": {
+  "total": 6.9,
+  "fit": 6.9,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 4491,
+ "n_test": 498,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-13 20:23:37",
+ "argv": [
+  "--method",
+  "cte",
+  "--learner",
+  "lgbm",
+  "--dataset",
+  "REG_TEXT_BOOK_PRICE",
+  "--fold",
+  "3",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte",
+  "experts": [
+   "lex",
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": true,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 3.23
+  },
+  "expert_cache_hits": {
+   "lex": true,
+   "nbr": true
+  },
+  "lex_alpha": {
+   "chosen": 1.0,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.687606,
+    0.693104,
+    0.685669,
+    0.656146
+   ]
+  },
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 15486
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.6931035233999717,
+     "nbr:Author": 0.5268250453350453,
+     "nbr:Edition": 0.31683894538312685,
+     "nbr:Genre": 0.4247286173228515,
+     "nbr:Synopsis": 0.6297176210203752,
+     "nbr:Title": 0.5618139448650175,
+     "nbr:__all__": 0.6341314211267612
+    },
+    "test": {
+     "lex:__all__": 0.695680957288284,
+     "nbr:Author": 0.5515095044523004,
+     "nbr:Edition": 0.34807120319005136,
+     "nbr:Genre": 0.4356896774496406,
+     "nbr:Synopsis": 0.6861509814544139,
+     "nbr:Title": 0.6001464191210611,
+     "nbr:__all__": 0.6666158021004606
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": -0.0025774338883123304,
+    "nbr:Author": -0.024684459117255142,
+    "nbr:Edition": -0.031232257806924513,
+    "nbr:Genre": -0.010961060126789102,
+    "nbr:Synopsis": -0.05643336043403868,
+    "nbr:Title": -0.03833247425604369,
+    "nbr:__all__": -0.03248438097369932
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "Author": 23,
+   "Edition": 21,
+   "Genre": 21,
+   "Synopsis": 21,
+   "Title": 21
+  },
+  "seconds": {
+   "frozen_embeddings": 0.1,
+   "experts": 3.2
+  },
+  "catboost_importance": null
+ }
+}

@@ -137,6 +137,19 @@ uv sync --frozen            # Python 3.11 environment, pinned by uv.lock
 
 Learner choice, API keys (TabPFN-2.5 needs one), measured runtimes and the benchmark runner: [method README](multabench/ours/README.md).
 
+## Reproduce the evaluation
+
+```bash
+# the 480 final runs (5 learners x 20 datasets x 5 folds; TabPFN: 18 datasets), about 47 GPU-hours one job at a time
+.venv/bin/python scripts/run_experiment.py --jobs_file jobs/p18.txt --out my_results/
+.venv/bin/python scripts/p18_report.py --out my_results/ --report_dir my_reports/   # the pre-registered test (claim C13)
+```
+
+[`notebooks/colab_run.ipynb`](notebooks/colab_run.ipynb) runs the same jobs file on a Colab GPU. From the committed
+results, `scripts/make_results.py`, `scripts/paper_assets.py` and `scripts/build_results_notebook.py` rebuild
+`results/`, every number of the paper and notebook 02; `scripts/check_recompute.py` and `scripts/check_fold_scores.py`
+check them against the raw result files ([`results/README.md`](results/README.md)).
+
 ## Is this the official benchmark?
 
 - The upstream code is included unmodified, at tag [`paper_version`](https://github.com/alanarazi7/MulTaBench/tree/paper_version).
@@ -190,7 +203,7 @@ reports/                  the pre-registered analysis of each final claim (p14 t
 notebooks/                01 benchmark study, 02 results, the Colab runner
 jobs/                     the jobs files of the final runs
 paper/                    the paper (LaTeX)
-archive/                  development history: lab notebook, earlier reports, jobs, scripts
+archive/                  development history: lab notebook, earlier raw results, reports, jobs, scripts
 tests/                    unit and end-to-end tests
 multabench/ (the rest), benchmark.py   upstream MulTaBench, unmodified
 ```

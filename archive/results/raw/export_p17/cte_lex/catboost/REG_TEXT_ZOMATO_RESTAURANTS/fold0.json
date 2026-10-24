@@ -1,0 +1,236 @@
+{
+ "method": "cte_lex",
+ "run_name": "cte_lex",
+ "engine_version": "cte/3",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_ZOMATO_RESTAURANTS",
+ "fold": 0,
+ "task": "REG",
+ "score": 0.8364846438733471,
+ "metrics": {
+  "score": 0.8364846438733471,
+  "metrics": {
+   "r2": 0.8364846438733471,
+   "mse": 0.031107929462919855,
+   "rmse": 0.17637440138217295
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.818909584764638,
+  "joint_tar": 0.8414018717604228,
+  "unimodal_structured": 0.5750196112814945,
+  "unimodal_text": 0.7981423142055579
+ },
+ "diff_vs_csv_joint_tar": -0.004917227887075715,
+ "runtime_s": {
+  "total": 210.4,
+  "fit": 210.1,
+  "predict": 0.2,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "cte/3",
+   "method": "cte_lex",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "f1514bcdc13b610604bea5500c16042ea4917f92",
+  "dirty": false
+ },
+ "timestamp": "2026-10-13 22:23:54",
+ "argv": [
+  "--method",
+  "cte_lex",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_ZOMATO_RESTAURANTS",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "cte/3",
+  "method": "cte_lex",
+  "experts": [
+   "lex"
+  ],
+  "mode": "oof",
+  "numeracy": false,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "numeracy": 0.0
+  },
+  "expert_cache_hits": {
+   "lex": true
+  },
+  "lex_alpha": {
+   "chosen": 0.3,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.89082,
+    0.887358,
+    0.871524,
+    0.835905
+   ]
+  },
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 1722,
+   "cached": 32697
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.890820270080576
+    },
+    "test": {
+     "lex:__all__": 0.9017413702263282
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": -0.010921100145752205
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "address": 1,
+   "cuisines": 0,
+   "dish_liked": 0,
+   "menu_item": 0,
+   "name": 0,
+   "phone": 0,
+   "reviews_list": 0
+  },
+  "seconds": {
+   "frozen_embeddings": 69.3,
+   "experts": 0.0
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "address_txt_pca_30": 50.253
+   },
+   "pred_share": 0.5025,
+   "group_share": {
+    "structured": 0.0679,
+    "pca": 0.4295,
+    "lex": 0.5025
+   },
+   "top10": [
+    [
+     "address_txt_pca_30",
+     50.253
+    ],
+    [
+     "votes",
+     5.455
+    ],
+    [
+     "reviews_list_txt_pca_10",
+     1.319
+    ],
+    [
+     "reviews_list_txt_pca_3",
+     1.193
+    ],
+    [
+     "dish_liked_txt_pca_0",
+     0.935
+    ],
+    [
+     "reviews_list_txt_pca_9",
+     0.664
+    ],
+    [
+     "reviews_list_txt_pca_8",
+     0.633
+    ],
+    [
+     "reviews_list_txt_pca_14",
+     0.611
+    ],
+    [
+     "name_txt_pca_4",
+     0.577
+    ],
+    [
+     "reviews_list_txt_pca_12",
+     0.568
+    ]
+   ]
+  }
+ }
+}

@@ -1,0 +1,310 @@
+{
+ "method": "cte_residual",
+ "run_name": "cte_residual",
+ "engine_version": "p6/2",
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_VANCOUVER_SALARIES",
+ "fold": 0,
+ "task": "REG",
+ "score": 0.8097555114647199,
+ "metrics": {
+  "score": 0.8097555114647199,
+  "metrics": {
+   "r2": 0.8097555114647199,
+   "mse": 137466700.93499526,
+   "rmse": 11724.619436680889
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.785138046706261,
+  "joint_tar": 0.7964217990461979,
+  "unimodal_structured": 0.3631206573796622,
+  "unimodal_text": 0.6022260433337469
+ },
+ "diff_vs_csv_joint_tar": 0.013333712418521992,
+ "runtime_s": {
+  "total": 70.0,
+  "fit": 70.0,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "p6/2",
+   "method": "cte_residual",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache"
+ },
+ "git": {
+  "commit": "d99be740ceb5b6e12eac61876c413e83c70cd11d",
+  "dirty": false
+ },
+ "timestamp": "2026-10-14 14:57:48",
+ "argv": [
+  "--method",
+  "cte_residual",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_VANCOUVER_SALARIES",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte",
+  "--cache_dir",
+  "/content/drive/MyDrive/text-tabular-nlp/results_cte/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "p6/2",
+  "method": "cte_residual",
+  "p6": {
+   "struct_cols": [
+    "department",
+    "expenses",
+    "year"
+   ],
+   "p6_config": {
+    "struct_iterations": 300,
+    "struct_depth": 6,
+    "struct_learning_rate": 0.1,
+    "inner_folds": 3,
+    "nb_smoothing": 1.0,
+    "seed": 42
+   },
+   "n_struct_fits": 20,
+   "struct_oof_metric": 0.559099,
+   "lexical": "tfidf",
+   "targets": "residual"
+  },
+  "experts": [
+   "lex",
+   "nbr"
+  ],
+  "mode": "oof",
+  "numeracy": true,
+  "expert_config": {
+   "n_folds": 5,
+   "word_ngrams": [
+    1,
+    2
+   ],
+   "char_ngrams": [
+    3,
+    5
+   ],
+   "min_df": 2,
+   "max_word_features": 50000,
+   "max_char_features": 50000,
+   "char_max_chars": 2000,
+   "ridge_alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "max_class_columns": 10,
+   "k_neighbors": 20,
+   "seed": 42
+  },
+  "expert_timings": {
+   "tfidf": 1.52,
+   "ridge": 20.18,
+   "n_tfidf_features": 31727,
+   "knn": 0.92,
+   "numeracy": 0.92
+  },
+  "expert_cache_hits": {
+   "lex": false,
+   "nbr": false
+  },
+  "lex_alpha": {
+   "chosen": 3.0,
+   "alphas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+   ],
+   "oof_metric": [
+    0.773164,
+    0.788344,
+    0.794369,
+    0.78247
+   ]
+  },
+  "n_classes": null,
+  "class_columns": "1",
+  "frozen_embedding_cache": {
+   "encoded": 0,
+   "cached": 7118
+  },
+  "pred_feature_quality": {
+   "per_expert": {
+    "train_rows": {
+     "lex:__all__": 0.595811927468882,
+     "nbr:name": 0.24837004273272162,
+     "nbr:title": 0.6076861756386898,
+     "nbr:__all__": 0.5377798189006215
+    },
+    "test": {
+     "lex:__all__": 0.6134339017543005,
+     "nbr:name": 0.32630714253045684,
+     "nbr:title": 0.6158043820079151,
+     "nbr:__all__": 0.5554985822851818
+    }
+   },
+   "gap_train_minus_test": {
+    "lex:__all__": -0.01762197428541845,
+    "nbr:name": -0.07793709979773522,
+    "nbr:title": -0.008118206369225334,
+    "nbr:__all__": -0.017718763384560243
+   },
+   "metric": "AUROC (cls; C > 10: mean OvR over the top-10 class columns) / Spearman with y (reg)"
+  },
+  "n_pred_features_per_col": {
+   "name": 23,
+   "title": 21
+  },
+  "seconds": {
+   "frozen_embeddings": 0.1,
+   "experts": 23.6
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "name_txt_pca_30": 18.705,
+    "name_txt_pca_31": 2.716,
+    "name_txt_pca_32": 2.505,
+    "name_txt_pca_33": 0.0,
+    "name_txt_pca_34": 0.0,
+    "name_txt_pca_35": 0.0,
+    "name_txt_pca_36": 0.0,
+    "name_txt_pca_37": 0.0,
+    "name_txt_pca_38": 0.0,
+    "name_txt_pca_39": 0.0,
+    "name_txt_pca_40": 0.0,
+    "name_txt_pca_41": 0.0,
+    "name_txt_pca_42": 0.133,
+    "name_txt_pca_43": 0.395,
+    "name_txt_pca_44": 0.002,
+    "name_txt_pca_45": 0.134,
+    "name_txt_pca_46": 0.1,
+    "name_txt_pca_47": 0.0,
+    "name_txt_pca_48": 0.204,
+    "name_txt_pca_49": 0.0,
+    "name_txt_pca_50": 0.0,
+    "name_txt_pca_51": 0.007,
+    "name_txt_pca_52": 0.0,
+    "title_txt_pca_30": 13.243,
+    "title_txt_pca_31": 0.0,
+    "title_txt_pca_32": 0.0,
+    "title_txt_pca_33": 0.0,
+    "title_txt_pca_34": 0.0,
+    "title_txt_pca_35": 0.0,
+    "title_txt_pca_36": 0.0,
+    "title_txt_pca_37": 0.0,
+    "title_txt_pca_38": 0.0,
+    "title_txt_pca_39": 0.0,
+    "title_txt_pca_40": 0.376,
+    "title_txt_pca_41": 0.53,
+    "title_txt_pca_42": 0.0,
+    "title_txt_pca_43": 0.221,
+    "title_txt_pca_44": 1.185,
+    "title_txt_pca_45": 0.003,
+    "title_txt_pca_46": 0.146,
+    "title_txt_pca_47": 0.0,
+    "title_txt_pca_48": 0.0,
+    "title_txt_pca_49": 0.282,
+    "title_txt_pca_50": 0.0
+   },
+   "pred_share": 0.4089,
+   "group_share": {
+    "structured": 0.2675,
+    "pca": 0.3236,
+    "lex": 0.187,
+    "nbr": 0.1846,
+    "num": 0.0372
+   },
+   "top10": [
+    [
+     "name_txt_pca_30",
+     18.705
+    ],
+    [
+     "title_txt_pca_30",
+     13.243
+    ],
+    [
+     "department",
+     11.637
+    ],
+    [
+     "year",
+     11.139
+    ],
+    [
+     "expenses",
+     3.973
+    ],
+    [
+     "name_txt_pca_31",
+     2.716
+    ],
+    [
+     "name_txt_pca_32",
+     2.505
+    ],
+    [
+     "title_txt_pca_13",
+     2.386
+    ],
+    [
+     "title_txt_pca_0",
+     1.939
+    ],
+    [
+     "title_txt_pca_44",
+     1.185
+    ]
+   ]
+  }
+ }
+}
