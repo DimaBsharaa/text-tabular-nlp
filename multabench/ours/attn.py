@@ -270,11 +270,10 @@ def predict_heads(states, text_cols: list[str], rows: np.ndarray, fit: dict, dev
     """Features for new rows from saved fold heads: the mean of the heads' outputs (as for learner-val / test rows in
     xfit_attention), each head with its own training-row token standardisation; cte.class_features' budget."""
     spec = AttnSpec(**fit["spec"])
-    P = None
+    P = np.zeros((len(rows), fit["n_out"]))  # float64 accumulation, exactly as for the extras in xfit_attention
     for h in fit["heads"]:
         model = AttnProbe(fit["n_cols"], fit["width"], spec.hidden, fit["n_out"], spec.dropout).to(device)
         model.load_state_dict({n: torch.as_tensor(a) for n, a in h["state"].items()})
-        p = _predict(model, _Batcher(states, text_cols, h["mu_sd"], device), rows, fit["is_cls"])
-        P = p / len(fit["heads"]) if P is None else P + p / len(fit["heads"])
+        P += _predict(model, _Batcher(states, text_cols, h["mu_sd"], device), rows, fit["is_cls"]) / len(fit["heads"])
     top = None if fit["top"] is None else np.asarray(fit["top"])
     return cte.class_features(P, fit["is_cls"], fit["n_classes"], top)

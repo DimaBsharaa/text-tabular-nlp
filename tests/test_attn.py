@@ -79,3 +79,19 @@ def test_deterministic():
     a = attn.xfit_attention(states, ["col"], pool, extra, y[:200], True, 2, cte.CTE_CONFIG, DEV, SPEC)
     b = attn.xfit_attention(states, ["col"], pool, extra, y[:200], True, 2, cte.CTE_CONFIG, DEV, SPEC)
     assert np.array_equal(a[0], b[0]) and np.array_equal(a[1]["test"], b[1]["test"])
+
+
+def test_saved_heads_reproduce_extra_rows_exactly():
+    """Packaged-model path: predict_heads with the kept fold heads gives the val/test rows exactly the features
+    xfit_attention gave them (the mean of the same fold heads, same standardisation)."""
+    n = 300
+    rng = np.random.RandomState(5)
+    states, rows = _states(n)
+    y = rng.randint(0, 3, n)
+    pool, extra = _split(rows, 240)
+    f, ext, _, fit = attn.xfit_attention(states, ["col"], pool, extra, y[:240], True, 3, cte.CTE_CONFIG, DEV, SPEC,
+                                         keep_heads=True)
+    assert len(fit["heads"]) == cte.CTE_CONFIG.n_folds
+    assert np.array_equal(attn.predict_heads(states, ["col"], extra["test"], fit, DEV), ext["test"])
+    f2, ext2, _ = attn.xfit_attention(states, ["col"], pool, extra, y[:240], True, 3, cte.CTE_CONFIG, DEV, SPEC)
+    assert np.array_equal(f, f2) and np.array_equal(ext["test"], ext2["test"])  # keep_heads changes nothing
