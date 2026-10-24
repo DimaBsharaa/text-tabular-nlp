@@ -1,8 +1,8 @@
 """Train our method end to end and save a model folder. No fine-tuning.
-Default: the final method cte_depth_top3 (CTE experts + linear probe + depth probes; claims C9-C11) with CatBoost.
-`--learner` picks any of the 5 MulTaBench learners (catboost, lgbm, tabm, tabpfnv2, tabpfnv2p5); TabPFN-2.5 needs the
-TABPFN_TOKEN environment variable (Prior Labs API key, license accepted). `--method cte_probe` / `cte` give the earlier
-methods (claims C5 / C2).
+Default: the final method cte_depth_top3_attn (CTE experts + linear probe + depth probes + attention probe; claim C13)
+with CatBoost. `--learner` picks any of the 5 MulTaBench learners (catboost, lgbm, tabm, tabpfnv2, tabpfnv2p5);
+TabPFN-2.5 needs the TABPFN_TOKEN environment variable (Prior Labs API key, license accepted). `--method cte_depth_top3`
+/ `cte_probe` / `cte` give the earlier methods (claims C9-C11 / C5 / C2).
 
 MulTaBench dataset + fold (same loading, split and code as the benchmark runs, scripts/run_experiment.py):
     python scripts/train.py --dataset REG_TEXT_BOOK_PRICE --fold 0 --out_dir models/book_price_f0
@@ -87,8 +87,9 @@ def main(argv=None) -> dict:
     p.add_argument("--target", help="--csv: name of the target column")
     p.add_argument("--task", default="auto", choices=("auto", "binary", "multiclass", "regression"))
     p.add_argument("--learner", default="catboost", choices=LEARNERS, help="the learner on top of our features")
-    p.add_argument("--method", default="cte_depth_top3", choices=("cte_probe", "cte", "cte_depth", "cte_depth_mm",
-                                                             "cte_depth_top3", "cte_depth_sl"))
+    p.add_argument("--method", default="cte_depth_top3_attn",
+                   choices=("cte_probe", "cte", "cte_depth", "cte_depth_mm", "cte_depth_top3", "cte_depth_sl",
+                            "cte_depth_top3_attn"))
     p.add_argument("--fold", type=int, default=0, help="which of the 5 benchmark splits (test rows) to hold out")
     p.add_argument("--out_dir", required=True)
     p.add_argument("--cache_dir", default=None, help="frozen-embedding / expert cache (default <out_dir>/_cache)")

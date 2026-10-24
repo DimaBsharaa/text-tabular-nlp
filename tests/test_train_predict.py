@@ -50,12 +50,30 @@ def test_model_folder_and_metrics(trained):
     out, m = trained
     assert FOLDER_FILES <= {p.name for p in out.iterdir()}
     meta = json.load(open(out / "meta.json"))
-    assert meta["format"] == "cte_model/1" and meta["method"] == "cte_depth_top3" and meta["engine_version"] == "depth/1"
+    assert meta["format"] == "cte_model/1" and meta["method"] == "cte_depth_top3_attn"  # the final method (P18)
+    assert meta["engine_version"] == "depth/1+attn/1"
     assert meta["alpha"] in (0.3, 1.0, 3.0, 10.0) and meta["probe_alpha"] in (0.3, 1.0, 3.0, 10.0)
     assert meta["learner"] == "catboost" and meta["learner_format"] == "catboost" and meta["fill_medians"] is None
-    assert (out / "probe.joblib").exists() and (out / "depth.joblib").exists()
-    assert m["method"] == "cte_depth_top3" and m["learner"] == "catboost"
+    assert (out / "probe.joblib").exists() and (out / "depth.joblib").exists() and (out / "attn.joblib").exists()
+    assert meta["attn"]["heads"] == 5 and meta["attn"]["layer"] in meta["depth"]["layers"]
+    assert m["method"] == "cte_depth_top3_attn" and m["learner"] == "catboost"
     assert 0 <= m["score"] <= 1 and m["n_train"] == 300 and m["leaderboard_same_fold"]
+
+
+def test_previous_method_still_packages(tmp_path):
+    """--method cte_depth_top3 (the method before P18) still trains, saves without an attention probe and predicts."""
+    import train
+    out = tmp_path / "m"
+    try:
+        train.main(["--dataset", DATASET, "--fold", "0", "--out_dir", str(out), "--train_examples", "300",
+                    "--method", "cte_depth_top3"])
+    except Exception as e:  # noqa: BLE001
+        _skip_if_no_data(e)
+    meta = json.load(open(out / "meta.json"))
+    assert meta["method"] == "cte_depth_top3" and meta["engine_version"] == "depth/1" and meta["attn"] is None
+    assert not (out / "attn.joblib").exists()
+    pred, ref = _predict_subprocess(out, tmp_path)
+    assert np.allclose(pred.to_numpy(), ref.to_numpy(), atol=1e-6)
 
 
 def test_round_trip_predict_matches_fit_time(trained, tmp_path):
@@ -88,6 +106,37 @@ def test_packaged_featurizer_reproduces_fit_time_features(method):
         ref = model.stack_result.features[col].loc[rows]
         assert list(feats[col].columns) == list(ref.columns)
         assert np.allclose(feats[col].to_numpy(), ref.to_numpy(), atol=1e-9, rtol=0, equal_nan=True), col
+
+
+@pytest.mark.parametrize("refit", [False, True])
+def test_packaged_attention_probe_reproduces_fit_time_features(refit):
+    """The saved fold heads give the test rows the attention features run_depth gave them at fit time: with the heads
+    kept from the fit, and with the heads refitted (the path used after an expert-cache hit). The token states of the
+    new rows are re-encoded in another batch composition, hence float tolerance rather than bit equality."""
+    import run_experiment as rx
+    from multabench.ours import tar_engine as te
+    from multabench.ours.cte_model import CTEFeaturizer
+    args = argparse.Namespace(dataset=DATASET, fold=0, method="cte_depth_top3_attn", learner="catboost", seed=42,
+                              train_examples=300, epochs=50, no_fast=False, micro_batch_size=256, lower_cache_dir=None,
+                              cache_dir=None)
+    try:
+        model, _, _, _, x_test, _, _ = rx.fit_learner(args)
+    except Exception as e:  # noqa: BLE001
+        _skip_if_no_data(e)
+    assert model.stack_result.attn_fit is not None and len(model.stack_result.attn_fit["heads"]) == 5
+    if refit:
+        model.stack_result.attn_fit = None
+    fz = CTEFeaturizer.from_learner(model)
+    pre = model._ours_preprocess_like_transform(x_test)[fz.text_cols]
+    rows = np.asarray(x_test.index)
+    feats = fz.transform({c: te.encoding_texts(pre, c) for c in fz.text_cols},
+                         {c: model.tar_result.row_embeddings(c, rows) for c in fz.text_cols}, x_test.index)
+    for col in fz.text_cols:
+        ref = model.stack_result.features[col].loc[rows]
+        assert list(feats[col].columns) == list(ref.columns)
+        a = [c for c in ref.columns if c.startswith("attn:")]
+        assert a or col != fz.text_cols[0], "the attention columns live on the first text column"
+        assert np.allclose(feats[col][a].to_numpy(), ref[a].to_numpy(), atol=1e-4, rtol=0), col
 
 
 def test_csv_mode(tmp_path):

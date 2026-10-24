@@ -324,7 +324,7 @@ def run_depth(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str]
         top = ranked[:spec.top_k]
         new[f"depthtop{spec.top_k}:{ALL_COLS}"] = {k: np.mean([per_layer[l][0] if k == "pool" else per_layer[l][1][k]
                                                                for l in top], axis=0) for k in splits}
-    attn_meta = None
+    attn_meta, attn_fit = None, {}
     if spec.attn:  # E52: token-level attention probe on the best-ranked layer (training-row OOF selection, as top3)
         from multabench.ours import attn
         layer_a = ranked[0]
@@ -334,8 +334,9 @@ def run_depth(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str]
             # features below are cached and shared by every learner; persisting the states filled the VM's disk (P18)
             st = attn.token_states_cached([x[text_cols] for x in splits.values()], text_cols, cfg, device, None,
                                           dataset, layer_a)
-            oof, ext, meta = attn.xfit_attention(st, text_cols, rows["pool"], {k: rows[k] for k in other}, y, is_cls,
-                                                 n_classes, c, device)
+            oof, ext, meta, fit = attn.xfit_attention(st, text_cols, rows["pool"], {k: rows[k] for k in other}, y,
+                                                      is_cls, n_classes, c, device, keep_heads=True)
+            attn_fit.update(fit, layer=int(layer_a))  # for the packaged model (cte_model.py); not cached
             return {"pool": {"f": oof}, **{k: {"f": v} for k, v in ext.items()},
                     "meta": {"oof_metric": np.array([meta["oof_metric"]])}}
         t2 = time.time()
@@ -364,5 +365,7 @@ def run_depth(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str]
                       "attn": attn_meta}}
     print(f"  [STACK:{method}] depth probes on {len(layers)} layers ({spec.pooling}, {aggregate}); best layers "
           f"{ranked[:3]}; states {t_states:.0f}s, probes {t_probe:.0f}s", flush=True)
-    return StackResult(method=method, embedding_result=base.embedding_result, base_result=None, features=features,
-                       diagnostics=diag)
+    res = StackResult(method=method, embedding_result=base.embedding_result, base_result=None, features=features,
+                      diagnostics=diag)
+    res.attn_fit = attn_fit or None  # the fold heads when computed in this process (None after a cache hit)
+    return res

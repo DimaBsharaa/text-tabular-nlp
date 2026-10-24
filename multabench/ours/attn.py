@@ -222,9 +222,11 @@ def _train_head(batcher, rows_tr, t_tr, rows_va, t_va, n_cols, width, n_out, is_
 
 
 def xfit_attention(states, text_cols: list[str], pool_rows: np.ndarray, extra_rows: Dict[str, np.ndarray],
-                   y: np.ndarray, is_cls: bool, n_classes: int, c, device: torch.device, spec: AttnSpec = ATTN_SPEC):
+                   y: np.ndarray, is_cls: bool, n_classes: int, c, device: torch.device, spec: AttnSpec = ATTN_SPEC,
+                   keep_heads: bool = False):
     """Cross-fitted attention-probe features: pool rows out-of-fold, extras the mean of the fold heads. Returns
-    (pool features, {split: features}, {"oof_metric": ...}) with cte.class_features' column budget."""
+    (pool features, {split: features}, {"oof_metric": ...}) with cte.class_features' column budget; with keep_heads
+    also the fold heads (`fit`, for the packaged model: new rows get the same mean of the fold heads)."""
     from multabench.ours.experts import expert_folds
     from sklearn.model_selection import train_test_split
     folds = expert_folds(len(y), y, is_cls, c.expert_config())
@@ -233,6 +235,7 @@ def xfit_attention(states, text_cols: list[str], pool_rows: np.ndarray, extra_ro
     n_out = n_classes if is_cls else 1
     oof = np.zeros((len(y), n_out))
     ext = {k: np.zeros((len(v), n_out)) for k, v in extra_rows.items()}
+    heads = []
     for k, (tr, te_) in enumerate(folds):
         # targets and standardisation from this fold's training rows only
         t_all = y[tr] if is_cls else cte._targets(y[tr], False, 1, c)[:, 0]
@@ -249,6 +252,29 @@ def xfit_attention(states, text_cols: list[str], pool_rows: np.ndarray, extra_ro
         oof[te_] = _predict(model, batcher, pool_rows[te_], is_cls)
         for name, rows in extra_rows.items():
             ext[name] += _predict(model, batcher, rows, is_cls) / len(folds)
+        if keep_heads:
+            heads.append({"state": {n: t.detach().cpu().numpy() for n, t in model.state_dict().items()},
+                          "mu_sd": mu_sd})
     metric = cte.oof_metric(oof if is_cls else oof, y, is_cls, n_classes)
     feat = lambda P: cte.class_features(P, is_cls, n_classes, top)
-    return feat(oof), {k: feat(v) for k, v in ext.items()}, {"oof_metric": metric}
+    out = feat(oof), {k: feat(v) for k, v in ext.items()}, {"oof_metric": metric}
+    if not keep_heads:
+        return out
+    fit = {"heads": heads, "n_cols": len(text_cols), "width": width, "n_out": n_out, "is_cls": is_cls,
+           "n_classes": n_classes, "top": None if top is None else [int(t) for t in top],
+           "spec": dataclasses.asdict(spec)}
+    return (*out, fit)
+
+
+def predict_heads(states, text_cols: list[str], rows: np.ndarray, fit: dict, device: torch.device) -> np.ndarray:
+    """Features for new rows from saved fold heads: the mean of the heads' outputs (as for learner-val / test rows in
+    xfit_attention), each head with its own training-row token standardisation; cte.class_features' budget."""
+    spec = AttnSpec(**fit["spec"])
+    P = None
+    for h in fit["heads"]:
+        model = AttnProbe(fit["n_cols"], fit["width"], spec.hidden, fit["n_out"], spec.dropout).to(device)
+        model.load_state_dict({n: torch.as_tensor(a) for n, a in h["state"].items()})
+        p = _predict(model, _Batcher(states, text_cols, h["mu_sd"], device), rows, fit["is_cls"])
+        P = p / len(fit["heads"]) if P is None else P + p / len(fit["heads"])
+    top = None if fit["top"] is None else np.asarray(fit["top"])
+    return cte.class_features(P, fit["is_cls"], fit["n_classes"], top)

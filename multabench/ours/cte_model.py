@@ -13,6 +13,8 @@ Model folder:
   probe.joblib      (cte_probe) the linear probe: Ridge on the full frozen embeddings of all text columns
   knn_index.npz     per neighbour view: L2-normalised training-row embeddings + training targets
   depth.joblib      (cte_depth*) per used layer: the training-row standardisation and the all-rows Ridge
+  attn.joblib       (cte_depth_top3_attn) the attention probe's 5 cross-fitted heads (weights + each head's training-row
+                    token standardisation) and its layer; new rows get the mean of the heads, as val/test rows in training
   pca.joblib        the fitted PCA-30 per text column
   the fitted learner, in its own format (meta.json "learner_format"; folders without it are CatBoost):
     catboost.cbm                  CatBoost (native format)
@@ -64,11 +66,12 @@ class CTEFeaturizer:
     """The full-pool CTE experts (method `cte`, engine cte/3) of one fitted learner."""
 
     def __init__(self, text_cols, is_cls, classes, top, alpha, vectorizers, ridge, ridge_const, knn, c=cte.CTE_CONFIG,
-                 probe=None, probe_alpha=None, depth=None):
+                 probe=None, probe_alpha=None, depth=None, attn=None):
         self.text_cols, self.is_cls, self.classes, self.top, self.alpha = text_cols, is_cls, classes, top, alpha
         self.vectorizers, self.ridge, self.ridge_const, self.knn, self.c = vectorizers, ridge, ridge_const, knn, c
         self.probe, self.probe_alpha = probe, probe_alpha  # cte_probe (and cte_depth*, which contain it)
         self.depth = depth  # cte_depth*: {pooling, aggregate, top_k, layers, stats {layer: {col: (mu, sd)}}, ridges}
+        self.attn = attn  # cte_depth_top3_attn: attn.xfit_attention's fold heads + "layer"
 
     @property
     def n_classes(self) -> int:
@@ -121,11 +124,14 @@ class CTEFeaturizer:
         if model.ours_variant != "cte":  # the all-training-rows fit p7.xfit_linear uses for val/test rows
             probe_alpha = float(diag["probe"]["alpha"])
             probe = Ridge(alpha=probe_alpha, solver="sparse_cg").fit(np.hstack([embs[col] for col in text_cols]), Y)
-        depth_fit = None
+        depth_fit = attn_fit = None
         if model.ours_variant in DEPTH_METHODS:
             depth_fit = _fit_depth(model, inp, text_cols, rows, y, n_classes)
+            if DEPTH_METHODS[model.ours_variant].attn:
+                attn_fit = getattr(model.stack_result, "attn_fit", None) or _fit_attn(model, inp, text_cols, rows, y,
+                                                                                     n_classes)
         return cls(text_cols, model.is_cls, classes, top, alpha, vectorizers, ridge, ridge_const, knn, c, probe,
-                   probe_alpha, depth_fit)
+                   probe_alpha, depth_fit, attn_fit)
 
     # ------------------------------------------------------------------ transform
     def transform(self, texts: Dict[str, list[str]], embs: Dict[str, np.ndarray], index,
@@ -170,6 +176,12 @@ class CTEFeaturizer:
             else:
                 depth_names = [f"depthtop{d['top_k']}:{ALL_COLS}"]
                 out[depth_names[0]] = np.mean([feat(P[l]) for l in d["layers"]], axis=0)
+        if self.attn is not None:  # after the depth columns, as in depth.run_depth
+            from multabench.ours import attn as at
+            st = at.token_states_cached([DataFrame({col: texts[col] for col in self.text_cols}, index=index)],
+                                        self.text_cols, self.depth["cfg"], device, None, "predict", self.attn["layer"])
+            depth_names.append(f"attn:{ALL_COLS}")
+            out[depth_names[-1]] = at.predict_heads(st, self.text_cols, np.asarray(index), self.attn, device)
         owner = {col: col for col in self.text_cols} | {ALL_COLS: self.text_cols[0]}
         frames = {}
         for col in self.text_cols:
@@ -194,11 +206,14 @@ class CTEFeaturizer:
             joblib.dump(self.probe, join(folder, "probe.joblib"), compress=3)
         if self.depth is not None:
             joblib.dump({k: v for k, v in self.depth.items() if k != "cfg"}, join(folder, "depth.joblib"), compress=3)
+        if self.attn is not None:
+            joblib.dump(self.attn, join(folder, "attn.joblib"), compress=3)
         return {"text_cols": self.text_cols, "is_cls": self.is_cls, "classes": self.classes, "probe_alpha": self.probe_alpha,
                 "top": None if self.top is None else [int(t) for t in self.top], "alpha": self.alpha,
                 "knn_views": list(self.knn),
                 "depth": None if self.depth is None else {k: self.depth[k] for k in ("pooling", "aggregate", "top_k")}
-                | {"layers": [int(l) for l in self.depth["layers"]]}}
+                | {"layers": [int(l) for l in self.depth["layers"]]},
+                "attn": None if self.attn is None else {"layer": int(self.attn["layer"]), "heads": len(self.attn["heads"])}}
 
     @classmethod
     def load(cls, folder: str, meta: dict) -> "CTEFeaturizer":
@@ -212,9 +227,10 @@ class CTEFeaturizer:
         if meta.get("depth"):
             depth_fit = joblib.load(join(folder, "depth.joblib"))
             depth_fit["cfg"] = te.TarConfig(**meta["encoder"])
+        attn_fit = joblib.load(join(folder, "attn.joblib")) if meta.get("attn") else None
         return cls(meta["text_cols"], meta["is_cls"], meta["classes"], top, meta["alpha"],
                    joblib.load(join(folder, "vectorizers.joblib")), r["ridge"], r["const"], knn, probe=probe,
-                   probe_alpha=meta.get("probe_alpha"), depth=depth_fit)
+                   probe_alpha=meta.get("probe_alpha"), depth=depth_fit, attn=attn_fit)
 
 
 def _fit_depth(model, inp, text_cols, rows, y, n_classes) -> dict:
@@ -236,6 +252,20 @@ def _fit_depth(model, inp, text_cols, rows, y, n_classes) -> dict:
     return {"pooling": spec.pooling, "aggregate": dd["aggregate"], "top_k": spec.top_k, "layers": [int(l) for l in layers],
             "stats": stats, "ridges": ridges, "cfg": model.ours_cfg, "sl_weights": dd.get("sl_weights"),
             "sl_intercept": dd.get("sl_intercept")}
+
+
+def _fit_attn(model, inp, text_cols, rows, y, n_classes) -> dict:
+    """The attention probe's fold heads, refitted exactly as depth.run_depth fits them (same rows, labels, folds, layer)
+    when the training run took the features from the cache and so kept no heads."""
+    from multabench.ours import attn as at
+    from multabench.ours import depth as dp
+    spec = dp.DEPTH_METHODS[model.ours_variant]
+    layer = int(model.stack_result.diagnostics["depth"]["attn"]["layer"])
+    st = at.token_states_cached([inp["x_fit"][text_cols]], text_cols, model.ours_cfg, model.device, None,
+                                model.ours_dataset, layer)
+    *_, fit = at.xfit_attention(st, text_cols, rows, {}, y, model.is_cls, n_classes, spec.cte_config(), model.device,
+                                keep_heads=True)
+    return {**fit, "layer": layer}
 
 
 def _analyzers(c):
