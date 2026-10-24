@@ -141,7 +141,8 @@ md("""
 ## 3. Per-dataset gains
 
 Rows are datasets (sorted by the mean gain over learners), columns are learners; each cell is our score minus Joint
-TAR, averaged over the 5 folds. Orange = we are better, blue = Joint TAR is better.
+TAR, averaged over the 5 folds. Orange = we are better, purple = Joint TAR is better; a dash = TabPFN cannot run the
+dataset (30 and 114 classes).
 """)
 
 code("""
@@ -154,7 +155,8 @@ ax.set_xticks(range(len(LEARNERS)), LEARNERS, rotation=20); ax.set_yticks(range(
 for i in range(piv.shape[0]):
     for j in range(piv.shape[1]):
         v = piv.iat[i, j]
-        ax.text(j, i, "–" if np.isnan(v) else f"{v:+.3f}", ha="center", va="center", fontsize=7)
+        ax.text(j, i, "–" if np.isnan(v) else f"{v:+.3f}", ha="center", va="center", fontsize=7,
+                color="white" if abs(v) > 0.035 else "black")  # readable on the darkest cells
 fig.colorbar(im, ax=ax, shrink=0.6, label="ours − Joint TAR (clipped at ±0.06)")
 ax.set_title("Gain over Joint TAR per dataset and learner")
 fig.tight_layout(); fig.savefig(join(FIG, "fig2_gain_heatmap.png"), dpi=200); plt.show()
@@ -162,6 +164,13 @@ n_pos = (piv > 0).sum(axis=1); n_obs = piv.notna().sum(axis=1)
 print("datasets where we win with every learner:", int((n_pos == n_obs).sum()), "of", len(piv))
 print("datasets where we lose with every learner:", int((n_pos == 0).sum()), "->", list(piv.index[n_pos == 0]))
 print("datasets won by >= 4 of the learners:", int((n_pos >= 4).sum()))
+""")
+
+md("""
+**The one dark cell: LightGBM on Spotify Genres.** It is a single failed run, not a pattern. Fold 3 scores AUROC 0.536
+on the Tesla T4 GPU, against 0.906–0.915 on the other four folds and 0.913 when the same job is re-run on an A100;
+CatBoost and TabM score 0.963 and 0.962 on the same fold's features. Averaged over the 5 folds, that one run gives the
+−0.067. It is kept as measured (section 7b has the per-fold scores and the re-run).
 """)
 
 md("""
