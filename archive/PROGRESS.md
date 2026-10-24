@@ -2413,3 +2413,10 @@ Features for the learner = structured columns (upstream preprocessing)
 - **Analysis:** as P18 (`scripts/p18_report.py`): C13 per learner on these 300 + the 180 TabPFN results; paired vs
   `cte_depth_top3`; Holm over all pre-registered tests; plus the new results vs the T4 results of the same jobs.
 - **Which run the submission reports is decided after this run;** both runs and the decision will be recorded here.
+
+## P18c amendment — which run the submission reports, fixed before any P18c result   (2026-10-24, during the run, no result seen)
+- Report the A100 run (all 480 runs on one GPU type) iff ALL of: (1) LightGBM Spotify Genres fold 3 scores >= 0.90;
+  (2) for each of the 5 learners, its mean gain over Joint TAR under the A100 run is at least the current one minus
+  0.003; (3) C13 passes for all 5 learners on the A100 run (P18 test, Holm over the 5 learners).
+- Otherwise the current (T4 / A100) results stay, and the A100 re-run is reported as an additional run (one sentence in
+  the paper, full numbers in notebook 02 and the README).
