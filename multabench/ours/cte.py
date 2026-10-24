@@ -393,7 +393,7 @@ def compute_cte_features(kind: str, texts: Dict[str, list[str]], embs: Optional[
         t0 = time.perf_counter()
         views = {ALL_COLS: _normalise(np.mean([embs[col] for col in cols], axis=0))}
         extra_views = {k: {ALL_COLS: _normalise(np.mean([v[col] for col in cols], axis=0))} for k, v in extra_embs.items()}
-        if not (is_cls and n_classes > 2):  # amendment 2A: multiclass -> concatenation only
+        if not (is_cls and n_classes > 2):  # amendment 2A: multiclass -> the normalised mean view only
             views = {**{col: embs[col] for col in cols}, **views}
             extra_views = {k: {**{col: extra_embs[k][col] for col in cols}, **v} for k, v in extra_views.items()}
         fp = lambda A, tr, Bs, full: [neighbour_average(A, targets(tr, full), B, c, device) for B in Bs]

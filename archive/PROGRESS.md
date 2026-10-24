@@ -2330,3 +2330,33 @@ Features for the learner = structured columns (upstream preprocessing)
   with the depth-probe version; paper, README and notebook say so.
 - **Housekeeping:** `scripts/e52_vm_run.sh` → `archive/scripts/` (a one-machine helper); the comment line of
   `jobs/p18.txt` names the GPUs instead of the machine (no job line changed).
+
+## E58 — External review of 8ab5b7a: corrections (no benchmark run, no score changes)   (2026-10-24)
+- **Correction to E56's wording.** E56 said the over-tolerance differences "can only come from the GPU". Too strong:
+  the two machines differ in GPU type, drivers and CPU threads (learner threads 2 on the VM, 4 on Colab). Correct
+  reading: the source comparison supports an equivalent implementation; cross-environment score differences remain,
+  and hardware-dependent numerical variation is a plausible explanation. The numerical check failed its original
+  tolerance (E55); keeping the original runs is a documented protocol deviation (E56), not a passed check.
+- **Evidence status.** The VM's file-by-file hash comparison (485 files vs `c63c26e`) is recorded here in prose only; its
+  command output / hash manifest was not saved to the repository, and the VM commit `8b3bb76` was never pushed.
+  `reports/p18/provenance_t4.csv` (new) lists every T4 result with its recorded commit, start and end time and source
+  version: 35 LightGBM runs started (and ended) before 2026-10-23 20:12 → `f145a76`; the other 265 → `c63c26e` content.
+  No run started before and ended after that time.
+- **Fixes from the review** (code paths not used by any reported run; tests re-run):
+  - `notebooks/colab_run.ipynb`: defaults reproduce the final run (`jobs/p18.txt`, fresh `results_final`, one job at a
+    time, 240-min timeout, MAX_JOBS = None = 480 jobs, ~47 GPU-hours); the public repository is cloned without a token
+    (a missing `GH_TOKEN` secret used to stop the notebook); the end-of-run report is `scripts/p18_report.py`; no
+    project-administration wording.
+  - `scripts/run_experiment.py`: `--parallel_jobs auto` runs the attention method and the TabPFN learners one at a time
+    (they use the GPU); `--job_timeout_min` default 30 → 240 (15 final jobs took over 30 min, the longest 114).
+  - `multabench/ours/attn.py`: the token-state disk-cache path includes the encoder's `max_length` (the final runs
+    keep token states in memory, so no result used this cache).
+  - Wording: Figure 1 "all 384 dims" → "all text columns" (384 per column, concatenated); method README neighbour
+    views (per column + the normalised mean view; multiclass: mean only; a code comment said "concatenation") and the
+    top-class selection (training-label counts); Results "Developed on training rows only" → "Screened on training-row
+    development splits"; tables / notebook / README: "the 24 pre-registered benchmark comparisons" instead of "all tests
+    run in the project", with the five-comparison Holm reading (5/5) stated next to the 24-comparison one (4/5);
+    class imbalance and label-shuffle statements narrowed to what the checks show.
+- **Left as is:** the bootstrap intervals of `results/summary.csv` (make_results) and `reports/p18` (p18_report) use
+  different random-number streams (e.g. TabPFN-v2 upper bound 0.0513 vs 0.0520); both are valid, the paper and README
+  use `results/summary.csv`.

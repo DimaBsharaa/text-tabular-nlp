@@ -120,8 +120,9 @@ md("""
 
 For each learner: one number per dataset, our score minus Joint TAR averaged over the 5 folds, then a two-sided
 Wilcoxon signed-rank test over datasets (do the gains lean consistently positive, or could the signs be chance?).
-Each test was written down before its run. **Holm (24)** corrects across all 24 tests run in the project, the
-strictest reading. The 95% interval is a bootstrap over datasets.
+Each test was written down before its run. **Holm (24)** corrects across the 24 pre-registered benchmark comparisons
+of the project, the strictest reading (over the five final comparisons alone, the pre-registered reading of the final
+claim, all five pass). The correlations and other analyses in this notebook are exploratory. The 95% interval is a bootstrap over datasets.
 """)
 
 code("""
@@ -290,10 +291,10 @@ fig.tight_layout(); fig.savefig(join(FIG, "fig4_gain_vs_finetuning.png"), dpi=20
 md("""
 ## 6. Class imbalance
 
-Two properties of the protocol keep imbalance from distorting the comparison: the benchmark's train / test split is
+Two properties of the protocol keep the paired comparison fair under class imbalance: the benchmark's train / test split is
 **stratified** by class (tabstar `split_to_test`, `stratify=y`), so every fold keeps the dataset's class ratio, and
 **AUROC does not depend on the class ratio** (it measures ranking, not a thresholded accuracy). Both methods are scored
-on the same rows. Below: the class balance of each classification dataset (from the benchmark's own loader) against
+on the same rows. Imbalance can still affect how well either method learns. Below: the class balance of each classification dataset (from the benchmark's own loader) against
 our gain.
 """)
 
@@ -410,10 +411,11 @@ print(f"attention probe training per (dataset, fold) on a Tesla T4: median {t4.s
 """)
 
 md("""
-**Same code, other GPU.** The attention probe trains on the GPU, whose arithmetic differs between GPU types. 19 of the
-Tesla T4 jobs were re-run on an A100 from the published code (`reports/p18/a100_check.csv`): the 18 fold-0 jobs differ
-by +0.0005 on average, most on Video Games Sales, the noisiest dataset; LightGBM's failed Spotify Genres fold does not
-recur. CatBoost, LightGBM and TabM ran on the T4 and TabPFN on the A100, so each learner's comparisons use one GPU type.
+**Same code, other machine.** 19 of the Tesla T4 jobs were re-run on an A100 machine from the published code
+(`reports/p18/a100_check.csv`): the 18 fold-0 jobs differ by +0.0005 on average but up to ±0.02, most on Video Games
+Sales, the noisiest dataset, and 5 of them by more than the 0.005 tolerance fixed for this check; LightGBM's failed
+Spotify Genres fold does not recur. The machines differ in GPU type, drivers and CPU threads; hardware-dependent
+arithmetic in the attention probe's GPU training is a plausible cause. CatBoost, LightGBM and TabM ran on the T4 and TabPFN on the A100, so each learner's comparisons use one GPU type.
 """)
 
 code("""
@@ -480,8 +482,8 @@ md("""
 ## 10. Trust checks
 
 - **Label shuffle.** The whole method retrained with the training labels randomly permuted (true test labels kept,
-  development split of training rows). If any label information reached the features by another path, the score would
-  stay high; it falls to chance, for the depth-probe version (first table) and for the final method (second table; on
+  development split of training rows), a negative control: if label information reached the features by another path,
+  the score would stay high. It falls to chance, for the depth-probe version (first table) and for the final method (second table; on
   the same five Jigsaw permutations both versions spread over 0.47–0.57).
 - **Independent recomputation.** `scripts/check_recompute.py` recomputes every headline number from the raw result
   files and the leaderboard CSVs with no project code; it reproduces all 5 rows of section 2.
@@ -524,7 +526,8 @@ md("""
 1. **Better than Joint TAR with every learner.** The mean gain is +0.019 to +0.033 (AUROC / R²). Measured from Joint
    Frozen, our method adds 1.8× (LightGBM) to 3.4× (TabPFN-2.5) what fine-tuning adds, without fine-tuning.
 2. **Significant for all 5 learners** (two-sided Wilcoxon over datasets, p ≤ 0.0073); **4 of 5 also survive** the
-   Holm correction over all 24 tests of the project (LightGBM: 0.095).
+   Holm correction over the 24 pre-registered comparisons (LightGBM: 0.095); all 5 survive it over the five final
+   comparisons.
 3. **Broad, not driven by a few datasets.** 83% of the 480 individual runs beat Joint TAR; 13 of the 20 datasets are
    won with every learner and 16 with at least 4; the learners agree on win / loss for 78–94% of the datasets.
 4. **Above the noise.** On 11 of the 20 datasets the mean gain exceeds one standard deviation of the baseline's own
@@ -538,8 +541,8 @@ md("""
    Joint TAR used to win with every learner (by 0.008–0.013), into a win with every learner (+0.006 to +0.016). With
    LightGBM it is −0.0006 on average, all from one failed fold (Spotify Genres fold 3: 0.536). Across datasets the gain
    is not significantly related to how much fine-tuning helps (Spearman ρ = 0.28, p = 0.23).
-8. **Class imbalance does not distort the comparison**: splits are stratified and AUROC does not depend on the class
-   ratio. The gain is smaller on the datasets with the rarest classes (ρ = 0.70 with the rarest class's share,
+8. **Class imbalance**: stratified splits and a class-ratio-free metric (AUROC) keep the paired comparison fair, though
+   imbalance can still affect how well either method learns. The gain is smaller on the datasets with the rarest classes (ρ = 0.70 with the rarest class's share,
    p = 0.03, 10 datasets): these are the multiclass tasks with 4 to 114 classes, the task type with the smallest gains
    (section 5).
 9. **Cross-fitting is essential**: the same lexical expert without it scores 0.034 lower (−0.034 vs. Joint TAR
@@ -548,7 +551,7 @@ md("""
    significant on its own (p = 0.017), not after the 24-test correction.
 11. **Cost** (section 8): the depth-probe version builds its features in about 2.7 min per job on a CPU, the attention
     probe adds a median 2.8 min on a GPU (T4); an optimised GPU fine-tuning of Joint TAR takes 1.3 min.
-12. **No leakage path found**: with shuffled training labels the final method falls to chance (AUROC 0.45–0.57,
+12. **No leakage detected in these checks**: with shuffled training labels the final method falls to chance (AUROC 0.45–0.57,
     R² ≤ 0.01), with the same spread as the depth-probe version on the same permutations.
 13. **Not a lucky seed** (depth-probe version): with two other cross-fitting fold seeds (LightGBM) the gain is +0.017
     and +0.018 (15 of 20 datasets each, Holm p = 0.019); per dataset it moves by a median 0.001 between seeds, most on

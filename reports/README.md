@@ -10,7 +10,7 @@ plus the raw tables and checks the results are built from. The summary numbers f
 | [`p15/`](p15/) | C10: LightGBM and TabM |
 | [`p16/`](p16/) | C11: TabPFN-v2 and TabPFN-2.5 (depth-probe version) |
 | [`p17/`](p17/) | Robustness to the cross-fitting fold seed: the depth-probe version with LightGBM and fold seeds 43 and 44 (C12; both pass, Holm p = 0.019) |
-| [`p18/`](p18/) | C13: the final method (`cte_depth_top3_attn`, with the attention probe) with all five learners; paired comparison with the depth-probe version; Holm correction over all 24 pre-registered tests of the project; `a100_check.csv` (+ `a100_check/`): 19 of its Tesla T4 jobs re-run on an A100 from the published code |
+| [`p18/`](p18/) | C13: the final method (`cte_depth_top3_attn`, with the attention probe) with all five learners; paired comparison with the depth-probe version; Holm correction over all 24 pre-registered tests of the project; `a100_check.csv` (+ `a100_check/`): 19 of its Tesla T4 jobs re-run on an A100 from the published code; `provenance_t4.csv`: the source version of each Tesla T4 result |
 | [`dev/`](dev/) | Development rounds on splits of the training rows: depth-probe aggregations (`e51/`) and the attention probe (`e52/`, with its label-shuffle check) |
 | [`tables/`](tables/) | `fold_scores.csv`: one row per run (method, learner, dataset, fold) of every full run, with the leaderboard scores of the same fold; `table_ablations.csv`: the expert ablations (CatBoost) |
 | [`checks/`](checks/) | `label_shuffle.csv`: the leakage check of the depth-probe version (shuffled labels → chance); the final method's is in `dev/e52/` |

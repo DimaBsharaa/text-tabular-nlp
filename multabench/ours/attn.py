@@ -95,7 +95,7 @@ def token_states_cached(x_frames: list[DataFrame], text_cols: list[str], cfg: te
         uniq, inverse = np.unique(np.array(raw, dtype=object), return_inverse=True)
         uniq = uniq.tolist()
         key = hashlib.sha1("\x00".join(uniq).encode()).hexdigest()[:12]
-        path = join(cache_root, "attn_states", dataset, cfg.model_name.replace("/", "__"), f"L{layer:02d}_t{spec.max_tokens}",
+        path = join(cache_root, "attn_states", dataset, cfg.model_name.replace("/", "__"), f"L{layer:02d}_t{spec.max_tokens}_len{cfg.max_length}",
                     hashlib.sha1(col.encode()).hexdigest()[:12] + f"_{key}.npz") if cache_root else None
         with cte._store_lock(path):
             if path and exists(path):

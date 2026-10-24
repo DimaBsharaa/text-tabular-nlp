@@ -14,7 +14,7 @@ For a table with structured columns and text columns, the learner (any of the fi
 | structured columns | table | upstream's preprocessing, unchanged | no |
 | PCA-30 | text column | frozen e5 mean-pooled embedding of `"passage: <column>: <value>"`, PCA fit on training rows (exactly Joint Frozen) | no |
 | lexical expert | table | TF-IDF of all text columns concatenated (`"col: val \| ..."`, word 1–2-grams + character 3–5-grams, 50k features each), then Ridge; the Ridge strength is picked from {0.3, 1, 3, 10} by the out-of-fold score on training rows | yes, cross-fitted |
-| neighbour expert | text column (+ concatenation) | the label average of the 20 most similar training rows (cosine similarity of frozen embeddings, 1/distance weights) | yes, cross-fitted |
+| neighbour expert | text column, and the normalised mean embedding of all text columns (multiclass: the mean view only) | the label average of the 20 most similar training rows (cosine similarity of frozen embeddings, 1/distance weights) | yes, cross-fitted |
 | probe | table | Ridge on the full 384-d final-layer embeddings of all text columns | yes, cross-fitted |
 | depth probes | table | Ridge on each of the 12 layers' mean-pooled states; the 3 layers with the best out-of-fold training score are averaged | yes, cross-fitted |
 | attention probe | table | the frozen token states of the best depth layer (up to 256 tokens per cell, standardised with training-row statistics); per text column a learned score v·tanh(W h) with 64 hidden units weights the tokens through a softmax, and a linear layer maps the weighted sums of all text columns to the target (cross-entropy or squared error; AdamW, learning rate 2e-3, weight decay 1e-2, at most 40 epochs, early stopping with patience 4 on 10% of each fold's training rows) | yes, cross-fitted |
@@ -29,8 +29,9 @@ least 5 rows). Each fold's expert columns come from
 experts fit on the other 4 folds, so each training row's feature comes from a model that never saw that row's label.
 The learner's validation rows and the test rows get experts fit on all training rows. The same holds for the probe and
 every depth probe; the attention probe is not refitted on all training rows: validation and test rows (and new rows
-at prediction time) get the mean of its 5 fold heads. The selection choices (Ridge penalty, the three best layers, the top classes) are made once from
-all training rows' out-of-fold scores; no validation or test label is ever used.
+at prediction time) get the mean of its 5 fold heads. The selection choices (Ridge penalty, the three best layers) are made once from
+all training rows' out-of-fold scores, and the most frequent classes from the training-label counts; no validation
+or test label is ever used.
 
 **What is never done:** fine-tuning the encoder, fitting anything label-aware on validation or test rows, or tuning a
 setting on test scores. TF-IDF vocabularies, PCA and the token standardisation are fit on training rows only; the
@@ -118,11 +119,12 @@ One job = (method, learner, dataset, fold), one JSON result per job, skipped if 
 ```bash
 .venv/bin/python scripts/run_experiment.py --method cte_depth_top3_attn --learner tabm \
     --dataset REG_TEXT_BOOK_PRICE --fold 0 --out results_runs/
-.venv/bin/python scripts/run_experiment.py --jobs_file jobs/p15.txt --out results_runs/   # a whole jobs file
+.venv/bin/python scripts/run_experiment.py --jobs_file jobs/p18.txt --out results_runs/   # the final run (480 jobs)
 ```
 
-Useful options: `--parallel_jobs` (default `auto`: half the CPU cores for CPU-bound methods; use 2 for TabPFN on one
-GPU), `--job_timeout_min` (default 30; the final runs used 240), `--filter` (run matching jobs only), `--max_jobs`.
+Useful options: `--parallel_jobs` (default `auto`: half the CPU cores for CPU-bound methods, one job at a time for the
+attention probe and TabPFN, which use the GPU), `--job_timeout_min` (default 240 minutes; the longest final job took
+114), `--filter` (run matching jobs only), `--max_jobs`.
 Each JSON records the score, the leaderboard references for the same fold, runtimes, the git commit and the engine
 version. [`notebooks/colab_run.ipynb`](../../notebooks/colab_run.ipynb) runs a jobs file on a Colab GPU with results
 on Google Drive. The final runs: `jobs/p18.txt` (all five learners); of the version without the attention probe,

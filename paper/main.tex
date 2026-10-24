@@ -109,7 +109,7 @@ in BERT~\citep{tenney2019bert}. We apply this idea to task-specific predictions 
   \node[frz=1.45cm] (struct) at (0,-2.1) {structured columns};
   \node[frz=1.85cm] (e5) at (2.2,0.6) {\mbox{e5-small-v2}\\(frozen)};
   \node[exp] (nbr) at (4.75,0.6) {\textbf{neighbor expert}\\20 nearest rows};
-  \node[exp] (prb) at (7.05,0.6) {\textbf{full-embedding probe}\\all 384 dims};
+  \node[exp] (prb) at (7.05,0.6) {\textbf{full-embedding probe}\\all text columns};
   \node[exp] (att) at (9.35,0.6) {\textbf{attention probe}\\best-layer tokens};
   \node[exp] (dep) at (4.75,-0.5) {\textbf{depth probes}\\best 3 of 12 layers};
   \node[exp] (lex) at (7.05,-0.5) {\textbf{lexical expert}\\TF-IDF + Ridge};
@@ -205,8 +205,8 @@ test and its threshold ($p < 0.05$, positive mean) were fixed in writing before 
 \nTests{} pre-registered claims (Table~\ref{tab:tests}). The main runs use seed 42, as the baselines.
 
 \begin{table}[t]
-\caption{Ours vs.\ the published scores of the same learner, mean over datasets: gain over Joint TAR (bootstrap 95\%
-interval), datasets won, Wilcoxon $p$ over datasets (Holm over all \nTests{} tests).}
+\caption{Ours vs.\ published scores of the same learner, mean over datasets: gain over Joint TAR (bootstrap
+95\% CI), datasets won, Wilcoxon $p$ (Holm over the \nTests{} pre-registered comparisons).}
 \label{tab:main}
 \centering
 \small
@@ -251,8 +251,8 @@ datasets.
 \paragraph{The attention probe.}
 Without it, Jigsaw Toxicity was the one dataset Joint TAR won with every learner (our gain \jigsawOldMin{} to
 \jigsawOldMax): fine-tuning gains most there (\jigsawTarGain{} over Joint Frozen), no layer beats the last (at most
-\depthJigsaw), and a single word can decide the label. Developed on training rows only, the attention
-probe makes Jigsaw a win with every learner (\jigsawNewMin{} to \jigsawNewMax) and adds \attnIncPosMin{} to
+\depthJigsaw), and a single word can decide the label. Screened on training-row development splits, the
+attention probe makes Jigsaw a win with every learner (\jigsawNewMin{} to \jigsawNewMax) and adds \attnIncPosMin{} to
 \attnIncPosMax{} over the \emph{depth-probe version} (the method without it) for \attnIncN{} learners ($p \le
 \attnIncPosPMax$). With LightGBM it is \attnIncLightGBM, all from Spotify Genres fold \spotifyFold, where
 LightGBM scores \spotifyBad{} (other folds \spotifyOtherMin--\spotifyOtherMax; \spotifyAhundred{} when re-run on an A100 GPU).
@@ -306,8 +306,8 @@ published Joint TAR and ours, per learner; bold where ours is higher. TabPFN has
 \end{table}
 
 \begin{table}[h]
-\caption{All tests run in the project, each specified in writing before its run: raw two-sided Wilcoxon $p$ and the
-Holm-adjusted $p$ over the \nTests{} claims. Bold: the final method (C13). C1--C6 and C8 are earlier versions of the
+\caption{The \nTests{} pre-registered benchmark comparisons, each specified in writing before its run: raw two-sided
+Wilcoxon $p$ and the Holm-adjusted $p$ over all \nTests. Bold: the final method (C13). C1--C6 and C8 are earlier versions of the
 method; C9--C11 the depth-probe version, i.e.\ the final method without the attention probe; C7a--d the checks on 36
 further datasets (CatBoost, folds 0--2); C12a--b replicate C10 (LightGBM) with other cross-fitting fold seeds,
 specified with a Holm correction within their own family of two ($p = \seedHolm$).}

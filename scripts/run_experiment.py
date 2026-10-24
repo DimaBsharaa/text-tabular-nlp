@@ -311,12 +311,13 @@ def _fmt_secs(s: float) -> str:
 
 def parallel_plan(args: argparse.Namespace, jobs: list) -> tuple[int, dict]:
     """(number of parallel jobs, extra env for each job). "auto" = CPU cores // 2 when every job is a CPU-bound CTE
-    / P6 job, else 1 (TAR fine-tuning jobs share one GPU and must run one at a time). Each job's learner and BLAS get
-    cores // n threads so the cores are not oversubscribed."""
+    / P6 job, else 1: TAR fine-tuning, the attention probe (trained on the GPU) and the TabPFN learners share one GPU
+    and run one at a time. Each job's learner and BLAS get cores // n threads so the cores are not oversubscribed."""
     cores = os.cpu_count() or 1
     if args.parallel_jobs == "auto":
         cpu_bound = lambda m: m.startswith(("cte", "tf_", "p9_", "frozen0")) or m == "catboost_native_text"
-        n = max(1, cores // 2) if jobs and all(cpu_bound(j[0]) for j in jobs) else 1
+        gpu_bound = lambda j: j[0].endswith("_attn") or j[1].startswith("tabpfn")
+        n = max(1, cores // 2) if jobs and all(cpu_bound(j[0]) and not gpu_bound(j) for j in jobs) else 1
     else:
         n = max(1, int(args.parallel_jobs))
     if n == 1:
@@ -471,12 +472,13 @@ def main() -> int:
                    help="--jobs_file: prune the oldest frozen-layer caches above this size before each job")
     p.add_argument("--force", action="store_true", help="re-run even if the result JSON exists")
     p.add_argument("--stream", action="store_true", help="--jobs_file: echo every log line, not just progress")
-    p.add_argument("--job_timeout_min", type=float, default=30.0,
+    p.add_argument("--job_timeout_min", type=float, default=240.0,
                    help="--jobs_file, parallel mode: kill a job after this many minutes (0 = none); logged as timeout in "
                         "<out>/_logs/process_errors.jsonl, not retried, reported as missing (P6 amendment 2)")
     p.add_argument("--retry_timeouts", action="store_true", help="--jobs_file: re-run jobs that timed out before")
     p.add_argument("--parallel_jobs", default="auto",
-                   help='--jobs_file: jobs run at once ("auto" = CPU cores // 2 if every job is CTE, else 1)')
+                   help='--jobs_file: jobs run at once ("auto" = CPU cores // 2 if every job is CPU-bound CTE, '
+                        'else 1; the attention probe and TabPFN use the GPU)')
     args = p.parse_args()
     set_xfit_seed(args.method)  # P17: before any multabench.ours import (the jobs runner passes it to each job)
     args.cache_dir = args.cache_dir or join(args.out, "_cache")

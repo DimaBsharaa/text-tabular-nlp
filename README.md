@@ -26,7 +26,8 @@ Left: mean scores (the axis starts at 0.70 and averages AUROC with R², as the b
 gain over Joint TAR with its 95% interval, the honest scale.
 
 - **Significant with every learner** (two-sided Wilcoxon signed-rank test over datasets, each test specified before
-  its run). With a Holm correction over all 24 claims tested in the project, 4 of 5 remain significant (LightGBM: 0.095).
+  its run). With a Holm correction over the 24 pre-registered comparisons of the project, 4 of 5 remain significant
+  (LightGBM: 0.095); over the five final comparisons alone, all 5.
 - **Broad:** 83% of the 480 individual (learner, dataset, fold) runs beat Joint TAR; 16 of the 20 datasets are won
   with at least 4 of the 5 learners.
 - **Jigsaw Toxicity**, where fine-tuning itself gains the most (+0.117 over the frozen encoder), was the one dataset
@@ -43,9 +44,9 @@ gain over Joint TAR with its 95% interval, the honest scale.
 Full analysis, with every comparison and chart: [**notebook 02**](notebooks/02_results.ipynb). Scores per fold, dataset
 and learner: [`results/`](results/); the result file of every run of the final method and of its version without
 the attention probe (1,268 JSONs, with config, git commit and hardware): [`results/raw/`](results/raw/). The final
-runs of CatBoost, LightGBM and TabM ran on a Tesla T4 GPU, those of TabPFN on an A100. The attention probe trains on
-the GPU, so single scores depend slightly on its type: 18 of the T4 jobs re-run on an A100 differ by +0.0005 on
-average and by up to ±0.02 on the noisiest dataset (Video Games Sales) ([`reports/p18/a100_check.csv`](reports/p18/a100_check.csv)).
+runs of CatBoost, LightGBM and TabM ran on a Tesla T4 GPU, those of TabPFN on an A100. Single scores differ slightly
+between the two machines (GPU type, drivers, CPU threads; the attention probe trains on the GPU): 18 of the T4 jobs
+re-run on an A100 differ by +0.0005 on average and by up to ±0.02 on the noisiest dataset (Video Games Sales) ([`reports/p18/a100_check.csv`](reports/p18/a100_check.csv)).
 
 ## Background
 
