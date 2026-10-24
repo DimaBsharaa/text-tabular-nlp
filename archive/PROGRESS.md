@@ -2401,3 +2401,15 @@ Features for the learner = structured columns (upstream preprocessing)
   include CR; all 38 are byte-identical on the T4 machine. Corrected in `reports/p18/vm_provenance/README.md`.
 - Notebook 02, section 10: the label-shuffle check is described as a negative control that can expose some leakage
   paths, not as proof that no other path exists. No code, result or paper change.
+
+## P18c — Re-run of the 300 Tesla T4 jobs on a Colab A100   (2026-10-24, BEFORE the run)
+- **Why:** the final runs mix two GPU types (T4: CatBoost, LightGBM, TabM; A100: TabPFN), and single scores depend on
+  the machine (E55: up to ±0.02 on Video Games; LightGBM's Spotify Genres fold 3 = 0.536 on the T4, 0.913 on the A100).
+  With all 480 runs on the A100, every learner is evaluated on one GPU type.
+- **Run:** `jobs/p18_a100.txt` = the 300 CatBoost / LightGBM / TabM lines of `jobs/p18.txt`, unchanged method and
+  settings (engine `depth/1+attn/1`, cross-fitting seed 42), published code (main head at launch), fresh results root
+  `MyDrive/text-tabular-nlp/results_p18_a100` and caches, `--parallel_jobs 4`, `--job_timeout_min 240`. Jobs that
+  fail for environment reasons (e.g. GPU memory) are re-run alone; no finished result is replaced.
+- **Analysis:** as P18 (`scripts/p18_report.py`): C13 per learner on these 300 + the 180 TabPFN results; paired vs
+  `cte_depth_top3`; Holm over all pre-registered tests; plus the new results vs the T4 results of the same jobs.
+- **Which run the submission reports is decided after this run;** both runs and the decision will be recorded here.
