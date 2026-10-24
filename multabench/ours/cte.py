@@ -174,7 +174,8 @@ def frozen_embeddings_cached(x_frames: list[DataFrame], text_cols: list[str], cf
         uniq = uniq.tolist()
         hashes = _h64(uniq)
         sub = "" if prefix == "passage: " else hashlib.sha1(prefix.encode()).hexdigest()[:8]  # other prefixes: own store
-        path = join(cache_root, "frozen_emb", dataset, cfg.model_name.replace("/", "__"), *([sub] if sub else []),
+        path = join(cache_root, "frozen_emb", dataset, cfg.model_name.replace("/", "__"), f"len{cfg.max_length}",
+                    *([sub] if sub else []),
                     hashlib.sha1(col.encode()).hexdigest()[:12] + ".npz") if cache_root else None
         with _store_lock(path):  # parallel jobs: one encodes, the others wait and then read the cache
             store_h, store_e = np.zeros(0, dtype=np.uint64), np.zeros((0, 384), dtype=np.float32)
@@ -417,6 +418,11 @@ def content_key(y: np.ndarray, extra_texts: Dict[str, Dict[str, list]], text_col
     return h.hexdigest()[:10]
 
 
+def encoder_key(cfg: te.TarConfig) -> str:
+    """Fingerprint of the frozen-encoder settings that cached predictions built on embeddings depend on."""
+    return hashlib.sha1(repr((cfg.model_name, cfg.max_length)).encode()).hexdigest()[:8]
+
+
 def run_cte(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], is_cls: bool,
             extra: Dict[str, tuple[DataFrame, Series]], cfg: te.TarConfig, device: torch.device,
             cache_root: Optional[str], dataset: str, fold: int, struct_cols: Optional[list[str]] = None,
@@ -469,7 +475,8 @@ def run_cte(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], 
         tag = kind + ("nb" if nb and kind == "lex" else "")
         if residual is not None:
             tag += "res_" + p6.P6_CONFIG.key() + "_" + hashlib.sha1("|".join(residual.xs.columns).encode()).hexdigest()[:8]
-        key = f"{dataset}/fold{fold}/cte_{tag}_{mode}_{ccfg.key()}_{rows_key}_{texts_key}_{content}"
+        enc = f"_{encoder_key(cfg)}" if kind == "nbr" else ""  # the lexical expert never reads the encoder
+        key = f"{dataset}/fold{fold}/cte_{tag}_{mode}_{ccfg.key()}_{rows_key}_{texts_key}_{content}{enc}"
 
         def compute(kind=kind):
             embs = extra_embs = None

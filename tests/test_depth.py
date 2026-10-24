@@ -265,3 +265,29 @@ def test_eig_solver_matches_sparse_cg_xfit(n_classes):
     assert ma["alpha"] == mb["alpha"] and a.shape == b.shape and eb["t"].shape == ea["t"].shape
     assert np.allclose(a, b, atol=1e-3) and np.allclose(ea["t"], eb["t"], atol=1e-3)
     assert np.allclose(ma["oof_metric"], mb["oof_metric"], atol=1e-3)
+
+
+def test_prediction_caches_depend_on_encoder_settings(tmp_path, cfg, monkeypatch):
+    """Changing the encoder settings (max_length 512 -> 6; the synthetic texts are ~10 tokens) must recompute everything built on the embeddings: the
+    frozen embeddings, the layer states, the neighbour expert and the depth probes; the lexical expert (TF-IDF, no
+    encoder) may be reused. Same settings: everything is reused (external review, 2026-10-23)."""
+    x, y = _table(task="reg")
+    calls = []
+    real = depth.encode_layer_states
+    monkeypatch.setattr(depth, "encode_layer_states", lambda *a_, **k: calls.append(1) or real(*a_, **k))
+    hits = lambda r: (r.diagnostics["cte"]["expert_cache_hits"], r.diagnostics["depth"]["probe_cache_hits"])
+    a = _run("cte_depth_top3", x, y, "reg", cfg, tmp_path)            # warm the caches at 512
+    n_state_calls = len(calls)
+    b = _run("cte_depth_top3", x, y, "reg", cfg, tmp_path)            # same settings: all reused
+    assert hits(b) == ({"lex": True, "nbr": True}, 12) and len(calls) == n_state_calls
+    for col in ("review", "title"):
+        assert np.array_equal(a.features[col].to_numpy(), b.features[col].to_numpy(), equal_nan=True)
+    c = _run("cte_depth_top3", x, y, "reg", dataclasses.replace(cfg, max_length=6), tmp_path)
+    assert hits(c) == ({"lex": True, "nbr": False}, 0)                # only the lexical expert is reused
+    assert len(calls) > n_state_calls                                  # layer states re-encoded at 6 tokens
+    f_a, f_c = a.features["review"], c.features["review"]
+    nbr_cols = [k for k in f_a.columns if k.startswith("nbr")]
+    depth_cols = [k for k in f_a.columns if k.startswith("depth")]
+    assert nbr_cols and depth_cols
+    assert not np.allclose(f_a[nbr_cols].to_numpy(), f_c[nbr_cols].to_numpy())
+    assert not np.allclose(f_a[depth_cols].to_numpy(), f_c[depth_cols].to_numpy())

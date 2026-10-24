@@ -111,7 +111,8 @@ Everything that uses labels is fit on training rows only, and nothing is fine-tu
 
 ```bash
 uv sync --frozen            # Python 3.11 environment, pinned by uv.lock
-cp .env.example .env        # add your Kaggle credentials (dataset downloads)
+# only for MulTaBench datasets (--dataset): create a file .env with two lines, KAGGLE_USERNAME=... and KAGGLE_KEY=...
+# (do not copy .env.example: its placeholder HF_TOKEN makes Hugging Face reject the public e5 download)
 
 # train on a MulTaBench dataset and fold (the benchmark's own split), or on any CSV with a target column
 .venv/bin/python scripts/train.py --dataset MUL_TEXT_PRODUCT_SENTIMENT --fold 0 --out_dir models/ps

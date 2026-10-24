@@ -212,6 +212,64 @@ by_task.round(4)
 """)
 
 code("""
+# Left: overall gain per learner (results/summary.csv); right: mean gain per task type (results/scores_per_dataset.csv,
+# already fold-averaged per dataset; unweighted mean over each learner's available datasets in the group).
+GROUPS = [("regression", "Regression"), ("binary", "Binary classification"), ("multiclass", "Multiclass classification")]
+COLORS = {"CatBoost": "#2a78d6", "LightGBM": "#eb6834", "TabM": "#1baf7a", "TabPFN-v2": "#eda100", "TabPFN-2.5": "#e87ba4"}
+MARKERS = {"CatBoost": "o", "LightGBM": "s", "TabM": "^", "TabPFN-v2": "D", "TabPFN-2.5": "v"}
+grp = per_ds.groupby(["learner", "task_type"]).gain_vs_tar
+grp_mean, grp_n = grp.mean().unstack(), grp.size().unstack()
+
+fig, (axl, axr) = plt.subplots(1, 2, figsize=(11.5, 4.3), gridspec_kw={"width_ratios": [1, 1.15]})
+yl = np.arange(len(LEARNERS))
+sl = summary.loc[LEARNERS]
+axl.errorbar(sl.mean_gain, yl, xerr=[sl.mean_gain - sl.ci95_low, sl.ci95_high - sl.mean_gain], fmt="o", color=C_OURS,
+             ms=6, capsize=3, lw=1.2)
+for i, l in enumerate(LEARNERS):
+    axl.text(sl.ci95_high[l] + 0.0015, i, f"{sl.mean_gain[l]:+.3f}", va="center", fontsize=9, color="#333333")
+axl.axvline(0, color="k", lw=0.8)
+axl.set_yticks(yl, [f"{l} ({int(sl.datasets[l])} datasets)" for l in LEARNERS]); axl.invert_yaxis()
+axl.set_xlim(-0.005, 0.065)
+axl.set_xlabel("Ours − Joint TAR (95% dataset-bootstrap CI)")
+axl.set_title("Overall gain by learner")
+
+offsets = dict(zip(LEARNERS, np.linspace(-0.24, 0.24, len(LEARNERS))))
+for gi, (key, _) in enumerate(GROUPS):
+    for l in LEARNERS:
+        axr.plot(grp_mean.loc[l, key], gi + offsets[l], MARKERS[l], color=COLORS[l], ms=7, mec="white", mew=1.0,
+                 label=l if gi == 0 else None)
+axr.axvline(0, color="k", lw=0.8)
+axr.set_yticks(range(len(GROUPS)), [lab for _, lab in GROUPS]); axr.invert_yaxis()
+for gi in range(len(GROUPS) - 1):
+    axr.axhline(gi + 0.5, color="#dddddd", lw=0.8)
+axr.set_xlabel("Mean gain over Joint TAR")
+axr.set_title("Gain by task type")
+axr.legend(fontsize=8, frameon=False, loc="lower right")
+fig.tight_layout(); fig.savefig(join(FIG, "fig4a_overall_and_task_gains.png"), dpi=200); plt.show()
+
+tab = pd.concat({lab: pd.DataFrame({"mean gain": grp_mean[key], "datasets": grp_n[key].astype(int)})
+                 for key, lab in GROUPS}, axis=1).loc[LEARNERS]
+tab.round(4)
+""")
+
+md("""
+*Left: mean paired gain over Joint TAR with 95% bootstrap intervals over datasets. Right: mean gain within each task
+type, one point per learner. Classification uses AUROC (macro one-vs-rest for multiclass); regression uses R².*
+
+All five learners have positive overall mean gains, and their 95% dataset-bootstrap intervals lie above zero. Every
+learner also has a positive mean gain within each of the three task groups.
+
+Regression shows the largest numerical gains across learners (+0.0237 to +0.0461), followed by binary classification
+(+0.0099 to +0.0170) and multiclass classification (+0.0035 to +0.0111). These are changes in different metrics—R² and
+AUROC—so their magnitudes require separate interpretation.
+
+Positive group averages do not mean improvement on every dataset. Regression improves on 8–10 of 10 datasets per
+learner, while binary classification improves on 2 of 3. Multiclass improvements are less uniform. The binary group is
+small, and multiclass coverage differs between learners, so this figure describes the observed pattern rather than
+establishing a statistically significant difference between task types.
+""")
+
+code("""
 d = per_ds.assign(tar_gain=per_ds.joint_tar - per_ds.joint_frozen).groupby(["dataset", "name"], as_index=False)[
     ["tar_gain", "gain_vs_tar"]].mean()
 rho = spearmanr(d.tar_gain, d.gain_vs_tar)

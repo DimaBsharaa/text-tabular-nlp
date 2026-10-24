@@ -2122,6 +2122,16 @@ Features for the learner = structured columns (upstream preprocessing)
   the 20 datasets' test scores → stated; they are not a pristine holdout. (f) Jigsaw: "no layer probe beats the final
   one" (about our probes, not about what a frozen model can represent).
 - **Not changed:** the method and every result; TabPFN reload differences were already documented.
+- **Follow-up (2026-10-23):** (1) README / method README: create `.env` with only the Kaggle lines; copying the upstream
+  `.env.example` sends its placeholder `HF_TOKEN` and Hugging Face rejects the public e5 download (the upstream file is
+  left unchanged). (2) The frozen-embedding and layer-state caches are now also keyed by `max_length`
+  (`len<max_length>/` in the path; every run used 512, so no result changes); test
+  `test_frozen_embedding_cache_depends_on_max_length`. Tests: 98 passed (cte, depth, stacking, tar_engine).
+- **Follow-up 2 (2026-10-23, external review):** the cached *predictions* built on embeddings (neighbour expert,
+  depth probes) are now keyed by an encoder fingerprint (`cte.encoder_key`: model name + max_length); the lexical cache
+  stays shared (no encoder). Test `test_prediction_caches_depend_on_encoder_settings`: warm at 512, all reused at 512,
+  at max_length 6 the embeddings, layer states, neighbour and depth predictions are recomputed and differ, the lexical
+  expert is reused. Every run used one encoder at 512, so no result changes. Tests: 163 passed.
 
 ## E51 — Dev round: two depth-probe aggregations; NEITHER advances, the final method is unchanged   (2026-10-23, course VM, Tesla T4)
 - **Why:** the only systematic loss to Joint TAR is Jigsaw (−0.011, every learner), where a single token can decide the

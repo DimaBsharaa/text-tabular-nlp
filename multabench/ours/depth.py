@@ -189,7 +189,7 @@ def layer_states_cached(x_frames: list[DataFrame], text_cols: list[str], cfg: te
         uniq, inverse = np.unique(np.array(raw, dtype=object), return_inverse=True)
         uniq = uniq.tolist()
         hashes = te._text_hash(uniq)
-        path = join(cache_root, "depth_states", dataset, cfg.model_name.replace("/", "__"), pooling,
+        path = join(cache_root, "depth_states", dataset, cfg.model_name.replace("/", "__"), f"len{cfg.max_length}", pooling,
                     hashlib.sha1(col.encode()).hexdigest()[:12] + ".npz") if cache_root else None
         with cte._store_lock(path):
             store_h, store_s = np.zeros(0, dtype=np.uint64), None
@@ -276,7 +276,7 @@ def run_depth(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str]
                 oof, ext, meta = p7.xfit_linear(Xp, Xe, y, is_cls, n_classes, c)
             return {"pool": {"f": oof}, **{k: {"f": v} for k, v in ext.items()},
                     "meta": {"alpha": np.array([meta["alpha"]]), "oof_metric": np.array(meta["oof_metric"])}}
-        key = f"{dataset}/fold{fold}/depth_L{layer:02d}_{probe_key}_{rows_key}_{texts_key}_{y_key}"
+        key = f"{dataset}/fold{fold}/depth_L{layer:02d}_{probe_key}_{rows_key}_{texts_key}_{y_key}_{cte.encoder_key(cfg)}"
         out, hit = cached_expert_features(cache_root, key, compute)
         hits += int(hit)
         per_layer[layer] = (out["pool"]["f"], {k: out[k]["f"] for k in other}, float(out["meta"]["oof_metric"].max()),
@@ -317,7 +317,8 @@ def run_depth(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str]
                     "meta": {"alpha": np.array([meta["alpha"]]), "oof_metric": np.array(meta["oof_metric"])}}
         layers_tag = "-".join(f"{l:02d}" for l in top)
         out, _ = cached_expert_features(
-            cache_root, f"{dataset}/fold{fold}/depth_cat{layers_tag}_{probe_key}_{rows_key}_{texts_key}_{y_key}",
+            cache_root, f"{dataset}/fold{fold}/depth_cat{layers_tag}_{probe_key}_{rows_key}_{texts_key}_{y_key}_"
+                        f"{cte.encoder_key(cfg)}",
             compute_cat)
         new[f"depthcat{spec.top_k}:{ALL_COLS}"] = {"pool": out["pool"]["f"], **{k: out[k]["f"] for k in other}}
     else:
@@ -342,7 +343,7 @@ def run_depth(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str]
         t2 = time.time()
         out, _ = cached_expert_features(
             cache_root, f"{dataset}/fold{fold}/attn_L{layer_a:02d}_{attn.ATTN_SPEC.key()}_{c.key()}_{rows_key}_"
-                        f"{texts_key}_{y_key}", compute_attn)
+                        f"{texts_key}_{y_key}_{cte.encoder_key(cfg)}", compute_attn)
         new[f"attn:{ALL_COLS}"] = {"pool": out["pool"]["f"], **{k: out[k]["f"] for k in other}}
         attn_meta = {"layer": int(layer_a), "oof_metric": round(float(out["meta"]["oof_metric"][0]), 6),
                      "seconds": round(time.time() - t2, 1)}
