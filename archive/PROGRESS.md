@@ -86,6 +86,7 @@ Entry template:
 | E50 | 2026-10-22 | external audit: findings checked; figures tracked, raw JSONs added, cache keys fixed, wording narrowed | method and results unchanged |
 | E51 | 2026-10-23 | dev round: two depth-probe aggregations on the P12 protocol (VM T4, 162 jobs) | neither advances: `cte_depth_cat3` +0.0009 (7/9), `cte_depth_top3_mm` +0.0015 (5/9); final method unchanged |
 | E52 | 2026-10-23 | dev round: cross-fitted attention probe on token states (`cte_depth_top3_attn`, VM T4, 54 jobs) | **advances**: +0.0064 vs `cte_depth_top3`, 8/9 datasets, 44/54 splits (Jigsaw +0.028); label-shuffle clean → P18 |
+| E53 | 2026-10-24 | P18: `cte_depth_top3_attn`, all 5 learners (VM T4: LightGBM/TabM/CatBoost; Colab A100: TabPFN), 480 jobs | **C13 passes 5/5** (Holm over 5); ahead of `cte_depth_top3` on 4/5 → **final method = `cte_depth_top3_attn`** (P18 rule) |
 
 ---
 
@@ -2191,4 +2192,36 @@ Features for the learner = structured columns (upstream preprocessing)
 - **Analysis:** `scripts/p18_report.py` (committed with this entry, before the run; dry-run on `results/raw` reproduces
   the current method's numbers). **Run:** `jobs/p18.txt` (480 jobs), course VM (Tesla T4, 8 CPUs), `--job_timeout_min
   240`, results root `~/p18/results`; engine version `depth/1+attn/1`.
+
+## E53 — P18: C13 PASSES on all 5 learners; by the pre-registered rule the final method is `cte_depth_top3_attn`   (2026-10-24)
+- **Runs:** `jobs/p18.txt`, 480/480 at commit c63c26e: LightGBM, TabM, CatBoost on the course VM (Tesla T4, 8 CPUs);
+  TabPFN-v2 and TabPFN-2.5 on Colab (A100-SXM4-40GB). Raw JSONs: `results/raw/cte_depth_top3_attn/`. Analysis:
+  `scripts/p18_report.py` (committed before the run) → `reports/p18/p18_report.json`.
+- **Operational issues (no effect on any score):** (1) the first launch rejected the method name (runner allow-list) →
+  every job failed at argument parsing, nothing ran; fixed (f145a76). (2) The per-fold token-state files filled the VM
+  disk (Errno 28) → state files no longer persisted (c63c26e; same features); failed jobs re-run. (3) GPU out-of-memory
+  when TabM / TabPFN shared the T4, and when two TabPFN-2.5 jobs shared the A100 → those jobs re-run alone. Every
+  re-run job had no result before; no finished result was replaced.
+- **C13 (vs leaderboard Joint TAR, same learner; Holm over 5):**
+
+  | learner | mean | median | wins | p | p (Holm/5) | current method (same reading) |
+  |---|---|---|---|---|---|---|
+  | CatBoost | +0.0191 | +0.0169 | 18/20 | 1.9e-5 | 7.6e-5 | +0.0161, 14/20 |
+  | LightGBM | +0.0187 | +0.0136 | 16/20 | 0.0073 | 0.0073 | +0.0193, 14/20 |
+  | TabM | +0.0190 | +0.0110 | 17/20 | 2.7e-5 | 8.0e-5 | +0.0161, 16/20 |
+  | TabPFN-v2 | +0.0325 | +0.0234 | 16/18 | 2.5e-4 | 5.0e-4 | +0.0294, 14/18 |
+  | TabPFN-2.5 | +0.0226 | +0.0142 | **18/18** | 7.6e-6 | 3.8e-5 | +0.0204, 15/18 |
+
+  Mean over learners +0.0224 (current +0.0203); datasets won 85/96 (current 73/96).
+- **vs `cte_depth_top3` (paired):** CatBoost +0.0030 (p 0.006), TabM +0.0029 (p 0.006), TabPFN-v2 +0.0031 (p 0.002),
+  TabPFN-2.5 +0.0021 (p 0.009), LightGBM −0.0006 (p 0.13; Spotify Genres −0.074 alone, otherwise +0.003).
+- **Rule:** (a) 5/5 pass ≥ the current method's 5/5 ✓; (b) ahead on 4/5 ✓ → **final method = `cte_depth_top3_attn`**.
+- **Holm over all 24 pre-registered tests:** C13 passes for CatBoost, TabM, TabPFN-v2, TabPFN-2.5 (LightGBM 0.095).
+- **Jigsaw (the one systematic loss):** now ahead of Joint TAR with every learner (+0.016 / +0.012 / +0.006 / +0.009 /
+  +0.010; was −0.008 … −0.013).
+- **Hostile review:** the analysis, rule and jobs were committed before any P18 run; the label-shuffle check (E52) is
+  clean; the hardware split (T4 / A100) is by learner, so each learner's 20 comparisons use one GPU type; LightGBM's
+  Spotify Genres drop is reported as measured, not tuned away.
+- **Not yet done:** `train.py` / `predict.py` packaging of the attention probe (the saved-model path supports
+  `cte_depth_top3` only).
 

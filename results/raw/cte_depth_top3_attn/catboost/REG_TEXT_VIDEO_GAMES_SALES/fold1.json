@@ -1,0 +1,344 @@
+{
+ "method": "cte_depth_top3_attn",
+ "run_name": "cte_depth_top3_attn",
+ "engine_version": "depth/1+attn/1",
+ "xfit_seed": 42,
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "REG_TEXT_VIDEO_GAMES_SALES",
+ "fold": 1,
+ "task": "REG",
+ "score": 0.5455500111076299,
+ "metrics": {
+  "score": 0.5455500111076299,
+  "metrics": {
+   "r2": 0.5455500111076299,
+   "mse": 0.667748787062052,
+   "rmse": 0.8171589729434855
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.4023806220078501,
+  "joint_tar": 0.4169549706950236,
+  "unimodal_structured": 0.0469133342518319,
+  "unimodal_text": 0.3057699442472299
+ },
+ "diff_vs_csv_joint_tar": 0.12859504041260633,
+ "runtime_s": {
+  "total": 30.7,
+  "fit": 30.7,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1+attn/1",
+   "method": "cte_depth_top3_attn",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 10000,
+ "n_test": 1659,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/home/student/p18/results/_cache"
+ },
+ "git": {
+  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
+  "dirty": true
+ },
+ "timestamp": "2026-10-24 02:22:25",
+ "argv": [
+  "--method",
+  "cte_depth_top3_attn",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "REG_TEXT_VIDEO_GAMES_SALES",
+  "--fold",
+  "1",
+  "--seed",
+  "42",
+  "--out",
+  "/home/student/p18/results",
+  "--cache_dir",
+  "/home/student/p18/results/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "Tesla T4",
+ "hardware": {
+  "gpu_type": "Tesla T4",
+  "gpu_total_memory_gb": 15.55816650390625,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 54.923683166503906,
+  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3_attn",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 0.7,
+   "probe": 1.4
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 3.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.549506,
+     0.580677,
+     0.593384,
+     0.585529
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.1,
+    "experts": 0.6
+   }
+  },
+  "probe": {
+   "alpha": 1.0,
+   "oof_metric": [
+    0.5536470452771606,
+    0.5563124689729704,
+    0.5519707460906104,
+    0.5363565328923257
+   ]
+  },
+  "n_extra_columns": {
+   "Name": 24,
+   "Publisher": 21
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ],
+   "attn": true
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "sparse_cg",
+   "layer_oof_metric": {
+    "1": 0.545047,
+    "2": 0.551062,
+    "3": 0.554684,
+    "4": 0.557812,
+    "5": 0.555232,
+    "6": 0.556019,
+    "7": 0.558865,
+    "8": 0.558192,
+    "9": 0.557937,
+    "10": 0.559044,
+    "11": 0.55909,
+    "12": 0.558788
+   },
+   "layer_alpha": {
+    "1": 10.0,
+    "2": 3.0,
+    "3": 3.0,
+    "4": 3.0,
+    "5": 3.0,
+    "6": 3.0,
+    "7": 3.0,
+    "8": 3.0,
+    "9": 3.0,
+    "10": 3.0,
+    "11": 3.0,
+    "12": 10.0
+   },
+   "ranked_layers": [
+    11,
+    10,
+    7,
+    12,
+    8,
+    9,
+    4,
+    6,
+    5,
+    3,
+    2,
+    1
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.5536470452771606,
+    0.5563124689729704,
+    0.5519707460906104,
+    0.5363565328923257
+   ],
+   "probe_cache_hits": 12,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 0.2,
+    "probes": 0.0
+   },
+   "attn": {
+    "layer": 11,
+    "oof_metric": 0.54525,
+    "seconds": 0.0
+   }
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Name_txt_pca_30": 8.486,
+    "Name_txt_pca_31": 2.806,
+    "Name_txt_pca_32": 7.488,
+    "Name_txt_pca_33": 0.025,
+    "Name_txt_pca_34": 0.072,
+    "Name_txt_pca_35": 0.018,
+    "Name_txt_pca_36": 0.058,
+    "Name_txt_pca_37": 0.0,
+    "Name_txt_pca_38": 0.001,
+    "Name_txt_pca_39": 0.0,
+    "Name_txt_pca_40": 0.0,
+    "Name_txt_pca_41": 0.0,
+    "Name_txt_pca_42": 1.272,
+    "Name_txt_pca_43": 0.36,
+    "Name_txt_pca_44": 0.004,
+    "Name_txt_pca_45": 1.397,
+    "Name_txt_pca_46": 0.628,
+    "Name_txt_pca_47": 0.167,
+    "Name_txt_pca_48": 0.144,
+    "Name_txt_pca_49": 0.009,
+    "Name_txt_pca_50": 0.0,
+    "Name_txt_pca_51": 0.007,
+    "Name_txt_pca_52": 0.0,
+    "Name_txt_pca_53": 5.528,
+    "Name_txt_pca_54": 9.358,
+    "Name_txt_pca_55": 8.764,
+    "Publisher_txt_pca_30": 2.348,
+    "Publisher_txt_pca_31": 0.002,
+    "Publisher_txt_pca_32": 0.0,
+    "Publisher_txt_pca_33": 0.0,
+    "Publisher_txt_pca_34": 0.0,
+    "Publisher_txt_pca_35": 0.0,
+    "Publisher_txt_pca_36": 0.0,
+    "Publisher_txt_pca_37": 0.0,
+    "Publisher_txt_pca_38": 0.0,
+    "Publisher_txt_pca_39": 0.0,
+    "Publisher_txt_pca_40": 0.023,
+    "Publisher_txt_pca_41": 0.0,
+    "Publisher_txt_pca_42": 0.0,
+    "Publisher_txt_pca_43": 0.024,
+    "Publisher_txt_pca_44": 0.058,
+    "Publisher_txt_pca_45": 0.001,
+    "Publisher_txt_pca_46": 0.011,
+    "Publisher_txt_pca_47": 0.0,
+    "Publisher_txt_pca_48": 0.0,
+    "Publisher_txt_pca_49": 0.0,
+    "Publisher_txt_pca_50": 0.0
+   },
+   "pred_share": 0.4906,
+   "group_share": {
+    "structured": 0.1165,
+    "pca": 0.3929,
+    "lex": 0.0849,
+    "nbr": 0.1264,
+    "num": 0.0428,
+    "probe": 0.0553,
+    "depthtop3": 0.0936,
+    "attn": 0.0876
+   },
+   "top10": [
+    [
+     "Name_txt_pca_54",
+     9.358
+    ],
+    [
+     "Name_txt_pca_55",
+     8.764
+    ],
+    [
+     "Platform",
+     8.611
+    ],
+    [
+     "Name_txt_pca_30",
+     8.486
+    ],
+    [
+     "Name_txt_pca_32",
+     7.488
+    ],
+    [
+     "Name_txt_pca_53",
+     5.528
+    ],
+    [
+     "Name_txt_pca_12",
+     3.918
+    ],
+    [
+     "Name_txt_pca_16",
+     3.7
+    ],
+    [
+     "Name_txt_pca_25",
+     2.82
+    ],
+    [
+     "Name_txt_pca_31",
+     2.806
+    ]
+   ]
+  }
+ }
+}

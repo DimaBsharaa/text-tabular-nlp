@@ -1,0 +1,330 @@
+{
+ "method": "cte_depth_top3_attn",
+ "run_name": "cte_depth_top3_attn",
+ "engine_version": "depth/1+attn/1",
+ "xfit_seed": 42,
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "MUL_TEXT_PRODUCT_SENTIMENT",
+ "fold": 4,
+ "task": "MUL",
+ "score": 0.9319174954225699,
+ "metrics": {
+  "score": 0.9319174954225699,
+  "metrics": {
+   "auc": 0.9319174954225699,
+   "logloss": 0.29972831316871645
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.9014415033768406,
+  "joint_tar": 0.919995931555325,
+  "unimodal_structured": 0.8307296453832611,
+  "unimodal_text": 0.7937292470657464
+ },
+ "diff_vs_csv_joint_tar": 0.011921563867244855,
+ "runtime_s": {
+  "total": 15.8,
+  "fit": 15.7,
+  "predict": 0.0,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1+attn/1",
+   "method": "cte_depth_top3_attn",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 4582,
+ "n_test": 509,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/home/student/p18/results/_cache"
+ },
+ "git": {
+  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
+  "dirty": true
+ },
+ "timestamp": "2026-10-24 02:25:28",
+ "argv": [
+  "--method",
+  "cte_depth_top3_attn",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "MUL_TEXT_PRODUCT_SENTIMENT",
+  "--fold",
+  "4",
+  "--seed",
+  "42",
+  "--out",
+  "/home/student/p18/results",
+  "--cache_dir",
+  "/home/student/p18/results/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "Tesla T4",
+ "hardware": {
+  "gpu_type": "Tesla T4",
+  "gpu_total_memory_gb": 15.55816650390625,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 54.923683166503906,
+  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3_attn",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 0.3,
+   "probe": 0.4
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 10.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.706473,
+     0.719735,
+     0.731704,
+     0.735404
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.0,
+    "experts": 0.3
+   }
+  },
+  "probe": {
+   "alpha": 3.0,
+   "oof_metric": [
+    0.7651810455548068,
+    0.7749757376535765,
+    0.7799074818261471,
+    0.7749839981904751
+   ]
+  },
+  "n_extra_columns": {
+   "Product_Description": 29
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ],
+   "attn": true
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "eig",
+   "layer_oof_metric": {
+    "1": 0.738943,
+    "2": 0.742173,
+    "3": 0.755081,
+    "4": 0.753018,
+    "5": 0.769513,
+    "6": 0.782683,
+    "7": 0.794217,
+    "8": 0.793207,
+    "9": 0.792248,
+    "10": 0.788351,
+    "11": 0.783085,
+    "12": 0.779834
+   },
+   "layer_alpha": {
+    "1": 10.0,
+    "2": 10.0,
+    "3": 3.0,
+    "4": 10.0,
+    "5": 10.0,
+    "6": 10.0,
+    "7": 10.0,
+    "8": 10.0,
+    "9": 10.0,
+    "10": 30.0,
+    "11": 30.0,
+    "12": 30.0
+   },
+   "ranked_layers": [
+    7,
+    8,
+    9,
+    10,
+    11,
+    6,
+    12,
+    5,
+    3,
+    4,
+    2,
+    1
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.7651810455548068,
+    0.7749757376535765,
+    0.7799074818261471,
+    0.7749839981904751
+   ],
+   "probe_cache_hits": 12,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 0.1,
+    "probes": 0.0
+   },
+   "attn": {
+    "layer": 7,
+    "oof_metric": 0.803552,
+    "seconds": 0.0
+   }
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "Product_Description_txt_pca_30": 0.999,
+    "Product_Description_txt_pca_31": 0.858,
+    "Product_Description_txt_pca_32": 0.89,
+    "Product_Description_txt_pca_33": 1.532,
+    "Product_Description_txt_pca_34": 1.766,
+    "Product_Description_txt_pca_35": 0.481,
+    "Product_Description_txt_pca_36": 0.185,
+    "Product_Description_txt_pca_37": 0.103,
+    "Product_Description_txt_pca_38": 0.049,
+    "Product_Description_txt_pca_39": 0.026,
+    "Product_Description_txt_pca_40": 0.01,
+    "Product_Description_txt_pca_41": 0.085,
+    "Product_Description_txt_pca_42": 0.0,
+    "Product_Description_txt_pca_43": 0.009,
+    "Product_Description_txt_pca_44": 0.0,
+    "Product_Description_txt_pca_45": 0.633,
+    "Product_Description_txt_pca_46": 0.222,
+    "Product_Description_txt_pca_47": 0.506,
+    "Product_Description_txt_pca_48": 0.478,
+    "Product_Description_txt_pca_49": 1.045,
+    "Product_Description_txt_pca_50": 0.286,
+    "Product_Description_txt_pca_51": 0.848,
+    "Product_Description_txt_pca_52": 0.33,
+    "Product_Description_txt_pca_53": 0.313,
+    "Product_Description_txt_pca_54": 0.492,
+    "Product_Description_txt_pca_55": 0.0,
+    "Product_Description_txt_pca_56": 3.418,
+    "Product_Description_txt_pca_57": 1.175,
+    "Product_Description_txt_pca_58": 0.849,
+    "Product_Description_txt_pca_59": 2.592,
+    "Product_Description_txt_pca_60": 1.34,
+    "Product_Description_txt_pca_61": 0.692,
+    "Product_Description_txt_pca_62": 3.603,
+    "Product_Description_txt_pca_63": 2.44,
+    "Product_Description_txt_pca_64": 0.759
+   },
+   "pred_share": 0.2901,
+   "group_share": {
+    "structured": 0.4991,
+    "pca": 0.2108,
+    "lex": 0.0275,
+    "nbr": 0.0378,
+    "num": 0.0562,
+    "probe": 0.0544,
+    "depthtop3": 0.0462,
+    "attn": 0.068
+   },
+   "top10": [
+    [
+     "Product_Type",
+     49.906
+    ],
+    [
+     "Product_Description_txt_pca_62",
+     3.603
+    ],
+    [
+     "Product_Description_txt_pca_56",
+     3.418
+    ],
+    [
+     "Product_Description_txt_pca_59",
+     2.592
+    ],
+    [
+     "Product_Description_txt_pca_63",
+     2.44
+    ],
+    [
+     "Product_Description_txt_pca_34",
+     1.766
+    ],
+    [
+     "Product_Description_txt_pca_33",
+     1.532
+    ],
+    [
+     "Product_Description_txt_pca_60",
+     1.34
+    ],
+    [
+     "Product_Description_txt_pca_4",
+     1.311
+    ],
+    [
+     "Product_Description_txt_pca_9",
+     1.204
+    ]
+   ]
+  }
+ }
+}

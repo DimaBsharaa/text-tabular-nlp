@@ -1,0 +1,240 @@
+{
+ "method": "cte_depth_top3_attn",
+ "run_name": "cte_depth_top3_attn",
+ "engine_version": "depth/1+attn/1",
+ "xfit_seed": 42,
+ "tar_path": null,
+ "learner": "tabpfnv2p5",
+ "learner_model_name": "TabPFN-v2p5 \ud83c\udde9\ud83c\uddea",
+ "dataset": "BIN_TEXT_FAKE_JOB_POSTING",
+ "fold": 0,
+ "task": "BIN",
+ "score": 0.9713272438909774,
+ "metrics": {
+  "score": 0.9713272438909774,
+  "metrics": {
+   "auc": 0.9713272438909774
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.950415589755639,
+  "joint_tar": 0.9264273966165412,
+  "unimodal_structured": 0.7047917645676692,
+  "unimodal_text": 0.9371402138157894
+ },
+ "diff_vs_csv_joint_tar": 0.04489984727443619,
+ "runtime_s": {
+  "total": 27.9,
+  "fit": 17.0,
+  "predict": 10.9,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1+attn/1",
+   "method": "cte_depth_top3_attn",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 9998,
+ "n_test": 1272,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/content/p18_cache"
+ },
+ "git": {
+  "commit": "c63c26ec906addf84309d4262788c29b7e07410d",
+  "dirty": false
+ },
+ "timestamp": "2026-10-24 05:05:40",
+ "argv": [
+  "--method",
+  "cte_depth_top3_attn",
+  "--learner",
+  "tabpfnv2p5",
+  "--dataset",
+  "BIN_TEXT_FAKE_JOB_POSTING",
+  "--fold",
+  "0",
+  "--seed",
+  "42",
+  "--out",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18",
+  "--cache_dir",
+  "/content/p18_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "hardware": {
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
+ },
+ "learner_threads": 6,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3_attn",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 6.7,
+   "probe": 3.2
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 1.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.937472,
+     0.941279,
+     0.940881,
+     0.934737
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.3,
+    "experts": 6.3
+   }
+  },
+  "probe": {
+   "alpha": 1.0,
+   "oof_metric": [
+    0.8957223654300832,
+    0.8957412819637883,
+    0.8902688257707215,
+    0.8778818914690555
+   ]
+  },
+  "n_extra_columns": {
+   "description": 24,
+   "salary_range": 21,
+   "title": 21
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ],
+   "attn": true
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "sparse_cg",
+   "layer_oof_metric": {
+    "1": 0.895399,
+    "2": 0.898922,
+    "3": 0.901541,
+    "4": 0.89552,
+    "5": 0.888136,
+    "6": 0.898742,
+    "7": 0.898606,
+    "8": 0.901345,
+    "9": 0.896379,
+    "10": 0.896364,
+    "11": 0.897866,
+    "12": 0.897555
+   },
+   "layer_alpha": {
+    "1": 1.0,
+    "2": 1.0,
+    "3": 1.0,
+    "4": 1.0,
+    "5": 1.0,
+    "6": 1.0,
+    "7": 3.0,
+    "8": 1.0,
+    "9": 1.0,
+    "10": 1.0,
+    "11": 1.0,
+    "12": 3.0
+   },
+   "ranked_layers": [
+    3,
+    8,
+    2,
+    6,
+    7,
+    11,
+    12,
+    9,
+    10,
+    4,
+    1,
+    5
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.8957223654300832,
+    0.8957412819637883,
+    0.8902688257707215,
+    0.8778818914690555
+   ],
+   "probe_cache_hits": 12,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 1.5,
+    "probes": 0.1
+   },
+   "attn": {
+    "layer": 3,
+    "oof_metric": 0.889275,
+    "seconds": 0.0
+   }
+  },
+  "catboost_importance": null
+ }
+}
