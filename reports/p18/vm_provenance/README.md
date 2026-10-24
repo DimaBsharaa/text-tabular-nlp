@@ -11,8 +11,9 @@ done > vm_hash_manifest.txt
 
 - `vm_hash_manifest.txt`: per file, the blob in `c63c26e`, the hash of the machine's file, and its hash with CR removed.
   All 485 files: 481 byte-identical, 4 identical after removing CR (`jobs/p18.txt`, `depth.py`, `variants.py`,
-  `run_experiment.py`, copied from a Windows checkout). Rule: column 2 = column 3 or column 2 = column 4 (38 benchmark
-  CSVs are stored with CRLF in `c63c26e` itself, so for them only column 3 matches).
+  `run_experiment.py`, copied from a Windows checkout). Rule: column 2 = column 3 or column 2 = column 4 (38 upstream
+  benchmark files contain CR bytes in `c63c26e` itself, 36 CSVs with CRLF line endings and 2 PNG images, so for them
+  only column 3 matches; all 38 are byte-identical).
 - `vm_file_times.txt`: each file's last modification time on the machine. The newest is `multabench/ours/depth.py`,
   2026-10-23 20:12:54 +0300 (the `f145a76` → `c63c26e` change: token states kept in memory, not written to disk).
 - `../provenance_t4.csv`: each result's start and end time: the 35 LightGBM runs that started before that change (last

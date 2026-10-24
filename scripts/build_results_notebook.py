@@ -482,8 +482,8 @@ md("""
 ## 10. Trust checks
 
 - **Label shuffle.** The whole method retrained with the training labels randomly permuted (true test labels kept,
-  development split of training rows), a negative control: if label information reached the features by another path,
-  the score would stay high. It falls to chance, for the depth-probe version (first table) and for the final method (second table; on
+  development split of training rows). Label shuffling is a negative control that can expose some leakage paths.
+  Performance falls to chance in these checks, for the depth-probe version (first table) and for the final method (second table; on
   the same five Jigsaw permutations both versions spread over 0.47–0.57).
 - **Independent recomputation.** `scripts/check_recompute.py` recomputes every headline number from the raw result
   files and the leaderboard CSVs with no project code; it reproduces all 5 rows of section 2.

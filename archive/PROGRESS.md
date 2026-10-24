@@ -2394,3 +2394,10 @@ Features for the learner = structured columns (upstream preprocessing)
   test) checks all 3,195 rows against their raw JSONs: 0 mismatches.
 - **Readers:** `results/README.md`; a "Reproduce the evaluation" section in the README; the paper's last section is
   named "Conclusion and summary" as in the course's list of required sections.
+
+## E61 — Wording corrections from the second review   (2026-10-24)
+- E59 called the 38 manifest lines where only the CR-stripped hash differs "benchmark CSVs": they are 36 CSVs (CRLF
+  line endings) and 2 PNG images (`analysis_curation_sensitivity/model_agreement_{diagonal,full}.png`), whose bytes
+  include CR; all 38 are byte-identical on the T4 machine. Corrected in `reports/p18/vm_provenance/README.md`.
+- Notebook 02, section 10: the label-shuffle check is described as a negative control that can expose some leakage
+  paths, not as proof that no other path exists. No code, result or paper change.
