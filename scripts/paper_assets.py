@@ -277,11 +277,11 @@ def main() -> None:
     lines += ["\\bottomrule", "\\end{tabular}"]
     open(join(GEN, "table_tests.tex"), "w").write("\n".join(lines) + "\n")
 
-    figures(summ, hm, per_ds)
+    figures(summ, hm, per_ds, rows[2:])
     print(f"{len(m)} macros, 4 tables, 2 figures -> paper/generated/, paper/figures/")
 
 
-def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame) -> None:
+def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame, buildup: list) -> None:
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -291,7 +291,7 @@ def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame) -> None:
     orange, grey = "#d95f02", "#555555"
     xlim, xt = (-0.004, 0.068), [0, 0.02, 0.04, 0.06]
     # results figure (a): gain per learner with its 95% interval
-    fig, ax = plt.subplots(figsize=(2.6, 1.0))
+    fig, ax = plt.subplots(figsize=(2.6, 1.2))
     y = np.arange(len(LEARNERS))
     ax.errorbar(summ.mean_gain, y, xerr=[summ.mean_gain - summ.ci95_low, summ.ci95_high - summ.mean_gain],
                 fmt="o", color=orange, ms=3.6, capsize=2, lw=0.9)
@@ -305,11 +305,11 @@ def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame) -> None:
     # results figure (b): mean gain per task type (dot: mean over learners; bar: lowest to highest learner)
     groups = [("REG", "regression (10)"), ("BIN", "binary (3)"), ("MUL", "multiclass (7)")]
     g = per_ds.assign(t=per_ds.dataset.str[:3]).groupby(["t", "learner"]).gain_vs_tar.mean()
-    fig, ax = plt.subplots(figsize=(2.6, 1.0))
+    fig, ax = plt.subplots(figsize=(2.6, 1.2))
     for gi, (t, _) in enumerate(groups):
         v = g[t]
-        ax.plot([v.min(), v.max()], [gi, gi], color=orange, lw=0.9, alpha=0.55)
-        ax.plot(v.mean(), gi, "o", color=orange, ms=4)
+        ax.scatter(v.values, gi + np.linspace(-0.18, 0.18, len(v)), s=9, color=orange, alpha=0.55, lw=0)
+        ax.scatter([v.mean()], [gi], s=30, color=orange, edgecolor="white", lw=0.6, zorder=3)
         ax.text(v.max() + 0.002, gi, f"+{v.mean():.3f}", va="center", fontsize=6.5, color=grey)
     ax.axvline(0, color="k", lw=0.7)
     ax.set_yticks(range(len(groups)), [lab for _, lab in groups], fontsize=6.5); ax.invert_yaxis()
@@ -317,6 +317,23 @@ def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame) -> None:
     ax.set_xlim(*xlim); ax.set_xticks(xt); ax.tick_params(labelsize=6.5, length=2)
     ax.set_xlabel("ours $-$ Joint TAR", fontsize=7)
     fig.tight_layout(pad=0.3); fig.savefig(join(FIGS, "fig_tasks.pdf"), bbox_inches="tight", pad_inches=0.02); plt.close(fig)
+    # method figure (a): build-up of the method (CatBoost, 20 datasets; the rows of the appendix build-up table)
+    short = {"numeracy features only": "numeracy only", "neighbor expert only": "neighbor only",
+             "lexical expert, \\emph{not} cross-fitted": "lexical, not cross-fitted", "lexical expert only": "lexical only",
+             "all experts": "all experts", "+ full-embedding probe": "+ full-embedding probe", "+ depth probes": "+ depth probes",
+             "+ attention probe (final method)": "+ attention probe"}
+    labels, gains = [short[r[0]] for r in buildup], [r[1] for r in buildup]
+    fig, ax = plt.subplots(figsize=(2.3, 1.9))
+    yb = np.arange(len(labels))
+    ax.barh(yb, gains, height=0.62, color=[orange if v > 0 else "#7b3294" for v in gains])
+    for yi, v in enumerate(gains):
+        ax.text(max(v, 0) + 0.0012, yi, f"{v:+.3f}".replace("-", "$-$") if abs(v) >= 0.0005 else "0.000",
+                va="center", ha="left", fontsize=6.3, color=grey)
+    ax.axvline(0, color="k", lw=0.7)
+    ax.set_yticks(yb, labels, fontsize=6.5); ax.invert_yaxis(); ax.set_xlim(-0.04, 0.032)
+    ax.set_xticks([-0.03, 0, 0.03]); ax.tick_params(labelsize=6.5, length=2)
+    ax.set_xlabel("score $-$ Joint TAR", fontsize=7)
+    fig.tight_layout(pad=0.3); fig.savefig(join(FIGS, "fig_buildup.pdf"), bbox_inches="tight", pad_inches=0.02); plt.close(fig)
     # (c) depth profile heatmap
     best = hm.idxmax(axis=1)
     hm = hm.loc[best.sort_values(kind="stable").index]

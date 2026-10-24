@@ -28,6 +28,7 @@
 \author{%
   Dima Bshara \\
   Technion -- Israel Institute of Technology \\
+  \texttt{dima.bshara@campus.technion.ac.il} \\
 }
 
 \begin{document}
@@ -35,18 +36,16 @@
 \maketitle
 
 \begin{abstract}
-Text-tabular learning combines structured attributes with free-text descriptions. MulTaBench's Joint TAR pipeline
-fine-tunes the text encoder on each prediction task to produce target-aware embeddings. Can a frozen encoder support a
-stronger alternative? We introduce Cross-Fitted Text Experts (CTE), which augments frozen E5 embeddings with
-complementary predictions based on exact words, similar training examples, full embeddings, intermediate encoder
-layers and attention over tokens, each trained out-of-fold, together with numerical features extracted from text. These features are combined
-with the original structured columns and used by the benchmark's existing tabular learners. Across MulTaBench's 20
-text-tabular datasets, CTE achieves higher mean scores than Joint TAR with all five learners, with improvements from
-\gainMin{} to \gainMax{} AUROC~/~$R^2$, statistically significant for every learner (Wilcoxon test, $p < 0.01$).
-Component comparisons demonstrate the benefit of combining different text signals, while layer analysis reveals that
-predictive information is accessible at different encoder depths for different tasks. Our results show that combining
-frozen representations with cross-fitted text experts provides an effective alternative to encoder fine-tuning on this
-benchmark, although an earlier version's gains are smaller on 36 further datasets.
+Text-tabular learning combines structured attributes with free text. MulTaBench's Joint TAR pipeline fine-tunes the
+text encoder on each task to make its embeddings target-aware. We ask whether supervised experts can provide
+target-awareness while the encoder stays frozen. Cross-Fitted Text Experts (CTE) add a few compact columns, each a
+prediction of the target from one view of the text (exact words, similar rows, the full embedding, intermediate layers
+or attention over tokens), computed out-of-fold for training rows, and pass them with the standard features to the
+benchmark's unchanged learners. On MulTaBench's 20 text-tabular datasets, CTE beats Joint TAR with all five learners,
+by \gainMin{} to \gainMax{} AUROC~/~$R^2$, significantly for each (pre-registered Wilcoxon tests, Holm-corrected across
+the learners), and scores higher in \runsWonPct\% of the \nRuns{} individual runs. Component comparisons support
+cross-fitting and combining views, and layer probes find a layer other than the last most predictive on \depthInner{}
+of 20 datasets. On this benchmark, cross-fitted text experts are an effective alternative to encoder fine-tuning.
 \end{abstract}
 
 \section{Introduction}
@@ -106,7 +105,7 @@ in BERT~\citep{tenney2019bert}. We apply this idea to task-specific predictions 
   exp/.style={draw=orange!70!black, rounded corners=2pt, align=center, inner sep=2pt, minimum height=1.0cm,
               text width=2.1cm, fill=orange!15}]
   \node[frz=1.45cm] (text) at (0,0.6) {text columns};
-  \node[frz=1.45cm] (struct) at (0,-2.1) {structured columns};
+  \node[frz=1.45cm] (struct) at (0,-2.0) {structured columns};
   \node[frz=1.85cm] (e5) at (2.2,0.6) {\mbox{e5-small-v2}\\(frozen)};
   \node[exp] (nbr) at (4.75,0.6) {\textbf{neighbor expert}\\20 nearest rows};
   \node[exp] (prb) at (7.05,0.6) {\textbf{full-embedding probe}\\all text columns};
@@ -115,7 +114,7 @@ in BERT~\citep{tenney2019bert}. We apply this idea to task-specific predictions 
   \node[exp] (lex) at (7.05,-0.5) {\textbf{lexical expert}\\TF-IDF + Ridge};
   \node[align=center, inner sep=2pt, text width=2.1cm, minimum height=1.0cm, text=orange!50!black] (cf) at (9.35,-0.5)
     {\textbf{cross-fitted}\\5-fold out-of-fold};
-  \node[frz=5.0cm] (pca) at (6.05,1.65) {PCA-30 per text column (as Joint Frozen)};
+  \node[frz=5.0cm] (pca) at (6.05,1.6) {PCA-30 per text column (as Joint Frozen)};
   \node[frz=5.0cm] (num) at (6.05,-1.6) {numeracy features (label-free)};
   \node[draw=orange!70!black, dashed, rounded corners=3pt, inner sep=2pt, fit=(nbr)(prb)(att)(lex)(dep)(cf)] (xf) {};
   \node[draw=blue!60!black, rounded corners=2pt, align=center, inner sep=2pt, text width=1.45cm, fill=blue!10,
@@ -157,11 +156,11 @@ We keep Joint Frozen's features and add columns that each predict $y$ from the t
 or small attention models fitted on $\mathcal{I}$. The \textbf{lexical expert} (iv) concatenates a row's text columns
 (\texttt{"col: value | \dots"}) and applies TF-IDF over word 1--2-grams and character 3--5-grams (50k
 features each) followed by Ridge regression. The \textbf{neighbor expert} (v) averages the targets of up to 20 most similar training
-rows (cosine similarity of the frozen embeddings, weights $1/(d+10^{-6})$ with $d$ the cosine distance), per text column and for the mean embedding
+rows (cosine similarity, weights $1/(d+10^{-6})$ with $d$ the cosine distance), per text column and for the mean embedding
 of all text columns (multiclass: the mean only). The \textbf{full-embedding probe} (ii) is a Ridge regression on the
 concatenated full embeddings of all text columns, before PCA. The \textbf{depth probes} (iii) mean-pool each of the 12
 layers, standardize them with statistics of $\mathcal{I}$, fit one Ridge probe per layer, and average the predictions
-of the three layers with the best cross-fitted score on $\mathcal{I}$ (Figure~\ref{fig:depth}). The \textbf{attention probe} (iv) reads the
+of the three layers with the best cross-fitted score on $\mathcal{I}$ (Figure~\ref{fig:depth}b). The \textbf{attention probe} (iv) reads the
 frozen token states (up to 256 per cell) of the best of these layers, standardized with statistics of $\mathcal{I}$:
 per text column, additive attention~\citep{lin2017structured} with scores $v^\top\tanh(W h_t)$ (64 hidden units)
 weights the tokens, and a linear layer maps the weighted sums of all columns to $y$ (AdamW, at most 40 epochs,
@@ -170,19 +169,22 @@ experts regress one-hot classes or a rank-Gaussian transform of $y$ fitted withi
 minimizes cross-entropy or squared error on the same targets); every expert appends one score (binary, regression), $C{-}1$ class scores (3--10 classes) or, for more
 classes, the ten most frequent classes' scores plus the maximum normalized score and the entropy. Ridge penalties come from small grids ($\{0.3, \dots, 10\}$; $\{1, \dots, 300\}$ for the layers), chosen by
 the cross-fitted AUROC or Spearman correlation. Twenty
-label-free \textbf{numeracy features} (iv) per text column (numbers, amounts, length, \dots) complete the input.
+label-free \textbf{numeracy features} (iv) per text column complete the input.
 
 \begin{figure}[t]
 \centering
-\begin{minipage}[c]{0.57\linewidth}\centering
-  \includegraphics[width=\linewidth]{fig_depth}
+\begin{minipage}[b]{0.40\linewidth}\centering
+  \includegraphics[width=\linewidth]{fig_buildup}\\[-1mm]
+  {\small (a) build-up of the method}
 \end{minipage}\hfill
-\begin{minipage}[c]{0.40\linewidth}
-  \caption{Where the target is best read. Per dataset, the cross-fitted score of a linear probe on each layer of the
-  frozen encoder minus the full-embedding probe (training rows of the final CatBoost run, mean over folds); dots mark
-  the best layer. Clipped at $\pm 0.03$ (\depthTopName: \depthTopGain{} at layer \depthTopLayer).}
-  \label{fig:depth}
+\begin{minipage}[b]{0.57\linewidth}\centering
+  \includegraphics[width=\linewidth]{fig_depth}\\[-1mm]
+  {\small (b) where the target is best read}
 \end{minipage}
+\caption{(a) Mean difference to Joint TAR as parts are added (CatBoost, 20 datasets). (b) Cross-fitted score of a probe
+on each layer minus the full-embedding probe (training rows); dots: best layer; clipped at $\pm 0.03$
+(\depthTopName: \depthTopGain{} at layer \depthTopLayer).}
+\label{fig:depth}
 \end{figure}
 
 \paragraph{Cross-fitting} (i).
@@ -204,27 +206,27 @@ a feature.
 
 \paragraph{Setup.}
 We use the 20 MulTaBench text-tabular datasets (3 binary, 7 multiclass, 10 regression), the benchmark's five folds
-(test: 10\% of the rows, at most 2,000) and its code and metrics (AUROC, macro one-vs-rest for multiclass; $R^2$).
-Baselines are the published Joint TAR and Joint Frozen scores of the same learner, dataset and fold; TabPFN cannot
+(test: 10\% of the rows, at most 2,000) and its code and metrics (AUROC; $R^2$).
+Baselines are the published Joint TAR and Joint Frozen scores of the same learner, dataset, fold and seed (42); TabPFN cannot
 run the two datasets with 30 and 114 classes ($n = 18$). Our re-implementation of Joint TAR scores \tarReproDiff{} against the
 published numbers ($p = \tarReproP$), so our environment does not appear to favor us. Per learner, the fold-averaged
 differences to Joint TAR are tested over datasets with a two-sided Wilcoxon signed-rank test; each
 test and its threshold ($p < 0.05$, positive mean) were fixed in writing before its run, Holm-corrected over the
-five learners (over all \nTests{} pre-registered comparisons, Table~\ref{tab:tests}: \holmAllNote). The main runs use seed 42, as the baselines.
+five learners (over all \nTests{} pre-registered comparisons, Table~\ref{tab:tests}: \holmAllNote).
 
 \begin{table}[t]
 \caption{Ours vs.\ published scores of the same learner, mean over datasets: gain over Joint TAR (bootstrap
 95\% CI), datasets won, Wilcoxon $p$ (Holm over the five learners).}
 \label{tab:main}
 \centering
-\small
+\footnotesize
 \setlength{\tabcolsep}{4pt}
 \input{generated/table_main}
 \end{table}
 
 \paragraph{Main result.}
 Table~\ref{tab:main} and Figure~\ref{fig:results}a: with every learner our features beat Joint TAR, by \gainMin{} to
-\gainMax{}. Measured from Joint Frozen, they add \multMin{} to \multMax{} times what fine-tuning adds. The gain is broad: \runsWonPct\% of the \nRuns{} individual (learner, dataset, fold) runs beat Joint TAR,
+\gainMax{}. Measured from Joint Frozen, they add \multMin{} to \multMax{} times what fine-tuning adds. The gain is broad: \runsWonPct\% of the \nRuns{} individual runs beat Joint TAR,
 \dsWonFour{} of the 20 datasets are won with at least four learners (\dsWonAll{} with all), and on \dsAboveNoise{}
 the mean gain exceeds the baselines' own fold-to-fold noise (per dataset: Table~\ref{tab:per_dataset}). It is largest for
 regression (Figure~\ref{fig:results}b; \gainRegMin{} to \gainRegMax{} by learner), smaller for binary (\gainBinMin{} to \gainBinMax{}) and
@@ -240,27 +242,25 @@ multiclass targets (\gainMulMin{} to \gainMulMax{}).
   \includegraphics[width=\linewidth]{fig_tasks}\\[-1mm]
   {\small (b) gain per task type}
 \end{minipage}
-\caption{(a) Gain over Joint TAR per learner, 95\% intervals (Table~\ref{tab:main}). (b) Per task type: the mean over the
-five learners (dot) and the range from the lowest to the highest learner (bar).}
+\caption{(a) Gain over Joint TAR per learner, 95\% intervals (Table~\ref{tab:main}). (b) Per task type: one small dot per
+learner, the large dot their mean.}
 \label{fig:results}
 \end{figure}
 
 
 \paragraph{What each part contributes.}
-Table~\ref{tab:buildup} (appendix): no expert alone beats Joint TAR; together they gain \bucte{} (not significant),
-and the full-embedding, depth and attention probes add \buProbeAdd, \buDepthAdd{} and \buAttnAdd{} (to \buattn).
-Cross-fitting is essential: the same lexical expert fitted and applied in-sample scores \buLexInDrop{} lower, far
-below Joint TAR. The depth probes' own increment is not significant (\depthIncWins{} of 20 datasets, $p =
-\depthIncP$), so the depth profile (Figure~\ref{fig:depth}) is mainly an
-analysis.
+Figure~\ref{fig:depth}a and Table~\ref{tab:buildup}: no expert alone beats Joint TAR; together they gain \bucte{} (not
+significant), and the three probes raise this to \buattn. Cross-fitting is essential: fitted and applied in-sample,
+the lexical expert scores \buLexInDrop{} lower. The depth probes' own increment is not significant (\depthIncWins{} of
+20 datasets, $p = \depthIncP$), so the depth profile (Figure~\ref{fig:depth}b) is mainly an analysis.
 
 \paragraph{The attention probe.}
 Without it, Jigsaw Toxicity was the one dataset Joint TAR won with every learner (our gain \jigsawOldMin{} to
-\jigsawOldMax): fine-tuning gains most there (\jigsawTarGain{} over Joint Frozen), and a single word can decide the label. Screened on training-row development splits, the
+\jigsawOldMax), and a single word can decide its label. Screened on training-row development splits, the
 attention probe makes Jigsaw a win with every learner (\jigsawNewMin{} to \jigsawNewMax) and adds \attnIncPosMin{} to
 \attnIncPosMax{} over the \emph{depth-probe version} (the method without it) for \attnIncN{} learners ($p \le
-\attnIncPosPMax$). With LightGBM it is \attnIncLightGBM, all from Spotify Genres fold \spotifyFold, where
-LightGBM scores \spotifyBad{} (\spotifyAhundred{} when re-run on an A100 GPU).
+\attnIncPosPMax$). With LightGBM it is \attnIncLightGBM, all from one run (Spotify Genres fold \spotifyFold: \spotifyBad;
+\spotifyAhundred{} when re-run on an A100 GPU).
 
 \paragraph{Robustness and checks.}
 Two checks used the depth-probe version. On 36 further text datasets never used in development (CatBoost, folds
