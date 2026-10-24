@@ -67,10 +67,15 @@ def main() -> None:
         m[f"gain{k}"] = f3(s.mean_gain, True)
         m[f"wins{k}"] = str(int(s.wins))
         m[f"p{k}"] = fp(s.wilcoxon_p)
-        m[f"holm{k}"] = fp(holm[HOLM_KEY[l]])
+        m[f"holm{k}"] = fp(p18["C13"][SHORT[l]]["p_holm"])  # as registered for C13: Holm over the 5 learners
+        m[f"holmAll{k}"] = fp(holm[HOLM_KEY[l]])  # the strictest reading: Holm over all pre-registered tests
     m["gainMin"], m["gainMax"] = f3(summ.mean_gain.min(), True), f3(summ.mean_gain.max(), True)
     m["pMax"] = fp(summ.wilcoxon_p.max())
-    m["nHolmPass"] = str(int(sum(holm[HOLM_KEY[l]] < 0.05 for l in LEARNERS)))
+    m["nHolmPass"] = str(int(sum(p18["C13"][SHORT[l]]["p_holm"] < 0.05 for l in LEARNERS)))
+    fail = [l for l in LEARNERS if holm[HOLM_KEY[l]] >= 0.05]
+    words = {0: "no", 1: "one", 2: "two", 3: "three", 4: "four", 5: "all five"}
+    m["holmAllNote"] = ("all five pass" if not fail else
+                        f"{words[5 - len(fail)]} of five pass (" + ", ".join(f"{l}: {fp(holm[HOLM_KEY[l]])}" for l in fail) + ")")
     mult = (summ.ours - summ.joint_frozen) / (summ.joint_tar - summ.joint_frozen)
     m["multMin"], m["multMax"] = f"{mult.min():.1f}", f"{mult.max():.1f}"
     m["nTests"] = str(len(holm))
@@ -130,7 +135,7 @@ def main() -> None:
         s = summ.loc[l]
         tab.append(f"{l} & {int(s.datasets)} & {f3(s.joint_frozen)} & {f3(s.joint_tar)} & \\textbf{{{f3(s.ours)}}} & "
                    f"{f3(s.mean_gain, True)} [{f3(s.ci95_low)}, {f3(s.ci95_high)}] & {int(s.wins)} & "
-                   f"{fp(s.wilcoxon_p)} ({fp(holm[HOLM_KEY[l]])}) \\\\")
+                   f"{fp(s.wilcoxon_p)} ({fp(p18['C13'][SHORT[l]]['p_holm'])}) \\\\")
     tab += ["\\bottomrule", "\\end{tabular}"]
     open(join(GEN, "table_main.tex"), "w").write("\n".join(tab) + "\n")
 
@@ -284,30 +289,39 @@ def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame) -> None:
     plt.rcParams.update({"font.family": "serif", "font.size": 7.5, "axes.spines.top": False,
                          "axes.spines.right": False, "pdf.fonttype": 42})
     orange, grey = "#d95f02", "#555555"
-    # (a) mean gain per task type, one point per learner (the learners' colors and markers of notebook 02, fig. 4a)
-    colors = {"CatBoost": "#2a78d6", "LightGBM": "#eb6834", "TabM": "#1baf7a", "TabPFN-v2": "#eda100",
-              "TabPFN-2.5": "#e87ba4"}
-    markers = {"CatBoost": "o", "LightGBM": "s", "TabM": "^", "TabPFN-v2": "D", "TabPFN-2.5": "v"}
-    groups = [("REG", "regression\n(10)"), ("BIN", "binary\n(3)"), ("MUL", "multiclass\n(7; TabPFN 5)")]
-    g = per_ds.assign(t=per_ds.dataset.str[:3]).groupby(["learner", "t"]).gain_vs_tar.mean()
-    fig, ax = plt.subplots(figsize=(2.15, 1.7))
-    off = dict(zip(LEARNERS, np.linspace(-0.26, 0.26, len(LEARNERS))))
+    xlim, xt = (-0.004, 0.068), [0, 0.02, 0.04, 0.06]
+    # results figure (a): gain per learner with its 95% interval
+    fig, ax = plt.subplots(figsize=(2.6, 1.0))
+    y = np.arange(len(LEARNERS))
+    ax.errorbar(summ.mean_gain, y, xerr=[summ.mean_gain - summ.ci95_low, summ.ci95_high - summ.mean_gain],
+                fmt="o", color=orange, ms=3.6, capsize=2, lw=0.9)
+    for yi, l in enumerate(LEARNERS):
+        ax.text(summ.ci95_high[l] + 0.002, yi, f"+{summ.mean_gain[l]:.3f}", va="center", fontsize=6.5, color=grey)
+    ax.axvline(0, color="k", lw=0.7)
+    ax.set_yticks(y, LEARNERS, fontsize=6.5); ax.invert_yaxis()
+    ax.set_xlim(*xlim); ax.set_xticks(xt); ax.tick_params(labelsize=6.5, length=2)
+    ax.set_xlabel("ours $-$ Joint TAR (95% CI)", fontsize=7)
+    fig.tight_layout(pad=0.3); fig.savefig(join(FIGS, "fig_gains.pdf"), bbox_inches="tight", pad_inches=0.02); plt.close(fig)
+    # results figure (b): mean gain per task type (dot: mean over learners; bar: lowest to highest learner)
+    groups = [("REG", "regression (10)"), ("BIN", "binary (3)"), ("MUL", "multiclass (7)")]
+    g = per_ds.assign(t=per_ds.dataset.str[:3]).groupby(["t", "learner"]).gain_vs_tar.mean()
+    fig, ax = plt.subplots(figsize=(2.6, 1.0))
     for gi, (t, _) in enumerate(groups):
-        for l in LEARNERS:
-            ax.plot(g[(l, t)], gi + off[l], markers[l], color=colors[l], ms=3.6, mec="white", mew=0.5,
-                    label=l if gi == 0 else None)
-    for gi in range(len(groups) - 1):
-        ax.axhline(gi + 0.5, color="#dddddd", lw=0.6)
+        v = g[t]
+        ax.plot([v.min(), v.max()], [gi, gi], color=orange, lw=0.9, alpha=0.55)
+        ax.plot(v.mean(), gi, "o", color=orange, ms=4)
+        ax.text(v.max() + 0.002, gi, f"+{v.mean():.3f}", va="center", fontsize=6.5, color=grey)
     ax.axvline(0, color="k", lw=0.7)
     ax.set_yticks(range(len(groups)), [lab for _, lab in groups], fontsize=6.5); ax.invert_yaxis()
-    ax.set_xlim(-0.004, 0.056); ax.set_xticks([0, 0.02, 0.04]); ax.set_xlabel("ours $-$ Joint TAR (mean)")
-    ax.legend(fontsize=5.6, frameon=False, loc="lower right", handletextpad=0.2, borderaxespad=0.1, labelspacing=0.25)
-    fig.tight_layout(pad=0.3); fig.savefig(join(FIGS, "fig_gains.pdf"), bbox_inches="tight", pad_inches=0.02); plt.close(fig)
-    # (b) depth profile heatmap
+    ax.set_ylim(len(groups) - 0.5, -0.5)
+    ax.set_xlim(*xlim); ax.set_xticks(xt); ax.tick_params(labelsize=6.5, length=2)
+    ax.set_xlabel("ours $-$ Joint TAR", fontsize=7)
+    fig.tight_layout(pad=0.3); fig.savefig(join(FIGS, "fig_tasks.pdf"), bbox_inches="tight", pad_inches=0.02); plt.close(fig)
+    # (c) depth profile heatmap
     best = hm.idxmax(axis=1)
     hm = hm.loc[best.sort_values(kind="stable").index]
     lim = 0.03
-    fig, ax = plt.subplots(figsize=(3.15, 2.1))
+    fig, ax = plt.subplots(figsize=(3.15, 1.9))
     im = ax.imshow(hm.clip(-lim, lim), cmap="PuOr_r", vmin=-lim, vmax=lim, aspect="auto")
     ax.scatter(hm.idxmax(axis=1).to_numpy() - 1, range(len(hm)), s=6, color="k")
     ax.set_xticks(range(12), range(1, 13)); ax.set_yticks(range(len(hm)), [name(d) for d in hm.index], fontsize=6.3)

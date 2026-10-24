@@ -161,16 +161,29 @@ rows (cosine similarity of the frozen embeddings, weights $1/(d+10^{-6})$ with $
 of all text columns (multiclass: the mean only). The \textbf{full-embedding probe} (ii) is a Ridge regression on the
 concatenated full embeddings of all text columns, before PCA. The \textbf{depth probes} (iii) mean-pool each of the 12
 layers, standardize them with statistics of $\mathcal{I}$, fit one Ridge probe per layer, and average the predictions
-of the three layers with the best cross-fitted score on $\mathcal{I}$. The \textbf{attention probe} (iv) reads the
+of the three layers with the best cross-fitted score on $\mathcal{I}$ (Figure~\ref{fig:depth}). The \textbf{attention probe} (iv) reads the
 frozen token states (up to 256 per cell) of the best of these layers, standardized with statistics of $\mathcal{I}$:
 per text column, additive attention~\citep{lin2017structured} with scores $v^\top\tanh(W h_t)$ (64 hidden units)
 weights the tokens, and a linear layer maps the weighted sums of all columns to $y$ (AdamW, at most 40 epochs,
 early-stopped on 10\% of each fit's training rows). The Ridge
 experts regress one-hot classes or a rank-Gaussian transform of $y$ fitted within each expert fit (the attention probe
 minimizes cross-entropy or squared error on the same targets); every expert appends one score (binary, regression), $C{-}1$ class scores (3--10 classes) or, for more
-classes, the ten most frequent classes' scores plus the maximum normalized score and the entropy. Ridge penalties come from $\{0.3, 1, 3, 10\}$ ($\{1, 3, 10, 30, 100, 300\}$ for the
-standardized layers), chosen by the cross-fitted AUROC, macro one-vs-rest AUROC or Spearman correlation. Twenty
+classes, the ten most frequent classes' scores plus the maximum normalized score and the entropy. Ridge penalties come from small grids ($\{0.3, \dots, 10\}$; $\{1, \dots, 300\}$ for the layers), chosen by
+the cross-fitted AUROC or Spearman correlation. Twenty
 label-free \textbf{numeracy features} (iv) per text column (numbers, amounts, length, \dots) complete the input.
+
+\begin{figure}[t]
+\centering
+\begin{minipage}[c]{0.57\linewidth}\centering
+  \includegraphics[width=\linewidth]{fig_depth}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.40\linewidth}
+  \caption{Where the target is best read. Per dataset, the cross-fitted score of a linear probe on each layer of the
+  frozen encoder minus the full-embedding probe (training rows of the final CatBoost run, mean over folds); dots mark
+  the best layer. Clipped at $\pm 0.03$ (\depthTopName: \depthTopGain{} at layer \depthTopLayer).}
+  \label{fig:depth}
+\end{minipage}
+\end{figure}
 
 \paragraph{Cross-fitting} (i).
 We split $\mathcal{I}$ into five folds $\mathcal{I}_1,\dots,\mathcal{I}_5$, stratified for classification when class
@@ -186,11 +199,6 @@ selected from training-label counts, so selection is training-wide rather than n
 TF-IDF vocabulary, standardization and PCA use training inputs only; no validation or test label builds or selects
 a feature.
 
-\paragraph{How we arrived here.}
-Cross-fitting the fine-tuned TAR head addressed (i) but was no better than Joint TAR, at a high computational cost;
-frozen experts were better, and each probe above increased the mean gain further. Bringing the structured columns
-into the text features did not help, possibly because the learner already combines them.
-
 \section{Results}
 \label{sec:results}
 
@@ -201,40 +209,39 @@ Baselines are the published Joint TAR and Joint Frozen scores of the same learne
 run the two datasets with 30 and 114 classes ($n = 18$). Our re-implementation of Joint TAR scores \tarReproDiff{} against the
 published numbers ($p = \tarReproP$), so our environment does not appear to favor us. Per learner, the fold-averaged
 differences to Joint TAR are tested over datasets with a two-sided Wilcoxon signed-rank test; each
-test and its threshold ($p < 0.05$, positive mean) were fixed in writing before its run, and Holm corrects over all
-\nTests{} pre-registered claims (Table~\ref{tab:tests}). The main runs use seed 42, as the baselines.
+test and its threshold ($p < 0.05$, positive mean) were fixed in writing before its run, Holm-corrected over the
+five learners (over all \nTests{} pre-registered comparisons, Table~\ref{tab:tests}: \holmAllNote). The main runs use seed 42, as the baselines.
 
 \begin{table}[t]
 \caption{Ours vs.\ published scores of the same learner, mean over datasets: gain over Joint TAR (bootstrap
-95\% CI), datasets won, Wilcoxon $p$ (Holm over the \nTests{} pre-registered comparisons).}
+95\% CI), datasets won, Wilcoxon $p$ (Holm over the five learners).}
 \label{tab:main}
 \centering
 \small
-\setlength{\tabcolsep}{5pt}
+\setlength{\tabcolsep}{4pt}
 \input{generated/table_main}
 \end{table}
 
 \paragraph{Main result.}
-Table~\ref{tab:main}: with every learner our features beat Joint TAR, by \gainMin{} to
+Table~\ref{tab:main} and Figure~\ref{fig:results}a: with every learner our features beat Joint TAR, by \gainMin{} to
 \gainMax{}. Measured from Joint Frozen, they add \multMin{} to \multMax{} times what fine-tuning adds. The gain is broad: \runsWonPct\% of the \nRuns{} individual (learner, dataset, fold) runs beat Joint TAR,
 \dsWonFour{} of the 20 datasets are won with at least four learners (\dsWonAll{} with all), and on \dsAboveNoise{}
 the mean gain exceeds the baselines' own fold-to-fold noise (per dataset: Table~\ref{tab:per_dataset}). It is largest for
-regression (Figure~\ref{fig:results}a; \gainRegMin{} to \gainRegMax{} by learner), smaller for binary (\gainBinMin{} to \gainBinMax{}) and
+regression (Figure~\ref{fig:results}b; \gainRegMin{} to \gainRegMax{} by learner), smaller for binary (\gainBinMin{} to \gainBinMax{}) and
 multiclass targets (\gainMulMin{} to \gainMulMax{}).
 
 \begin{figure}[t]
 \centering
-\begin{minipage}[b]{0.40\linewidth}\centering
+\begin{minipage}[b]{0.49\linewidth}\centering
   \includegraphics[width=\linewidth]{fig_gains}\\[-1mm]
-  {\small (a) gain over Joint TAR by task type}
+  {\small (a) gain per learner}
 \end{minipage}\hfill
-\begin{minipage}[b]{0.58\linewidth}\centering
-  \includegraphics[width=\linewidth]{fig_depth}\\[-1mm]
-  {\small (b) where the target is best read}
+\begin{minipage}[b]{0.49\linewidth}\centering
+  \includegraphics[width=\linewidth]{fig_tasks}\\[-1mm]
+  {\small (b) gain per task type}
 \end{minipage}
-\caption{(a) Mean gain over Joint TAR per task type, one point per learner. (b) Cross-fitted score of a linear probe on each layer minus the
-full-embedding probe (training rows, final CatBoost run, mean over folds); dots: best layer; clipped at $\pm 0.03$
-(\depthTopName: \depthTopGain{} at layer \depthTopLayer).}
+\caption{(a) Gain over Joint TAR per learner, 95\% intervals (Table~\ref{tab:main}). (b) Per task type: the mean over the
+five learners (dot) and the range from the lowest to the highest learner (bar).}
 \label{fig:results}
 \end{figure}
 
@@ -243,26 +250,24 @@ full-embedding probe (training rows, final CatBoost run, mean over folds); dots:
 Table~\ref{tab:buildup} (appendix): no expert alone beats Joint TAR; together they gain \bucte{} (not significant),
 and the full-embedding, depth and attention probes add \buProbeAdd, \buDepthAdd{} and \buAttnAdd{} (to \buattn).
 Cross-fitting is essential: the same lexical expert fitted and applied in-sample scores \buLexInDrop{} lower, far
-below Joint TAR (observation (i)). The depth probes' own increment is not significant (\depthIncWins{} of 20
-datasets, $p = \depthIncP$), so we read the depth profile (Figure~\ref{fig:results}b) mainly as an analysis: the best
-layer ranges from \depthMinLayer{} to \depthMaxLayer{} and is a layer other than the last in \depthInner{} of 20
-datasets.
+below Joint TAR. The depth probes' own increment is not significant (\depthIncWins{} of 20 datasets, $p =
+\depthIncP$), so the depth profile (Figure~\ref{fig:depth}) is mainly an
+analysis.
 
 \paragraph{The attention probe.}
 Without it, Jigsaw Toxicity was the one dataset Joint TAR won with every learner (our gain \jigsawOldMin{} to
-\jigsawOldMax): fine-tuning gains most there (\jigsawTarGain{} over Joint Frozen), no layer beats the last (at most
-\depthJigsaw), and a single word can decide the label. Screened on training-row development splits, the
+\jigsawOldMax): fine-tuning gains most there (\jigsawTarGain{} over Joint Frozen), and a single word can decide the label. Screened on training-row development splits, the
 attention probe makes Jigsaw a win with every learner (\jigsawNewMin{} to \jigsawNewMax) and adds \attnIncPosMin{} to
 \attnIncPosMax{} over the \emph{depth-probe version} (the method without it) for \attnIncN{} learners ($p \le
 \attnIncPosPMax$). With LightGBM it is \attnIncLightGBM, all from Spotify Genres fold \spotifyFold, where
-LightGBM scores \spotifyBad{} (other folds \spotifyOtherMin--\spotifyOtherMax; \spotifyAhundred{} when re-run on an A100 GPU).
+LightGBM scores \spotifyBad{} (\spotifyAhundred{} when re-run on an A100 GPU).
 
 \paragraph{Robustness and checks.}
 Two checks used the depth-probe version. On 36 further text datasets never used in development (CatBoost, folds
 0--2) the gain is small: median \cSevenMedian, \cSevenWins{} of \cSevenN{} won and \cSevenLosses{} lost
 (\cSevenBigLosses{} by more than 0.07), $p = \cSevenP$, not significant after Holm ($\cSevenHolm$). With two other
 cross-fitting seeds (LightGBM) the gain is \seedGainA{} and \seedGainB{} (\seedWinsA{} of 20 datasets each, Holm $p =
-\seedHolm$ over the two seeds) and per dataset keeps its sign on \seedSameSign{} of 20. Shuffled training labels drop the final method to chance (AUROC \shuffleMin--\shuffleMax, $R^2 \le
+\seedHolm$ over the two seeds). Shuffled training labels drop the final method to chance (AUROC \shuffleMin--\shuffleMax, $R^2 \le
 \shuffleRtwo$); an independent script reproduces Table~\ref{tab:main} from the raw results.
 
 \section{Conclusion and summary}
