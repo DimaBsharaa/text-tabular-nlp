@@ -137,6 +137,15 @@ uv sync --frozen            # Python 3.11 environment, pinned by uv.lock
 
 Learner choice, API keys (TabPFN-2.5 needs one), measured runtimes and the benchmark runner: [method README](multabench/ours/README.md).
 
+## Model weights and Hugging Face
+
+The method pretrains and fine-tunes nothing. Its only pretrained models are public and load from Hugging Face on
+first use: the frozen encoder `intfloat/e5-small-v2` (never updated) and the TabPFN learners' weights. What the method
+learns (the Ridge experts, the attention probe's small heads, the PCA and the tabular learner) is fit from scratch on
+each dataset's training rows inside every run and saved in that run's model folder (`attn.joblib`, `ridge.joblib`, …).
+There is therefore no single trained model to publish: `scripts/train.py` is the end-to-end training mode and
+`scripts/predict.py` the inference mode that loads a saved model folder.
+
 ## Reproduce the evaluation
 
 ```bash
