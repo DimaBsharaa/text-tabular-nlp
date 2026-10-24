@@ -309,14 +309,14 @@ def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame, buildup:
     # results figure (b): mean gain per task type, one dot per learner at a fixed offset, black diamond = their mean
     groups = [("REG", "regression (10)"), ("BIN", "binary (3)"), ("MUL", "multiclass (7)")]
     g = per_ds.assign(t=per_ds.dataset.str[:3]).groupby(["t", "learner"]).gain_vs_tar.mean()
-    off = dict(zip(LEARNERS, np.linspace(-0.24, 0.24, len(LEARNERS))))
+    off = dict(zip(LEARNERS, np.linspace(-0.06, 0.34, len(LEARNERS))))  # learner dots below the mean's line
     fig, ax = plt.subplots(figsize=(2.6, 1.2))
     for gi, (t, _) in enumerate(groups):
         v = g[t]
         for l in LEARNERS:
             ax.scatter([v[l]], [gi + off[l]], s=11, color=colors[l], lw=0, zorder=2)
-        ax.scatter([v.mean()], [gi], s=26, marker="D", color="k", zorder=3)
-        ax.text(max(v.max(), v.mean()) + 0.002, gi, f"+{v.mean():.3f}", va="center", fontsize=6.5, color=grey)
+        ax.scatter([v.mean()], [gi - 0.24], s=26, marker="D", color="k", zorder=3)
+        ax.text(v.mean() + 0.0025, gi - 0.24, f"+{v.mean():.3f}", va="center", fontsize=6.5, color=grey)
     ax.axvline(0, color="k", lw=0.7)
     ax.set_yticks(range(len(groups)), [lab for _, lab in groups], fontsize=6.5)
     ax.set_ylim(len(groups) - 0.5, -0.5)

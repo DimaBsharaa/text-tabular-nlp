@@ -24,7 +24,7 @@
 % marks a sentence that waits for a running experiment; none may remain in the submitted PDF
 \newcommand{\pending}[1]{\textcolor{red}{[PENDING: #1]}}
 
-\title{Can Cross-Fitted Text Experts Outperform Encoder Fine-Tuning?\\Fusing Frozen Text Embeddings with Tabular Data}
+\title{Can Cross-Fitted Text Experts Outperform\\Encoder Fine-Tuning?\\Fusing Frozen Text Embeddings with Tabular Data}
 
 \author{%
   Dima Bshara \\
@@ -78,8 +78,8 @@ measured causes of Joint TAR's results.
 
 We propose Cross-Fitted Text Experts (CTE), which introduce target-awareness through supervised text predictions
 while keeping the encoder frozen. Unchanged tabular learners combine these predictions with structured, PCA and
-numeracy features. We evaluate CTE against Joint TAR with five learners and analyze feature contributions,
-cross-fitting and encoder depth. Code and results: \url{https://github.com/DimaBsharaa/text-tabular-nlp}.
+numeracy features. Across MulTaBench, CTE achieves higher mean scores than Joint TAR with all five
+learners; we analyze feature contributions, cross-fitting and encoder depth. Code and results: \url{https://github.com/DimaBsharaa/text-tabular-nlp}.
 
 \section{Related work}
 \label{sec:related}
@@ -175,7 +175,7 @@ the cross-fitted AUROC or Spearman correlation. Twenty
 label-free \textbf{numeracy features} (iv) per text column complete the input.
 
 
-\paragraph{Cross-fitting} (i).
+\paragraph{Cross-fitting (i).}
 We split $\mathcal{I}$ into five folds $\mathcal{I}_1,\dots,\mathcal{I}_5$, stratified for classification when class
 counts permit, and define the expert feature of row $i$ as
 \begin{equation}
@@ -197,10 +197,11 @@ a feature.
 \begin{minipage}[b]{0.57\linewidth}\centering
   \includegraphics[width=\linewidth]{fig_depth}
 \end{minipage}
-\caption{(a) Held-out mean gains over Joint TAR (CatBoost, 20 datasets). All configurations retain Joint Frozen's
-structured and PCA features. Base = lexical + neighbor + numeracy; the final four rows are cumulative. (b) Training
-out-of-fold layer-probe scores minus the full-embedding probe, averaged over folds. Dots mark the averaged profile's
-best layer; colors clip at $\pm 0.03$ (\depthTopName: \depthTopGain{} at layer \depthTopLayer).}
+\caption{(a) Held-out gains over Joint TAR (CatBoost, 20 datasets): no single expert is ahead, the cross-fitted
+combination is. All rows keep Joint Frozen's structured and PCA features; base = lexical + neighbor + numeracy; the
+final four rows are cumulative. (b) Training out-of-fold layer-probe scores minus the full-embedding probe, averaged
+over folds; the averaged profile's best layer (dots) is often not the last. Colors clip at $\pm 0.03$ (\depthTopName:
+\depthTopGain{} at layer \depthTopLayer).}
 \label{fig:depth}
 \end{figure}
 
@@ -218,11 +219,11 @@ test and its threshold ($p < 0.05$, positive mean) were fixed in writing before 
 five learners; over all \nTests{} pre-registered comparisons (Table~\ref{tab:tests}), \holmAllNote.
 
 \begin{table}[t]
-\caption{Ours vs.\ published scores of the same learner, mean over datasets: gain over Joint TAR (bootstrap
-95\% CI), datasets won, Wilcoxon $p$ (Holm over the five learners).}
+\caption{Ours is above the published Joint TAR of the same learner for every learner (means over datasets): gain
+(bootstrap 95\% CI), datasets won, Wilcoxon $p$ (Holm over the five learners).}
 \label{tab:main}
 \centering
-\footnotesize
+\small
 \setlength{\tabcolsep}{4pt}
 \input{generated/table_main}
 \end{table}
@@ -242,8 +243,9 @@ regression, followed by binary and multiclass classification (Figure~\ref{fig:re
   \includegraphics[width=\linewidth]{fig_tasks}
 \end{minipage}\\[1mm]
 \includegraphics[width=0.92\linewidth]{fig_legend}
-\caption{Held-out test folds. (a) Gain over Joint TAR per learner, 95\% intervals (Table~\ref{tab:main}). (b) Per task
-type: one dot per learner, the black diamond their mean; the two TabPFN learners cover 5 of the 7 multiclass datasets.}
+\caption{Held-out test folds: every learner gains over Joint TAR, regression most on average. (a) Per learner, 95\%
+intervals (Table~\ref{tab:main}). (b) Per task type: one dot per learner, the black diamond their mean; TabPFN covers 5 of
+the 7 multiclass datasets.}
 \label{fig:results}
 \end{figure}
 
@@ -256,7 +258,7 @@ mainly an analysis.
 
 \paragraph{The attention probe.}
 Without it, Jigsaw Toxicity was the one dataset Joint TAR won with every learner, and a single word can decide its label. Screened on training-row development splits, the
-attention probe makes Jigsaw a win with every learner (\jigsawNewMin{} to \jigsawNewMax) and adds \attnIncPosMin{} to
+attention probe turns Jigsaw into a win with every learner on the benchmark folds (\jigsawNewMin{} to \jigsawNewMax) and adds \attnIncPosMin{} to
 \attnIncPosMax{} over the \emph{depth-probe version} (the method without it) for \attnIncN{} learners ($p \le
 \attnIncPosPMax$). With LightGBM it is \attnIncLightGBM, all from one run (Spotify Genres fold \spotifyFold: \spotifyBad;
 \spotifyAhundred{} when re-run on an A100 GPU).
@@ -273,13 +275,13 @@ cross-fitting seeds (LightGBM) the gain is \seedGainA{} and \seedGainB{} (\seedW
 \label{sec:conclusion}
 CTE combines cross-fitted text predictions with structured features while keeping the encoder frozen and the tabular
 learners unchanged. It achieves higher mean scores than Joint TAR with all five learners. Component comparisons support
-complementary text signals, while layer analysis identifies predictive information beyond the final encoder layer.
+combining complementary text signals, while layer analysis identifies predictive information beyond the final encoder layer.
 
 \textbf{Limitations.} Benchmark test scores informed development; an earlier version showed smaller gains on 36
 additional datasets. Future work will combine these experts with encoder fine-tuning.
 
 \textbf{Additional Track 2 contribution.} We also curated VAERS-Serious, which satisfies both joint-signal and
-task-awareness conditions with all five learners (5/5 each) under the official MulTaBench pipeline. Its dataset,
+task-awareness conditions with all five learners under the official MulTaBench pipeline. Its dataset,
 preprocessing, notebooks and results are available in the
 \href{https://github.com/DimaBsharaa/text-tabular-research-vaers}{\textcolor{blue!60!black}{accompanying repository}},
 provided for consideration as additional project work.
