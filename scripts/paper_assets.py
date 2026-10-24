@@ -298,7 +298,7 @@ def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame, buildup:
     for yi, l in enumerate(LEARNERS):
         ax.text(summ.ci95_high[l] + 0.002, yi, f"+{summ.mean_gain[l]:.3f}", va="center", fontsize=6.5, color=grey)
     ax.axvline(0, color="k", lw=0.7)
-    ax.set_yticks(y, LEARNERS, fontsize=6.5); ax.invert_yaxis()
+    ax.set_yticks(y, LEARNERS, fontsize=6.5); ax.set_ylim(len(LEARNERS) - 0.4, -0.6)  # inverted, padded
     ax.set_xlim(*xlim); ax.set_xticks(xt); ax.tick_params(labelsize=6.5, length=2)
     ax.set_xlabel("ours $-$ Joint TAR (95% CI)", fontsize=7)
     fig.tight_layout(pad=0.3); fig.savefig(join(FIGS, "fig_gains.pdf"), bbox_inches="tight", pad_inches=0.02); plt.close(fig)
@@ -338,10 +338,10 @@ def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame, buildup:
     best = hm.idxmax(axis=1)
     hm = hm.loc[best.sort_values(kind="stable").index]
     lim = 0.03
-    fig, ax = plt.subplots(figsize=(3.15, 1.9))
+    fig, ax = plt.subplots(figsize=(3.15, 2.0))
     im = ax.imshow(hm.clip(-lim, lim), cmap="PuOr_r", vmin=-lim, vmax=lim, aspect="auto")
     ax.scatter(hm.idxmax(axis=1).to_numpy() - 1, range(len(hm)), s=6, color="k")
-    ax.set_xticks(range(12), range(1, 13)); ax.set_yticks(range(len(hm)), [name(d) for d in hm.index], fontsize=6.3)
+    ax.set_xticks(range(12), range(1, 13)); ax.set_yticks(range(len(hm)), [name(d) for d in hm.index], fontsize=5.6)
     ax.set_xlabel("layer of frozen e5-small-v2"); ax.tick_params(length=1.5, labelsize=6.5)
     cb = fig.colorbar(im, ax=ax, shrink=0.75, pad=0.02)
     cb.set_label("vs. full-embedding probe", fontsize=7); cb.ax.tick_params(labelsize=6.5)
