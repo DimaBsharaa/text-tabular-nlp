@@ -1,5 +1,5 @@
 # P18 (PROGRESS.md, claim C13): cte_depth_top3_attn with all 5 learners, 20 datasets x 5 folds (TabPFN: 18).
-# Results root: ~/p18/results (course VM, Tesla T4). EXTRA_ARGS = ['--job_timeout_min', '240'].
+# Results root: ~/p18/results (a Tesla T4 machine; TabPFN on a Colab A100). EXTRA_ARGS = ['--job_timeout_min', '240'].
 cte_depth_top3_attn catboost MUL_TEXT_SPOTIFY_GENRES 0
 cte_depth_top3_attn catboost MUL_TEXT_SPOTIFY_GENRES 1
 cte_depth_top3_attn catboost MUL_TEXT_SPOTIFY_GENRES 2

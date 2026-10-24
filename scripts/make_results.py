@@ -14,7 +14,7 @@ import pandas as pd
 from scipy.stats import wilcoxon
 
 REPO_ROOT = dirname(dirname(abspath(__file__)))
-METHOD = "cte_depth_top3"
+METHOD = "cte_depth_top3_attn"
 LEARNERS = {"catboost": "CatBoost", "lgbm": "LightGBM", "tabm": "TabM", "tabpfnv2": "TabPFN-v2",
             "tabpfnv2p5": "TabPFN-2.5"}
 

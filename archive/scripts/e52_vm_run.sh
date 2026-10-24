@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# E52 on the course VM: end-to-end tests, then the dev screen of cte_depth_top3_attn on the P12 protocol.
+# E52 on a GPU machine: end-to-end tests, then the dev screen of cte_depth_top3_attn on the P12 protocol.
 # The baseline (cte_depth_top3) rows of the same splits are E51's (~/e51/dev_fold*.csv); caches are shared (~/e51/cache).
 set -u
 cd ~/text-tabular-nlp

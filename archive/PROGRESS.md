@@ -2255,3 +2255,78 @@ Features for the learner = structured columns (upstream preprocessing)
   jobs is within 0.005 of its T4 score and their mean difference is within ±0.002.** Spotify fold 3 is reported either
   way (it shows whether the LightGBM failure reproduces). If the check fails, the 300 jobs are re-run from the clean
   commit before any claim uses them.
+
+## E55 — The pre-registered re-run check (E54) FAILS   (2026-10-24)
+- **Run:** `jobs/p18_check.txt`, 19 jobs, Colab A100, clean commit 061c3eb (`dirty: False`), fresh results root,
+  `--parallel_jobs 3`; 32 min wall. Splits (n_train / n_test) identical to the T4 runs, 19/19.
+- **Result (A100 − T4, same job):** the 18 fold-0 jobs: mean **+0.0005**, max |diff| **0.0208**; 13 within 0.005,
+  5 outside: Video Games CatBoost +0.0208, LightGBM −0.0202, TabM +0.0064; Book Price LightGBM +0.0108; Babies CatBoost
+  −0.0052. **Rule (every job within 0.005 AND mean within ±0.002): FAIL** (the mean part passes).
+- **LightGBM Spotify Genres fold 3:** 0.9135 on the A100 (T4: 0.536). The T4 collapse does not reproduce: a numerical
+  event of that GPU run, not a property of the method's features.
+- **Reading (hostile):** the differences go both ways, their mean is ~0, and the large ones sit on the noisiest
+  datasets (Video Games, E28; Book Price), as GPU non-determinism of the attention probe's training would produce; the
+  laptop-CPU run of Product Sentiment fold 0 also differed from the T4 run (+0.0034). So the failure is most likely
+  hardware, not different code, but this check cannot separate the two, and the tolerance was fixed in advance.
+  The method's single-job scores therefore depend on the GPU by up to ~0.02 on noisy datasets.
+- **Consequence, as pre-registered (E54):** the 300 T4 results may not be used for a claim until the 300 jobs are re-run
+  from a clean commit. Until then the final method stays `cte_depth_top3`. Next: Dima decides between the re-run and
+  keeping `cte_depth_top3` final.
+
+## P18b — Pre-registration: the 300 P18 jobs of CatBoost, LightGBM, TabM re-run from a clean commit   (2026-10-24, BEFORE the run)
+- **Why:** E55 — the check failed, so (as fixed in E54) the 300 T4 results are not used for any claim; they are re-run.
+- **Run:** `jobs/p18_rerun.txt` = exactly the 300 CatBoost / LightGBM / TabM lines of `jobs/p18.txt`, same method and
+  settings (`cte_depth_top3_attn`, engine `depth/1+attn/1`, cross-fitting seed 42); Colab A100 (the GPU type of the 180
+  TabPFN results and of every `cte_depth_top3` result), clean commit (the `enhance` head at launch), fresh results root
+  `MyDrive/text-tabular-nlp/results_p18clean` and fresh caches, `--parallel_jobs 4`, `--job_timeout_min 240`. A job
+  that fails (e.g. GPU memory) is re-run alone; no finished result is replaced.
+- **Analysis and rule: unchanged from P18.** C13 per learner on the 300 new results plus the 180 TabPFN results of P18
+  (clean c63c26e, A100): leaderboard Joint TAR of the same learner, fold-averaged, two-sided Wilcoxon, Holm over the 5
+  learners, pass iff Holm p < 0.05 AND positive mean (`scripts/p18_report.py`). Final method = `cte_depth_top3_attn`
+  iff (a) C13 passes for 5/5 learners AND (b) its paired mean vs `cte_depth_top3` is positive for >= 4/5 learners;
+  otherwise `cte_depth_top3` stays final and P18 is reported as an analysis. Secondary, reported regardless: Holm over
+  all pre-registered tests; the new results vs the T4 results of the same jobs.
+- **The 300 T4 results** are kept as a record outside `results/raw/` and are not used for any claim.
+
+## E56 — Provenance settled by a direct file comparison; P18b WITHDRAWN before any run; the P18 results stand   (2026-10-24)
+- **Check (read-only, on the VM that ran the 300 T4 jobs):** every file of the code the runs import, as listed in
+  `c63c26e` (`multabench/`, `scripts/run_experiment.py`, `jobs/p18.txt`, `pyproject.toml`, `uv.lock`: 485 files), compared
+  with `git hash-object` against `c63c26e`: 481 byte-identical; the other 4 (`depth.py`, `variants.py`,
+  `run_experiment.py`, `jobs/p18.txt`) identical after removing CR characters (copied from a Windows checkout, CRLF).
+  The VM's HEAD `8b3bb76` "dirty" is therefore `c63c26e` in content.
+- **The 35 LightGBM results finished before 2026-10-23 20:12** (verified from the JSON timestamps: 35, all LightGBM) ran
+  with `f145a76`, which differs from `c63c26e` in one argument of `depth.py` (token states also written to disk,
+  `cache_root` vs `None`): the same computation and features.
+- **Correction to E53:** "300 results at `8b3bb76` + uncommitted copies, verified identical in content to `c63c26e`
+  (35 early LightGBM results: `f145a76`, differing only in whether token states are written to disk)."
+- **Deviation from E54, stated openly:** E54 fixed that a failed check means re-running the 300 jobs. The check's purpose
+  was provenance (same code?); the file comparison answers it directly. With the code identical, E55's over-tolerance
+  differences can only come from the GPU (T4 vs A100), and a re-run on another GPU would draw new GPU noise, not remove
+  it. P18b is withdrawn before any run (its jobs file was never added); the P18 results and the P18 final-method rule
+  stand: final method `cte_depth_top3_attn`. Keeping the T4 results is the conservative choice: it keeps the one
+  failed LightGBM fold (Spotify Genres fold 3, 0.536 on the T4, 0.9135 on the A100).
+- **Reported as a property of the method:** single-job scores depend on the GPU type through the attention probe's
+  training (A100 − T4 on 18 jobs: mean +0.0005, up to ±0.021 on Video Games, the noisiest dataset); the final runs
+  used a T4 (CatBoost, LightGBM, TabM) and an A100 (TabPFN), one GPU type per learner.
+
+## E57 — Switch to the final method `cte_depth_top3_attn` in every reader-facing file   (2026-10-24)
+- **Data:** `reports/tables/fold_scores.csv` + the 480 P18 rows (`export_p18`, new column `share_attn`; the 2,715 old
+  rows byte-identical apart from the empty new column). `scripts/make_results.py` METHOD = `cte_depth_top3_attn` →
+  `results/*.csv` (reproduce C13 exactly; `scripts/check_recompute.py` reproduces all 5 learners from `results/raw`).
+  `reports/figures/fig7_depth_profile_20.*` rebuilt from the final CatBoost runs: max |Δ| vs the depth-probe runs
+  7e-5, best layer identical on 20/20. `reports/p18/a100_check.csv` + `a100_check/`: the 19 E55 results.
+- **Notebook 02** rebuilt and executed (0 errors): Holm over 24; new section 7b (paired vs the depth-probe version,
+  Jigsaw, Spotify folds, attention-probe training time: median 2.8 min per dataset-fold on a T4, max 26.5; the A100
+  check). Checks run with the depth-probe version (36 datasets, seeds, cost, label shuffle of reports/checks) are labelled
+  so; the final method's label shuffle is E52's.
+- **Paper:** attention probe in Method (citing Lin et al. 2017) and Figure 1 (5 experts); Results paragraph "The
+  attention probe"; build-up table moved to the appendix (tables only there) and given the attention row; Figure 2a =
+  mean gain per task type per learner; tests table over all 24 tests; main text within 4 pages.
+- **Hostile review of the new numbers:** (a) the class-imbalance correlation became ρ = 0.70, p = 0.03 (10 datasets, not
+  planned): the paper's old sentence "not related to class imbalance" would be false, so it was removed; the
+  task-type sentence (multiclass smallest) carries the same fact, and notebook 02 reports the correlation. (b) Gain vs
+  fine-tuning's own gain: ρ = 0.28, p = 0.23 (was 0.06). (c) Laptop CPU, CatBoost, Product Sentiment fold 0: train 126 s,
+  predict 17 s, AUROC 0.898 vs 0.895 on the T4 (CPU vs GPU arithmetic). (d) The 36-dataset and seed checks were run
+  with the depth-probe version; paper, README and notebook say so.
+- **Housekeeping:** `scripts/e52_vm_run.sh` → `archive/scripts/` (a one-machine helper); the comment line of
+  `jobs/p18.txt` names the GPUs instead of the machine (no job line changed).

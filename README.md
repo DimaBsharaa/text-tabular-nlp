@@ -3,8 +3,8 @@
 An extension of [MulTaBench](https://github.com/alanarazi7/MulTaBench), the benchmark for tables with free-text
 columns ([arXiv:2605.10616](https://arxiv.org/abs/2605.10616)). The benchmark's strongest text pipeline, **Joint TAR**,
 fine-tunes the text encoder on each task. This repository presents a method that makes the text features target-aware
-**without fine-tuning anything**. A frozen encoder is read by a few cheap models that predict the target ("experts"),
-each fitted without the label of the row it describes. With all five MulTaBench learners, the method
+**without fine-tuning the encoder**. A frozen encoder is read by a few small models that predict the target
+("experts"), each fitted without the label of the row it describes. With all five MulTaBench learners, the method
 scores higher than Joint TAR with the same learner.
 
 ## Results
@@ -14,11 +14,11 @@ regression), compared with the published Joint TAR score of the **same learner, 
 
 | Learner | Datasets | Joint TAR | Ours | Mean gain [95% CI] | Datasets won | Wilcoxon p |
 |---|---:|---:|---:|---:|---:|---:|
-| CatBoost | 20 | 0.811 | 0.828 | +0.016 [0.008, 0.024] | 14 | 0.002 |
-| LightGBM | 20 | 0.798 | 0.817 | +0.019 [0.008, 0.031] | 14 | 0.006 |
-| TabM | 20 | 0.819 | 0.836 | +0.016 [0.008, 0.024] | 16 | 0.0007 |
-| TabPFN-v2 | 18 | 0.783 | 0.812 | +0.029 [0.013, 0.049] | 14 | 0.004 |
-| TabPFN-2.5 | 18 | 0.807 | 0.827 | +0.020 [0.010, 0.031] | 15 | 0.001 |
+| CatBoost | 20 | 0.811 | 0.831 | +0.019 [0.012, 0.027] | 18 | < 0.0001 |
+| LightGBM | 20 | 0.798 | 0.817 | +0.019 [0.005, 0.031] | 16 | 0.007 |
+| TabM | 20 | 0.819 | 0.838 | +0.019 [0.011, 0.027] | 17 | < 0.0001 |
+| TabPFN-v2 | 18 | 0.783 | 0.815 | +0.033 [0.017, 0.051] | 16 | 0.0003 |
+| TabPFN-2.5 | 18 | 0.807 | 0.829 | +0.023 [0.013, 0.033] | 18 | < 0.0001 |
 
 ![Mean score per learner: Joint TAR vs ours, and the gain with its 95% interval](results/figures/fig1_mean_by_learner.png)
 
@@ -26,19 +26,26 @@ Left: mean scores (the axis starts at 0.70 and averages AUROC with R², as the b
 gain over Joint TAR with its 95% interval, the honest scale.
 
 - **Significant with every learner** (two-sided Wilcoxon signed-rank test over datasets, each test specified before
-  its run). With a Holm correction over all 17 claims tested in the project, 4 of 5 remain significant (LightGBM: 0.061).
-- **Not a lucky seed:** re-run with two other cross-fitting fold seeds (LightGBM), the gain is +0.017 and +0.018
-  (15 of 20 datasets each, Holm p = 0.019); per dataset it moves by a median 0.001 between seeds.
-- **Broad:** 76% of the 480 individual (learner, dataset, fold) runs beat Joint TAR; 14 of the 20 datasets are won
+  its run). With a Holm correction over all 24 claims tested in the project, 4 of 5 remain significant (LightGBM: 0.095).
+- **Broad:** 83% of the 480 individual (learner, dataset, fold) runs beat Joint TAR; 16 of the 20 datasets are won
   with at least 4 of the 5 learners.
-- **Where fine-tuning still wins:** Jigsaw Toxicity, the dataset on which fine-tuning itself gains the most
-  (+0.117 over the frozen encoder). On 36 further text datasets never used in development the gain is smaller
-  (median +0.003, 24 of 36 won).
+- **Jigsaw Toxicity**, where fine-tuning itself gains the most (+0.117 over the frozen encoder), was the one dataset
+  Joint TAR won with every learner. The last expert added, an attention probe on the frozen token states, turns it
+  into a win with every learner (+0.006 to +0.016).
+- **One failure:** LightGBM fails on one fold of Spotify Genres (AUROC 0.536 against 0.906–0.915 on the other folds;
+  0.913 when that job is re-run on an A100 GPU). It is reported as measured and makes LightGBM the one learner the
+  attention probe does not help on average (−0.0006).
+- **Checked with the version without the attention probe:** re-run with two other cross-fitting fold seeds
+  (LightGBM), the gain is +0.017 and +0.018 (15 of 20 datasets each, Holm p = 0.019); on 36 further text datasets
+  never used in development it is smaller (median +0.003, 24 of 36 won).
 - TabPFN has no published baseline for 2 of the 20 datasets (Spotify Genres, Wine Review).
 
 Full analysis, with every comparison and chart: [**notebook 02**](notebooks/02_results.ipynb). Scores per fold, dataset
-and learner: [`results/`](results/); the result file of every run of the final method (788 JSONs, with config, git
-commit and hardware): [`results/raw/`](results/raw/).
+and learner: [`results/`](results/); the result file of every run of the final method and of its version without
+the attention probe (1,268 JSONs, with config, git commit and hardware): [`results/raw/`](results/raw/). The final
+runs of CatBoost, LightGBM and TabM ran on a Tesla T4 GPU, those of TabPFN on an A100. The attention probe trains on
+the GPU, so single scores depend slightly on its type: 18 of the T4 jobs re-run on an A100 differ by +0.0005 on
+average and by up to ±0.02 on the noisiest dataset (Video Games Sales) ([`reports/p18/a100_check.csv`](reports/p18/a100_check.csv)).
 
 ## Background
 
@@ -69,8 +76,8 @@ Each one measured on the benchmark, while studying it or while developing the me
 4. **Exact words and numbers get blurred.** A sentence embedding smooths over the specific tokens ("Riesling",
    "$45", "2015") that often carry the signal: adding only the cross-fitted lexical expert (TF-IDF + Ridge) to the
    standard frozen features already matches Joint TAR (±0.000).
-5. **A GPU for every run.** Upstream fine-tunes the encoder again inside every learner's run: for every dataset,
-   fold and learner.
+5. **Fine-tuning inside every run.** Upstream fine-tunes the encoder again inside every learner's run: for every
+   dataset, fold and learner.
 
 ## The method
 
@@ -82,8 +89,9 @@ flowchart LR
     E --> N["neighbour expert<br/>labels of the 20 most similar rows"]
     E --> F["probe<br/>Ridge on the full 384-d embedding"]
     E --> D["depth probes<br/>Ridge on each of 12 layers, best 3 averaged"]
+    E --> A["attention probe<br/>learned token weights on the best layer"]
     T --> M["numeracy features<br/>numbers, years, currency, length"]
-    L & N & F & D --> X["cross-fitting<br/>5-fold out-of-fold predictions"]
+    L & N & F & D & A --> X["cross-fitting<br/>5-fold out-of-fold predictions"]
     S["structured columns"] --> G["any MulTaBench learner"]
     P --> G
     X --> G
@@ -92,19 +100,23 @@ flowchart LR
 
 The learner receives everything Joint Frozen gives it, plus a few columns that are **predictions of the target from
 the text**, each from a different view: the exact words (lexical expert), similar rows (neighbour expert), the whole
-final-layer embedding (probe) and the best inner layers (depth probes). Each answers one problem above: cross-fitting
-(1), the probe on all 384 dimensions (2), the depth probes (3), the lexical expert and numeracy features (4), and no
-fine-tuning, so no GPU (5).
+final-layer embedding (probe), the best inner layers (depth probes) and the tokens that matter most (attention probe:
+a small learned head that weights the frozen token states of the best layer, so one decisive word is not averaged
+away). Each answers one problem above: cross-fitting (1), the probe on all 384 dimensions (2), the depth probes (3),
+the lexical expert, the attention probe and the numeracy features (4), and features built once per dataset and fold
+for all learners, with the encoder never fine-tuned (5).
 
 **Cross-fitting** is what makes this work. The training rows are split into 5 parts; each part's expert predictions
 come from experts trained on the other 4, so each training row's feature comes from a model that never saw that row's
-label, as for a test row. Test rows get predictions from experts trained on all training rows. The few selection
+label, as for a test row. Test rows get predictions from experts trained on all training rows (the attention probe
+instead gives them the mean of its 5 fold models). The few selection
 choices (the Ridge penalty from a small grid, the three depth layers) are made once from all training rows'
 out-of-fold scores, never from validation or test labels. The same lexical expert without cross-fitting
 (trained on all training rows, then used on them) scores 0.034 lower, well below Joint TAR.
 
-Everything that uses labels is fit on training rows only, and nothing is fine-tuned: the encoder is the public
-`intfloat/e5-small-v2`, and no model weights are needed beyond it. Details, every option and runtimes:
+Everything that uses labels is fit on training rows only, and the encoder is never fine-tuned: it is the public
+`intfloat/e5-small-v2`, and no pretrained weights are needed beyond it (the attention probe's small heads are trained
+inside each run, like the Ridge experts). Details, every option and runtimes:
 [**method README**](multabench/ours/README.md).
 
 ## Quickstart
@@ -151,32 +163,29 @@ The method was reached in steps, each tested on development splits of the traini
 advance, on the full benchmark. Fine-tuning variants that put the structured columns into the encoder's input did not
 beat Joint TAR. Cross-fitting the fine-tuned head fixed the over-trust but cost 22 GPU-hours and was no better, which
 raised the question of whether the target-awareness needs fine-tuning at all. Cheap frozen experts matched Joint TAR;
-a probe on the full embedding, then probes on the inner layers, took it clearly past. Every stage, with its numbers:
+a probe on the full embedding, then probes on the inner layers, took it clearly past, and an attention probe on the
+frozen token states removed the last dataset Joint TAR won with every learner (Jigsaw Toxicity). Every stage, with its numbers:
 [`archive/README.md`](archive/README.md).
 
 ## Limitations
 
-- **Toxicity-like targets.** On Jigsaw Toxicity fine-tuning keeps a clear edge with every learner; what a frozen
-  encoder cannot represent, no read-out of it can recover.
 - **Smaller gains on new data.** On 36 further datasets the gain is positive but small, and not significant after
-  correcting for the number of tests.
+  correcting for the number of tests; this was measured before the attention probe existed.
 - **The 20 datasets were seen during development.** Early on, their test scores were looked at; later ideas were
   compared on splits of the training rows only and each final claim was specified before its run, but the method was
-  chosen on these datasets, so they are not a pristine holdout. The 36 datasets never used show a smaller gain.
-- **Not faster.** Building our features on a CPU takes about 2.7 minutes per job (excluding the frozen encoding, done
-  once per dataset), against 1.3 minutes for an optimised GPU fine-tuning of Joint TAR on the same machine; the method
-  saves the GPU, not time.
+  chosen on these datasets, so they are not a pristine holdout (the attention probe, for example, was motivated by
+  the known result on Jigsaw Toxicity). The 36 datasets never used show a smaller gain.
 - **One learner seed** (42), as in the published baselines; the method's own randomness, the assignment of rows to
-  cross-fitting folds, was checked with two more seeds.
+  cross-fitting folds, was checked with two more seeds (version without the attention probe).
 
 ## Repository layout
 
 ```
-multabench/ours/          the method (cte.py, p7.py, depth.py) and its plumbing; README with every detail
+multabench/ours/          the method (cte.py, p7.py, depth.py, attn.py) and its plumbing; README with every detail
 multabench/ours/archive/  code of earlier versions, kept runnable
 scripts/                  train / predict, the benchmark runner, report and check scripts
 results/                  final scores per fold, per dataset and per learner; figures
-reports/                  the pre-registered analysis of each final claim (p14, p15, p16), checks, tables
+reports/                  the pre-registered analysis of each final claim (p14 to p18), checks, tables
 notebooks/                01 benchmark study, 02 results, the Colab runner
 jobs/                     the jobs files of the final runs
 paper/                    the paper (LaTeX)

@@ -1,4 +1,4 @@
-"""Builds and executes notebooks/02_results.ipynb: every comparison of the final method (cte_depth_top3) with the
+"""Builds and executes notebooks/02_results.ipynb: every comparison of the final method (cte_depth_top3_attn) with the
 MulTaBench baselines, from the committed results/ and reports/ files only (no Drive export needed).
     python scripts/make_results.py            # results/*.csv from reports/tables/fold_scores.csv
     python scripts/build_results_notebook.py  # notebooks/02_results.ipynb + results/figures/*.png
@@ -28,8 +28,10 @@ def code(text: str) -> None:
 md("""
 # Results: Cross-fitted Text Experts vs. MulTaBench Joint TAR
 
-This notebook compares our method (`cte_depth_top3`: cross-fitted text experts, a linear probe and depth probes on a
-frozen e5-small-v2 encoder) with the baselines published by [MulTaBench](https://github.com/alanarazi7/MulTaBench).
+This notebook compares our method (`cte_depth_top3_attn`: cross-fitted text experts, a linear probe, depth probes and
+an attention probe on a frozen e5-small-v2 encoder) with the baselines published by
+[MulTaBench](https://github.com/alanarazi7/MulTaBench). "Depth-probe version" (`cte_depth_top3`) is the same method
+without the attention probe; some checks (36 further datasets, other seeds, cost) were run with it.
 
 - **Datasets:** the 20 MulTaBench text-tabular datasets, the benchmark's 5 folds (test = 10% of rows, at most 2,000).
 - **Learners:** CatBoost, LightGBM, TabM, TabPFN-v2, TabPFN-2.5, each with upstream default settings.
@@ -118,18 +120,18 @@ md("""
 
 For each learner: one number per dataset, our score minus Joint TAR averaged over the 5 folds, then a two-sided
 Wilcoxon signed-rank test over datasets (do the gains lean consistently positive, or could the signs be chance?).
-Each test was written down before its run. **Holm (17)** corrects across all 17 tests run in the project, the
+Each test was written down before its run. **Holm (24)** corrects across all 24 tests run in the project, the
 strictest reading. The 95% interval is a bootstrap over datasets.
 """)
 
 code("""
-holm = json.load(open(R("reports", "p16", "p16_report.json")))["holm_all_preregistered"]
-holm_key = {"CatBoost": "C9", "LightGBM": "C10_lgbm", "TabM": "C10_tabm", "TabPFN-v2": "C11_tabpfnv2",
-            "TabPFN-2.5": "C11_tabpfnv2p5"}
+p18 = json.load(open(R("reports", "p18", "p18_report.json")))
+holm = p18["holm_all_preregistered"]
+SHORT = {"CatBoost": "catboost", "LightGBM": "lgbm", "TabM": "tabm", "TabPFN-v2": "tabpfnv2", "TabPFN-2.5": "tabpfnv2p5"}
 t = s[["datasets", "joint_tar", "ours", "mean_gain", "median_gain", "ci95_low", "ci95_high", "wins", "wilcoxon_p"]].copy()
-t["holm_17"] = [holm[holm_key[l]] for l in t.index]
+t["holm_24"] = [holm["C13_" + SHORT[l]] for l in t.index]
 t["passes (p < 0.05)"] = t.wilcoxon_p < 0.05
-t["passes Holm (17)"] = t.holm_17 < 0.05
+t["passes Holm (24)"] = t.holm_24 < 0.05
 t
 """)
 
@@ -259,12 +261,13 @@ type, one point per learner. Classification uses AUROC (macro one-vs-rest for mu
 All five learners have positive overall mean gains, and their 95% dataset-bootstrap intervals lie above zero. Every
 learner also has a positive mean gain within each of the three task groups.
 
-Regression shows the largest numerical gains across learners (+0.0237 to +0.0461), followed by binary classification
-(+0.0099 to +0.0170) and multiclass classification (+0.0035 to +0.0111). These are changes in different metrics—R² and
-AUROC—so their magnitudes require separate interpretation.
+Regression shows the largest numerical gains across learners (+0.0256 to +0.0484), followed by binary classification
+(+0.0180 to +0.0261) and multiclass classification (+0.0007 to +0.0088; LightGBM's +0.0007 is pulled down by its one
+failed Spotify Genres fold, section 7b). These are changes in different metrics—R² and AUROC—so their magnitudes
+require separate interpretation.
 
-Positive group averages do not mean improvement on every dataset. Regression improves on 8–10 of 10 datasets per
-learner, while binary classification improves on 2 of 3. Multiclass improvements are less uniform. The binary group is
+Positive group averages do not mean improvement on every dataset. Regression improves on 9–10 of 10 datasets per
+learner, and binary classification on 3 of 3. Multiclass improvements are less uniform (3–6 datasets per learner). The binary group is
 small, and multiclass coverage differs between learners, so this figure describes the observed pattern rather than
 establishing a statistically significant difference between task types.
 """)
@@ -311,7 +314,7 @@ md("""
 ## 7. What each part contributes
 
 **Build-up** (CatBoost, all 20 datasets, 5 folds, each vs. Joint TAR of the same fold): each expert alone, the lexical
-expert *without* cross-fitting, the experts together, then the probe and the depth probes added. All rows are full
+expert *without* cross-fitting, the experts together, then the probe, the depth probes and the attention probe added. All rows are full
 benchmark runs (`reports/tables/fold_scores.csv`). **Depth profile**: for all 20 datasets, how well a cross-fitted
 linear probe on each of e5's 12 layers predicts the target, minus the final-layer probe (out-of-fold scores on the
 training rows of the final CatBoost run, averaged over the 5 folds; `scripts/depth_figures.py`). The dot marks each
@@ -324,7 +327,7 @@ STAGES = [("Joint Frozen (leaderboard)", None), ("our Joint TAR re-implementatio
           ("numeracy features only", "cte_num"), ("neighbour expert only", "cte_nbr"),
           ("lexical expert, NOT cross-fitted", "cte_lex_insample"), ("lexical expert only", "cte_lex"),
           ("all experts (CTE)", "cte"), ("+ probe on the full embedding", "cte_probe"),
-          ("+ depth probes = final method", "cte_depth_top3")]
+          ("+ depth probes", "cte_depth_top3"), ("+ attention probe = final method", "cte_depth_top3_attn")]
 cb = fs[(fs.learner == "catboost") & fs.dataset.isin(per_ds.dataset.unique())]
 rows = []
 for label, m in STAGES:
@@ -359,12 +362,76 @@ print("largest inner-layer gains:", hm.max(axis=1).sort_values(ascending=False).
 """)
 
 md("""
+## 7b. The attention probe on its own
+
+The final method is the depth-probe version plus one expert, a cross-fitted attention probe on the frozen token states
+(`reports/p18/`, specified before its run). Below: the paired difference between the two versions per learner (same
+datasets, folds and cross-fitting folds), the one dataset where Joint TAR used to win with every learner (Jigsaw
+Toxicity), and LightGBM on Spotify Genres, the one case where the new version is clearly worse.
+""")
+
+code("""
+inc = pd.DataFrame({l: p18["vs_current_method"][SHORT[l]] for l in LEARNERS}).T
+display(inc[["n", "mean_diff", "median_diff", "wins", "p_value"]].rename(
+    columns={"mean_diff": "mean: final - depth-probe version", "median_diff": "median", "wins": "datasets better"}).round(4))
+fs_ = pd.read_csv(R("reports", "tables", "fold_scores.csv"))
+fs_ = fs_[fs_.learner.isin(SHORT.values())]
+jig = fs_[fs_.dataset == "BIN_TEXT_JIGSAW_TOXICITY"]
+jg = pd.DataFrame({lab: (jig[jig.method == m].score - jig[jig.method == m].lb_joint_tar).groupby(jig.learner).mean()
+                   for lab, m in (("depth-probe version", "cte_depth_top3"), ("final method", "cte_depth_top3_attn"))})
+print("Jigsaw Toxicity, gain over Joint TAR per learner:")
+display(jg.round(4))
+sp = fs_[(fs_.dataset == "MUL_TEXT_SPOTIFY_GENRES") & fs_.method.isin(["cte_depth_top3", "cte_depth_top3_attn"])]
+print("Spotify Genres, score per fold (AUROC):")
+display(sp.pivot_table(index=["method", "learner"], columns="fold", values="score").round(3))
+""")
+
+md("""
+**Reading.** The attention probe improves four of the five learners by +0.002 to +0.003 on average (p < 0.01 each)
+and turns Jigsaw Toxicity from a loss into a win with every learner. LightGBM is the exception (−0.0006 on average,
+not significant), and that comes from a single run: on Spotify Genres fold 3, LightGBM scores 0.536 against 0.906–0.915
+on the other folds. The features of that fold are sound: CatBoost and TabM score 0.963 and 0.962 on exactly the same
+features. LightGBM, run with the benchmark's default settings (100 trees, no early stopping), fails on that fold. We
+report the result as measured. Re-run on an A100 GPU instead of the Tesla T4, the same job scores 0.9135 (table
+below).
+""")
+
+code("""
+import glob
+rows = []
+for p in glob.glob(R("results", "raw", "cte_depth_top3_attn", "*", "*", "fold[0-4].json")):
+    r = json.load(open(p)); a = r["stacking"]["depth"]["attn"]
+    if a["seconds"] > 0:  # the first job of each (dataset, fold) trains the probe; later learners reuse it
+        rows.append({"gpu": r["gpu"], "dataset": r["dataset"], "fold": r["fold"], "seconds": a["seconds"]})
+at = pd.DataFrame(rows)
+t4 = at[at.gpu == "Tesla T4"]
+print(f"attention probe training per (dataset, fold) on a Tesla T4: median {t4.seconds.median() / 60:.1f} min, "
+      f"max {t4.seconds.max() / 60:.1f} min ({len(t4)} of 100)")
+""")
+
+md("""
+**Same code, other GPU.** The attention probe trains on the GPU, whose arithmetic differs between GPU types. 19 of the
+Tesla T4 jobs were re-run on an A100 from the published code (`reports/p18/a100_check.csv`): the 18 fold-0 jobs differ
+by +0.0005 on average, most on Video Games Sales, the noisiest dataset; LightGBM's failed Spotify Genres fold does not
+recur. CatBoost, LightGBM and TabM ran on the T4 and TabPFN on the A100, so each learner's comparisons use one GPU type.
+""")
+
+code("""
+chk = pd.read_csv(R("reports", "p18", "a100_check.csv"))
+chk["dataset"] = chk.dataset.map(NAME)
+f0 = chk[chk.fold == 0].diff_a100_minus_t4
+print(f"fold-0 jobs: {len(f0)}, mean A100 - T4 {f0.mean():+.4f}, max |diff| {f0.abs().max():.4f}")
+chk.drop(columns=["commit_a100", "dirty_a100"]).round(4)
+""")
+
+md("""
 ## 8. Cost of building the text features
 
-Joint TAR fine-tunes e5 on a GPU; our method builds its features on the CPU. Both timed on the same Colab A100
-machine, per (dataset, fold) (`scripts/compute_cost.py`). Joint TAR's time is our fast re-implementation of its
-fine-tuning, about 11× faster per epoch than upstream's own code; our time is a run in which every expert and probe
-was built from scratch.
+Joint TAR fine-tunes e5 on a GPU. The depth-probe version builds its features on the CPU; the final method adds the
+attention probe, which trains on a GPU (section 7b: median 2.8 min per (dataset, fold) on a Tesla T4). Below, both
+timed on the same Colab A100 machine, per (dataset, fold) (`scripts/compute_cost.py`): Joint TAR's time is our fast
+re-implementation of its fine-tuning, about 11× faster per epoch than upstream's own code; ours is the depth-probe
+version, every expert and probe built from scratch.
 """)
 
 code("""
@@ -377,15 +444,17 @@ print(f"median per job: Joint TAR {cc.tar_seconds.median() / 60:.1f} min (GPU), 
 """)
 
 md("""
-**Reading.** Our method is not faster than an optimised fine-tuning: about 2× its time per job, on a CPU instead of a
-GPU. What it saves is the GPU. It also builds features once per (dataset, fold) for all learners that share the same
+**Reading.** Our method is not faster than an optimised fine-tuning. The depth-probe version takes about 2× its time
+per job, on a CPU; the final method adds about 2.8 GPU-minutes for the attention probe, so it costs roughly 4× an
+optimised Joint TAR fine-tuning. Both build features once per (dataset, fold) for all learners that share the same
 training rows, whereas upstream's Joint TAR fine-tunes again inside every learner's run.
 """)
 
 md("""
 ## 9. Beyond the 20: 36 further text datasets
 
-To check that the method was not tuned to the 20 benchmark datasets, it was run once (CatBoost, folds 0–2) on 36
+To check that the method was not tuned to the 20 benchmark datasets, the depth-probe version was run once (CatBoost,
+folds 0–2; the attention probe came later and was not run here) on 36
 further text datasets that have MulTaBench baselines (`multabench/leaderboard/results/text_source/`) and were never
 used during development. The **median** is the summary to read: on two used-car price datasets with heavy-tailed
 targets (Mercedes-Benz Italy, CarDekho) both methods score R² far below zero on some folds, and the difference of two
@@ -400,9 +469,9 @@ ax.bar(range(len(h)), h.clip(-0.1, 0.1), color=[C_OURS if v > 0 else C_TAR for v
 ax.axhline(0, color="k", lw=0.8); ax.set_xticks([])
 ax.set_ylabel("ours − Joint TAR (clipped ±0.1)"); ax.set_title("36 further datasets, sorted")
 fig.tight_layout(); fig.savefig(join(FIG, "fig6_36_datasets.png"), dpi=200); plt.show()
-holm7 = json.load(open(R("reports", "p16", "p16_report.json")))["holm_all_preregistered"]["C7:cte_depth_top3|vs_joint_tar"]
+holm7 = json.load(open(R("reports", "p18", "p18_report.json")))["holm_all_preregistered"]["C7:cte_depth_top3|vs_joint_tar"]
 print(f"n = {c7['n']}, wins = {c7['wins']}, median {c7['median_diff']:+.4f}, Wilcoxon p = {c7['p_value']:.4f}, "
-      f"Holm (17) = {holm7:.3f}")
+      f"Holm (24) = {holm7:.3f}")
 heavy = ["REG_TEXT_TRANSPORTATION_USED_CAR_MERCEDES_BENZ_ITALY", "REG_TEXT_CONSUMER_CAR_PRICE_CARDEKHO"]
 print(f"mean {c7['mean_diff']:+.4f}; without the two heavy-tailed car-price datasets {h.drop(heavy).mean():+.4f}")
 """)
@@ -412,7 +481,8 @@ md("""
 
 - **Label shuffle.** The whole method retrained with the training labels randomly permuted (true test labels kept,
   development split of training rows). If any label information reached the features by another path, the score would
-  stay high; it falls to chance.
+  stay high; it falls to chance, for the depth-probe version (first table) and for the final method (second table; on
+  the same five Jigsaw permutations both versions spread over 0.47–0.57).
 - **Independent recomputation.** `scripts/check_recompute.py` recomputes every headline number from the raw result
   files and the leaderboard CSVs with no project code; it reproduces all 5 rows of section 2.
 - **Same benchmark.** Upstream code at tag `paper_version`, unmodified; for these 20 datasets its splits, metrics,
@@ -423,13 +493,16 @@ md("""
 """)
 
 code("""
-pd.read_csv(R("reports", "checks", "label_shuffle.csv")).round(4)
+display(pd.read_csv(R("reports", "checks", "label_shuffle.csv")).round(4))
+display(pd.concat([pd.read_csv(R("reports", "dev", "e52", f)) for f in ("label_shuffle.csv", "label_shuffle_jigsaw.csv")])
+        .round(4).reset_index(drop=True))
 """)
 
 md("""
 **Not a lucky seed.** The method's own randomness is the assignment of training rows to the 5 cross-fitting folds
-(seed 42 everywhere above; the learners' seeds are fixed by the benchmark). LightGBM was re-run with fold seeds 43 and
-44 (`reports/p17/`, specified before the run, Holm over the two seeds). Below: the gain per seed, then per dataset.
+(seed 42 everywhere above; the learners' seeds are fixed by the benchmark). The depth-probe version with LightGBM was
+re-run with fold seeds 43 and 44 (`reports/p17/`, specified before the run, Holm over the two seeds). Below: the gain
+per seed, then per dataset.
 """)
 
 code("""
@@ -448,31 +521,38 @@ sd.sort_values("sd over seeds", ascending=False).head(5).round(4)
 md("""
 ## 11. Summary
 
-1. **Better than Joint TAR with every learner.** The mean gain is +0.016 to +0.029 (AUROC / R²). Measured from Joint
-   Frozen, our method adds 1.8× (CatBoost, LightGBM) to 3.2× (TabPFN-2.5) what fine-tuning adds, without fine-tuning.
-2. **Significant for all 5 learners** (two-sided Wilcoxon over datasets, p ≤ 0.0056); **4 of 5 also survive** the
-   Holm correction over all 17 tests of the project (LightGBM: 0.061).
-3. **Broad, not driven by a few datasets.** 76% of the 480 individual runs beat Joint TAR; 10 of the 20 datasets are
-   won with every learner and 14 with at least 4; the learners agree on win / loss for 72–94% of the datasets.
-4. **Above the noise.** On 10 of the 20 datasets the mean gain exceeds one standard deviation of the baseline's own
-   fold-to-fold noise; only Wine Review loses by more than that, and by 0.002.
-5. **Largest on regression** (+0.024 to +0.046), then binary (+0.010 to +0.017), smallest on multiclass (+0.004 to +0.011).
+1. **Better than Joint TAR with every learner.** The mean gain is +0.019 to +0.033 (AUROC / R²). Measured from Joint
+   Frozen, our method adds 1.8× (LightGBM) to 3.4× (TabPFN-2.5) what fine-tuning adds, without fine-tuning.
+2. **Significant for all 5 learners** (two-sided Wilcoxon over datasets, p ≤ 0.0073); **4 of 5 also survive** the
+   Holm correction over all 24 tests of the project (LightGBM: 0.095).
+3. **Broad, not driven by a few datasets.** 83% of the 480 individual runs beat Joint TAR; 13 of the 20 datasets are
+   won with every learner and 16 with at least 4; the learners agree on win / loss for 78–94% of the datasets.
+4. **Above the noise.** On 11 of the 20 datasets the mean gain exceeds one standard deviation of the baseline's own
+   fold-to-fold noise; two lose by more than that: Wine Review (by 0.0015) and Spotify Genres (by 0.022, from
+   LightGBM's one failed fold).
+5. **Largest on regression** (+0.026 to +0.048), then binary (+0.018 to +0.026), smallest on multiclass (+0.001 to
+   +0.009).
 6. **The target sits at different depths**: the best probe layer ranges from 2 to 12 and is an inner layer in 14 of
    the 20 datasets (largest gain: Book Readability, layer 3), which is what the depth probes exploit.
-7. **Where fine-tuning still wins: Jigsaw Toxicity**, the one dataset where fine-tuning itself adds +0.117 over the
-   frozen encoder; toxicity is not linearly readable from frozen e5. Elsewhere our gain is unrelated to how much
-   fine-tuning helps (Spearman ρ = 0.06).
-8. **Class imbalance does not drive the result**: the gain is unrelated to the minority-class share (ρ = 0.42,
-   p = 0.23, 10 datasets), splits are stratified, and AUROC does not depend on the class ratio.
+7. **The attention probe** adds +0.002 to +0.003 for four learners (p < 0.01 each) and turns Jigsaw Toxicity, where
+   Joint TAR used to win with every learner (by 0.008–0.013), into a win with every learner (+0.006 to +0.016). With
+   LightGBM it is −0.0006 on average, all from one failed fold (Spotify Genres fold 3: 0.536). Across datasets the gain
+   is not significantly related to how much fine-tuning helps (Spearman ρ = 0.28, p = 0.23).
+8. **Class imbalance does not distort the comparison**: splits are stratified and AUROC does not depend on the class
+   ratio. The gain is smaller on the datasets with the rarest classes (ρ = 0.70 with the rarest class's share,
+   p = 0.03, 10 datasets): these are the multiclass tasks with 4 to 114 classes, the task type with the smallest gains
+   (section 5).
 9. **Cross-fitting is essential**: the same lexical expert without it scores 0.034 lower (−0.034 vs. Joint TAR
    instead of ±0.000), and 0.045 below the full set of cross-fitted experts.
-10. **On 36 further datasets** the gain is positive but small (median +0.003, 24 of 36 won); significant on its own
-   (p = 0.017), not after the 17-test correction.
-11. **No GPU needed, but not faster**: building our features takes about 2.7 min per job on a CPU, against 1.3 min for
-    an optimised GPU fine-tuning of Joint TAR.
-12. **No leakage path found**: with shuffled training labels the method falls to chance (AUROC 0.50–0.53, R² −0.01).
-13. **Not a lucky seed**: with two other cross-fitting fold seeds (LightGBM) the gain is +0.017 and +0.018 (15 of 20
-    datasets each, Holm p = 0.019); per dataset it moves by a median 0.001 between seeds, most on Video Games Sales.
+10. **On 36 further datasets** (depth-probe version) the gain is positive but small (median +0.003, 24 of 36 won);
+   significant on its own (p = 0.017), not after the 24-test correction.
+11. **Cost** (section 8): the depth-probe version builds its features in about 2.7 min per job on a CPU, the attention
+    probe adds a median 2.8 min on a GPU (T4); an optimised GPU fine-tuning of Joint TAR takes 1.3 min.
+12. **No leakage path found**: with shuffled training labels the final method falls to chance (AUROC 0.45–0.57,
+    R² ≤ 0.01), with the same spread as the depth-probe version on the same permutations.
+13. **Not a lucky seed** (depth-probe version): with two other cross-fitting fold seeds (LightGBM) the gain is +0.017
+    and +0.018 (15 of 20 datasets each, Holm p = 0.019); per dataset it moves by a median 0.001 between seeds, most on
+    Video Games Sales.
 """)
 
 

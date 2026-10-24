@@ -23,8 +23,10 @@ R = lambda *p: join(REPO_ROOT, *p)
 LEARNERS = ["CatBoost", "LightGBM", "TabM", "TabPFN-v2", "TabPFN-2.5"]
 MACRO = {"CatBoost": "CatBoost", "LightGBM": "LightGBM", "TabM": "TabM", "TabPFN-v2": "PFNtwo",
          "TabPFN-2.5": "PFNtwofive"}
-HOLM_KEY = {"CatBoost": "C9", "LightGBM": "C10_lgbm", "TabM": "C10_tabm", "TabPFN-v2": "C11_tabpfnv2",
-            "TabPFN-2.5": "C11_tabpfnv2p5"}
+HOLM_KEY = {"CatBoost": "C13_catboost", "LightGBM": "C13_lgbm", "TabM": "C13_tabm", "TabPFN-v2": "C13_tabpfnv2",
+            "TabPFN-2.5": "C13_tabpfnv2p5"}
+SHORT = {"CatBoost": "catboost", "LightGBM": "lgbm", "TabM": "tabm", "TabPFN-v2": "tabpfnv2", "TabPFN-2.5": "tabpfnv2p5"}
+FINAL, PREVIOUS = "cte_depth_top3_attn", "cte_depth_top3"  # the final method and the same method without the attention probe
 # E8 (archive/PROGRESS.md): Joint TAR's head quality, its own training rows minus test rows, 6 pilot datasets x 3 folds
 LEAK = {"gap": "+0.031", "pos": "16", "n": "18", "datasets": "6", "p": "0.0002"}
 
@@ -53,8 +55,8 @@ def main() -> None:
     summ = pd.read_csv(R("results", "summary.csv")).set_index("learner").loc[LEARNERS]
     per_ds = pd.read_csv(R("results", "scores_per_dataset.csv"))
     folds = pd.read_csv(R("results", "scores_per_fold.csv"))
-    holm = json.load(open(R("reports", "p16", "p16_report.json")))["holm_all_preregistered"]
-    p16 = json.load(open(R("reports", "p16", "p16_report.json")))
+    p18 = json.load(open(R("reports", "p18", "p18_report.json")))
+    holm = p18["holm_all_preregistered"]  # Holm over all pre-registered tests, C1-C13
     m: dict[str, str] = {}
 
     # ---- headline per learner
@@ -89,7 +91,8 @@ def main() -> None:
     ph0 = pd.read_csv(R("reports", "phase0", "summary.csv")).set_index("dataset")
     m["jigsawTarGain"] = f3(ph0.loc["BIN_TEXT_JIGSAW_TOXICITY", "gain_over_frozen"], True)
     d = per_ds.assign(tg=per_ds.joint_tar - per_ds.joint_frozen).groupby("dataset")[["tg", "gain_vs_tar"]].mean()
-    m["rhoFineTune"] = f"{spearmanr(d.tg, d.gain_vs_tar).statistic:.2f}"
+    r_ft = spearmanr(d.tg, d.gain_vs_tar)
+    m["rhoFineTune"], m["pFineTune"] = f"{r_ft.statistic:.2f}", f"{r_ft.pvalue:.2f}"
     m["leakGap"], m["leakPos"], m["leakN"], m["leakDatasets"], m["leakP"] = (LEAK["gap"], LEAK["pos"], LEAK["n"],
                                                                          LEAK["datasets"], LEAK["p"])
 
@@ -97,10 +100,11 @@ def main() -> None:
     fs = pd.read_csv(R("reports", "tables", "fold_scores.csv"))
     cb = fs[(fs.learner == "catboost") & fs.dataset.isin(piv.index)]
     stages = [("Joint Frozen (published)", None, "frozen"), ("our re-implementation of Joint TAR", "tar_repro", "tarRepro"),
-              ("numeracy features only", "cte_num", "num"), ("neighbour expert only", "cte_nbr", "nbr"),
+              ("numeracy features only", "cte_num", "num"), ("neighbor expert only", "cte_nbr", "nbr"),
               ("lexical expert, \\emph{not} cross-fitted", "cte_lex_insample", "lexIn"),
               ("lexical expert only", "cte_lex", "lex"), ("all experts", "cte", "cte"),
-              ("+ final-layer probe", "cte_probe", "probe"), ("+ depth probes (final method)", "cte_depth_top3", "depth")]
+              ("+ full-embedding probe", "cte_probe", "probe"), ("+ depth probes", PREVIOUS, "depth"),
+              ("+ attention probe (final method)", FINAL, "attn")]
     rows = []
     for label, meth, key in stages:
         dd = cb[cb.method == ("cte" if meth is None else meth)]
@@ -109,6 +113,7 @@ def main() -> None:
         m[f"bu{key}"] = f3(diff.mean(), True)
     m["buLexInDrop"] = f3(rows[5][1] - rows[4][1])
     m["buProbeAdd"], m["buDepthAdd"] = f3(rows[7][1] - rows[6][1], True), f3(rows[8][1] - rows[7][1], True)
+    m["buAttnAdd"] = f3(rows[9][1] - rows[8][1], True)
     tarr = [r for r in rows if r[0].startswith("our re-impl")][0]
     m["tarReproP"] = fp(tarr[3])
     tab = ["\\begin{tabular}{lrrr}", "\\toprule", "Text features (CatBoost) & $\\Delta$ vs.\\ Joint TAR & Wins & $p$ \\\\",
@@ -145,10 +150,14 @@ def main() -> None:
     m["cSevenN"], m["cSevenWins"] = str(c7["n"]), str(c7["wins"])
     m["cSevenMedian"], m["cSevenP"] = f3(c7["median_diff"], True), fp(c7["p_value"])
     m["cSevenHolm"] = fp(holm["C7:cte_depth_top3|vs_joint_tar"])
+    c7d = list(c7["per_dataset"].values())
+    m["cSevenLosses"], m["cSevenBigLosses"] = str(sum(d < 0 for d in c7d)), str(sum(d < -0.07 for d in c7d))
     cc = pd.read_csv(R("results", "compute_cost.csv"))
     m["costOurs"], m["costTar"] = f"{cc.ours_seconds.median() / 60:.1f}", f"{cc.tar_seconds.median() / 60:.1f}"
     m["tarReproDiff"] = f3(rows[1][1], True)
-    ls = pd.read_csv(R("reports", "checks", "label_shuffle.csv"))
+    # label shuffle of the final method (E52: dev split 0 of fold 0, training labels permuted)
+    ls = pd.concat([pd.read_csv(R("reports", "dev", "e52", f)) for f in ("label_shuffle.csv", "label_shuffle_jigsaw.csv")])
+    ls = ls[ls.method == FINAL]
     sh = ls[(ls.train_labels == "shuffled") & ~ls.dataset.str.startswith("REG")]
     m["shuffleMin"], m["shuffleMax"] = f"{sh.score.min():.2f}", f"{sh.score.max():.2f}"
     m["shuffleRtwo"] = f"{ls[(ls.train_labels == 'shuffled') & ls.dataset.str.startswith('REG')].score.max():+.2f}".replace("-", "$-$")
@@ -162,8 +171,6 @@ def main() -> None:
     m["depthIncWins"], m["depthIncP"] = str(inc["wins"]), fp(inc["p_value"])
 
     # ---- C12: other cross-fitting fold seeds (LightGBM), a replication of C10, Holm within its own family of 2
-    import full_report as fr
-    import p16_report as pr
     p17 = json.load(open(R("reports", "p17", "p17_report.json")))
     c12 = p17["C12"]
     m["seedGainA"], m["seedGainB"] = f3(c12["seed43"]["mean_diff"], True), f3(c12["seed44"]["mean_diff"], True)
@@ -171,10 +178,33 @@ def main() -> None:
     m["seedHolm"] = fp(max(c12["seed43"]["p_holm"], c12["seed44"]["p_holm"]))
     m["seedSd"] = f"{p17['seed_spread']['per_dataset_sd_over_seeds_median']:.3f}"
     m["seedSameSign"] = str(p17["seed_spread"]["datasets_same_sign_all_seeds"])
-    raw = dict(pr.EARLIER_P, **{f"C11_{k}": c["p_value"] for k, c in p16["C11"].items()})
-    holm19 = fr.holm(dict(raw, C12_seed43=c12["seed43"]["p_value"], C12_seed44=c12["seed44"]["p_value"]))
-    m["holmNineteenPFNtwo"] = fp(holm19["C11_tabpfnv2"])
-    m["nHolmPassNineteen"] = str(int(sum(holm19[HOLM_KEY[l]] < 0.05 for l in LEARNERS)))
+    # ---- the attention probe on its own: final method vs. the same method without it (P18, paired, same folds)
+    inc = p18["vs_current_method"]
+    for l in LEARNERS:
+        c_, k = inc[SHORT[l]], MACRO[l]
+        m[f"attnInc{k}"], m[f"attnIncWins{k}"], m[f"attnIncP{k}"] = f3(c_["mean_diff"], True), str(c_["wins"]), fp(c_["p_value"])
+    m["attnIncN"] = str(sum(inc[SHORT[l]]["mean_diff"] > 0 for l in LEARNERS))
+    pos = [inc[SHORT[l]] for l in LEARNERS if inc[SHORT[l]]["mean_diff"] > 0]  # the learners it helps on average
+    m["attnIncPosMin"], m["attnIncPosMax"] = f3(min(c_["mean_diff"] for c_ in pos), True), f3(max(c_["mean_diff"] for c_ in pos), True)
+    m["attnIncPosPMax"] = fp(max(c_["p_value"] for c_ in pos))
+    # Jigsaw Toxicity vs. Joint TAR, per learner, with and without the attention probe
+    jig = fs[(fs.dataset == "BIN_TEXT_JIGSAW_TOXICITY") & fs.learner.isin(SHORT.values())]
+    for meth, key in ((FINAL, "New"), (PREVIOUS, "Old")):
+        g = (jig[jig.method == meth].score - jig[jig.method == meth].lb_joint_tar).groupby(jig.learner).mean()
+        m[f"jigsaw{key}Min"], m[f"jigsaw{key}Max"] = f3(g.min(), True), f3(g.max(), True)
+    # LightGBM on Spotify Genres: the one fold where LightGBM fails with the attention features
+    sp = fs[(fs.dataset == "MUL_TEXT_SPOTIFY_GENRES") & (fs.method == FINAL)].set_index(["learner", "fold"]).score
+    bad = sp["lgbm"].idxmin()
+    m["spotifyFold"], m["spotifyBad"] = str(bad), f"{sp['lgbm'][bad]:.3f}"
+    m["spotifyOtherMin"], m["spotifyOtherMax"] = f"{sp['lgbm'].drop(bad).min():.3f}", f"{sp['lgbm'].drop(bad).max():.3f}"
+    m["spotifyCatBoost"], m["spotifyTabM"] = f"{sp['catboost'][bad]:.3f}", f"{sp['tabm'][bad]:.3f}"
+    chk = pd.read_csv(R("reports", "p18", "a100_check.csv"))  # 19 P18 jobs re-run on an A100 from a clean commit (E55)
+    m["spotifyAhundred"] = f"{chk[(chk.learner == 'lgbm') & (chk.dataset == 'MUL_TEXT_SPOTIFY_GENRES') & (chk.fold == bad)].score_a100.iloc[0]:.3f}"
+    f0 = chk[chk.fold == 0].diff_a100_minus_t4
+    m["gpuDiffMean"], m["gpuDiffMax"], m["gpuDiffN"] = f3(f0.mean(), True), f"{f0.abs().max():.2f}", str(len(f0))
+    m["spotifyOld"] = f"{fs[(fs.dataset == 'MUL_TEXT_SPOTIFY_GENRES') & (fs.method == PREVIOUS) & (fs.learner == 'lgbm') & (fs.fold == bad)].score.iloc[0]:.3f}"
+    m["spotifyLgbmDrop"] = f3((sp["lgbm"] - fs[(fs.dataset == "MUL_TEXT_SPOTIFY_GENRES") & (fs.method == PREVIOUS)].set_index(["learner", "fold"]).score["lgbm"]).mean(), True)
+    m["attnIncLightGBMnoSpotify"] = f3(np.mean([v for d_, v in pd.Series(inc["lgbm"]["per_dataset"]).items() if d_ != "MUL_TEXT_SPOTIFY_GENRES"]), True) if "per_dataset" in inc["lgbm"] else "n/a"
 
     with open(join(GEN, "numbers.tex"), "w") as f:
         f.write("% generated by scripts/paper_assets.py from results/ and reports/ -- do not edit by hand\n")
@@ -202,44 +232,51 @@ def main() -> None:
     lines += ["\\bottomrule", "\\end{tabular}"]
     open(join(GEN, "table_per_dataset.tex"), "w").write("\n".join(lines) + "\n")
 
-    # ---- appendix: all pre-registered tests (raw: computed above)
+    # ---- appendix: all pre-registered tests
     what = {"C1": "Cross-fitted fine-tuned TAR head (CatBoost) vs.\\ Joint TAR",
             "C2": "Experts only (CatBoost) vs.\\ Joint TAR", "C3_nb": "Experts, Naive-Bayes lexical model vs.\\ Joint TAR",
             "C3_res": "Experts on residual targets vs.\\ Joint TAR",
             "C4": "Label-free variant (CatBoost) vs.\\ Joint Frozen", "C5": "Experts + probe (CatBoost) vs.\\ Joint TAR",
             "C6": "Experts + probe, e5 query prefix vs.\\ Joint TAR", "C8": "Experts + probe (LightGBM) vs.\\ Joint TAR",
-            "C9": "\\textbf{Final method, CatBoost} vs.\\ Joint TAR",
+            "C9": "Depth-probe version, CatBoost vs.\\ Joint TAR",
             "C7:cte_probe|vs_joint_frozen": "36 datasets: experts + probe vs.\\ Joint Frozen",
             "C7:cte_probe|vs_joint_tar": "36 datasets: experts + probe vs.\\ Joint TAR",
-            "C7:cte_depth_top3|vs_joint_frozen": "36 datasets: final method vs.\\ Joint Frozen",
-            "C7:cte_depth_top3|vs_joint_tar": "36 datasets: final method vs.\\ Joint TAR",
-            "C10_lgbm": "\\textbf{Final method, LightGBM} vs.\\ Joint TAR",
-            "C10_tabm": "\\textbf{Final method, TabM} vs.\\ Joint TAR",
-            "C11_tabpfnv2": "\\textbf{Final method, TabPFN-v2} vs.\\ Joint TAR",
-            "C11_tabpfnv2p5": "\\textbf{Final method, TabPFN-2.5} vs.\\ Joint TAR"}
+            "C7:cte_depth_top3|vs_joint_frozen": "36 datasets: depth-probe version vs.\\ Joint Frozen",
+            "C7:cte_depth_top3|vs_joint_tar": "36 datasets: depth-probe version vs.\\ Joint TAR",
+            "C10_lgbm": "Depth-probe version, LightGBM vs.\\ Joint TAR",
+            "C10_tabm": "Depth-probe version, TabM vs.\\ Joint TAR",
+            "C11_tabpfnv2": "Depth-probe version, TabPFN-v2 vs.\\ Joint TAR",
+            "C11_tabpfnv2p5": "Depth-probe version, TabPFN-2.5 vs.\\ Joint TAR",
+            "C12_seed43": "Depth-probe version, LightGBM, cross-fitting seed 43 vs.\\ Joint TAR",
+            "C12_seed44": "Depth-probe version, LightGBM, cross-fitting seed 44 vs.\\ Joint TAR",
+            **{HOLM_KEY[l]: f"\\textbf{{Final method, {l}}} vs.\\ Joint TAR" for l in LEARNERS}}
     order = ["C1", "C2", "C3_nb", "C3_res", "C4", "C5", "C6", "C8", "C9", "C7:cte_probe|vs_joint_frozen",
              "C7:cte_probe|vs_joint_tar", "C7:cte_depth_top3|vs_joint_frozen", "C7:cte_depth_top3|vs_joint_tar",
-             "C10_lgbm", "C10_tabm", "C11_tabpfnv2", "C11_tabpfnv2p5"]
+             "C10_lgbm", "C10_tabm", "C11_tabpfnv2", "C11_tabpfnv2p5", "C12_seed43", "C12_seed44",
+             *[HOLM_KEY[l] for l in LEARNERS]]
+    from p16_report import EARLIER_P  # raw p-values of C1-C10, as in scripts/p18_report.py
+    p16 = json.load(open(R("reports", "p16", "p16_report.json")))
+    raw = dict(EARLIER_P, **{f"C11_{k}": c["p_value"] for k, c in p16["C11"].items()},
+               C12_seed43=c12["seed43"]["p_value"], C12_seed44=c12["seed44"]["p_value"],
+               **{HOLM_KEY[l]: p18["C13"][SHORT[l]]["p_value"] for l in LEARNERS})
+    import full_report as fr
+    assert all(abs(fr.holm(raw)[k] - holm[k]) < 1e-6 for k in holm)  # the Holm column is reproduced from these
     assert set(order) == set(holm) == set(raw), (set(order) ^ set(holm), set(order) ^ set(raw))
     lines = ["\\begin{tabular}{llrr}", "\\toprule", "Test & Comparison & $p$ & Holm (all " + str(len(order)) + ") \\\\",
              "\\midrule"]
     c7_label = {k: f"C7{c}" for k, c in zip([o for o in order if o.startswith("C7:")], "abcd")}
+    c7_label.update({"C12_seed43": "C12a", "C12_seed44": "C12b"})
     for k in order:
         label = c7_label.get(k) or k.replace("_nb", "a").replace("_res", "b").split("_")[0]
         lines.append(f"{label} & {what[k]} & {fp(raw[k])} & {fp(holm[k])} \\\\")
-    lines.append("\\midrule")
-    for s_, c_ in (("a", c12["seed43"]), ("b", c12["seed44"])):
-        seed = {"a": 43, "b": 44}[s_]
-        lines.append(f"C12{s_} & Final method, LightGBM, cross-fitting seed {seed} vs.\\ Joint TAR & {fp(c_['p_value'])} & "
-                     f"{fp(c_['p_holm'])}$^\\dagger$ \\\\")
     lines += ["\\bottomrule", "\\end{tabular}"]
     open(join(GEN, "table_tests.tex"), "w").write("\n".join(lines) + "\n")
 
-    figures(summ, hm)
+    figures(summ, hm, per_ds)
     print(f"{len(m)} macros, 4 tables, 2 figures -> paper/generated/, paper/figures/")
 
 
-def figures(summ: pd.DataFrame, hm: pd.DataFrame) -> None:
+def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame) -> None:
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -247,28 +284,36 @@ def figures(summ: pd.DataFrame, hm: pd.DataFrame) -> None:
     plt.rcParams.update({"font.family": "serif", "font.size": 7.5, "axes.spines.top": False,
                          "axes.spines.right": False, "pdf.fonttype": 42})
     orange, grey = "#d95f02", "#555555"
-    # (a) gain per learner with 95% CI
-    fig, ax = plt.subplots(figsize=(2.15, 1.9))
-    y = np.arange(len(LEARNERS))
-    ax.errorbar(summ.mean_gain, y, xerr=[summ.mean_gain - summ.ci95_low, summ.ci95_high - summ.mean_gain],
-                fmt="o", color=orange, ms=4, capsize=2.5, lw=1)
-    for yi, (g, w, n) in enumerate(zip(summ.mean_gain, summ.wins, summ.datasets)):
-        ax.text(summ.ci95_high.iloc[yi] + 0.002, yi, f"+{g:.3f}", va="center", fontsize=7.5, color=grey)
+    # (a) mean gain per task type, one point per learner (the learners' colors and markers of notebook 02, fig. 4a)
+    colors = {"CatBoost": "#2a78d6", "LightGBM": "#eb6834", "TabM": "#1baf7a", "TabPFN-v2": "#eda100",
+              "TabPFN-2.5": "#e87ba4"}
+    markers = {"CatBoost": "o", "LightGBM": "s", "TabM": "^", "TabPFN-v2": "D", "TabPFN-2.5": "v"}
+    groups = [("REG", "regression\n(10)"), ("BIN", "binary\n(3)"), ("MUL", "multiclass\n(7; TabPFN 5)")]
+    g = per_ds.assign(t=per_ds.dataset.str[:3]).groupby(["learner", "t"]).gain_vs_tar.mean()
+    fig, ax = plt.subplots(figsize=(2.15, 1.7))
+    off = dict(zip(LEARNERS, np.linspace(-0.26, 0.26, len(LEARNERS))))
+    for gi, (t, _) in enumerate(groups):
+        for l in LEARNERS:
+            ax.plot(g[(l, t)], gi + off[l], markers[l], color=colors[l], ms=3.6, mec="white", mew=0.5,
+                    label=l if gi == 0 else None)
+    for gi in range(len(groups) - 1):
+        ax.axhline(gi + 0.5, color="#dddddd", lw=0.6)
     ax.axvline(0, color="k", lw=0.7)
-    ax.set_yticks(y, LEARNERS); ax.invert_yaxis(); ax.set_xlim(-0.004, 0.074)
-    ax.set_xticks([0, 0.02, 0.04]); ax.set_xlabel("ours $-$ Joint TAR (95% CI)")
+    ax.set_yticks(range(len(groups)), [lab for _, lab in groups], fontsize=6.5); ax.invert_yaxis()
+    ax.set_xlim(-0.004, 0.056); ax.set_xticks([0, 0.02, 0.04]); ax.set_xlabel("ours $-$ Joint TAR (mean)")
+    ax.legend(fontsize=5.6, frameon=False, loc="lower right", handletextpad=0.2, borderaxespad=0.1, labelspacing=0.25)
     fig.tight_layout(pad=0.3); fig.savefig(join(FIGS, "fig_gains.pdf"), bbox_inches="tight", pad_inches=0.02); plt.close(fig)
     # (b) depth profile heatmap
     best = hm.idxmax(axis=1)
     hm = hm.loc[best.sort_values(kind="stable").index]
     lim = 0.03
-    fig, ax = plt.subplots(figsize=(3.15, 2.32))
+    fig, ax = plt.subplots(figsize=(3.15, 2.1))
     im = ax.imshow(hm.clip(-lim, lim), cmap="PuOr_r", vmin=-lim, vmax=lim, aspect="auto")
     ax.scatter(hm.idxmax(axis=1).to_numpy() - 1, range(len(hm)), s=6, color="k")
     ax.set_xticks(range(12), range(1, 13)); ax.set_yticks(range(len(hm)), [name(d) for d in hm.index], fontsize=6.3)
     ax.set_xlabel("layer of frozen e5-small-v2"); ax.tick_params(length=1.5, labelsize=6.5)
     cb = fig.colorbar(im, ax=ax, shrink=0.75, pad=0.02)
-    cb.set_label("vs. final-layer probe", fontsize=7); cb.ax.tick_params(labelsize=6.5)
+    cb.set_label("vs. full-embedding probe", fontsize=7); cb.ax.tick_params(labelsize=6.5)
     fig.tight_layout(pad=0.3); fig.savefig(join(FIGS, "fig_depth.pdf"), bbox_inches="tight", pad_inches=0.02); plt.close(fig)
 
 
