@@ -1,0 +1,21 @@
+# P18 check (archive/PROGRESS.md, E54): 19 P18 jobs first run on a Tesla T4 re-run on an A100 from a clean commit;
+# the scores are compared with the T4 results. Results root: MyDrive/text-tabular-nlp/results_p18check. EXTRA_ARGS = ['--job_timeout_min', '240', '--parallel_jobs', '3'].
+cte_depth_top3_attn lgbm MUL_TEXT_PRODUCT_SENTIMENT 0
+cte_depth_top3_attn catboost MUL_TEXT_PRODUCT_SENTIMENT 0
+cte_depth_top3_attn tabm MUL_TEXT_PRODUCT_SENTIMENT 0
+cte_depth_top3_attn lgbm REG_TEXT_VIDEO_GAMES_SALES 0
+cte_depth_top3_attn catboost REG_TEXT_VIDEO_GAMES_SALES 0
+cte_depth_top3_attn tabm REG_TEXT_VIDEO_GAMES_SALES 0
+cte_depth_top3_attn lgbm REG_TEXT_BABIES_PRICES 0
+cte_depth_top3_attn catboost REG_TEXT_BABIES_PRICES 0
+cte_depth_top3_attn tabm REG_TEXT_BABIES_PRICES 0
+cte_depth_top3_attn lgbm REG_TEXT_BOOK_PRICE 0
+cte_depth_top3_attn catboost REG_TEXT_BOOK_PRICE 0
+cte_depth_top3_attn tabm REG_TEXT_BOOK_PRICE 0
+cte_depth_top3_attn lgbm BIN_TEXT_JIGSAW_TOXICITY 0
+cte_depth_top3_attn catboost BIN_TEXT_JIGSAW_TOXICITY 0
+cte_depth_top3_attn tabm BIN_TEXT_JIGSAW_TOXICITY 0
+cte_depth_top3_attn lgbm MUL_TEXT_WOMEN_CLOTHING_REVIEW 0
+cte_depth_top3_attn catboost MUL_TEXT_WOMEN_CLOTHING_REVIEW 0
+cte_depth_top3_attn tabm MUL_TEXT_WOMEN_CLOTHING_REVIEW 0
+cte_depth_top3_attn lgbm MUL_TEXT_SPOTIFY_GENRES 3

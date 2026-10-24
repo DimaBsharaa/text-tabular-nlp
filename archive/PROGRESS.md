@@ -2235,3 +2235,23 @@ Features for the learner = structured columns (upstream preprocessing)
 - **Not yet done:** `train.py` / `predict.py` packaging of the attention probe (the saved-model path supports
   `cte_depth_top3` only).
 
+
+## E54 — Audit of P18 and pre-registration of a re-run check   (2026-10-24, BEFORE the check run)
+- **Independent recompute** of C13 and of the paired comparison from the 480 raw JSONs: every number of E53 reproduced
+  (C13 per learner; paired vs `cte_depth_top3`; Jigsaw; 85/96 vs 73/96; mean +0.0224 vs +0.0203). Splits (n_train /
+  n_test) and the leaderboard Joint TAR references equal those of the `cte_depth_top3` runs, 480/480.
+- **Correction to E53 ("480/480 at commit c63c26e"):** only the 180 TabPFN results record a clean c63c26e. The 300
+  CatBoost / LightGBM / TabM results record commit 8b3bb76 with uncommitted changes: a commit made on the VM and never
+  pushed, so their exact code is not in the repository. c63c26e itself changes no feature (token states kept in memory
+  instead of on disk).
+- **Hardware:** those 300 ran on a Tesla T4; every `cte_depth_top3` result they are paired with ran on an A100.
+- **LightGBM / Spotify Genres:** the −0.074 is one fold: fold 3 scores 0.536 (folds 0–2, 4: 0.906–0.915; the
+  current method's fold 3: 0.912). The attention features of that fold are healthy (same OOF metric as fold 2, 0.902 vs
+  0.900; CatBoost 0.963 and TabM 0.962 on the same features), so it is LightGBM (default settings, 100 trees, no early
+  stopping) failing on one fold, not the feature. Reported as measured.
+- **Check (pre-registered now):** `jobs/p18_check.txt` — 19 of those 300 jobs (LightGBM, CatBoost, TabM × 6 datasets
+  spanning binary / multiclass / regression incl. Jigsaw, fold 0; plus LightGBM Spotify Genres fold 3), re-run on a
+  Colab A100 from clean commit (the enhance head), fresh results root and caches. **Pass iff every one of the 18 fold-0
+  jobs is within 0.005 of its T4 score and their mean difference is within ±0.002.** Spotify fold 3 is reported either
+  way (it shows whether the LightGBM failure reproduces). If the check fails, the 300 jobs are re-run from the clean
+  commit before any claim uses them.

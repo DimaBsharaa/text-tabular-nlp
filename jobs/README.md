@@ -12,5 +12,7 @@ Each file lists the benchmark jobs of one final run, one per line: `method learn
 | [`p16.txt`](p16.txt) | Final method, TabPFN-v2 and TabPFN-2.5, 18 × 5 (180 jobs) | `reports/p16/` (C11) |
 | [`p16_timing.txt`](p16_timing.txt) | 6 jobs used to measure TabPFN runtimes before the full run | – |
 | [`p17.txt`](p17.txt) | Final method, LightGBM, cross-fitting fold seeds 43 and 44, 20 × 5 each (200 jobs) | `reports/p17/` |
+| [`p18.txt`](p18.txt) | Final method with the attention probe (`cte_depth_top3_attn`), all 5 learners, 20 × 5 (TabPFN: 18 × 5; 480 jobs) | `reports/p18/` (C13) |
+| [`p18_check.txt`](p18_check.txt) | 19 of the P18 jobs re-run on another GPU type from a clean commit, to confirm the first run | – |
 
 Development runs (earlier methods) are in [`archive/jobs/`](../archive/jobs/).
