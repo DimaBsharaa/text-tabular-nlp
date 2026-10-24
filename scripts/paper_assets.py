@@ -107,7 +107,7 @@ def main() -> None:
     stages = [("Joint Frozen (published)", None, "frozen"), ("our re-implementation of Joint TAR", "tar_repro", "tarRepro"),
               ("numeracy features only", "cte_num", "num"), ("neighbor expert only", "cte_nbr", "nbr"),
               ("lexical expert, \\emph{not} cross-fitted", "cte_lex_insample", "lexIn"),
-              ("lexical expert only", "cte_lex", "lex"), ("all experts", "cte", "cte"),
+              ("lexical expert only", "cte_lex", "lex"), ("base experts + numeracy", "cte", "cte"),
               ("+ full-embedding probe", "cte_probe", "probe"), ("+ depth probes", PREVIOUS, "depth"),
               ("+ attention probe (final method)", FINAL, "attn")]
     rows = []
@@ -290,37 +290,51 @@ def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame, buildup:
                          "axes.spines.right": False, "pdf.fonttype": 42})
     orange, grey = "#d95f02", "#555555"
     xlim, xt = (-0.004, 0.068), [0, 0.02, 0.04, 0.06]
-    # results figure (a): gain per learner with its 95% interval
+    # one color per learner (as in notebook 02, fig. 4a), the same in both results panels and their shared legend
+    colors = {"CatBoost": "#2a78d6", "LightGBM": "#eb6834", "TabM": "#1baf7a", "TabPFN-v2": "#eda100",
+              "TabPFN-2.5": "#e87ba4"}
+    # results figure (a): gain per learner with its 95% interval (rows name the learners: no legend)
     fig, ax = plt.subplots(figsize=(2.6, 1.2))
     y = np.arange(len(LEARNERS))
-    ax.errorbar(summ.mean_gain, y, xerr=[summ.mean_gain - summ.ci95_low, summ.ci95_high - summ.mean_gain],
-                fmt="o", color=orange, ms=3.6, capsize=2, lw=0.9)
     for yi, l in enumerate(LEARNERS):
-        ax.text(summ.ci95_high[l] + 0.002, yi, f"+{summ.mean_gain[l]:.3f}", va="center", fontsize=6.5, color=grey)
+        sl = summ.loc[l]
+        ax.errorbar(sl.mean_gain, yi, xerr=[[sl.mean_gain - sl.ci95_low], [sl.ci95_high - sl.mean_gain]], fmt="o",
+                    color=colors[l], ms=3.6, capsize=2, lw=0.9)
+        ax.text(sl.ci95_high + 0.002, yi, f"+{sl.mean_gain:.3f}", va="center", fontsize=6.5, color=grey)
     ax.axvline(0, color="k", lw=0.7)
     ax.set_yticks(y, LEARNERS, fontsize=6.5); ax.set_ylim(len(LEARNERS) - 0.4, -0.6)  # inverted, padded
     ax.set_xlim(*xlim); ax.set_xticks(xt); ax.tick_params(labelsize=6.5, length=2)
-    ax.set_xlabel("ours $-$ Joint TAR (95% CI)", fontsize=7)
+    ax.set_xlabel("ours $-$ Joint TAR (95% CI)", fontsize=7); ax.set_title("(a) gain per learner", fontsize=7, loc="left", pad=3)
     fig.tight_layout(pad=0.3); fig.savefig(join(FIGS, "fig_gains.pdf"), bbox_inches="tight", pad_inches=0.02); plt.close(fig)
-    # results figure (b): mean gain per task type (dot: mean over learners; bar: lowest to highest learner)
+    # results figure (b): mean gain per task type, one dot per learner at a fixed offset, black diamond = their mean
     groups = [("REG", "regression (10)"), ("BIN", "binary (3)"), ("MUL", "multiclass (7)")]
     g = per_ds.assign(t=per_ds.dataset.str[:3]).groupby(["t", "learner"]).gain_vs_tar.mean()
+    off = dict(zip(LEARNERS, np.linspace(-0.24, 0.24, len(LEARNERS))))
     fig, ax = plt.subplots(figsize=(2.6, 1.2))
     for gi, (t, _) in enumerate(groups):
         v = g[t]
-        ax.scatter(v.values, gi + np.linspace(-0.18, 0.18, len(v)), s=9, color=orange, alpha=0.55, lw=0)
-        ax.scatter([v.mean()], [gi], s=30, color=orange, edgecolor="white", lw=0.6, zorder=3)
-        ax.text(v.max() + 0.002, gi, f"+{v.mean():.3f}", va="center", fontsize=6.5, color=grey)
+        for l in LEARNERS:
+            ax.scatter([v[l]], [gi + off[l]], s=11, color=colors[l], lw=0, zorder=2)
+        ax.scatter([v.mean()], [gi], s=26, marker="D", color="k", zorder=3)
+        ax.text(max(v.max(), v.mean()) + 0.002, gi, f"+{v.mean():.3f}", va="center", fontsize=6.5, color=grey)
     ax.axvline(0, color="k", lw=0.7)
-    ax.set_yticks(range(len(groups)), [lab for _, lab in groups], fontsize=6.5); ax.invert_yaxis()
+    ax.set_yticks(range(len(groups)), [lab for _, lab in groups], fontsize=6.5)
     ax.set_ylim(len(groups) - 0.5, -0.5)
     ax.set_xlim(*xlim); ax.set_xticks(xt); ax.tick_params(labelsize=6.5, length=2)
-    ax.set_xlabel("ours $-$ Joint TAR", fontsize=7)
+    ax.set_xlabel("ours $-$ Joint TAR", fontsize=7); ax.set_title("(b) gain per task type", fontsize=7, loc="left", pad=3)
     fig.tight_layout(pad=0.3); fig.savefig(join(FIGS, "fig_tasks.pdf"), bbox_inches="tight", pad_inches=0.02); plt.close(fig)
+    # shared horizontal legend below both results panels
+    from matplotlib.lines import Line2D
+    handles = [Line2D([], [], marker="o", ls="", color=colors[l], ms=4, label=l) for l in LEARNERS] + \
+              [Line2D([], [], marker="D", ls="", color="k", ms=4, label="mean of the learners")]
+    fig = plt.figure(figsize=(5.4, 0.22))
+    fig.legend(handles=handles, loc="center", ncol=len(handles), frameon=False, fontsize=6.8, handletextpad=0.25,
+               columnspacing=1.2, borderaxespad=0)
+    fig.savefig(join(FIGS, "fig_legend.pdf"), bbox_inches="tight", pad_inches=0.01); plt.close(fig)
     # method figure (a): build-up of the method (CatBoost, 20 datasets; the rows of the appendix build-up table)
     short = {"numeracy features only": "numeracy only", "neighbor expert only": "neighbor only",
              "lexical expert, \\emph{not} cross-fitted": "lexical, not cross-fitted", "lexical expert only": "lexical only",
-             "all experts": "all experts", "+ full-embedding probe": "+ full-embedding probe", "+ depth probes": "+ depth probes",
+             "base experts + numeracy": "base experts + numeracy", "+ full-embedding probe": "+ full-embedding probe", "+ depth probes": "+ depth probes",
              "+ attention probe (final method)": "+ attention probe"}
     labels, gains = [short[r[0]] for r in buildup], [r[1] for r in buildup]
     fig, ax = plt.subplots(figsize=(2.3, 1.9))
@@ -332,7 +346,7 @@ def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame, buildup:
     ax.axvline(0, color="k", lw=0.7)
     ax.set_yticks(yb, labels, fontsize=6.5); ax.invert_yaxis(); ax.set_xlim(-0.04, 0.032)
     ax.set_xticks([-0.03, 0, 0.03]); ax.tick_params(labelsize=6.5, length=2)
-    ax.set_xlabel("score $-$ Joint TAR", fontsize=7)
+    ax.set_xlabel("score $-$ Joint TAR", fontsize=7); ax.set_title("(a) build-up of the method", fontsize=7, loc="left", pad=3)
     fig.tight_layout(pad=0.3); fig.savefig(join(FIGS, "fig_buildup.pdf"), bbox_inches="tight", pad_inches=0.02); plt.close(fig)
     # (c) depth profile heatmap
     best = hm.idxmax(axis=1)
@@ -342,9 +356,11 @@ def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame, buildup:
     im = ax.imshow(hm.clip(-lim, lim), cmap="PuOr_r", vmin=-lim, vmax=lim, aspect="auto")
     ax.scatter(hm.idxmax(axis=1).to_numpy() - 1, range(len(hm)), s=6, color="k")
     ax.set_xticks(range(12), range(1, 13)); ax.set_yticks(range(len(hm)), [name(d) for d in hm.index], fontsize=5.6)
-    ax.set_xlabel("layer of frozen e5-small-v2"); ax.tick_params(length=1.5, labelsize=6.5)
+    ax.set_xlabel("layer of frozen e5-small-v2"); ax.tick_params(length=1.5)
+    ax.set_title("(b) where the target is best read", fontsize=7, loc="left", pad=3)
+    ax.tick_params(axis="x", labelsize=5.8); ax.tick_params(axis="y", labelsize=5.6)  # 10, 11, 12 and the names stay distinct
     cb = fig.colorbar(im, ax=ax, shrink=0.75, pad=0.02)
-    cb.set_label("vs. full-embedding probe", fontsize=7); cb.ax.tick_params(labelsize=6.5)
+    cb.set_label("layer probe $-$ full-embedding probe", fontsize=6.5); cb.ax.tick_params(labelsize=6.5)
     fig.tight_layout(pad=0.3); fig.savefig(join(FIGS, "fig_depth.pdf"), bbox_inches="tight", pad_inches=0.02); plt.close(fig)
 
 
