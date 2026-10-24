@@ -1,6 +1,7 @@
 \documentclass{article}
 
 % preprint: shows the author and removes the review line numbers
+\PassOptionsToPackage{numbers, compress, sort}{natbib}
 \usepackage[preprint]{neurips_2026}
 
 \usepackage[utf8]{inputenc}
@@ -36,16 +37,21 @@
 \maketitle
 
 \begin{abstract}
-Text-tabular learning combines structured attributes with free text. MulTaBench's Joint TAR pipeline fine-tunes the
-text encoder on each task to make its embeddings target-aware. We ask whether supervised experts can provide
-target-awareness while the encoder stays frozen. Cross-Fitted Text Experts (CTE) add a few compact columns, each a
-prediction of the target from one view of the text (exact words, similar rows, the full embedding, intermediate layers
-or attention over tokens), computed out-of-fold for training rows, and pass them with the standard features to the
-benchmark's unchanged learners. On MulTaBench's 20 text-tabular datasets, CTE beats Joint TAR with all five learners,
-by \gainMin{} to \gainMax{} AUROC~/~$R^2$, significantly for each (pre-registered Wilcoxon tests, Holm-corrected across
-the learners), and scores higher in \runsWonPct\% of the \nRuns{} individual runs. Component comparisons support
-cross-fitting and combining views, and layer probes find a layer other than the last most predictive on \depthInner{}
-of 20 datasets. On this benchmark, cross-fitted text experts are an effective alternative to encoder fine-tuning.
+Text-tabular learning combines structured attributes with free-text descriptions. MulTaBench's Joint TAR
+pipeline fine-tunes the text encoder on each prediction task to produce target-aware embeddings. We ask
+whether supervised experts can provide target-awareness while keeping the encoder frozen. Cross-Fitted
+Text Experts (CTE) add a few compact columns, each a prediction of the target from one view of the text
+(exact words, similar training rows, the full embedding, intermediate encoder layers or attention over
+tokens), with predictions generated out-of-fold for training rows. The benchmark's tabular learners,
+unchanged, receive these columns together with Joint Frozen's PCA-compressed embeddings, numerical features
+extracted from the text and the original structured columns. Across MulTaBench's 20 text-tabular datasets,
+CTE achieves higher mean scores than Joint TAR with all five learners, by \gainMin{} to \gainMax{}
+AUROC~/~$R^2$, and scores higher in \runsWonPct\% of the \nRuns{} individual runs; the gains are
+statistically significant for every learner in pre-registered Wilcoxon tests, Holm-corrected across the
+five learners. Component comparisons support combining complementary text signals and using cross-fitted
+predictions, and layer probes find a layer other than the last most predictive on \depthInner{} of 20
+datasets. On this benchmark, cross-fitted text experts provide an effective alternative to encoder
+fine-tuning.
 \end{abstract}
 
 \section{Introduction}
