@@ -2501,3 +2501,43 @@ Features for the learner = structured columns (upstream preprocessing)
   rows, 0 mismatches; `check_recompute.py` CatBoost +0.0192, 18/20; `pytest` 316 passed, 1 skipped, exit 0 (49.8 min,
   one run); 0 upstream files changed. **Next:** the author compiles the Overleaf zip with pdfLaTeX (the template's
   required engine; our builds use Tectonic) and the two PDFs are compared before the `submission` tag.
+
+## E66 — Paper text revised by the author while reading (no number change)   (2026-10-25)
+- **Commit:** the one after acf01ee. Every change checked against the data and the 4-page limit before it was kept.
+- **Abstract** (author's text): significant for every learner "even after Holm correction over all 24 comparisons"
+  (largest Holm(24) p = 0.015, LightGBM); "Component comparisons show that the experts are complementary, with each
+  probe adding to the mean gain (+0.011 → +0.014 → +0.016 → +0.019, CatBoost), and that cross-fitting is essential"
+  (in-sample lexical −0.034 vs 0.000). The 14/20 depth finding left the abstract (it stays in the Introduction,
+  Figure 2b and Results).
+- **Introduction:** (iii) points to Figure 2b; the "motivations, not measured causes" sentence and the "may" of (v)
+  removed (the paragraph is framed as "Five considerations shape our design"); the last paragraph ends on the result
+  (gain range, significant for every learner); the repository link moved to a footnote.
+- **Related work** rewritten as two paragraphs (benchmark and learners; stacking, cross-fitting, probing), all 13
+  citations kept; "probes on every layer" corrected to "the most predictive layers" (three of twelve are kept);
+  "keeps first-stage overfitting out" softened to "reduces the effect of" (penalties and layer choices are selected
+  training-wide, not nested). **Method:** AdamW cited (Loshchilov & Hutter 2019); the clause repeating that selection
+  is training-wide removed (the preceding sentence says so). Table 3 caption: bold "before rounding" (7 cells tie at
+  three decimals, all real wins of +0.0001 to +0.0007).
+- **Figures:** Times-style font (STIX) like the body; Figure 2b 0.15 in taller: at 2.0 in, 8 pairs of the 20
+  dataset labels touched (ink measured at 1200 dpi), now all separate; every figure prints at 6.2 pt or more. The
+  taller figure is paid for by two one-word end lines (Related work, Method).
+- **Checks:** main text ends on page 4 (References top of page 5), 7 pages, US Letter, fonts embedded, no Type 3, no
+  undefined references; audit PASS; main text, figures and abstract recomputed from the appendix tables as printed:
+  all consistent. `pytest`: see the commit.
+
+## E66 addendum — Results and Conclusion (same commit, no number change)   (2026-10-25)
+- **Results:** "CTE" throughout; Table 1 caption "CTE beats the published Joint TAR with every learner"; Setup states
+  that all five pass Holm over the five learners and over all 24 comparisons. New, generated from the data in
+  `scripts/paper_assets.py`: CTE beats Joint Frozen on 95 of 96 learner–dataset pairs (`frozenPairsWon`; the one loss
+  TabM / SCImago, −0.0014); on the 36 out-of-curation datasets the leaderboard's own Joint TAR beats its Joint Frozen
+  on only 17 (CatBoost, folds 0–2, `cSevenTarOverFrozen`; median −0.002, p = 0.66); the attention probe's paired gain
+  is significant for four learners, p ≤ 0.009 (`attnIncSigN`, `attnIncSigPMax`; registered in P18 as a secondary
+  result). In-sample lexical stated as "drops from 0.000 to −0.034 against Joint TAR". Kept: the depth probes'
+  p = 0.216 and C7's Holm 0.138 (pre-registered results stay in the text). Jigsaw described by its fine-tuning gain
+  (+0.117) instead of an untested claim about single words.
+- **Conclusion:** answers the title's question; Limitations say the 36-dataset check used an earlier version; VAERS:
+  25/25 learner–fold runs pass both curation checks (smallest TAR gain +0.0065), and its fine-tuning gain (median
+  +0.020 over learners) ranks 3rd of the 21 text datasets on the official leaderboard CSVs by both the median and the
+  mean over learners, behind Jigsaw and Video Games (1.7× the median of the 20; "twice" not used).
+- **Checks:** main text ends on page 4; audit PASS; main text vs appendix consistent; `pytest` 316 passed, 1 skipped,
+  exit 0 (35.9 min; no test covers `scripts/paper_assets.py`, whose only change since is the five macros).

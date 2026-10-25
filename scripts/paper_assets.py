@@ -5,6 +5,7 @@ Writes paper/generated/numbers.tex (\\newcommand macros), paper/generated/table_
 """
 from __future__ import annotations
 
+import glob
 import json
 import os
 import sys
@@ -78,6 +79,7 @@ def main() -> None:
                         f"{words[5 - len(fail)]} of five pass (" + ", ".join(f"{l}: {fp(holm[HOLM_KEY[l]])}" for l in fail) + ")")
     mult = (summ.ours - summ.joint_frozen) / (summ.joint_tar - summ.joint_frozen)
     m["multMin"], m["multMax"] = f"{mult.min():.1f}", f"{mult.max():.1f}"
+    m["frozenPairsWon"], m["frozenPairs"] = str(int((per_ds.ours > per_ds.joint_frozen).sum())), str(len(per_ds))
     m["nTests"] = str(len(holm))
 
     # ---- consistency
@@ -157,6 +159,11 @@ def main() -> None:
     m["cSevenHolm"] = fp(holm["C7:cte_depth_top3|vs_joint_tar"])
     c7d = list(c7["per_dataset"].values())
     m["cSevenLosses"], m["cSevenBigLosses"] = str(sum(d < 0 for d in c7d)), str(sum(d < -0.07 for d in c7d))
+    # on the same 36 datasets and folds 0-2, how often the leaderboard's own Joint TAR beats its Joint Frozen (CatBoost)
+    lb = pd.concat(pd.read_csv(f) for f in glob.glob(R("multabench", "leaderboard", "results", "text_source", "*.csv")))
+    lb = lb[lb.model.str.startswith("CatBoost") & lb.fold.isin([0, 1, 2]) & lb.dataset.isin(list(c7["per_dataset"]))]
+    lbm = lb.pivot_table(index="dataset", columns="multimodal_state", values="test_score", aggfunc="mean")
+    m["cSevenTarOverFrozen"] = str(int((lbm["ft"] > lbm["all"]).sum()))
     cc = pd.read_csv(R("results", "compute_cost.csv"))
     m["costOurs"], m["costTar"] = f"{cc.ours_seconds.median() / 60:.1f}", f"{cc.tar_seconds.median() / 60:.1f}"
     m["tarReproDiff"] = f3(rows[1][1], True)
@@ -194,6 +201,7 @@ def main() -> None:
     m["attnIncPosMax"] = f3(max(inc[SHORT[l]]["mean_diff"] for l in pos), True)
     sig = [l for l in pos if inc[SHORT[l]]["p_value"] < 0.05]
     words = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five"}
+    m["attnIncSigN"], m["attnIncSigPMax"] = words[len(sig)], fp(max(inc[SHORT[l]]["p_value"] for l in sig))
     who = "all five learners" if len(pos) == len(LEARNERS) else f"{words[len(pos)]} learners"
     if len(sig) == len(pos):
         m["attnIncNote"] = f"for {who} ($p \\le {fp(max(inc[SHORT[l]]['p_value'] for l in sig))}$)"
@@ -290,7 +298,9 @@ def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame, buildup:
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     # sized to their printed width in the paper (5.5 in text width: panel (a) 40%, panel (b) 58%), so fonts print as set
-    plt.rcParams.update({"font.family": "serif", "font.size": 7.5, "axes.spines.top": False,
+    # STIX: a Times-style font, like the paper's body text and more compact than the default serif
+    plt.rcParams.update({"font.family": "serif", "font.serif": ["STIXGeneral"], "mathtext.fontset": "stix",
+                         "font.size": 7.5, "axes.spines.top": False,
                          "axes.spines.right": False, "pdf.fonttype": 42})
     orange, grey = "#d95f02", "#555555"
     xlim, xt = (-0.004, 0.068), [0, 0.02, 0.04, 0.06]
@@ -360,7 +370,7 @@ def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame, buildup:
     best = hm.idxmax(axis=1)
     hm = hm.loc[best.sort_values(kind="stable").index]
     lim = 0.03
-    fig, ax = plt.subplots(figsize=(3.15, 2.0))
+    fig, ax = plt.subplots(figsize=(3.15, 2.15))  # 20 dataset rows, labels clear of each other
     im = ax.imshow(hm.clip(-lim, lim), cmap="PuOr_r", vmin=-lim, vmax=lim, aspect="auto")
     ax.scatter(hm.idxmax(axis=1).to_numpy() - 1, range(len(hm)), s=6, color="k")
     ax.set_xticks(range(1, 12, 2), range(2, 13, 2)); ax.set_xticks(range(12), minor=True)  # every layer ticked, even ones labeled
