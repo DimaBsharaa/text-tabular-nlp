@@ -195,7 +195,7 @@ a feature.
 \begin{minipage}[b]{0.57\linewidth}\centering
   \includegraphics[width=\linewidth]{fig_depth}
 \end{minipage}
-\caption{(a) Held-out gains over Joint TAR (CatBoost, 20 datasets): no single expert is ahead, the cross-fitted
+\caption{(a) Held-out gains over Joint TAR (CatBoost, 20 datasets): no base expert alone is ahead, the cross-fitted
 combination is. All rows keep Joint Frozen's structured and PCA features; base = lexical + neighbor + numeracy; the
 final four rows are cumulative. (b) Training out-of-fold layer-probe scores minus the full-embedding probe, averaged
 over folds; the averaged profile's best layer (dots) is often not the last. Colors clip at $\pm 0.03$ (\depthTopName:
@@ -229,7 +229,7 @@ five learners; over all \nTests{} pre-registered comparisons (Tables~\ref{tab:te
 \paragraph{Main result.}
 Table~\ref{tab:main} and Figure~\ref{fig:results}a: with every learner our features beat Joint TAR, by \gainMin{} to
 \gainMax{}. Measured from Joint Frozen, they add \multMin{} to \multMax{} times what fine-tuning adds. The gain is broad: \runsWonPct\% of the \nRuns{} individual runs beat Joint TAR,
-\dsWonFour{} of the 20 datasets are won with at least four learners (\dsWonAll{} with all; per dataset: Table~\ref{tab:per_dataset}). Gains are largest for
+\dsWonFour{} of the 20 datasets are won with at least four learners (\dsWonAll{} with every eligible learner; per dataset: Table~\ref{tab:per_dataset}). Gains are largest for
 regression, followed by binary and multiclass classification (Figure~\ref{fig:results}b).
 
 \begin{figure}[t]
@@ -249,8 +249,8 @@ the 7 multiclass datasets.}
 
 
 \paragraph{What each part contributes.}
-Figure~\ref{fig:depth}a, Table~\ref{tab:buildup}: no expert alone beats Joint TAR; combined they gain \bucte{} (not
-significant), the final configuration \buattn. Fitted in-sample, the lexical expert scores \buLexInDrop{} lower. The
+Figure~\ref{fig:depth}a, Table~\ref{tab:buildup}: combined, the base experts gain \bucte{} over Joint TAR (not
+significant) and the final configuration \buattn; none of the three base experts alone is ahead. Fitted in-sample, the lexical expert scores \buLexInDrop{} lower. The
 depth increment alone is not significant (\depthIncWins{} of 20 datasets, $p = \depthIncP$), so Figure~\ref{fig:depth}b is
 mainly an analysis.
 
@@ -264,8 +264,8 @@ Two checks used the depth-probe version. On 36 further text datasets never used 
 0--2) the gain over Joint TAR is small: median \cSevenMedian, \cSevenWins{} of \cSevenN{} won and \cSevenLosses{} lost
 (\cSevenBigLosses{} by more than 0.07), $p = \cSevenP$, not significant after Holm ($\cSevenHolm$). With two other
 cross-fitting seeds (LightGBM) the gain is \seedGainA{} and \seedGainB{} (\seedWinsA{} of 20 datasets each, Holm $p =
-\seedHolm$ over the two seeds). Shuffled training labels drop the final method to chance (AUROC \shuffleMin--\shuffleMax, $R^2 \le
-\shuffleRtwo$).
+\seedHolm$ over the two seeds). Label-shuffle checks of the final method give chance-level performance, as expected (AUROC
+\shuffleMin--\shuffleMax, $R^2 \le \shuffleRtwo$).
 
 \section{Conclusion and summary}
 \label{sec:conclusion}

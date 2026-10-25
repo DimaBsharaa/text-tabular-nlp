@@ -161,7 +161,8 @@ fig.colorbar(im, ax=ax, shrink=0.6, label="ours − Joint TAR (clipped at ±0.06
 ax.set_title("Gain over Joint TAR per dataset and learner")
 fig.tight_layout(); fig.savefig(join(FIG, "fig2_gain_heatmap.png"), dpi=200); plt.show()
 n_pos = (piv > 0).sum(axis=1); n_obs = piv.notna().sum(axis=1)
-print("datasets where we win with every learner:", int((n_pos == n_obs).sum()), "of", len(piv))
+print("datasets where we win with every eligible learner:", int((n_pos == n_obs).sum()), "of", len(piv),
+      "| with all five:", int(((n_pos == 5) & (n_obs == 5)).sum()))
 print("datasets where we lose with every learner:", int((n_pos == 0).sum()), "->", list(piv.index[n_pos == 0]))
 print("datasets won by >= 4 of the learners:", int((n_pos >= 4).sum()))
 """)
@@ -459,7 +460,7 @@ training rows, whereas upstream's Joint TAR fine-tunes again inside every learne
 md("""
 ## 9. Beyond the 20: 36 further text datasets
 
-To check that the method was not tuned to the 20 benchmark datasets, the depth-probe version was run once (CatBoost,
+To assess transfer beyond the development datasets, the depth-probe version was run once (CatBoost,
 folds 0–2; the attention probe came later and was not run here) on 36
 further text datasets that have MulTaBench baselines (`multabench/leaderboard/results/text_source/`) and were never
 used during development. The **median** is the summary to read: on two used-car price datasets with heavy-tailed
@@ -533,7 +534,7 @@ md("""
    Holm correction over the five final comparisons and over all 24 pre-registered comparisons (largest: LightGBM,
    0.015).
 3. **Broad, not driven by a few datasets.** 84% of the 480 individual runs beat Joint TAR (402); 15 of the 20 datasets
-   are won with every learner and 16 with at least 4; the learners agree on win / loss for 83–100% of the datasets.
+   are won with every eligible learner (14 with all five) and 16 with at least 4; the learners agree on win / loss for 83–100% of the datasets.
 4. **Above the noise.** On 12 of the 20 datasets the mean gain exceeds one standard deviation of the baseline's own
    fold-to-fold noise; none loses by more than that (the only mean loss: Wine Review, −0.001).
 5. **Largest on regression** (+0.026 to +0.048), then binary (+0.019 to +0.026), smallest on multiclass (+0.006 to

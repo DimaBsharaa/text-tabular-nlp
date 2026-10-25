@@ -29,7 +29,7 @@ gain over Joint TAR with its 95% interval, the honest scale.
   its run). All 5 remain significant with a Holm correction over the five learners (as registered) and over all 24
   pre-registered comparisons of the project (largest corrected p: LightGBM, 0.015).
 - **Broad:** 84% of the 480 individual (learner, dataset, fold) runs beat Joint TAR (402); 16 of the 20 datasets are
-  won with at least 4 of the 5 learners, 15 with all 5.
+  won with at least 4 of the 5 learners, 15 with every eligible learner.
 - **Jigsaw Toxicity**, where fine-tuning itself gains the most (+0.117 over the frozen encoder), was the one dataset
   Joint TAR won with every learner. The last expert added, an attention probe on the frozen token states, turns it
   into a win with every learner (+0.009 to +0.015).

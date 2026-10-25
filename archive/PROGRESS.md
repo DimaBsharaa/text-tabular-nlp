@@ -2460,3 +2460,15 @@ Features for the learner = structured columns (upstream preprocessing)
   Wilcoxon (1945) and Holm (1979) cited; the unused `\pending` macro removed. Main text still within 4 pages.
 - **READMEs:** results table and claims; "one GPU type" with the archived T4 batch; method README runtimes from the
   A100 batch (attention probe median 3.5 min per dataset-fold on an A100 shared by four jobs, max 35 min).
+
+## E64 — Review of e70def1: wording and notebook fixes (no result change)   (2026-10-25)
+- **Datasets won:** 14 datasets are won with all five learners; 15 with every eligible learner (Spotify Genres counts
+  with its three, TabPFN being unable to run it). "15 with all" → "15 with every eligible learner" in the paper, the
+  README and notebook 02 (which now prints both counts).
+- **Component paragraph** opens with the combined gains (+0.011, final +0.019) and says "none of the three base
+  experts alone is ahead" instead of "no expert alone beats Joint TAR" (the probes were never tested alone); Figure 2
+  caption likewise ("no base expert alone"). Robustness: "Label-shuffle checks of the final method give chance-level
+  performance, as expected". Notebook 02, section 9: "To assess transfer beyond the development datasets".
+- **Notebook 01** now finds the repository from `notebooks/` as well (path setup in its first cell); re-executed from
+  `notebooks/`, 0 errors, every benchmark number unchanged. Only the machine-dependent `raw_cached` column and the
+  text-length table (now 16 of 20 datasets cached locally, was 1) differ.
