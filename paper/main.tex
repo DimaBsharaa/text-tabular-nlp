@@ -253,14 +253,13 @@ the 7 multiclass datasets.}
 \paragraph{What each part contributes.}
 Figure~\ref{fig:depth}a, Table~\ref{tab:buildup}: no base expert alone is ahead of Joint TAR, but combined they are
 (\bucte), and each probe adds to this, up to \buattn{} for the full CTE. Cross-fitting is essential: fitted in-sample
-instead, the lexical expert drops from \bulex{} to \bulexIn{} against Joint TAR. e5-small-v2 has 12 layers, but MulTaBench reads only the last one (Joint TAR fine-tunes the top
-three). Figure~\ref{fig:depth}b shows, per dataset, which layer predicts the target best: in \depthInner{} of 20
+instead, the lexical expert drops from \bulex{} to \bulexIn{} against Joint TAR. e5-small-v2 has 12 layers, but MulTaBench reads only the last one. Figure~\ref{fig:depth}b shows, per dataset, which layer predicts the target best: in \depthInner{} of 20
 datasets it is not the last, so useful information often sits in earlier layers. This motivated
 the depth probes, which add a further \buDepthAdd{} (Figure~\ref{fig:depth}a).
 
 \paragraph{The attention probe.}
 Without it, Jigsaw Toxicity, where fine-tuning gains most (\jigsawTarGain), was the one dataset
-Joint TAR won with every learner. Selected on training-row splits, the attention probe turns Jigsaw into
+Joint TAR won with all five learners. Selected on training-row splits, the attention probe turns Jigsaw into
 a win with every learner (\jigsawNewMin{} to \jigsawNewMax) and adds \attnIncPosMin{} to \attnIncPosMax{} over the
 \emph{depth-probe version} (CTE without it) for every learner, significantly for \attnIncSigN{} ($p \le
 \attnIncSigPMax$).
@@ -282,10 +281,10 @@ Its experts are complementary, cross-fitting is essential, and useful signal oft
 \textbf{Limitations and future work.} The 20 datasets also guided development; on 36 further datasets an earlier
 version gained less. Next steps: combining the experts with fine-tuning; image-tabular data.
 
-\textbf{Additional Track 2 contribution.} We also curated VAERS-Serious (vaccine adverse-event reports). It passes
+\textbf{Additional Track 2 contribution.} We also curated VAERS-Serious (vaccine adverse-event reports), which passes
 both MulTaBench curation checks with all five learners and in all 25 learner--fold runs; its fine-tuning gain
-(median +0.020) ranks 3rd of MulTaBench's 21 text datasets, behind only Jigsaw and Video Games. Data, code and results:
-\href{https://github.com/DimaBsharaa/text-tabular-research-vaers}{\textcolor{blue!60!black}{accompanying repository}}.
+(median +0.020) ranks 3rd of MulTaBench's 21 text datasets
+(\href{https://github.com/DimaBsharaa/text-tabular-research-vaers}{\textcolor{blue!60!black}{repository}}).
 
 {\small
 \bibliographystyle{plainnat}

@@ -2549,3 +2549,9 @@ Features for the learner = structured columns (upstream preprocessing)
   Table 4, and Limitations says an earlier version gained less there). The Holm sentence names both corrections;
   "useful information often sits in earlier layers". Main text ends on page 4; audit PASS.
 - E66 addendum 3 (2026-10-25): the depth probes' pre-registered paired test (P14 secondary, p = 0.216) is reported in the Table 2 caption, so every pre-registered result appears in the paper.
+- E66 addendum 4 (2026-10-25): the page fit is now checked with pdfLaTeX (TinyTeX 2026.10, the template's engine and
+  Overleaf's), not Tectonic: the author's Overleaf build ran 2 lines over, reproduced here. Fixed by a shorter Track 2
+  paragraph (link "repository") and dropping "(Joint TAR fine-tunes the top three)" (the Introduction says it).
+  "the one dataset Joint TAR won with every learner" → "with all five learners" in the paper and README (under the
+  "every eligible learner" reading, Wine Review was also lost by the depth-probe version: −0.0012 / −0.0034 / −0.0004;
+  found by an independent check). pdfLaTeX: main text ends on page 4, no Type 3 fonts (with cm-super, as on Overleaf).

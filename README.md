@@ -31,7 +31,7 @@ gain over Joint TAR with its 95% interval, the honest scale.
 - **Broad:** 84% of the 480 individual (learner, dataset, fold) runs beat Joint TAR (402); 16 of the 20 datasets are
   won with at least 4 of the 5 learners, 15 with every eligible learner.
 - **Jigsaw Toxicity**, where fine-tuning itself gains the most (+0.117 over the frozen encoder), was the one dataset
-  Joint TAR won with every learner. The last expert added, an attention probe on the frozen token states, turns it
+  Joint TAR won with all five learners. The last expert added, an attention probe on the frozen token states, turns it
   into a win with every learner (+0.009 to +0.015).
 - **The attention probe helps every learner** over the version without it (+0.002 to +0.003 on average), significantly
   for four (LightGBM: p = 0.12).
@@ -187,7 +187,7 @@ advance, on the full benchmark. Fine-tuning variants that put the structured col
 beat Joint TAR. Cross-fitting the fine-tuned head fixed the over-trust but cost 22 GPU-hours and was no better, which
 raised the question of whether the target-awareness needs fine-tuning at all. Cheap frozen experts matched Joint TAR;
 a probe on the full embedding, then probes on the inner layers, took it clearly past, and an attention probe on the
-frozen token states removed the last dataset Joint TAR won with every learner (Jigsaw Toxicity). Every stage, with its numbers:
+frozen token states removed the last dataset Joint TAR won with all five learners (Jigsaw Toxicity). Every stage, with its numbers:
 [`archive/README.md`](archive/README.md).
 
 ## Limitations
