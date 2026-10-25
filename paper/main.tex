@@ -250,15 +250,15 @@ the 7 multiclass datasets.}
 
 
 \paragraph{What each part contributes.}
-Figure~\ref{fig:depth}a, Table~\ref{tab:buildup}: combined, the base experts gain \bucte{} over Joint TAR (not
-significant) and the final configuration \buattn; none of the three base experts alone is ahead. Fitted in-sample, the lexical expert scores \buLexInDrop{} lower. The
+Figure~\ref{fig:depth}a, Table~\ref{tab:buildup}: no base expert alone is ahead of Joint TAR; combined they are
+(\bucte), and the full method reaches \buattn. Fitted in-sample, the lexical expert scores \buLexInDrop{} lower. The
 depth increment alone is not significant (\depthIncWins{} of 20 datasets, $p = \depthIncP$), so Figure~\ref{fig:depth}b is
 mainly an analysis.
 
 \paragraph{The attention probe.}
 Without it, Jigsaw Toxicity was the one dataset Joint TAR won with every learner, and a single word can decide its label. Screened on training-row development splits, the
 attention probe turns Jigsaw into a win with every learner on the benchmark folds (\jigsawNewMin{} to \jigsawNewMax) and adds \attnIncPosMin{} to
-\attnIncPosMax{} over the \emph{depth-probe version} (the method without it) \attnIncNote.
+\attnIncPosMax{} over the \emph{depth-probe version} (the method without it) for all five learners.
 
 \paragraph{Robustness and checks.}
 Two checks used the depth-probe version. On 36 further text datasets never used in development (CatBoost, folds
