@@ -210,8 +210,9 @@ over folds; the averaged profile's best layer (dots) is often not the last. Colo
 We use the 20 MulTaBench text-tabular datasets (3 binary, 7 multiclass, 10 regression), the benchmark's five folds
 (test: 10\% of the rows, at most 2,000) and its code and metrics (AUROC; $R^2$).
 Baselines are the published Joint TAR and Joint Frozen scores of the same learner, dataset, fold and seed (42); TabPFN cannot
-run the two datasets with 30 and 114 classes ($n = 18$). Our re-implementation of Joint TAR scores \tarReproDiff{} against the
-published numbers ($p = \tarReproP$), so our environment does not appear to favor us. Per learner, the fold-averaged
+run the two datasets with 30 and 114 classes ($n = 18$). To check our setup, we re-ran Joint TAR ourselves: it
+reproduces the published scores within noise (\tarReproDiff, $p = \tarReproP$), so our setup does not inflate our
+results. Per learner, the fold-averaged
 differences to Joint TAR are tested over datasets with a two-sided Wilcoxon signed-rank test~\citep{wilcoxon1945individual}; each
 test and its threshold ($p < 0.05$, positive mean) were fixed in writing before its run. We Holm-correct~\citep{holm1979simple} over the
 five learners; over all \nTests{} pre-registered comparisons (Tables~\ref{tab:tests}--\ref{tab:final_p}), \holmAllNote.
