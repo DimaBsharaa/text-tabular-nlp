@@ -213,8 +213,8 @@ run the two datasets with 30 and 114 classes ($n = 18$). To check our setup, we 
 reproduces the published scores within noise (\tarReproDiff, $p = \tarReproP$), so our setup does not inflate our
 results. Per learner, the fold-averaged
 differences to Joint TAR are tested over datasets with a two-sided Wilcoxon signed-rank test~\citep{wilcoxon1945individual}; each
-test and its threshold ($p < 0.05$, positive mean) were fixed in writing before its run. All five learners pass the registered Holm correction~\citep{holm1979simple} over the five learners and
-over all \nTests{} comparisons (Tables~\ref{tab:tests}--\ref{tab:final_p}).
+test and its threshold ($p < 0.05$, positive mean) were fixed in writing before its run. All five learners pass the registered Holm correction~\citep{holm1979simple} over the five learners, and
+also the stricter one over all \nTests{} comparisons (Tables~\ref{tab:tests}--\ref{tab:final_p}).
 
 \begin{table}[t]
 \caption{CTE beats the published Joint TAR with every learner (means over datasets): gain (bootstrap 95\% CI),
@@ -255,9 +255,8 @@ Figure~\ref{fig:depth}a, Table~\ref{tab:buildup}: no base expert alone is ahead 
 (\bucte), and each probe adds to this, up to \buattn{} for the full CTE. Cross-fitting is essential: fitted in-sample
 instead, the lexical expert drops from \bulex{} to \bulexIn{} against Joint TAR. e5-small-v2 has 12 layers, but MulTaBench reads only the last one (Joint TAR fine-tunes the top
 three). Figure~\ref{fig:depth}b shows, per dataset, which layer predicts the target best: in \depthInner{} of 20
-datasets it is not the last, so useful information sits in earlier layers. This motivated
-the depth probes, which raise the score by a further \buDepthAdd{} (Figure~\ref{fig:depth}a; not significant on its
-own, $p = \depthIncP$).
+datasets it is not the last, so useful information often sits in earlier layers. This motivated
+the depth probes, which add a further \buDepthAdd{} (Figure~\ref{fig:depth}a).
 
 \paragraph{The attention probe.}
 Without it, Jigsaw Toxicity, where fine-tuning gains most (\jigsawTarGain), was the one dataset
@@ -268,8 +267,8 @@ a win with every learner (\jigsawNewMin{} to \jigsawNewMax) and adds \attnIncPos
 
 \paragraph{Robustness and checks.}
 Two checks used the depth-probe version. On 36 further text datasets that failed MulTaBench's curation, where
-fine-tuning itself beats Joint Frozen on only \cSevenTarOverFrozen, it still beats Joint TAR on \cSevenWins{}
-(median \cSevenMedian, $p = \cSevenP$; CatBoost, folds 0--2), though not significantly after Holm ($\cSevenHolm$). With two other
+fine-tuning itself beats Joint Frozen on only \cSevenTarOverFrozen, it still beats Joint TAR on \cSevenWins{} of
+them (median \cSevenMedian; CatBoost, folds 0--2; Table~\ref{tab:tests}). With two other
 cross-fitting seeds (LightGBM) the gain is \seedGainA{} and \seedGainB{} (\seedWinsA{} of 20 datasets each, Holm $p =
 \seedHolm$). Label-shuffle checks of the final method give chance-level scores (AUROC
 \shuffleMin--\shuffleMax, $R^2 \le \shuffleRtwo$).

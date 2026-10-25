@@ -2541,3 +2541,10 @@ Features for the learner = structured columns (upstream preprocessing)
   mean over learners, behind Jigsaw and Video Games (1.7× the median of the 20; "twice" not used).
 - **Checks:** main text ends on page 4; audit PASS; main text vs appendix consistent; `pytest` 316 passed, 1 skipped,
   exit 0 (35.9 min; no test covers `scripts/paper_assets.py`, whose only change since is the five macros).
+
+## E66 addendum 2 — wording of two side results (no number change)   (2026-10-25)
+- At the author's request the main text no longer quotes p-values for two side results; both stay in full where they
+  were: the depth probes' increment ("add a further +0.002"; Table 2 shows the step, +0.014 → +0.016) and the
+  36-dataset check ("beats Joint TAR on 24 of them (median +0.003; … Table 4)"; C7d with p = 0.017 and Holm 0.138 in
+  Table 4, and Limitations says an earlier version gained less there). The Holm sentence names both corrections;
+  "useful information often sits in earlier layers". Main text ends on page 4; audit PASS.
