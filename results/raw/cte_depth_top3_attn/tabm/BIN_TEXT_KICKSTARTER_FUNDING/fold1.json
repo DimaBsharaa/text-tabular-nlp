@@ -9,11 +9,11 @@
  "dataset": "BIN_TEXT_KICKSTARTER_FUNDING",
  "fold": 1,
  "task": "BIN",
- "score": 0.7530032169117648,
+ "score": 0.7526953125,
  "metrics": {
-  "score": 0.7530032169117648,
+  "score": 0.7526953125,
   "metrics": {
-   "auc": 0.7530032169117648
+   "auc": 0.7526953125
   }
  },
  "reference": {
@@ -22,11 +22,11 @@
   "unimodal_structured": 0.6080830652573529,
   "unimodal_text": 0.6994829963235295
  },
- "diff_vs_csv_joint_tar": 0.01227596507352946,
+ "diff_vs_csv_joint_tar": 0.011968060661764701,
  "runtime_s": {
-  "total": 60.1,
-  "fit": 59.7,
-  "predict": 0.4,
+  "total": 28.9,
+  "fit": 28.6,
+  "predict": 0.3,
   "tar_lower_cache": null,
   "tar_train": null,
   "tar_encode": null
@@ -51,13 +51,13 @@
   "micro_batch_size": 256,
   "fast": true,
   "pca_components": 30,
-  "cache_dir": "/home/student/p18/results/_cache"
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache"
  },
  "git": {
-  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
-  "dirty": true
+  "commit": "7a36f4e7b21cfa5df7b3cbeae3ede75d2b2b7700",
+  "dirty": false
  },
- "timestamp": "2026-10-23 22:56:11",
+ "timestamp": "2026-10-25 00:57:10",
  "argv": [
   "--method",
   "cte_depth_top3_attn",
@@ -70,9 +70,9 @@
   "--seed",
   "42",
   "--out",
-  "/home/student/p18/results",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100",
   "--cache_dir",
-  "/home/student/p18/results/_cache",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache",
   "--train_examples",
   "10000",
   "--epochs",
@@ -80,16 +80,16 @@
   "--micro_batch_size",
   "256"
  ],
- "gpu": "Tesla T4",
+ "gpu": "NVIDIA A100-SXM4-40GB",
  "hardware": {
-  "gpu_type": "Tesla T4",
-  "gpu_total_memory_gb": 15.55816650390625,
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
   "use_gpu": true,
   "cpu_cores": 8,
-  "system_ram_gb": 54.923683166503906,
-  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
  },
- "learner_threads": 2,
+ "learner_threads": 3,
  "torch": "2.7.1+cu126",
  "numpy": "2.3.5",
  "stacking": {
@@ -99,8 +99,8 @@
    "probe"
   ],
   "seconds": {
-   "base": 4.6,
-   "probe": 10.6
+   "base": 4.9,
+   "probe": 6.9
   },
   "cte": {
    "lex_alpha": {
@@ -112,10 +112,10 @@
      10.0
     ],
     "oof_metric": [
-     0.652684,
-     0.673597,
-     0.695404,
-     0.710229
+     0.652561,
+     0.673517,
+     0.695415,
+     0.710222
     ]
    },
    "expert_cache_hits": {
@@ -123,17 +123,17 @@
     "nbr": true
    },
    "seconds": {
-    "frozen_embeddings": 0.5,
-    "experts": 3.8
+    "frozen_embeddings": 0.8,
+    "experts": 3.9
    }
   },
   "probe": {
    "alpha": 10.0,
    "oof_metric": [
-    0.692318225075636,
-    0.7044044998082468,
-    0.7128916949561809,
-    0.713062227461898
+    0.6923019473601977,
+    0.7044031646378704,
+    0.7128989105577888,
+    0.7130672840645995
    ]
   },
   "n_extra_columns": {
@@ -177,18 +177,18 @@
    "aggregate": "top3",
    "solver": "sparse_cg",
    "layer_oof_metric": {
-    "1": 0.698692,
-    "2": 0.703239,
-    "3": 0.708942,
-    "4": 0.709725,
+    "1": 0.698691,
+    "2": 0.70326,
+    "3": 0.708941,
+    "4": 0.70974,
     "5": 0.710199,
-    "6": 0.714217,
-    "7": 0.71351,
-    "8": 0.713393,
-    "9": 0.706333,
-    "10": 0.708532,
-    "11": 0.712474,
-    "12": 0.713468
+    "6": 0.714215,
+    "7": 0.713489,
+    "8": 0.713375,
+    "9": 0.706375,
+    "10": 0.708562,
+    "11": 0.712481,
+    "12": 0.713435
    },
    "layer_alpha": {
     "1": 30.0,
@@ -219,21 +219,21 @@
     1
    ],
    "probe_oof_metric_final_layer_cte_probe": [
-    0.692318225075636,
-    0.7044044998082468,
-    0.7128916949561809,
-    0.713062227461898
+    0.6923019473601977,
+    0.7044031646378704,
+    0.7128989105577888,
+    0.7130672840645995
    ],
    "probe_cache_hits": 12,
    "sl_weights": null,
    "sl_intercept": null,
    "seconds": {
-    "states": 2.9,
-    "probes": 0.0
+    "states": 5.5,
+    "probes": 0.1
    },
    "attn": {
     "layer": 6,
-    "oof_metric": 0.711291,
+    "oof_metric": 0.709539,
     "seconds": 0.0
    }
   },

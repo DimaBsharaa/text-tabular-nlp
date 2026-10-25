@@ -9,13 +9,13 @@
  "dataset": "REG_TEXT_BOOK_READABILITY",
  "fold": 4,
  "task": "REG",
- "score": 0.8896794831002075,
+ "score": 0.8839055636498837,
  "metrics": {
-  "score": 0.8896794831002075,
+  "score": 0.8839055636498837,
   "metrics": {
-   "r2": 0.8896794831002075,
-   "mse": 0.4430415724369058,
-   "rmse": 0.6656136810770237
+   "r2": 0.8839055636498837,
+   "mse": 0.46622933863201044,
+   "rmse": 0.6828098846912004
   }
  },
  "reference": {
@@ -24,10 +24,10 @@
   "unimodal_structured": 0.8314830271254057,
   "unimodal_text": 0.7160241956387308
  },
- "diff_vs_csv_joint_tar": 0.03457972961477973,
+ "diff_vs_csv_joint_tar": 0.028805810164455936,
  "runtime_s": {
-  "total": 74.7,
-  "fit": 74.6,
+  "total": 500.2,
+  "fit": 500.2,
   "predict": 0.0,
   "tar_lower_cache": null,
   "tar_train": null,
@@ -53,13 +53,13 @@
   "micro_batch_size": 256,
   "fast": true,
   "pca_components": 30,
-  "cache_dir": "/home/student/p18/results/_cache"
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache"
  },
  "git": {
-  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
-  "dirty": true
+  "commit": "7a36f4e7b21cfa5df7b3cbeae3ede75d2b2b7700",
+  "dirty": false
  },
- "timestamp": "2026-10-24 02:15:55",
+ "timestamp": "2026-10-24 23:20:59",
  "argv": [
   "--method",
   "cte_depth_top3_attn",
@@ -72,9 +72,9 @@
   "--seed",
   "42",
   "--out",
-  "/home/student/p18/results",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100",
   "--cache_dir",
-  "/home/student/p18/results/_cache",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache",
   "--train_examples",
   "10000",
   "--epochs",
@@ -82,16 +82,16 @@
   "--micro_batch_size",
   "256"
  ],
- "gpu": "Tesla T4",
+ "gpu": "NVIDIA A100-SXM4-40GB",
  "hardware": {
-  "gpu_type": "Tesla T4",
-  "gpu_total_memory_gb": 15.55816650390625,
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
   "use_gpu": true,
   "cpu_cores": 8,
-  "system_ram_gb": 54.923683166503906,
-  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
  },
- "learner_threads": 2,
+ "learner_threads": 3,
  "torch": "2.7.1+cu126",
  "numpy": "2.3.5",
  "stacking": {
@@ -101,8 +101,8 @@
    "probe"
   ],
   "seconds": {
-   "base": 2.2,
-   "probe": 2.7
+   "base": 23.9,
+   "probe": 2.1
   },
   "cte": {
    "lex_alpha": {
@@ -114,28 +114,28 @@
      10.0
     ],
     "oof_metric": [
-     0.937079,
-     0.934475,
-     0.926693,
-     0.909941
+     0.937109,
+     0.934499,
+     0.9267,
+     0.909958
     ]
    },
    "expert_cache_hits": {
-    "lex": true,
-    "nbr": true
+    "lex": false,
+    "nbr": false
    },
    "seconds": {
-    "frozen_embeddings": 0.1,
-    "experts": 2.1
+    "frozen_embeddings": 0.2,
+    "experts": 23.6
    }
   },
   "probe": {
    "alpha": 1.0,
    "oof_metric": [
-    0.8941967883526084,
-    0.8966949951770595,
-    0.8877936272253026,
-    0.862002617769506
+    0.8941665338143707,
+    0.8966783939610842,
+    0.8877845560111223,
+    0.8620051610674531
    ]
   },
   "n_extra_columns": {
@@ -180,18 +180,18 @@
    "aggregate": "top3",
    "solver": "sparse_cg",
    "layer_oof_metric": {
-    "1": 0.950546,
-    "2": 0.950345,
-    "3": 0.951666,
+    "1": 0.950547,
+    "2": 0.95035,
+    "3": 0.951669,
     "4": 0.948579,
-    "5": 0.944299,
-    "6": 0.942167,
-    "7": 0.940273,
-    "8": 0.938513,
-    "9": 0.935185,
-    "10": 0.922507,
-    "11": 0.902158,
-    "12": 0.892003
+    "5": 0.94431,
+    "6": 0.942165,
+    "7": 0.94027,
+    "8": 0.938501,
+    "9": 0.935176,
+    "10": 0.922525,
+    "11": 0.902147,
+    "12": 0.891998
    },
    "layer_alpha": {
     "1": 3.0,
@@ -222,74 +222,74 @@
     12
    ],
    "probe_oof_metric_final_layer_cte_probe": [
-    0.8941967883526084,
-    0.8966949951770595,
-    0.8877936272253026,
-    0.862002617769506
+    0.8941665338143707,
+    0.8966783939610842,
+    0.8877845560111223,
+    0.8620051610674531
    ],
-   "probe_cache_hits": 12,
+   "probe_cache_hits": 0,
    "sl_weights": null,
    "sl_intercept": null,
    "seconds": {
-    "states": 0.4,
-    "probes": 0.0
+    "states": 0.7,
+    "probes": 91.9
    },
    "attn": {
     "layer": 3,
-    "oof_metric": 0.948399,
-    "seconds": 0.0
+    "oof_metric": 0.947195,
+    "seconds": 322.4
    }
   },
   "catboost_importance": {
    "pred_columns": {
-    "Anthology_txt_pca_30": 14.525,
-    "Anthology_txt_pca_31": 0.595,
-    "Anthology_txt_pca_32": 0.51,
-    "Anthology_txt_pca_33": 0.004,
-    "Anthology_txt_pca_34": 0.005,
-    "Anthology_txt_pca_35": 0.067,
-    "Anthology_txt_pca_36": 0.032,
+    "Anthology_txt_pca_30": 17.809,
+    "Anthology_txt_pca_31": 0.644,
+    "Anthology_txt_pca_32": 0.648,
+    "Anthology_txt_pca_33": 0.0,
+    "Anthology_txt_pca_34": 0.0,
+    "Anthology_txt_pca_35": 0.046,
+    "Anthology_txt_pca_36": 0.049,
     "Anthology_txt_pca_37": 0.0,
-    "Anthology_txt_pca_38": 0.0,
+    "Anthology_txt_pca_38": 0.001,
     "Anthology_txt_pca_39": 0.0,
     "Anthology_txt_pca_40": 0.0,
     "Anthology_txt_pca_41": 0.0,
-    "Anthology_txt_pca_42": 0.06,
-    "Anthology_txt_pca_43": 0.004,
+    "Anthology_txt_pca_42": 0.008,
+    "Anthology_txt_pca_43": 0.027,
     "Anthology_txt_pca_44": 0.0,
-    "Anthology_txt_pca_45": 0.005,
-    "Anthology_txt_pca_46": 0.014,
-    "Anthology_txt_pca_47": 0.032,
-    "Anthology_txt_pca_48": 0.017,
+    "Anthology_txt_pca_45": 0.007,
+    "Anthology_txt_pca_46": 0.027,
+    "Anthology_txt_pca_47": 0.036,
+    "Anthology_txt_pca_48": 0.036,
     "Anthology_txt_pca_49": 0.0,
     "Anthology_txt_pca_50": 0.0,
-    "Anthology_txt_pca_51": 0.104,
+    "Anthology_txt_pca_51": 0.099,
     "Anthology_txt_pca_52": 0.0,
-    "Anthology_txt_pca_53": 2.409,
-    "Anthology_txt_pca_54": 17.448,
-    "Anthology_txt_pca_55": 26.075,
-    "Author_txt_pca_30": 0.26,
+    "Anthology_txt_pca_53": 3.086,
+    "Anthology_txt_pca_54": 18.211,
+    "Anthology_txt_pca_55": 26.991,
+    "Author_txt_pca_30": 0.253,
     "Author_txt_pca_31": 0.0,
     "Author_txt_pca_32": 0.0,
-    "Author_txt_pca_33": 0.005,
+    "Author_txt_pca_33": 0.0,
     "Author_txt_pca_34": 0.0,
     "Author_txt_pca_35": 0.0,
     "Author_txt_pca_36": 0.0,
     "Author_txt_pca_37": 0.0,
     "Author_txt_pca_38": 0.0,
     "Author_txt_pca_39": 0.0,
-    "Author_txt_pca_40": 0.069,
-    "Author_txt_pca_41": 0.007,
-    "Author_txt_pca_42": 0.014,
-    "Author_txt_pca_43": 0.117,
-    "Author_txt_pca_44": 0.133,
-    "Author_txt_pca_45": 0.001,
-    "Author_txt_pca_46": 0.014,
+    "Author_txt_pca_40": 0.094,
+    "Author_txt_pca_41": 0.0,
+    "Author_txt_pca_42": 0.0,
+    "Author_txt_pca_43": 0.056,
+    "Author_txt_pca_44": 0.091,
+    "Author_txt_pca_45": 0.0,
+    "Author_txt_pca_46": 0.011,
     "Author_txt_pca_47": 0.0,
-    "Author_txt_pca_48": 0.0,
-    "Author_txt_pca_49": 0.001,
+    "Author_txt_pca_48": 0.007,
+    "Author_txt_pca_49": 0.0,
     "Author_txt_pca_50": 0.0,
-    "British Words_txt_pca_30": 0.08,
+    "British Words_txt_pca_30": 0.052,
     "British Words_txt_pca_31": 0.0,
     "British Words_txt_pca_32": 0.0,
     "British Words_txt_pca_33": 0.0,
@@ -299,10 +299,10 @@
     "British Words_txt_pca_37": 0.0,
     "British Words_txt_pca_38": 0.0,
     "British Words_txt_pca_39": 0.0,
-    "British Words_txt_pca_40": 0.009,
-    "British Words_txt_pca_41": 0.0,
+    "British Words_txt_pca_40": 0.012,
+    "British Words_txt_pca_41": 0.002,
     "British Words_txt_pca_42": 0.0,
-    "British Words_txt_pca_43": 0.001,
+    "British Words_txt_pca_43": 0.006,
     "British Words_txt_pca_44": 0.0,
     "British Words_txt_pca_45": 0.0,
     "British Words_txt_pca_46": 0.0,
@@ -310,121 +310,121 @@
     "British Words_txt_pca_48": 0.0,
     "British Words_txt_pca_49": 0.0,
     "British Words_txt_pca_50": 0.0,
-    "Excerpt_txt_pca_30": 1.011,
-    "Excerpt_txt_pca_31": 0.378,
-    "Excerpt_txt_pca_32": 0.053,
-    "Excerpt_txt_pca_33": 0.078,
-    "Excerpt_txt_pca_34": 0.013,
-    "Excerpt_txt_pca_35": 0.006,
-    "Excerpt_txt_pca_36": 0.009,
+    "Excerpt_txt_pca_30": 0.692,
+    "Excerpt_txt_pca_31": 0.414,
+    "Excerpt_txt_pca_32": 0.043,
+    "Excerpt_txt_pca_33": 0.031,
+    "Excerpt_txt_pca_34": 0.016,
+    "Excerpt_txt_pca_35": 0.0,
+    "Excerpt_txt_pca_36": 0.007,
     "Excerpt_txt_pca_37": 0.0,
     "Excerpt_txt_pca_38": 0.0,
-    "Excerpt_txt_pca_39": 0.0,
-    "Excerpt_txt_pca_40": 0.19,
-    "Excerpt_txt_pca_41": 0.103,
-    "Excerpt_txt_pca_42": 0.433,
-    "Excerpt_txt_pca_43": 1.925,
-    "Excerpt_txt_pca_44": 1.17,
-    "Excerpt_txt_pca_45": 0.075,
-    "Excerpt_txt_pca_46": 0.284,
-    "Excerpt_txt_pca_47": 0.091,
-    "Excerpt_txt_pca_48": 0.082,
-    "Excerpt_txt_pca_49": 0.433,
+    "Excerpt_txt_pca_39": 0.004,
+    "Excerpt_txt_pca_40": 0.106,
+    "Excerpt_txt_pca_41": 0.143,
+    "Excerpt_txt_pca_42": 0.556,
+    "Excerpt_txt_pca_43": 1.439,
+    "Excerpt_txt_pca_44": 1.166,
+    "Excerpt_txt_pca_45": 0.14,
+    "Excerpt_txt_pca_46": 0.228,
+    "Excerpt_txt_pca_47": 0.023,
+    "Excerpt_txt_pca_48": 0.018,
+    "Excerpt_txt_pca_49": 0.468,
     "Excerpt_txt_pca_50": 0.0,
-    "Title_txt_pca_30": 0.382,
-    "Title_txt_pca_31": 0.007,
-    "Title_txt_pca_32": 0.001,
-    "Title_txt_pca_33": 0.0,
+    "Title_txt_pca_30": 0.213,
+    "Title_txt_pca_31": 0.0,
+    "Title_txt_pca_32": 0.0,
+    "Title_txt_pca_33": 0.001,
     "Title_txt_pca_34": 0.0,
     "Title_txt_pca_35": 0.0,
     "Title_txt_pca_36": 0.0,
     "Title_txt_pca_37": 0.0,
     "Title_txt_pca_38": 0.0,
     "Title_txt_pca_39": 0.0,
-    "Title_txt_pca_40": 0.05,
-    "Title_txt_pca_41": 0.003,
+    "Title_txt_pca_40": 0.015,
+    "Title_txt_pca_41": 0.009,
     "Title_txt_pca_42": 0.0,
-    "Title_txt_pca_43": 0.287,
-    "Title_txt_pca_44": 0.118,
+    "Title_txt_pca_43": 0.243,
+    "Title_txt_pca_44": 0.148,
     "Title_txt_pca_45": 0.0,
-    "Title_txt_pca_46": 0.03,
-    "Title_txt_pca_47": 0.001,
-    "Title_txt_pca_48": 0.001,
-    "Title_txt_pca_49": 0.095,
+    "Title_txt_pca_46": 0.05,
+    "Title_txt_pca_47": 0.0,
+    "Title_txt_pca_48": 0.0,
+    "Title_txt_pca_49": 0.057,
     "Title_txt_pca_50": 0.0,
-    "URL_txt_pca_30": 0.221,
-    "URL_txt_pca_31": 0.033,
-    "URL_txt_pca_32": 0.009,
-    "URL_txt_pca_33": 0.064,
-    "URL_txt_pca_34": 0.01,
-    "URL_txt_pca_35": 0.0,
+    "URL_txt_pca_30": 0.15,
+    "URL_txt_pca_31": 0.064,
+    "URL_txt_pca_32": 0.053,
+    "URL_txt_pca_33": 0.071,
+    "URL_txt_pca_34": 0.011,
+    "URL_txt_pca_35": 0.045,
     "URL_txt_pca_36": 0.0,
     "URL_txt_pca_37": 0.0,
     "URL_txt_pca_38": 0.0,
     "URL_txt_pca_39": 0.0,
-    "URL_txt_pca_40": 0.012,
+    "URL_txt_pca_40": 0.017,
     "URL_txt_pca_41": 0.0,
     "URL_txt_pca_42": 0.0,
-    "URL_txt_pca_43": 0.018,
-    "URL_txt_pca_44": 0.038,
-    "URL_txt_pca_45": 0.034,
-    "URL_txt_pca_46": 0.028,
+    "URL_txt_pca_43": 0.011,
+    "URL_txt_pca_44": 0.044,
+    "URL_txt_pca_45": 0.004,
+    "URL_txt_pca_46": 0.047,
     "URL_txt_pca_47": 0.0,
     "URL_txt_pca_48": 0.0,
     "URL_txt_pca_49": 0.0,
     "URL_txt_pca_50": 0.0
    },
-   "pred_share": 0.7039,
+   "pred_share": 0.7505,
    "group_share": {
-    "structured": 0.0942,
-    "pca": 0.2019,
-    "lex": 0.1453,
-    "nbr": 0.0306,
-    "num": 0.0688,
-    "probe": 0.0241,
-    "depthtop3": 0.1745,
-    "attn": 0.2608
+    "structured": 0.0966,
+    "pca": 0.1528,
+    "lex": 0.1781,
+    "nbr": 0.0265,
+    "num": 0.0631,
+    "probe": 0.0309,
+    "depthtop3": 0.1821,
+    "attn": 0.2699
    },
    "top10": [
     [
      "Anthology_txt_pca_55",
-     26.075
+     26.991
     ],
     [
      "Anthology_txt_pca_54",
-     17.448
+     18.211
     ],
     [
      "Anthology_txt_pca_30",
-     14.525
+     17.809
     ],
     [
      "Flesch-Reading-Ease",
-     3.488
+     4.081
     ],
     [
      "Anthology_txt_pca_53",
-     2.409
+     3.086
     ],
     [
      "Excerpt_txt_pca_43",
-     1.925
+     1.439
     ],
     [
      "Excerpt_txt_pca_44",
-     1.17
+     1.166
+    ],
+    [
+     "CAREC",
+     0.728
     ],
     [
      "Excerpt_txt_pca_30",
-     1.011
+     0.692
     ],
     [
-     "CARES",
-     0.748
-    ],
-    [
-     "BT Easiness",
-     0.709
+     "Flesch-Kincaid-Grade-Level",
+     0.664
     ]
    ]
   }

@@ -9,13 +9,13 @@
  "dataset": "REG_TEXT_MONTGOMERY_SALARIES",
  "fold": 0,
  "task": "REG",
- "score": 0.9867488671866175,
+ "score": 0.9864036817180131,
  "metrics": {
-  "score": 0.9867488671866175,
+  "score": 0.9864036817180131,
   "metrics": {
-   "r2": 0.9867488671866175,
-   "mse": 11926232.890318077,
-   "rmse": 3453.4378364635545
+   "r2": 0.9864036817180131,
+   "mse": 12236905.369939823,
+   "rmse": 3498.128838384862
   }
  },
  "reference": {
@@ -24,10 +24,10 @@
   "unimodal_structured": 0.9653214908621384,
   "unimodal_text": 0.884760629233541
  },
- "diff_vs_csv_joint_tar": 0.002793159300550685,
+ "diff_vs_csv_joint_tar": 0.002447973831946282,
  "runtime_s": {
-  "total": 53.4,
-  "fit": 53.4,
+  "total": 379.4,
+  "fit": 379.3,
   "predict": 0.0,
   "tar_lower_cache": null,
   "tar_train": null,
@@ -53,13 +53,13 @@
   "micro_batch_size": 256,
   "fast": true,
   "pca_components": 30,
-  "cache_dir": "/home/student/p18/results/_cache"
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache"
  },
  "git": {
-  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
-  "dirty": true
+  "commit": "7a36f4e7b21cfa5df7b3cbeae3ede75d2b2b7700",
+  "dirty": false
  },
- "timestamp": "2026-10-24 02:19:17",
+ "timestamp": "2026-10-24 23:50:25",
  "argv": [
   "--method",
   "cte_depth_top3_attn",
@@ -72,9 +72,9 @@
   "--seed",
   "42",
   "--out",
-  "/home/student/p18/results",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100",
   "--cache_dir",
-  "/home/student/p18/results/_cache",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache",
   "--train_examples",
   "10000",
   "--epochs",
@@ -82,16 +82,16 @@
   "--micro_batch_size",
   "256"
  ],
- "gpu": "Tesla T4",
+ "gpu": "NVIDIA A100-SXM4-40GB",
  "hardware": {
-  "gpu_type": "Tesla T4",
-  "gpu_total_memory_gb": 15.55816650390625,
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
   "use_gpu": true,
   "cpu_cores": 8,
-  "system_ram_gb": 54.923683166503906,
-  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
  },
- "learner_threads": 2,
+ "learner_threads": 3,
  "torch": "2.7.1+cu126",
  "numpy": "2.3.5",
  "stacking": {
@@ -101,8 +101,8 @@
    "probe"
   ],
   "seconds": {
-   "base": 1.1,
-   "probe": 2.9
+   "base": 21.2,
+   "probe": 3.1
   },
   "cte": {
    "lex_alpha": {
@@ -114,28 +114,28 @@
      10.0
     ],
     "oof_metric": [
-     0.928861,
-     0.93309,
-     0.930432,
-     0.918758
+     0.928863,
+     0.933089,
+     0.930431,
+     0.918757
     ]
    },
    "expert_cache_hits": {
-    "lex": true,
-    "nbr": true
+    "lex": false,
+    "nbr": false
    },
    "seconds": {
-    "frozen_embeddings": 0.1,
-    "experts": 1.0
+    "frozen_embeddings": 8.3,
+    "experts": 12.8
    }
   },
   "probe": {
    "alpha": 0.3,
    "oof_metric": [
-    0.9290916235633544,
-    0.9220455350003774,
-    0.910195979897299,
-    0.8862638956734685
+    0.929094000539483,
+    0.9220537157897222,
+    0.9102139713401644,
+    0.8862862941099096
    ]
   },
   "n_extra_columns": {
@@ -178,18 +178,18 @@
    "aggregate": "top3",
    "solver": "sparse_cg",
    "layer_oof_metric": {
-    "1": 0.930607,
-    "2": 0.931732,
-    "3": 0.931746,
-    "4": 0.929759,
-    "5": 0.929143,
-    "6": 0.929191,
-    "7": 0.928983,
-    "8": 0.928878,
-    "9": 0.927841,
-    "10": 0.92966,
-    "11": 0.931889,
-    "12": 0.933428
+    "1": 0.93062,
+    "2": 0.931739,
+    "3": 0.931764,
+    "4": 0.929777,
+    "5": 0.929169,
+    "6": 0.929188,
+    "7": 0.928977,
+    "8": 0.928885,
+    "9": 0.927828,
+    "10": 0.929637,
+    "11": 0.931863,
+    "12": 0.933419
    },
    "layer_alpha": {
     "1": 1.0,
@@ -220,35 +220,35 @@
     9
    ],
    "probe_oof_metric_final_layer_cte_probe": [
-    0.9290916235633544,
-    0.9220455350003774,
-    0.910195979897299,
-    0.8862638956734685
+    0.929094000539483,
+    0.9220537157897222,
+    0.9102139713401644,
+    0.8862862941099096
    ],
-   "probe_cache_hits": 12,
+   "probe_cache_hits": 0,
    "sl_weights": null,
    "sl_intercept": null,
    "seconds": {
-    "states": 0.3,
-    "probes": 0.0
+    "states": 8.1,
+    "probes": 157.5
    },
    "attn": {
     "layer": 12,
-    "oof_metric": 0.936721,
-    "seconds": 0.0
+    "oof_metric": 0.935088,
+    "seconds": 139.9
    }
   },
   "catboost_importance": {
    "pred_columns": {
-    "date_first_hired_txt_pca_30": 10.613,
-    "date_first_hired_txt_pca_31": 0.697,
-    "date_first_hired_txt_pca_32": 0.055,
+    "date_first_hired_txt_pca_30": 11.46,
+    "date_first_hired_txt_pca_31": 0.346,
+    "date_first_hired_txt_pca_32": 0.036,
     "date_first_hired_txt_pca_33": 0.0,
-    "date_first_hired_txt_pca_34": 0.539,
-    "date_first_hired_txt_pca_35": 0.36,
-    "date_first_hired_txt_pca_36": 0.02,
+    "date_first_hired_txt_pca_34": 0.606,
+    "date_first_hired_txt_pca_35": 0.54,
+    "date_first_hired_txt_pca_36": 0.016,
     "date_first_hired_txt_pca_37": 0.0,
-    "date_first_hired_txt_pca_38": 0.387,
+    "date_first_hired_txt_pca_38": 0.302,
     "date_first_hired_txt_pca_39": 0.0,
     "date_first_hired_txt_pca_40": 0.0,
     "date_first_hired_txt_pca_41": 0.0,
@@ -263,31 +263,31 @@
     "date_first_hired_txt_pca_50": 0.0,
     "date_first_hired_txt_pca_51": 0.0,
     "date_first_hired_txt_pca_52": 0.0,
-    "date_first_hired_txt_pca_53": 10.319,
-    "date_first_hired_txt_pca_54": 3.64,
-    "date_first_hired_txt_pca_55": 11.834,
-    "division_txt_pca_30": 0.122,
+    "date_first_hired_txt_pca_53": 9.376,
+    "date_first_hired_txt_pca_54": 5.207,
+    "date_first_hired_txt_pca_55": 10.934,
+    "division_txt_pca_30": 0.07,
     "division_txt_pca_31": 0.0,
-    "division_txt_pca_32": 0.004,
+    "division_txt_pca_32": 0.0,
     "division_txt_pca_33": 0.001,
-    "division_txt_pca_34": 0.0,
+    "division_txt_pca_34": 0.001,
     "division_txt_pca_35": 0.0,
     "division_txt_pca_36": 0.0,
     "division_txt_pca_37": 0.0,
     "division_txt_pca_38": 0.0,
     "division_txt_pca_39": 0.0,
-    "division_txt_pca_40": 0.005,
-    "division_txt_pca_41": 0.048,
+    "division_txt_pca_40": 0.008,
+    "division_txt_pca_41": 0.046,
     "division_txt_pca_42": 0.0,
-    "division_txt_pca_43": 0.02,
+    "division_txt_pca_43": 0.015,
     "division_txt_pca_44": 0.016,
-    "division_txt_pca_45": 0.006,
-    "division_txt_pca_46": 0.016,
+    "division_txt_pca_45": 0.102,
+    "division_txt_pca_46": 0.01,
     "division_txt_pca_47": 0.0,
     "division_txt_pca_48": 0.0,
-    "division_txt_pca_49": 0.001,
+    "division_txt_pca_49": 0.0,
     "division_txt_pca_50": 0.0,
-    "employee_position_title_txt_pca_30": 8.956,
+    "employee_position_title_txt_pca_30": 9.549,
     "employee_position_title_txt_pca_31": 0.0,
     "employee_position_title_txt_pca_32": 0.0,
     "employee_position_title_txt_pca_33": 0.0,
@@ -297,18 +297,18 @@
     "employee_position_title_txt_pca_37": 0.0,
     "employee_position_title_txt_pca_38": 0.0,
     "employee_position_title_txt_pca_39": 0.0,
-    "employee_position_title_txt_pca_40": 0.34,
-    "employee_position_title_txt_pca_41": 0.376,
+    "employee_position_title_txt_pca_40": 0.149,
+    "employee_position_title_txt_pca_41": 0.179,
     "employee_position_title_txt_pca_42": 0.0,
-    "employee_position_title_txt_pca_43": 0.085,
-    "employee_position_title_txt_pca_44": 0.127,
+    "employee_position_title_txt_pca_43": 0.043,
+    "employee_position_title_txt_pca_44": 0.107,
     "employee_position_title_txt_pca_45": 0.0,
-    "employee_position_title_txt_pca_46": 0.132,
+    "employee_position_title_txt_pca_46": 0.173,
     "employee_position_title_txt_pca_47": 0.0,
     "employee_position_title_txt_pca_48": 0.0,
     "employee_position_title_txt_pca_49": 0.0,
     "employee_position_title_txt_pca_50": 0.0,
-    "full_name_txt_pca_30": 0.026,
+    "full_name_txt_pca_30": 0.025,
     "full_name_txt_pca_31": 0.0,
     "full_name_txt_pca_32": 0.0,
     "full_name_txt_pca_33": 0.0,
@@ -318,11 +318,11 @@
     "full_name_txt_pca_37": 0.0,
     "full_name_txt_pca_38": 0.0,
     "full_name_txt_pca_39": 0.0,
-    "full_name_txt_pca_40": 0.003,
+    "full_name_txt_pca_40": 0.004,
     "full_name_txt_pca_41": 0.0,
-    "full_name_txt_pca_42": 0.0,
-    "full_name_txt_pca_43": 0.008,
-    "full_name_txt_pca_44": 0.012,
+    "full_name_txt_pca_42": 0.001,
+    "full_name_txt_pca_43": 0.006,
+    "full_name_txt_pca_44": 0.007,
     "full_name_txt_pca_45": 0.0,
     "full_name_txt_pca_46": 0.003,
     "full_name_txt_pca_47": 0.0,
@@ -330,57 +330,57 @@
     "full_name_txt_pca_49": 0.0,
     "full_name_txt_pca_50": 0.0
    },
-   "pred_share": 0.4877,
+   "pred_share": 0.4934,
    "group_share": {
-    "structured": 0.4352,
-    "pca": 0.0771,
-    "lex": 0.1061,
-    "nbr": 0.0986,
-    "num": 0.0251,
-    "probe": 0.1032,
-    "depthtop3": 0.0364,
-    "attn": 0.1183
+    "structured": 0.4279,
+    "pca": 0.0787,
+    "lex": 0.1146,
+    "nbr": 0.1003,
+    "num": 0.0234,
+    "probe": 0.0938,
+    "depthtop3": 0.0521,
+    "attn": 0.1093
    },
    "top10": [
     [
      "2016_gross_pay_received",
-     30.517
-    ],
-    [
-     "date_first_hired_txt_pca_55",
-     11.834
+     30.023
     ],
     [
      "date_first_hired_txt_pca_30",
-     10.613
+     11.46
     ],
     [
-     "date_first_hired_txt_pca_53",
-     10.319
+     "date_first_hired_txt_pca_55",
+     10.934
     ],
     [
      "employee_position_title_txt_pca_30",
-     8.956
+     9.549
+    ],
+    [
+     "date_first_hired_txt_pca_53",
+     9.376
     ],
     [
      "2016_overtime_pay",
-     7.275
+     7.21
     ],
     [
      "assignment_category",
-     5.457
+     5.23
     ],
     [
      "date_first_hired_txt_pca_54",
-     3.64
-    ],
-    [
-     "date_first_hired_txt_pca_31",
-     0.697
+     5.207
     ],
     [
      "employee_position_title_txt_pca_13",
-     0.542
+     0.825
+    ],
+    [
+     "date_first_hired_txt_pca_34",
+     0.606
     ]
    ]
   }

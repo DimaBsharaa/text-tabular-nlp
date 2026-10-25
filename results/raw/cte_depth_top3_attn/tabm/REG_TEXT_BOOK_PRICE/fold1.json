@@ -9,13 +9,13 @@
  "dataset": "REG_TEXT_BOOK_PRICE",
  "fold": 1,
  "task": "REG",
- "score": 0.6340995243099703,
+ "score": 0.6265920606883641,
  "metrics": {
-  "score": 0.6340995243099703,
+  "score": 0.6265920606883641,
   "metrics": {
-   "r2": 0.6340995243099703,
-   "mse": 0.03521682056924589,
-   "rmse": 0.1876614520066545
+   "r2": 0.6265920606883641,
+   "mse": 0.03593939136884282,
+   "rmse": 0.18957687456238648
   }
  },
  "reference": {
@@ -24,10 +24,10 @@
   "unimodal_structured": 0.2224007549884585,
   "unimodal_text": 0.5749652593243215
  },
- "diff_vs_csv_joint_tar": 0.04835850300054312,
+ "diff_vs_csv_joint_tar": 0.04085103937893697,
  "runtime_s": {
-  "total": 81.7,
-  "fit": 81.5,
+  "total": 14.1,
+  "fit": 13.9,
   "predict": 0.2,
   "tar_lower_cache": null,
   "tar_train": null,
@@ -53,13 +53,13 @@
   "micro_batch_size": 256,
   "fast": true,
   "pca_components": 30,
-  "cache_dir": "/home/student/p18/results/_cache"
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache"
  },
  "git": {
-  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
-  "dirty": true
+  "commit": "7a36f4e7b21cfa5df7b3cbeae3ede75d2b2b7700",
+  "dirty": false
  },
- "timestamp": "2026-10-23 22:55:09",
+ "timestamp": "2026-10-25 00:56:28",
  "argv": [
   "--method",
   "cte_depth_top3_attn",
@@ -72,9 +72,9 @@
   "--seed",
   "42",
   "--out",
-  "/home/student/p18/results",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100",
   "--cache_dir",
-  "/home/student/p18/results/_cache",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache",
   "--train_examples",
   "10000",
   "--epochs",
@@ -82,16 +82,16 @@
   "--micro_batch_size",
   "256"
  ],
- "gpu": "Tesla T4",
+ "gpu": "NVIDIA A100-SXM4-40GB",
  "hardware": {
-  "gpu_type": "Tesla T4",
-  "gpu_total_memory_gb": 15.55816650390625,
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
   "use_gpu": true,
   "cpu_cores": 8,
-  "system_ram_gb": 54.923683166503906,
-  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
  },
- "learner_threads": 2,
+ "learner_threads": 3,
  "torch": "2.7.1+cu126",
  "numpy": "2.3.5",
  "stacking": {
@@ -101,8 +101,8 @@
    "probe"
   ],
   "seconds": {
-   "base": 2.6,
-   "probe": 1.8
+   "base": 3.0,
+   "probe": 1.4
   },
   "cte": {
    "lex_alpha": {
@@ -114,10 +114,10 @@
      10.0
     ],
     "oof_metric": [
-     0.674921,
-     0.68316,
-     0.680799,
-     0.657345
+     0.674588,
+     0.682983,
+     0.680547,
+     0.657212
     ]
    },
    "expert_cache_hits": {
@@ -126,16 +126,16 @@
    },
    "seconds": {
     "frozen_embeddings": 0.1,
-    "experts": 2.5
+    "experts": 2.8
    }
   },
   "probe": {
    "alpha": 1.0,
    "oof_metric": [
-    0.6504052421663339,
-    0.6607358823024615,
-    0.654011757681671,
-    0.6255863041329408
+    0.650425695530116,
+    0.6607748183561697,
+    0.6540199473080168,
+    0.6256047900319941
    ]
   },
   "n_extra_columns": {
@@ -179,18 +179,18 @@
    "aggregate": "top3",
    "solver": "sparse_cg",
    "layer_oof_metric": {
-    "1": 0.668884,
-    "2": 0.678175,
-    "3": 0.675489,
-    "4": 0.678814,
-    "5": 0.678559,
-    "6": 0.68142,
-    "7": 0.68182,
-    "8": 0.683162,
-    "9": 0.680039,
-    "10": 0.688891,
-    "11": 0.670015,
-    "12": 0.66585
+    "1": 0.668882,
+    "2": 0.678171,
+    "3": 0.675495,
+    "4": 0.678827,
+    "5": 0.678575,
+    "6": 0.68143,
+    "7": 0.681831,
+    "8": 0.683143,
+    "9": 0.679966,
+    "10": 0.688893,
+    "11": 0.669994,
+    "12": 0.665868
    },
    "layer_alpha": {
     "1": 10.0,
@@ -221,21 +221,21 @@
     12
    ],
    "probe_oof_metric_final_layer_cte_probe": [
-    0.6504052421663339,
-    0.6607358823024615,
-    0.654011757681671,
-    0.6255863041329408
+    0.650425695530116,
+    0.6607748183561697,
+    0.6540199473080168,
+    0.6256047900319941
    ],
    "probe_cache_hits": 12,
    "sl_weights": null,
    "sl_intercept": null,
    "seconds": {
-    "states": 0.4,
+    "states": 0.6,
     "probes": 0.0
    },
    "attn": {
     "layer": 10,
-    "oof_metric": 0.673997,
+    "oof_metric": 0.676311,
     "seconds": 0.0
    }
   },

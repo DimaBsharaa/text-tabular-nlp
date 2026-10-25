@@ -9,13 +9,13 @@
  "dataset": "REG_TEXT_BABIES_PRICES",
  "fold": 4,
  "task": "REG",
- "score": 0.8928028594142123,
+ "score": 0.8908145597511559,
  "metrics": {
-  "score": 0.8928028594142123,
+  "score": 0.8908145597511559,
   "metrics": {
-   "r2": 0.8928028594142123,
-   "mse": 190.06266926737234,
-   "rmse": 13.786321817924183
+   "r2": 0.8908145597511559,
+   "mse": 193.5879642444478,
+   "rmse": 13.913589193462908
   }
  },
  "reference": {
@@ -24,10 +24,10 @@
   "unimodal_structured": 0.3498535231286357,
   "unimodal_text": 0.8627175072236588
  },
- "diff_vs_csv_joint_tar": 0.02422773698818448,
+ "diff_vs_csv_joint_tar": 0.02223943732512801,
  "runtime_s": {
-  "total": 37.5,
-  "fit": 37.3,
+  "total": 16.6,
+  "fit": 16.4,
   "predict": 0.2,
   "tar_lower_cache": null,
   "tar_train": null,
@@ -53,13 +53,13 @@
   "micro_batch_size": 256,
   "fast": true,
   "pca_components": 30,
-  "cache_dir": "/home/student/p18/results/_cache"
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache"
  },
  "git": {
-  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
-  "dirty": true
+  "commit": "7a36f4e7b21cfa5df7b3cbeae3ede75d2b2b7700",
+  "dirty": false
  },
- "timestamp": "2026-10-23 23:19:32",
+ "timestamp": "2026-10-25 00:59:03",
  "argv": [
   "--method",
   "cte_depth_top3_attn",
@@ -72,9 +72,9 @@
   "--seed",
   "42",
   "--out",
-  "/home/student/p18/results",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100",
   "--cache_dir",
-  "/home/student/p18/results/_cache",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache",
   "--train_examples",
   "10000",
   "--epochs",
@@ -82,16 +82,16 @@
   "--micro_batch_size",
   "256"
  ],
- "gpu": "Tesla T4",
+ "gpu": "NVIDIA A100-SXM4-40GB",
  "hardware": {
-  "gpu_type": "Tesla T4",
-  "gpu_total_memory_gb": 15.55816650390625,
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
   "use_gpu": true,
   "cpu_cores": 8,
-  "system_ram_gb": 54.923683166503906,
-  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
  },
- "learner_threads": null,
+ "learner_threads": 3,
  "torch": "2.7.1+cu126",
  "numpy": "2.3.5",
  "stacking": {
@@ -102,7 +102,7 @@
   ],
   "seconds": {
    "base": 0.5,
-   "probe": 8.9
+   "probe": 1.1
   },
   "cte": {
    "lex_alpha": {
@@ -114,10 +114,10 @@
      10.0
     ],
     "oof_metric": [
-     0.923727,
-     0.918269,
-     0.904274,
-     0.877292
+     0.923723,
+     0.918271,
+     0.904275,
+     0.877291
     ]
    },
    "expert_cache_hits": {
@@ -125,17 +125,17 @@
     "nbr": true
    },
    "seconds": {
-    "frozen_embeddings": 0.0,
-    "experts": 0.4
+    "frozen_embeddings": 0.1,
+    "experts": 0.5
    }
   },
   "probe": {
    "alpha": 0.3,
    "oof_metric": [
-    0.8584845519528196,
-    0.8400426041522706,
-    0.8120627064113719,
-    0.7658531336247322
+    0.8584808196537795,
+    0.8400455873558552,
+    0.8120645241391702,
+    0.7658462303687982
    ]
   },
   "n_extra_columns": {
@@ -178,18 +178,18 @@
    "aggregate": "top3",
    "solver": "sparse_cg",
    "layer_oof_metric": {
-    "1": 0.856628,
-    "2": 0.848038,
-    "3": 0.845533,
-    "4": 0.845317,
-    "5": 0.834736,
-    "6": 0.834556,
-    "7": 0.830746,
+    "1": 0.856625,
+    "2": 0.848039,
+    "3": 0.845529,
+    "4": 0.845333,
+    "5": 0.834749,
+    "6": 0.83458,
+    "7": 0.830733,
     "8": 0.832473,
-    "9": 0.830672,
-    "10": 0.840911,
-    "11": 0.852514,
-    "12": 0.867641
+    "9": 0.830657,
+    "10": 0.840876,
+    "11": 0.852532,
+    "12": 0.867658
    },
    "layer_alpha": {
     "1": 1.0,
@@ -220,10 +220,10 @@
     9
    ],
    "probe_oof_metric_final_layer_cte_probe": [
-    0.8584845519528196,
-    0.8400426041522706,
-    0.8120627064113719,
-    0.7658531336247322
+    0.8584808196537795,
+    0.8400455873558552,
+    0.8120645241391702,
+    0.7658462303687982
    ],
    "probe_cache_hits": 12,
    "sl_weights": null,
@@ -234,7 +234,7 @@
    },
    "attn": {
     "layer": 12,
-    "oof_metric": 0.894783,
+    "oof_metric": 0.894112,
     "seconds": 0.0
    }
   },

@@ -9,12 +9,12 @@
  "dataset": "MUL_TEXT_DATA_SCIENTIST_SALARY",
  "fold": 3,
  "task": "MUL",
- "score": 0.8588051531950383,
+ "score": 0.8613675200997214,
  "metrics": {
-  "score": 0.8588051531950383,
+  "score": 0.8613675200997214,
   "metrics": {
-   "auc": 0.8588051531950383,
-   "logloss": 1.1401617711401582
+   "auc": 0.8613675200997214,
+   "logloss": 1.1155204141563015
   }
  },
  "reference": {
@@ -23,10 +23,10 @@
   "unimodal_structured": 0.5625223141404816,
   "unimodal_text": 0.8340780576126714
  },
- "diff_vs_csv_joint_tar": 0.02117523783200248,
+ "diff_vs_csv_joint_tar": 0.023737604736685625,
  "runtime_s": {
-  "total": 74.5,
-  "fit": 74.2,
+  "total": 36.8,
+  "fit": 36.5,
   "predict": 0.3,
   "tar_lower_cache": null,
   "tar_train": null,
@@ -52,13 +52,13 @@
   "micro_batch_size": 256,
   "fast": true,
   "pca_components": 30,
-  "cache_dir": "/home/student/p18/results/_cache"
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache"
  },
  "git": {
-  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
-  "dirty": true
+  "commit": "7a36f4e7b21cfa5df7b3cbeae3ede75d2b2b7700",
+  "dirty": false
  },
- "timestamp": "2026-10-23 22:38:16",
+ "timestamp": "2026-10-25 00:48:47",
  "argv": [
   "--method",
   "cte_depth_top3_attn",
@@ -71,9 +71,9 @@
   "--seed",
   "42",
   "--out",
-  "/home/student/p18/results",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100",
   "--cache_dir",
-  "/home/student/p18/results/_cache",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache",
   "--train_examples",
   "10000",
   "--epochs",
@@ -81,16 +81,16 @@
   "--micro_batch_size",
   "256"
  ],
- "gpu": "Tesla T4",
+ "gpu": "NVIDIA A100-SXM4-40GB",
  "hardware": {
-  "gpu_type": "Tesla T4",
-  "gpu_total_memory_gb": 15.55816650390625,
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
   "use_gpu": true,
   "cpu_cores": 8,
-  "system_ram_gb": 54.923683166503906,
-  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
  },
- "learner_threads": 2,
+ "learner_threads": 3,
  "torch": "2.7.1+cu126",
  "numpy": "2.3.5",
  "stacking": {
@@ -100,8 +100,8 @@
    "probe"
   ],
   "seconds": {
-   "base": 4.3,
-   "probe": 39.4
+   "base": 2.8,
+   "probe": 20.2
   },
   "cte": {
    "lex_alpha": {
@@ -113,10 +113,10 @@
      10.0
     ],
     "oof_metric": [
-     0.727681,
-     0.757677,
-     0.780019,
-     0.791071
+     0.727706,
+     0.757711,
+     0.780036,
+     0.791073
     ]
    },
    "expert_cache_hits": {
@@ -125,16 +125,16 @@
    },
    "seconds": {
     "frozen_embeddings": 0.3,
-    "experts": 3.8
+    "experts": 2.3
    }
   },
   "probe": {
    "alpha": 10.0,
    "oof_metric": [
-    0.7776851593967885,
-    0.7927739733078938,
-    0.801560158017276,
-    0.8034139740230527
+    0.777681808890117,
+    0.7927724650205241,
+    0.8015584602294976,
+    0.8034136729920424
    ]
   },
   "n_extra_columns": {
@@ -179,17 +179,17 @@
    "solver": "eig",
    "layer_oof_metric": {
     "1": 0.800439,
-    "2": 0.800749,
-    "3": 0.80139,
+    "2": 0.80075,
+    "3": 0.801392,
     "4": 0.801854,
-    "5": 0.801383,
-    "6": 0.801229,
-    "7": 0.802076,
-    "8": 0.802024,
-    "9": 0.802168,
-    "10": 0.80219,
-    "11": 0.802294,
-    "12": 0.80319
+    "5": 0.801381,
+    "6": 0.801224,
+    "7": 0.802074,
+    "8": 0.802021,
+    "9": 0.802165,
+    "10": 0.802191,
+    "11": 0.802295,
+    "12": 0.803187
    },
    "layer_alpha": {
     "1": 100.0,
@@ -220,21 +220,21 @@
     1
    ],
    "probe_oof_metric_final_layer_cte_probe": [
-    0.7776851593967885,
-    0.7927739733078938,
-    0.801560158017276,
-    0.8034139740230527
+    0.777681808890117,
+    0.7927724650205241,
+    0.8015584602294976,
+    0.8034136729920424
    ],
    "probe_cache_hits": 12,
    "sl_weights": null,
    "sl_intercept": null,
    "seconds": {
-    "states": 0.6,
+    "states": 1.0,
     "probes": 0.1
    },
    "attn": {
     "layer": 12,
-    "oof_metric": 0.805069,
+    "oof_metric": 0.805407,
     "seconds": 0.0
    }
   },

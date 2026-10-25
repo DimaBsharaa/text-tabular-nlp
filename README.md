@@ -15,8 +15,8 @@ regression), compared with the published Joint TAR score of the **same learner, 
 | Learner | Datasets | Joint TAR | Ours | Mean gain [95% CI] | Datasets won | Wilcoxon p |
 |---|---:|---:|---:|---:|---:|---:|
 | CatBoost | 20 | 0.811 | 0.831 | +0.019 [0.012, 0.027] | 18 | < 0.0001 |
-| LightGBM | 20 | 0.798 | 0.817 | +0.019 [0.005, 0.031] | 16 | 0.007 |
-| TabM | 20 | 0.819 | 0.838 | +0.019 [0.011, 0.027] | 17 | < 0.0001 |
+| LightGBM | 20 | 0.798 | 0.819 | +0.021 [0.010, 0.032] | 17 | 0.0009 |
+| TabM | 20 | 0.819 | 0.839 | +0.019 [0.012, 0.028] | 19 | < 0.0001 |
 | TabPFN-v2 | 18 | 0.783 | 0.815 | +0.033 [0.017, 0.051] | 16 | 0.0003 |
 | TabPFN-2.5 | 18 | 0.807 | 0.829 | +0.023 [0.013, 0.033] | 18 | < 0.0001 |
 
@@ -26,16 +26,20 @@ Left: mean scores (the axis starts at 0.70 and averages AUROC with R², as the b
 gain over Joint TAR with its 95% interval, the honest scale.
 
 - **Significant with every learner** (two-sided Wilcoxon signed-rank test over datasets, each test specified before
-  its run). With a Holm correction over the 24 pre-registered comparisons of the project, 4 of 5 remain significant
-  (LightGBM: 0.095); over the five final comparisons alone, all 5.
-- **Broad:** 83% of the 480 individual (learner, dataset, fold) runs beat Joint TAR; 16 of the 20 datasets are won
-  with at least 4 of the 5 learners.
+  its run). All 5 remain significant with a Holm correction over the five learners (as registered) and over all 24
+  pre-registered comparisons of the project (largest corrected p: LightGBM, 0.015).
+- **Broad:** 84% of the 480 individual (learner, dataset, fold) runs beat Joint TAR (402); 16 of the 20 datasets are
+  won with at least 4 of the 5 learners, 15 with all 5.
 - **Jigsaw Toxicity**, where fine-tuning itself gains the most (+0.117 over the frozen encoder), was the one dataset
   Joint TAR won with every learner. The last expert added, an attention probe on the frozen token states, turns it
-  into a win with every learner (+0.006 to +0.016).
-- **One failure:** LightGBM fails on one fold of Spotify Genres (AUROC 0.536 against 0.906–0.915 on the other folds;
-  0.913 when that job is re-run on an A100 GPU). It is reported as measured and makes LightGBM the one learner the
-  attention probe does not help on average (−0.0006).
+  into a win with every learner (+0.009 to +0.015).
+- **The attention probe helps every learner** over the version without it (+0.002 to +0.003 on average), significantly
+  for four (LightGBM: p = 0.12).
+- **One GPU type:** all 480 final runs ran on an NVIDIA A100. A first batch of the CatBoost, LightGBM and TabM runs on a
+  Tesla T4 (one LightGBM fold of Spotify Genres failed there: AUROC 0.536, 0.913 on the A100) was replaced as a whole,
+  by a rule fixed before the new results were seen; it is kept in
+  [`archive/results/raw/p18_t4/`](archive/results/raw/p18_t4/) with its provenance check
+  ([`reports/p18/`](reports/p18/)).
 - **Checked with the version without the attention probe:** re-run with two other cross-fitting fold seeds
   (LightGBM), the gain is +0.017 and +0.018 (15 of 20 datasets each, Holm p = 0.019); on 36 further text datasets
   never used in development it is smaller (median +0.003, 24 of 36 won).
@@ -44,10 +48,10 @@ gain over Joint TAR with its 95% interval, the honest scale.
 
 Full analysis, with every comparison and chart: [**notebook 02**](notebooks/02_results.ipynb). Scores per fold, dataset
 and learner: [`results/`](results/); the result file of every run of the final method and of its version without
-the attention probe (1,268 JSONs, with config, git commit and hardware): [`results/raw/`](results/raw/). The final
-runs of CatBoost, LightGBM and TabM ran on a Tesla T4 GPU, those of TabPFN on an A100. Single scores differ slightly
-between the two machines (GPU type, drivers, CPU threads; the attention probe trains on the GPU): 18 of the T4 jobs
-re-run on an A100 differ by +0.0005 on average and by up to ±0.02 on the noisiest dataset (Video Games Sales) ([`reports/p18/a100_check.csv`](reports/p18/a100_check.csv)).
+the attention probe (1,268 JSONs, with config, git commit and hardware): [`results/raw/`](results/raw/). Single scores
+depend slightly on the machine, because the attention probe trains on the GPU: 18 jobs run on both the T4 and the A100
+differ by +0.0005 on average and by up to ±0.02 on the noisiest dataset, Video Games Sales
+([`reports/p18/a100_check.csv`](reports/p18/a100_check.csv)).
 
 ## Background
 

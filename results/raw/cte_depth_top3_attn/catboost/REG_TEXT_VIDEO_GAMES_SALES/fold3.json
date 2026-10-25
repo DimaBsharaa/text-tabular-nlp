@@ -9,13 +9,13 @@
  "dataset": "REG_TEXT_VIDEO_GAMES_SALES",
  "fold": 3,
  "task": "REG",
- "score": 0.39517934923963893,
+ "score": 0.4029079884776099,
  "metrics": {
-  "score": 0.39517934923963893,
+  "score": 0.4029079884776099,
   "metrics": {
-   "r2": 0.39517934923963893,
-   "mse": 0.9360123301173613,
-   "rmse": 0.9674773021199832
+   "r2": 0.4029079884776099,
+   "mse": 0.924051591652702,
+   "rmse": 0.9612760226140575
   }
  },
  "reference": {
@@ -24,10 +24,10 @@
   "unimodal_structured": 0.0176326873467865,
   "unimodal_text": 0.2282011898569458
  },
- "diff_vs_csv_joint_tar": -0.10328977499313274,
+ "diff_vs_csv_joint_tar": -0.09556113575516179,
  "runtime_s": {
-  "total": 31.2,
-  "fit": 31.2,
+  "total": 144.8,
+  "fit": 144.8,
   "predict": 0.0,
   "tar_lower_cache": null,
   "tar_train": null,
@@ -53,13 +53,13 @@
   "micro_batch_size": 256,
   "fast": true,
   "pca_components": 30,
-  "cache_dir": "/home/student/p18/results/_cache"
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache"
  },
  "git": {
-  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
-  "dirty": true
+  "commit": "7a36f4e7b21cfa5df7b3cbeae3ede75d2b2b7700",
+  "dirty": false
  },
- "timestamp": "2026-10-24 02:22:41",
+ "timestamp": "2026-10-25 00:03:46",
  "argv": [
   "--method",
   "cte_depth_top3_attn",
@@ -72,9 +72,9 @@
   "--seed",
   "42",
   "--out",
-  "/home/student/p18/results",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100",
   "--cache_dir",
-  "/home/student/p18/results/_cache",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache",
   "--train_examples",
   "10000",
   "--epochs",
@@ -82,16 +82,16 @@
   "--micro_batch_size",
   "256"
  ],
- "gpu": "Tesla T4",
+ "gpu": "NVIDIA A100-SXM4-40GB",
  "hardware": {
-  "gpu_type": "Tesla T4",
-  "gpu_total_memory_gb": 15.55816650390625,
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
   "use_gpu": true,
   "cpu_cores": 8,
-  "system_ram_gb": 54.923683166503906,
-  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
  },
- "learner_threads": 2,
+ "learner_threads": 3,
  "torch": "2.7.1+cu126",
  "numpy": "2.3.5",
  "stacking": {
@@ -101,8 +101,8 @@
    "probe"
   ],
   "seconds": {
-   "base": 0.7,
-   "probe": 1.8
+   "base": 8.1,
+   "probe": 1.1
   },
   "cte": {
    "lex_alpha": {
@@ -115,27 +115,27 @@
     ],
     "oof_metric": [
      0.536196,
-     0.562847,
-     0.575235,
-     0.570049
+     0.562846,
+     0.575238,
+     0.570047
     ]
    },
    "expert_cache_hits": {
-    "lex": true,
-    "nbr": true
+    "lex": false,
+    "nbr": false
    },
    "seconds": {
-    "frozen_embeddings": 0.1,
-    "experts": 0.6
+    "frozen_embeddings": 1.9,
+    "experts": 6.2
    }
   },
   "probe": {
    "alpha": 1.0,
    "oof_metric": [
-    0.5367303873285667,
-    0.5415962153960242,
-    0.5391424197446343,
-    0.5245818087132449
+    0.5367317592079517,
+    0.5415946605859396,
+    0.5391422108327117,
+    0.5245734271218081
    ]
   },
   "n_extra_columns": {
@@ -176,17 +176,17 @@
    "aggregate": "top3",
    "solver": "sparse_cg",
    "layer_oof_metric": {
-    "1": 0.539189,
-    "2": 0.543944,
-    "3": 0.549358,
-    "4": 0.548796,
-    "5": 0.546426,
+    "1": 0.539186,
+    "2": 0.543951,
+    "3": 0.549355,
+    "4": 0.548787,
+    "5": 0.546422,
     "6": 0.546238,
-    "7": 0.547416,
-    "8": 0.549211,
+    "7": 0.547411,
+    "8": 0.549202,
     "9": 0.549859,
-    "10": 0.548568,
-    "11": 0.547316,
+    "10": 0.548559,
+    "11": 0.547305,
     "12": 0.545406
    },
    "layer_alpha": {
@@ -218,125 +218,125 @@
     1
    ],
    "probe_oof_metric_final_layer_cte_probe": [
-    0.5367303873285667,
-    0.5415962153960242,
-    0.5391424197446343,
-    0.5245818087132449
+    0.5367317592079517,
+    0.5415946605859396,
+    0.5391422108327117,
+    0.5245734271218081
    ],
-   "probe_cache_hits": 12,
+   "probe_cache_hits": 0,
    "sl_weights": null,
    "sl_intercept": null,
    "seconds": {
-    "states": 0.2,
-    "probes": 0.0
+    "states": 2.2,
+    "probes": 55.6
    },
    "attn": {
     "layer": 9,
-    "oof_metric": 0.538946,
-    "seconds": 0.0
+    "oof_metric": 0.539111,
+    "seconds": 51.7
    }
   },
   "catboost_importance": {
    "pred_columns": {
-    "Name_txt_pca_30": 13.72,
-    "Name_txt_pca_31": 4.672,
-    "Name_txt_pca_32": 7.946,
-    "Name_txt_pca_33": 0.054,
-    "Name_txt_pca_34": 0.002,
-    "Name_txt_pca_35": 0.08,
-    "Name_txt_pca_36": 0.026,
+    "Name_txt_pca_30": 14.511,
+    "Name_txt_pca_31": 4.616,
+    "Name_txt_pca_32": 6.995,
+    "Name_txt_pca_33": 0.1,
+    "Name_txt_pca_34": 0.015,
+    "Name_txt_pca_35": 0.125,
+    "Name_txt_pca_36": 0.058,
     "Name_txt_pca_37": 0.0,
-    "Name_txt_pca_38": 0.001,
+    "Name_txt_pca_38": 0.003,
     "Name_txt_pca_39": 0.0,
     "Name_txt_pca_40": 0.0,
     "Name_txt_pca_41": 0.0,
-    "Name_txt_pca_42": 0.317,
-    "Name_txt_pca_43": 0.041,
-    "Name_txt_pca_44": 0.033,
-    "Name_txt_pca_45": 1.062,
-    "Name_txt_pca_46": 0.644,
-    "Name_txt_pca_47": 0.148,
-    "Name_txt_pca_48": 0.486,
-    "Name_txt_pca_49": 0.115,
-    "Name_txt_pca_50": 0.0,
-    "Name_txt_pca_51": 0.029,
+    "Name_txt_pca_42": 0.544,
+    "Name_txt_pca_43": 0.138,
+    "Name_txt_pca_44": 0.016,
+    "Name_txt_pca_45": 0.943,
+    "Name_txt_pca_46": 0.446,
+    "Name_txt_pca_47": 0.326,
+    "Name_txt_pca_48": 0.321,
+    "Name_txt_pca_49": 0.089,
+    "Name_txt_pca_50": 0.003,
+    "Name_txt_pca_51": 0.017,
     "Name_txt_pca_52": 0.0,
-    "Name_txt_pca_53": 3.253,
-    "Name_txt_pca_54": 5.839,
-    "Name_txt_pca_55": 7.032,
-    "Publisher_txt_pca_30": 0.579,
+    "Name_txt_pca_53": 3.567,
+    "Name_txt_pca_54": 6.547,
+    "Name_txt_pca_55": 6.888,
+    "Publisher_txt_pca_30": 0.822,
     "Publisher_txt_pca_31": 0.0,
-    "Publisher_txt_pca_32": 0.001,
-    "Publisher_txt_pca_33": 0.009,
+    "Publisher_txt_pca_32": 0.002,
+    "Publisher_txt_pca_33": 0.004,
     "Publisher_txt_pca_34": 0.0,
     "Publisher_txt_pca_35": 0.0,
     "Publisher_txt_pca_36": 0.0,
     "Publisher_txt_pca_37": 0.0,
     "Publisher_txt_pca_38": 0.0,
     "Publisher_txt_pca_39": 0.0,
-    "Publisher_txt_pca_40": 0.218,
+    "Publisher_txt_pca_40": 0.073,
     "Publisher_txt_pca_41": 0.0,
     "Publisher_txt_pca_42": 0.0,
-    "Publisher_txt_pca_43": 0.021,
-    "Publisher_txt_pca_44": 0.043,
+    "Publisher_txt_pca_43": 0.043,
+    "Publisher_txt_pca_44": 0.016,
     "Publisher_txt_pca_45": 0.008,
-    "Publisher_txt_pca_46": 0.068,
+    "Publisher_txt_pca_46": 0.009,
     "Publisher_txt_pca_47": 0.0,
     "Publisher_txt_pca_48": 0.0,
     "Publisher_txt_pca_49": 0.0,
     "Publisher_txt_pca_50": 0.0
    },
-   "pred_share": 0.4645,
+   "pred_share": 0.4724,
    "group_share": {
-    "structured": 0.1172,
-    "pca": 0.4183,
-    "lex": 0.1372,
-    "nbr": 0.132,
-    "num": 0.0341,
-    "probe": 0.0325,
-    "depthtop3": 0.0584,
-    "attn": 0.0703
+    "structured": 0.1179,
+    "pca": 0.4096,
+    "lex": 0.1451,
+    "nbr": 0.1243,
+    "num": 0.033,
+    "probe": 0.0357,
+    "depthtop3": 0.0655,
+    "attn": 0.0689
    },
    "top10": [
     [
      "Name_txt_pca_30",
-     13.72
+     14.511
     ],
     [
      "Platform",
-     8.152
+     8.28
     ],
     [
      "Name_txt_pca_32",
-     7.946
+     6.995
     ],
     [
      "Name_txt_pca_55",
-     7.032
+     6.888
     ],
     [
      "Name_txt_pca_54",
-     5.839
+     6.547
     ],
     [
      "Name_txt_pca_16",
-     5.831
+     5.3
     ],
     [
      "Name_txt_pca_31",
-     4.672
+     4.616
     ],
     [
      "Name_txt_pca_12",
-     4.03
-    ],
-    [
-     "Name_txt_pca_27",
-     3.615
+     3.635
     ],
     [
      "Name_txt_pca_53",
-     3.253
+     3.567
+    ],
+    [
+     "Name_txt_pca_27",
+     3.468
     ]
    ]
   }

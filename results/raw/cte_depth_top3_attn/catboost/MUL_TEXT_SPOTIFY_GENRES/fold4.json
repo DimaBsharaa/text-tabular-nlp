@@ -9,12 +9,12 @@
  "dataset": "MUL_TEXT_SPOTIFY_GENRES",
  "fold": 4,
  "task": "MUL",
- "score": 0.9650181072634912,
+ "score": 0.9652739483930951,
  "metrics": {
-  "score": 0.9650181072634912,
+  "score": 0.9652739483930951,
   "metrics": {
-   "auc": 0.9650181072634912,
-   "logloss": 2.005282429700595
+   "auc": 0.9652739483930951,
+   "logloss": 2.0020117414182033
   }
  },
  "reference": {
@@ -23,11 +23,11 @@
   "unimodal_structured": 0.9274326638904686,
   "unimodal_text": 0.9190596691191844
  },
- "diff_vs_csv_joint_tar": -0.0005521231972511753,
+ "diff_vs_csv_joint_tar": -0.00029628206764731324,
  "runtime_s": {
-  "total": 5871.2,
-  "fit": 5871.0,
-  "predict": 0.1,
+  "total": 6859.3,
+  "fit": 6859.0,
+  "predict": 0.3,
   "tar_lower_cache": null,
   "tar_train": null,
   "tar_encode": null
@@ -52,13 +52,13 @@
   "micro_batch_size": 256,
   "fast": true,
   "pca_components": 30,
-  "cache_dir": "/home/student/p18/results/_cache"
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache"
  },
  "git": {
-  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
-  "dirty": true
+  "commit": "7a36f4e7b21cfa5df7b3cbeae3ede75d2b2b7700",
+  "dirty": false
  },
- "timestamp": "2026-10-24 02:41:49",
+ "timestamp": "2026-10-24 20:50:50",
  "argv": [
   "--method",
   "cte_depth_top3_attn",
@@ -71,9 +71,9 @@
   "--seed",
   "42",
   "--out",
-  "/home/student/p18/results",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100",
   "--cache_dir",
-  "/home/student/p18/results/_cache",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache",
   "--train_examples",
   "10000",
   "--epochs",
@@ -81,16 +81,16 @@
   "--micro_batch_size",
   "256"
  ],
- "gpu": "Tesla T4",
+ "gpu": "NVIDIA A100-SXM4-40GB",
  "hardware": {
-  "gpu_type": "Tesla T4",
-  "gpu_total_memory_gb": 15.55816650390625,
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
   "use_gpu": true,
   "cpu_cores": 8,
-  "system_ram_gb": 54.923683166503906,
-  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
  },
- "learner_threads": 2,
+ "learner_threads": 3,
  "torch": "2.7.1+cu126",
  "numpy": "2.3.5",
  "stacking": {
@@ -100,8 +100,8 @@
    "probe"
   ],
   "seconds": {
-   "base": 1.2,
-   "probe": 208.8
+   "base": 297.2,
+   "probe": 84.0
   },
   "cte": {
    "lex_alpha": {
@@ -113,28 +113,28 @@
      10.0
     ],
     "oof_metric": [
-     0.821556,
-     0.842388,
-     0.862213,
-     0.879208
+     0.821632,
+     0.842393,
+     0.862189,
+     0.879201
     ]
    },
    "expert_cache_hits": {
-    "lex": true,
-    "nbr": true
+    "lex": false,
+    "nbr": false
    },
    "seconds": {
-    "frozen_embeddings": 0.2,
-    "experts": 0.9
+    "frozen_embeddings": 4.8,
+    "experts": 292.3
    }
   },
   "probe": {
    "alpha": 10.0,
    "oof_metric": [
-    0.8574062974861308,
-    0.8694473580768212,
-    0.8822654520168387,
-    0.8928124674896378
+    0.8574066081793622,
+    0.8694530512454426,
+    0.8822709000542903,
+    0.892816191554909
    ]
   },
   "n_extra_columns": {
@@ -176,17 +176,17 @@
    "aggregate": "top3",
    "solver": "eig",
    "layer_oof_metric": {
-    "1": 0.880465,
-    "2": 0.881538,
-    "3": 0.882805,
-    "4": 0.884349,
-    "5": 0.884139,
-    "6": 0.884227,
-    "7": 0.885128,
-    "8": 0.885196,
-    "9": 0.885891,
-    "10": 0.887786,
-    "11": 0.89087,
+    "1": 0.880464,
+    "2": 0.881537,
+    "3": 0.882804,
+    "4": 0.884352,
+    "5": 0.884141,
+    "6": 0.884225,
+    "7": 0.885123,
+    "8": 0.885194,
+    "9": 0.885887,
+    "10": 0.887785,
+    "11": 0.890868,
     "12": 0.89246
    },
    "layer_alpha": {
@@ -218,198 +218,198 @@
     1
    ],
    "probe_oof_metric_final_layer_cte_probe": [
-    0.8574062974861308,
-    0.8694473580768212,
-    0.8822654520168387,
-    0.8928124674896378
+    0.8574066081793622,
+    0.8694530512454426,
+    0.8822709000542903,
+    0.892816191554909
    ],
-   "probe_cache_hits": 12,
+   "probe_cache_hits": 0,
    "sl_weights": null,
    "sl_intercept": null,
    "seconds": {
-    "states": 1.0,
-    "probes": 0.1
+    "states": 9.6,
+    "probes": 64.9
    },
    "attn": {
     "layer": 12,
-    "oof_metric": 0.903788,
-    "seconds": 0.0
+    "oof_metric": 0.903796,
+    "seconds": 93.2
    }
   },
   "catboost_importance": {
    "pred_columns": {
-    "album_name_txt_pca_30": 0.325,
-    "album_name_txt_pca_31": 0.402,
-    "album_name_txt_pca_32": 0.306,
-    "album_name_txt_pca_33": 0.324,
-    "album_name_txt_pca_34": 0.273,
-    "album_name_txt_pca_35": 0.34,
-    "album_name_txt_pca_36": 0.755,
-    "album_name_txt_pca_37": 0.571,
-    "album_name_txt_pca_38": 0.485,
-    "album_name_txt_pca_39": 0.43,
-    "album_name_txt_pca_40": 0.574,
-    "album_name_txt_pca_41": 0.648,
-    "album_name_txt_pca_42": 0.127,
-    "album_name_txt_pca_43": 0.275,
-    "album_name_txt_pca_44": 0.065,
-    "album_name_txt_pca_45": 0.069,
-    "album_name_txt_pca_46": 0.153,
-    "album_name_txt_pca_47": 0.068,
-    "album_name_txt_pca_48": 0.126,
-    "album_name_txt_pca_49": 0.028,
-    "album_name_txt_pca_50": 0.098,
-    "album_name_txt_pca_51": 0.098,
-    "album_name_txt_pca_52": 0.374,
-    "album_name_txt_pca_53": 0.723,
+    "album_name_txt_pca_30": 0.398,
+    "album_name_txt_pca_31": 0.482,
+    "album_name_txt_pca_32": 0.311,
+    "album_name_txt_pca_33": 0.449,
+    "album_name_txt_pca_34": 0.265,
+    "album_name_txt_pca_35": 0.351,
+    "album_name_txt_pca_36": 0.751,
+    "album_name_txt_pca_37": 0.603,
+    "album_name_txt_pca_38": 0.411,
+    "album_name_txt_pca_39": 0.356,
+    "album_name_txt_pca_40": 0.752,
+    "album_name_txt_pca_41": 0.635,
+    "album_name_txt_pca_42": 0.121,
+    "album_name_txt_pca_43": 0.261,
+    "album_name_txt_pca_44": 0.082,
+    "album_name_txt_pca_45": 0.06,
+    "album_name_txt_pca_46": 0.109,
+    "album_name_txt_pca_47": 0.053,
+    "album_name_txt_pca_48": 0.147,
+    "album_name_txt_pca_49": 0.015,
+    "album_name_txt_pca_50": 0.091,
+    "album_name_txt_pca_51": 0.103,
+    "album_name_txt_pca_52": 0.34,
+    "album_name_txt_pca_53": 0.789,
     "album_name_txt_pca_54": 0.06,
-    "album_name_txt_pca_55": 0.028,
-    "album_name_txt_pca_56": 0.047,
-    "album_name_txt_pca_57": 0.015,
+    "album_name_txt_pca_55": 0.034,
+    "album_name_txt_pca_56": 0.049,
+    "album_name_txt_pca_57": 0.013,
     "album_name_txt_pca_58": 0.0,
-    "album_name_txt_pca_59": 0.014,
+    "album_name_txt_pca_59": 0.031,
     "album_name_txt_pca_60": 0.0,
     "album_name_txt_pca_61": 0.0,
     "album_name_txt_pca_62": 0.0,
-    "album_name_txt_pca_63": 0.177,
-    "album_name_txt_pca_64": 0.231,
-    "album_name_txt_pca_65": 0.001,
-    "album_name_txt_pca_66": 0.132,
-    "album_name_txt_pca_67": 0.239,
-    "album_name_txt_pca_68": 0.034,
-    "album_name_txt_pca_69": 0.105,
+    "album_name_txt_pca_63": 0.141,
+    "album_name_txt_pca_64": 0.228,
+    "album_name_txt_pca_65": 0.006,
+    "album_name_txt_pca_66": 0.137,
+    "album_name_txt_pca_67": 0.261,
+    "album_name_txt_pca_68": 0.022,
+    "album_name_txt_pca_69": 0.095,
     "album_name_txt_pca_70": 0.0,
     "album_name_txt_pca_71": 0.0,
     "album_name_txt_pca_72": 0.005,
     "album_name_txt_pca_73": 0.0,
-    "album_name_txt_pca_74": 0.283,
-    "album_name_txt_pca_75": 0.286,
-    "album_name_txt_pca_76": 0.572,
-    "album_name_txt_pca_77": 0.194,
-    "album_name_txt_pca_78": 0.413,
-    "album_name_txt_pca_79": 0.417,
-    "album_name_txt_pca_80": 1.213,
-    "album_name_txt_pca_81": 0.449,
-    "album_name_txt_pca_82": 0.345,
-    "album_name_txt_pca_83": 0.401,
-    "album_name_txt_pca_84": 0.979,
-    "album_name_txt_pca_85": 0.467,
-    "album_name_txt_pca_86": 0.241,
-    "album_name_txt_pca_87": 0.292,
-    "album_name_txt_pca_88": 0.469,
-    "album_name_txt_pca_89": 0.307,
-    "album_name_txt_pca_90": 0.432,
-    "album_name_txt_pca_91": 0.393,
-    "album_name_txt_pca_92": 0.55,
-    "album_name_txt_pca_93": 0.587,
-    "album_name_txt_pca_94": 0.357,
-    "album_name_txt_pca_95": 0.377,
-    "album_name_txt_pca_96": 1.179,
-    "album_name_txt_pca_97": 0.767,
-    "album_name_txt_pca_98": 0.514,
-    "album_name_txt_pca_99": 0.678,
-    "album_name_txt_pca_100": 0.315,
-    "album_name_txt_pca_101": 0.309,
-    "album_name_txt_pca_102": 0.531,
-    "album_name_txt_pca_103": 0.594,
-    "album_name_txt_pca_104": 0.781,
-    "album_name_txt_pca_105": 0.543,
-    "album_name_txt_pca_106": 0.668,
-    "album_name_txt_pca_107": 0.404,
-    "album_name_txt_pca_108": 0.361,
-    "album_name_txt_pca_109": 0.502,
+    "album_name_txt_pca_74": 0.232,
+    "album_name_txt_pca_75": 0.346,
+    "album_name_txt_pca_76": 0.478,
+    "album_name_txt_pca_77": 0.246,
+    "album_name_txt_pca_78": 0.363,
+    "album_name_txt_pca_79": 0.357,
+    "album_name_txt_pca_80": 1.48,
+    "album_name_txt_pca_81": 0.508,
+    "album_name_txt_pca_82": 0.505,
+    "album_name_txt_pca_83": 0.462,
+    "album_name_txt_pca_84": 0.912,
+    "album_name_txt_pca_85": 0.453,
+    "album_name_txt_pca_86": 0.243,
+    "album_name_txt_pca_87": 0.269,
+    "album_name_txt_pca_88": 0.492,
+    "album_name_txt_pca_89": 0.308,
+    "album_name_txt_pca_90": 0.597,
+    "album_name_txt_pca_91": 0.404,
+    "album_name_txt_pca_92": 0.621,
+    "album_name_txt_pca_93": 0.492,
+    "album_name_txt_pca_94": 0.354,
+    "album_name_txt_pca_95": 0.356,
+    "album_name_txt_pca_96": 1.149,
+    "album_name_txt_pca_97": 0.806,
+    "album_name_txt_pca_98": 0.459,
+    "album_name_txt_pca_99": 0.636,
+    "album_name_txt_pca_100": 0.32,
+    "album_name_txt_pca_101": 0.307,
+    "album_name_txt_pca_102": 0.558,
+    "album_name_txt_pca_103": 0.521,
+    "album_name_txt_pca_104": 0.526,
+    "album_name_txt_pca_105": 0.571,
+    "album_name_txt_pca_106": 0.647,
+    "album_name_txt_pca_107": 0.481,
+    "album_name_txt_pca_108": 0.444,
+    "album_name_txt_pca_109": 0.339,
     "artists_txt_pca_30": 0.005,
-    "artists_txt_pca_31": 0.005,
-    "artists_txt_pca_32": 0.007,
-    "artists_txt_pca_33": 0.001,
+    "artists_txt_pca_31": 0.003,
+    "artists_txt_pca_32": 0.006,
+    "artists_txt_pca_33": 0.002,
     "artists_txt_pca_34": 0.0,
     "artists_txt_pca_35": 0.0,
     "artists_txt_pca_36": 0.002,
     "artists_txt_pca_37": 0.0,
     "artists_txt_pca_38": 0.0,
-    "artists_txt_pca_39": 0.434,
-    "artists_txt_pca_40": 0.198,
-    "artists_txt_pca_41": 0.009,
-    "artists_txt_pca_42": 0.656,
-    "artists_txt_pca_43": 0.499,
-    "artists_txt_pca_44": 0.003,
-    "artists_txt_pca_45": 0.697,
-    "artists_txt_pca_46": 0.001,
+    "artists_txt_pca_39": 0.601,
+    "artists_txt_pca_40": 0.223,
+    "artists_txt_pca_41": 0.007,
+    "artists_txt_pca_42": 0.652,
+    "artists_txt_pca_43": 0.531,
+    "artists_txt_pca_44": 0.005,
+    "artists_txt_pca_45": 0.585,
+    "artists_txt_pca_46": 0.002,
     "artists_txt_pca_47": 0.0,
     "artists_txt_pca_48": 0.001,
     "artists_txt_pca_49": 0.0,
-    "track_name_txt_pca_30": 0.025,
+    "track_name_txt_pca_30": 0.026,
     "track_name_txt_pca_31": 0.033,
-    "track_name_txt_pca_32": 0.03,
-    "track_name_txt_pca_33": 0.0,
+    "track_name_txt_pca_32": 0.032,
+    "track_name_txt_pca_33": 0.001,
     "track_name_txt_pca_34": 0.0,
     "track_name_txt_pca_35": 0.008,
     "track_name_txt_pca_36": 0.0,
     "track_name_txt_pca_37": 0.0,
     "track_name_txt_pca_38": 0.0,
-    "track_name_txt_pca_39": 0.272,
-    "track_name_txt_pca_40": 0.048,
-    "track_name_txt_pca_41": 0.027,
-    "track_name_txt_pca_42": 0.187,
-    "track_name_txt_pca_43": 0.203,
-    "track_name_txt_pca_44": 0.032,
-    "track_name_txt_pca_45": 0.16,
+    "track_name_txt_pca_39": 0.253,
+    "track_name_txt_pca_40": 0.102,
+    "track_name_txt_pca_41": 0.022,
+    "track_name_txt_pca_42": 0.206,
+    "track_name_txt_pca_43": 0.233,
+    "track_name_txt_pca_44": 0.003,
+    "track_name_txt_pca_45": 0.179,
     "track_name_txt_pca_46": 0.0,
-    "track_name_txt_pca_47": 0.001,
-    "track_name_txt_pca_48": 0.002,
+    "track_name_txt_pca_47": 0.0,
+    "track_name_txt_pca_48": 0.003,
     "track_name_txt_pca_49": 0.0
    },
-   "pred_share": 0.3044,
+   "pred_share": 0.3098,
    "group_share": {
-    "structured": 0.3003,
-    "pca": 0.3952,
-    "lex": 0.0543,
-    "nbr": 0.0221,
-    "num": 0.0464,
-    "probe": 0.0602,
-    "depthtop3": 0.0595,
-    "attn": 0.062
+    "structured": 0.302,
+    "pca": 0.3883,
+    "lex": 0.0576,
+    "nbr": 0.0217,
+    "num": 0.048,
+    "probe": 0.0634,
+    "depthtop3": 0.0609,
+    "attn": 0.0581
    },
    "top10": [
     [
      "popularity",
-     9.445
+     9.415
     ],
     [
      "acousticness",
-     3.521
-    ],
-    [
-     "instrumentalness",
-     3.128
+     3.404
     ],
     [
      "danceability",
-     2.906
+     3.114
+    ],
+    [
+     "instrumentalness",
+     3.031
     ],
     [
      "loudness",
-     2.266
+     2.489
     ],
     [
      "duration_ms",
-     1.845
+     1.905
     ],
     [
      "energy",
-     1.77
+     1.747
     ],
     [
      "valence",
-     1.648
+     1.624
     ],
     [
      "speechiness",
-     1.64
+     1.521
     ],
     [
-     "artists_txt_pca_2",
-     1.376
+     "track_name_txt_pca_1",
+     1.495
     ]
    ]
   }

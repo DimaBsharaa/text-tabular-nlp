@@ -9,12 +9,12 @@
  "dataset": "MUL_TEXT_WOMEN_CLOTHING_REVIEW",
  "fold": 0,
  "task": "MUL",
- "score": 0.9046356462589525,
+ "score": 0.9045321896194967,
  "metrics": {
-  "score": 0.9046356462589525,
+  "score": 0.9045321896194967,
   "metrics": {
-   "auc": 0.9046356462589525,
-   "logloss": 0.7293316462310304
+   "auc": 0.9045321896194967,
+   "logloss": 0.7304566430305586
   }
  },
  "reference": {
@@ -23,11 +23,11 @@
   "unimodal_structured": 0.785221404071993,
   "unimodal_text": 0.8747495354296554
  },
- "diff_vs_csv_joint_tar": -0.006284890365871432,
+ "diff_vs_csv_joint_tar": -0.006388347005327311,
  "runtime_s": {
-  "total": 310.8,
-  "fit": 310.7,
-  "predict": 0.1,
+  "total": 14.3,
+  "fit": 14.1,
+  "predict": 0.2,
   "tar_lower_cache": null,
   "tar_train": null,
   "tar_encode": null
@@ -52,13 +52,13 @@
   "micro_batch_size": 256,
   "fast": true,
   "pca_components": 30,
-  "cache_dir": "/home/student/p18/results/_cache"
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache"
  },
  "git": {
-  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
-  "dirty": true
+  "commit": "7a36f4e7b21cfa5df7b3cbeae3ede75d2b2b7700",
+  "dirty": false
  },
- "timestamp": "2026-10-23 20:04:14",
+ "timestamp": "2026-10-25 00:34:56",
  "argv": [
   "--method",
   "cte_depth_top3_attn",
@@ -71,9 +71,9 @@
   "--seed",
   "42",
   "--out",
-  "/home/student/p18/results",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100",
   "--cache_dir",
-  "/home/student/p18/results/_cache",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache",
   "--train_examples",
   "10000",
   "--epochs",
@@ -81,16 +81,16 @@
   "--micro_batch_size",
   "256"
  ],
- "gpu": "Tesla T4",
+ "gpu": "NVIDIA A100-SXM4-40GB",
  "hardware": {
-  "gpu_type": "Tesla T4",
-  "gpu_total_memory_gb": 15.55816650390625,
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
   "use_gpu": true,
   "cpu_cores": 8,
-  "system_ram_gb": 54.923683166503906,
-  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
  },
- "learner_threads": 2,
+ "learner_threads": 3,
  "torch": "2.7.1+cu126",
  "numpy": "2.3.5",
  "stacking": {
@@ -100,8 +100,8 @@
    "probe"
   ],
   "seconds": {
-   "base": 103.2,
-   "probe": 12.7
+   "base": 2.4,
+   "probe": 4.5
   },
   "cte": {
    "lex_alpha": {
@@ -113,28 +113,28 @@
      10.0
     ],
     "oof_metric": [
-     0.802137,
-     0.825193,
-     0.844295,
+     0.802142,
+     0.825192,
+     0.844294,
      0.854352
     ]
    },
    "expert_cache_hits": {
-    "lex": false,
-    "nbr": false
+    "lex": true,
+    "nbr": true
    },
    "seconds": {
-    "frozen_embeddings": 23.8,
-    "experts": 79.3
+    "frozen_embeddings": 0.3,
+    "experts": 2.0
    }
   },
   "probe": {
    "alpha": 10.0,
    "oof_metric": [
-    0.868380067778497,
-    0.8771639837133964,
-    0.8818596725227159,
-    0.8821198573898608
+    0.8683883458963997,
+    0.8771760296327396,
+    0.8818674579475552,
+    0.8821187826660433
    ]
   },
   "n_extra_columns": {
@@ -175,18 +175,18 @@
    "aggregate": "top3",
    "solver": "eig",
    "layer_oof_metric": {
-    "1": 0.85176,
+    "1": 0.851761,
     "2": 0.853889,
-    "3": 0.856768,
-    "4": 0.860325,
-    "5": 0.869341,
-    "6": 0.877045,
-    "7": 0.88171,
-    "8": 0.884002,
-    "9": 0.884397,
-    "10": 0.884318,
-    "11": 0.883359,
-    "12": 0.882324
+    "3": 0.856767,
+    "4": 0.86032,
+    "5": 0.869344,
+    "6": 0.877046,
+    "7": 0.881709,
+    "8": 0.884001,
+    "9": 0.884396,
+    "10": 0.884316,
+    "11": 0.883355,
+    "12": 0.882323
    },
    "layer_alpha": {
     "1": 30.0,
@@ -217,22 +217,22 @@
     1
    ],
    "probe_oof_metric_final_layer_cte_probe": [
-    0.868380067778497,
-    0.8771639837133964,
-    0.8818596725227159,
-    0.8821198573898608
+    0.8683883458963997,
+    0.8771760296327396,
+    0.8818674579475552,
+    0.8821187826660433
    ],
-   "probe_cache_hits": 0,
+   "probe_cache_hits": 12,
    "sl_weights": null,
    "sl_intercept": null,
    "seconds": {
-    "states": 17.0,
-    "probes": 26.8
+    "states": 1.6,
+    "probes": 0.1
    },
    "attn": {
     "layer": 9,
-    "oof_metric": 0.896709,
-    "seconds": 146.7
+    "oof_metric": 0.89671,
+    "seconds": 0.0
    }
   },
   "catboost_importance": null

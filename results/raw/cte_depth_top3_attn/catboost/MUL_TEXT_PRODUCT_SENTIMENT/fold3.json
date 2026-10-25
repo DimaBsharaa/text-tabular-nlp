@@ -9,12 +9,12 @@
  "dataset": "MUL_TEXT_PRODUCT_SENTIMENT",
  "fold": 3,
  "task": "MUL",
- "score": 0.930958895548885,
+ "score": 0.9242246921200321,
  "metrics": {
-  "score": 0.930958895548885,
+  "score": 0.9242246921200321,
   "metrics": {
-   "auc": 0.930958895548885,
-   "logloss": 0.33505720509354386
+   "auc": 0.9242246921200321,
+   "logloss": 0.33943295632362547
   }
  },
  "reference": {
@@ -23,10 +23,10 @@
   "unimodal_structured": 0.8435699910305247,
   "unimodal_text": 0.7637023149763026
  },
- "diff_vs_csv_joint_tar": -0.001371367070211238,
+ "diff_vs_csv_joint_tar": -0.00810557049906413,
  "runtime_s": {
-  "total": 16.7,
-  "fit": 16.7,
+  "total": 77.8,
+  "fit": 77.8,
   "predict": 0.0,
   "tar_lower_cache": null,
   "tar_train": null,
@@ -52,13 +52,13 @@
   "micro_batch_size": 256,
   "fast": true,
   "pca_components": 30,
-  "cache_dir": "/home/student/p18/results/_cache"
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache"
  },
  "git": {
-  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
-  "dirty": true
+  "commit": "7a36f4e7b21cfa5df7b3cbeae3ede75d2b2b7700",
+  "dirty": false
  },
- "timestamp": "2026-10-24 02:25:16",
+ "timestamp": "2026-10-25 00:18:27",
  "argv": [
   "--method",
   "cte_depth_top3_attn",
@@ -71,9 +71,9 @@
   "--seed",
   "42",
   "--out",
-  "/home/student/p18/results",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100",
   "--cache_dir",
-  "/home/student/p18/results/_cache",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache",
   "--train_examples",
   "10000",
   "--epochs",
@@ -81,16 +81,16 @@
   "--micro_batch_size",
   "256"
  ],
- "gpu": "Tesla T4",
+ "gpu": "NVIDIA A100-SXM4-40GB",
  "hardware": {
-  "gpu_type": "Tesla T4",
-  "gpu_total_memory_gb": 15.55816650390625,
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
   "use_gpu": true,
   "cpu_cores": 8,
-  "system_ram_gb": 54.923683166503906,
-  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
  },
- "learner_threads": 2,
+ "learner_threads": 3,
  "torch": "2.7.1+cu126",
  "numpy": "2.3.5",
  "stacking": {
@@ -100,8 +100,8 @@
    "probe"
   ],
   "seconds": {
-   "base": 0.4,
-   "probe": 0.4
+   "base": 9.7,
+   "probe": 0.5
   },
   "cte": {
    "lex_alpha": {
@@ -113,28 +113,28 @@
      10.0
     ],
     "oof_metric": [
-     0.715346,
-     0.732296,
-     0.744612,
-     0.747325
+     0.715345,
+     0.732292,
+     0.744611,
+     0.747326
     ]
    },
    "expert_cache_hits": {
-    "lex": true,
-    "nbr": true
+    "lex": false,
+    "nbr": false
    },
    "seconds": {
     "frozen_embeddings": 0.0,
-    "experts": 0.3
+    "experts": 9.6
    }
   },
   "probe": {
    "alpha": 3.0,
    "oof_metric": [
-    0.7680067482139754,
-    0.7780870653637602,
-    0.7814176279802089,
-    0.773091324653876
+    0.7680201971853606,
+    0.7780967591332426,
+    0.7814322866222463,
+    0.7730993391665147
    ]
   },
   "n_extra_columns": {
@@ -174,18 +174,18 @@
    "aggregate": "top3",
    "solver": "eig",
    "layer_oof_metric": {
-    "1": 0.72967,
-    "2": 0.735114,
-    "3": 0.752166,
-    "4": 0.761113,
-    "5": 0.77717,
-    "6": 0.792629,
-    "7": 0.799611,
-    "8": 0.798693,
-    "9": 0.790823,
-    "10": 0.786392,
-    "11": 0.780946,
-    "12": 0.778654
+    "1": 0.729675,
+    "2": 0.735109,
+    "3": 0.75215,
+    "4": 0.761105,
+    "5": 0.77714,
+    "6": 0.792631,
+    "7": 0.799609,
+    "8": 0.79869,
+    "9": 0.790795,
+    "10": 0.78637,
+    "11": 0.780927,
+    "12": 0.778655
    },
    "layer_alpha": {
     "1": 10.0,
@@ -216,113 +216,113 @@
     1
    ],
    "probe_oof_metric_final_layer_cte_probe": [
-    0.7680067482139754,
-    0.7780870653637602,
-    0.7814176279802089,
-    0.773091324653876
+    0.7680201971853606,
+    0.7780967591332426,
+    0.7814322866222463,
+    0.7730993391665147
    ],
-   "probe_cache_hits": 12,
+   "probe_cache_hits": 0,
    "sl_weights": null,
    "sl_intercept": null,
    "seconds": {
-    "states": 0.1,
-    "probes": 0.0
+    "states": 0.2,
+    "probes": 3.9
    },
    "attn": {
     "layer": 7,
-    "oof_metric": 0.804887,
-    "seconds": 0.0
+    "oof_metric": 0.804899,
+    "seconds": 41.2
    }
   },
   "catboost_importance": {
    "pred_columns": {
-    "Product_Description_txt_pca_30": 2.187,
-    "Product_Description_txt_pca_31": 1.406,
-    "Product_Description_txt_pca_32": 0.696,
-    "Product_Description_txt_pca_33": 2.142,
-    "Product_Description_txt_pca_34": 1.333,
-    "Product_Description_txt_pca_35": 0.803,
-    "Product_Description_txt_pca_36": 0.119,
-    "Product_Description_txt_pca_37": 0.076,
-    "Product_Description_txt_pca_38": 0.067,
-    "Product_Description_txt_pca_39": 0.054,
-    "Product_Description_txt_pca_40": 0.016,
-    "Product_Description_txt_pca_41": 0.045,
+    "Product_Description_txt_pca_30": 2.31,
+    "Product_Description_txt_pca_31": 1.203,
+    "Product_Description_txt_pca_32": 1.101,
+    "Product_Description_txt_pca_33": 2.292,
+    "Product_Description_txt_pca_34": 1.292,
+    "Product_Description_txt_pca_35": 1.403,
+    "Product_Description_txt_pca_36": 0.086,
+    "Product_Description_txt_pca_37": 0.08,
+    "Product_Description_txt_pca_38": 0.105,
+    "Product_Description_txt_pca_39": 0.02,
+    "Product_Description_txt_pca_40": 0.01,
+    "Product_Description_txt_pca_41": 0.047,
     "Product_Description_txt_pca_42": 0.002,
-    "Product_Description_txt_pca_43": 0.005,
-    "Product_Description_txt_pca_44": 0.007,
-    "Product_Description_txt_pca_45": 0.934,
-    "Product_Description_txt_pca_46": 0.71,
-    "Product_Description_txt_pca_47": 0.213,
-    "Product_Description_txt_pca_48": 1.0,
-    "Product_Description_txt_pca_49": 1.2,
-    "Product_Description_txt_pca_50": 0.298,
-    "Product_Description_txt_pca_51": 1.394,
-    "Product_Description_txt_pca_52": 0.308,
-    "Product_Description_txt_pca_53": 0.202,
-    "Product_Description_txt_pca_54": 0.799,
+    "Product_Description_txt_pca_43": 0.004,
+    "Product_Description_txt_pca_44": 0.008,
+    "Product_Description_txt_pca_45": 0.871,
+    "Product_Description_txt_pca_46": 0.594,
+    "Product_Description_txt_pca_47": 0.333,
+    "Product_Description_txt_pca_48": 1.145,
+    "Product_Description_txt_pca_49": 1.364,
+    "Product_Description_txt_pca_50": 0.408,
+    "Product_Description_txt_pca_51": 1.274,
+    "Product_Description_txt_pca_52": 0.33,
+    "Product_Description_txt_pca_53": 0.192,
+    "Product_Description_txt_pca_54": 0.669,
     "Product_Description_txt_pca_55": 0.0,
-    "Product_Description_txt_pca_56": 1.715,
-    "Product_Description_txt_pca_57": 1.815,
-    "Product_Description_txt_pca_58": 0.628,
-    "Product_Description_txt_pca_59": 3.165,
-    "Product_Description_txt_pca_60": 1.462,
-    "Product_Description_txt_pca_61": 1.314,
-    "Product_Description_txt_pca_62": 3.75,
-    "Product_Description_txt_pca_63": 1.568,
-    "Product_Description_txt_pca_64": 1.147
+    "Product_Description_txt_pca_56": 1.732,
+    "Product_Description_txt_pca_57": 1.607,
+    "Product_Description_txt_pca_58": 0.496,
+    "Product_Description_txt_pca_59": 3.21,
+    "Product_Description_txt_pca_60": 1.311,
+    "Product_Description_txt_pca_61": 1.371,
+    "Product_Description_txt_pca_62": 3.947,
+    "Product_Description_txt_pca_63": 1.696,
+    "Product_Description_txt_pca_64": 0.813
    },
-   "pred_share": 0.3258,
+   "pred_share": 0.3332,
    "group_share": {
-    "structured": 0.3296,
-    "pca": 0.3446,
-    "lex": 0.0429,
-    "nbr": 0.0428,
-    "num": 0.0745,
-    "probe": 0.0416,
-    "depthtop3": 0.0594,
+    "structured": 0.3231,
+    "pca": 0.3437,
+    "lex": 0.0461,
+    "nbr": 0.0499,
+    "num": 0.0754,
+    "probe": 0.0384,
+    "depthtop3": 0.0589,
     "attn": 0.0646
    },
    "top10": [
     [
      "Product_Type",
-     32.962
+     32.306
     ],
     [
      "Product_Description_txt_pca_62",
-     3.75
+     3.947
     ],
     [
      "Product_Description_txt_pca_59",
-     3.165
+     3.21
     ],
     [
      "Product_Description_txt_pca_30",
-     2.187
+     2.31
     ],
     [
      "Product_Description_txt_pca_33",
-     2.142
-    ],
-    [
-     "Product_Description_txt_pca_57",
-     1.815
+     2.292
     ],
     [
      "Product_Description_txt_pca_56",
-     1.715
+     1.732
     ],
     [
-     "Product_Description_txt_pca_1",
-     1.607
+     "Product_Description_txt_pca_21",
+     1.708
     ],
     [
      "Product_Description_txt_pca_63",
-     1.568
+     1.696
     ],
     [
-     "Product_Description_txt_pca_60",
-     1.462
+     "Product_Description_txt_pca_57",
+     1.607
+    ],
+    [
+     "Product_Description_txt_pca_2",
+     1.547
     ]
    ]
   }

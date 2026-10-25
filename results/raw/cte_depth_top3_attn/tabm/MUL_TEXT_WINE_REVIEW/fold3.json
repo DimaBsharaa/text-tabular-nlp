@@ -9,12 +9,12 @@
  "dataset": "MUL_TEXT_WINE_REVIEW",
  "fold": 3,
  "task": "MUL",
- "score": 0.98113821883209,
+ "score": 0.9827819401729389,
  "metrics": {
-  "score": 0.98113821883209,
+  "score": 0.9827819401729389,
   "metrics": {
-   "auc": 0.98113821883209,
-   "logloss": 0.8261466077421221
+   "auc": 0.9827819401729389,
+   "logloss": 0.774234489722407
   }
  },
  "reference": {
@@ -23,10 +23,10 @@
   "unimodal_structured": 0.8528045369555517,
   "unimodal_text": 0.977417344001722
  },
- "diff_vs_csv_joint_tar": -0.0013231720050016493,
+ "diff_vs_csv_joint_tar": 0.0003205493358472422,
  "runtime_s": {
-  "total": 154.2,
-  "fit": 153.9,
+  "total": 51.4,
+  "fit": 51.1,
   "predict": 0.3,
   "tar_lower_cache": null,
   "tar_train": null,
@@ -52,13 +52,13 @@
   "micro_batch_size": 256,
   "fast": true,
   "pca_components": 30,
-  "cache_dir": "/home/student/p18/results/_cache"
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache"
  },
  "git": {
-  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
-  "dirty": true
+  "commit": "7a36f4e7b21cfa5df7b3cbeae3ede75d2b2b7700",
+  "dirty": false
  },
- "timestamp": "2026-10-23 22:32:57",
+ "timestamp": "2026-10-25 00:46:23",
  "argv": [
   "--method",
   "cte_depth_top3_attn",
@@ -71,9 +71,9 @@
   "--seed",
   "42",
   "--out",
-  "/home/student/p18/results",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100",
   "--cache_dir",
-  "/home/student/p18/results/_cache",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache",
   "--train_examples",
   "10000",
   "--epochs",
@@ -81,16 +81,16 @@
   "--micro_batch_size",
   "256"
  ],
- "gpu": "Tesla T4",
+ "gpu": "NVIDIA A100-SXM4-40GB",
  "hardware": {
-  "gpu_type": "Tesla T4",
-  "gpu_total_memory_gb": 15.55816650390625,
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
   "use_gpu": true,
   "cpu_cores": 8,
-  "system_ram_gb": 54.923683166503906,
-  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
  },
- "learner_threads": 2,
+ "learner_threads": 3,
  "torch": "2.7.1+cu126",
  "numpy": "2.3.5",
  "stacking": {
@@ -100,8 +100,8 @@
    "probe"
   ],
   "seconds": {
-   "base": 2.4,
-   "probe": 102.0
+   "base": 2.2,
+   "probe": 27.2
   },
   "cte": {
    "lex_alpha": {
@@ -114,7 +114,7 @@
     ],
     "oof_metric": [
      0.936815,
-     0.94523,
+     0.945229,
      0.953474,
      0.959741
     ]
@@ -125,16 +125,16 @@
    },
    "seconds": {
     "frozen_embeddings": 0.2,
-    "experts": 2.0
+    "experts": 1.8
    }
   },
   "probe": {
    "alpha": 10.0,
    "oof_metric": [
-    0.9483065891662597,
-    0.9510545029704288,
-    0.9535076544479806,
-    0.9542192491705598
+    0.9483086359997839,
+    0.9510561856849888,
+    0.9535097078082586,
+    0.9542200450246181
    ]
   },
   "n_extra_columns": {
@@ -176,17 +176,17 @@
    "solver": "eig",
    "layer_oof_metric": {
     "1": 0.943356,
-    "2": 0.941527,
-    "3": 0.937035,
-    "4": 0.935971,
-    "5": 0.935257,
-    "6": 0.934579,
-    "7": 0.93454,
-    "8": 0.934962,
-    "9": 0.938112,
+    "2": 0.941531,
+    "3": 0.937038,
+    "4": 0.93597,
+    "5": 0.935258,
+    "6": 0.934578,
+    "7": 0.934541,
+    "8": 0.934963,
+    "9": 0.938117,
     "10": 0.943185,
-    "11": 0.949188,
-    "12": 0.954738
+    "11": 0.949189,
+    "12": 0.954744
    },
    "layer_alpha": {
     "1": 10.0,
@@ -217,17 +217,17 @@
     7
    ],
    "probe_oof_metric_final_layer_cte_probe": [
-    0.9483065891662597,
-    0.9510545029704288,
-    0.9535076544479806,
-    0.9542192491705598
+    0.9483086359997839,
+    0.9510561856849888,
+    0.9535097078082586,
+    0.9542200450246181
    ],
    "probe_cache_hits": 12,
    "sl_weights": null,
    "sl_intercept": null,
    "seconds": {
-    "states": 1.1,
-    "probes": 0.3
+    "states": 1.8,
+    "probes": 0.2
    },
    "attn": {
     "layer": 12,

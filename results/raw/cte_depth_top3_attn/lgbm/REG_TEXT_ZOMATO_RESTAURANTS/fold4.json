@@ -9,13 +9,13 @@
  "dataset": "REG_TEXT_ZOMATO_RESTAURANTS",
  "fold": 4,
  "task": "REG",
- "score": 0.8677914516622438,
+ "score": 0.8629931376615811,
  "metrics": {
-  "score": 0.8677914516622438,
+  "score": 0.8629931376615811,
   "metrics": {
-   "r2": 0.8677914516622438,
-   "mse": 0.026691289990410906,
-   "rmse": 0.16337469201320903
+   "r2": 0.8629931376615811,
+   "mse": 0.02766001093975183,
+   "rmse": 0.16631299089293003
   }
  },
  "reference": {
@@ -24,11 +24,11 @@
   "unimodal_structured": 0.579290480217981,
   "unimodal_text": 0.7222859645195684
  },
- "diff_vs_csv_joint_tar": 0.060440307201501065,
+ "diff_vs_csv_joint_tar": 0.0556419932008384,
  "runtime_s": {
-  "total": 1991.8,
-  "fit": 1991.6,
-  "predict": 0.2,
+  "total": 102.8,
+  "fit": 102.4,
+  "predict": 0.3,
   "tar_lower_cache": null,
   "tar_train": null,
   "tar_encode": null
@@ -53,13 +53,13 @@
   "micro_batch_size": 256,
   "fast": true,
   "pca_components": 30,
-  "cache_dir": "/home/student/p18/results/_cache"
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache"
  },
  "git": {
-  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
-  "dirty": true
+  "commit": "7a36f4e7b21cfa5df7b3cbeae3ede75d2b2b7700",
+  "dirty": false
  },
- "timestamp": "2026-10-23 20:46:37",
+ "timestamp": "2026-10-25 00:33:21",
  "argv": [
   "--method",
   "cte_depth_top3_attn",
@@ -72,9 +72,9 @@
   "--seed",
   "42",
   "--out",
-  "/home/student/p18/results",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100",
   "--cache_dir",
-  "/home/student/p18/results/_cache",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache",
   "--train_examples",
   "10000",
   "--epochs",
@@ -82,16 +82,16 @@
   "--micro_batch_size",
   "256"
  ],
- "gpu": "Tesla T4",
+ "gpu": "NVIDIA A100-SXM4-40GB",
  "hardware": {
-  "gpu_type": "Tesla T4",
-  "gpu_total_memory_gb": 15.55816650390625,
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
   "use_gpu": true,
   "cpu_cores": 8,
-  "system_ram_gb": 54.923683166503906,
-  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
  },
- "learner_threads": 2,
+ "learner_threads": 3,
  "torch": "2.7.1+cu126",
  "numpy": "2.3.5",
  "stacking": {
@@ -101,8 +101,8 @@
    "probe"
   ],
   "seconds": {
-   "base": 269.7,
-   "probe": 5.1
+   "base": 74.3,
+   "probe": 10.7
   },
   "cte": {
    "lex_alpha": {
@@ -114,28 +114,28 @@
      10.0
     ],
     "oof_metric": [
-     0.888873,
-     0.883923,
-     0.867563,
-     0.83392
+     0.888867,
+     0.883931,
+     0.867571,
+     0.833915
     ]
    },
    "expert_cache_hits": {
-    "lex": false,
-    "nbr": false
+    "lex": true,
+    "nbr": true
    },
    "seconds": {
-    "frozen_embeddings": 119.2,
-    "experts": 150.3
+    "frozen_embeddings": 0.7,
+    "experts": 72.9
    }
   },
   "probe": {
    "alpha": 0.3,
    "oof_metric": [
-    0.8169751177694379,
-    0.816235747774975,
-    0.8095870521019647,
-    0.792636847793103
+    0.8169707940800204,
+    0.8162297781677366,
+    0.8095945063814314,
+    0.7926397787854557
    ]
   },
   "n_extra_columns": {
@@ -181,18 +181,18 @@
    "aggregate": "top3",
    "solver": "sparse_cg",
    "layer_oof_metric": {
-    "1": 0.807372,
-    "2": 0.806525,
-    "3": 0.810209,
-    "4": 0.811252,
-    "5": 0.815258,
-    "6": 0.816973,
-    "7": 0.816602,
-    "8": 0.81374,
-    "9": 0.814204,
-    "10": 0.812809,
-    "11": 0.811006,
-    "12": 0.816144
+    "1": 0.807368,
+    "2": 0.806521,
+    "3": 0.810213,
+    "4": 0.811268,
+    "5": 0.815242,
+    "6": 0.816953,
+    "7": 0.816597,
+    "8": 0.813736,
+    "9": 0.814206,
+    "10": 0.812812,
+    "11": 0.811019,
+    "12": 0.816177
    },
    "layer_alpha": {
     "1": 1.0,
@@ -223,22 +223,22 @@
     2
    ],
    "probe_oof_metric_final_layer_cte_probe": [
-    0.8169751177694379,
-    0.816235747774975,
-    0.8095870521019647,
-    0.792636847793103
+    0.8169707940800204,
+    0.8162297781677366,
+    0.8095945063814314,
+    0.7926397787854557
    ],
-   "probe_cache_hits": 0,
+   "probe_cache_hits": 12,
    "sl_weights": null,
    "sl_intercept": null,
    "seconds": {
-    "states": 70.4,
-    "probes": 355.4
+    "states": 4.7,
+    "probes": 0.6
    },
    "attn": {
     "layer": 6,
-    "oof_metric": 0.843641,
-    "seconds": 1277.6
+    "oof_metric": 0.84404,
+    "seconds": 0.0
    }
   },
   "catboost_importance": null

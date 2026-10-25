@@ -2420,3 +2420,43 @@ Features for the learner = structured columns (upstream preprocessing)
   0.003; (3) C13 passes for all 5 learners on the A100 run (P18 test, Holm over the 5 learners).
 - Otherwise the current (T4 / A100) results stay, and the A100 re-run is reported as an additional run (one sentence in
   the paper, full numbers in notebook 02 and the README).
+
+## E62 — P18c: the 300 A100 re-runs verified; by the pre-registered rule (P18c amendment) the A100 run is adopted   (2026-10-25)
+- **Run:** `jobs/p18_a100.txt` on a Colab A100, `--parallel_jobs 4`, results root `results_p18_a100`, export
+  `results_export_20261025_010118.zip` (19:50 → 01:01).
+- **Verification:** 300 result files, 300 unique jobs = the 300 lines of the jobs file (100 per learner); every run
+  commit `7a36f4e`, `dirty: False`, NVIDIA A100-SXM4-40GB, engine `depth/1+attn/1`, cross-fitting seed 42; n_train /
+  n_test identical to the T4 runs and to the depth-probe version (300/300); leaderboard references identical to the
+  T4 runs (300/300); no failed, timed-out or out-of-memory job in the logs. The 180 TabPFN results of P18 (A100,
+  `c63c26e`) unchanged → the complete final batch is 480 runs, all on one GPU type.
+- **P18 analysis on the 480** (`scripts/p18_report.py`): C13 per learner, mean gain over Joint TAR / wins / raw p /
+  Holm over 5: CatBoost +0.019205 / 18 / 4.8e-5 / 1.4e-4; LightGBM +0.020902 / 17 / 8.5e-4 / 8.5e-4; TabM +0.019493 /
+  19 / 1.3e-5 / 5.3e-5; TabPFN-v2 +0.032509 / 16 / 2.5e-4 / 5.0e-4; TabPFN-2.5 +0.022552 / 18 / 7.6e-6 / 3.8e-5.
+  All 5 pass; final-method rule: `cte_depth_top3_attn`. Holm over all 24 pre-registered tests: C13 0.0010 / 0.0153 /
+  0.0003 / 0.0050 / 0.0002 → all five pass (on the T4 batch: four, LightGBM 0.095). Runs won: 402 / 480 (83.75%).
+  Paired vs `cte_depth_top3` (same folds, now the same GPU type): +0.0031 (p 0.0012), +0.0016 (p 0.12, not
+  significant), +0.0034 (p 0.0003), +0.0031 (p 0.0019), +0.0021 (p 0.009).
+- **The rule (P18c amendment, fixed before any result):** (1) LightGBM Spotify Genres fold 3 = 0.9135 >= 0.90 ✓;
+  (2) change in mean gain vs the current results: CatBoost +0.00007, LightGBM +0.0022, TabM +0.0005, TabPFN 0 / 0
+  (none below −0.003) ✓; (3) C13 passes for all 5 ✓ → **the A100 run is reported.** Spotify Genres, LightGBM: gain
+  +0.0081 (T4 batch: −0.067 from the failed fold).
+- **Next:** E63, the complete-batch replacement (the 300 T4 runs archived intact, never mixed fold by fold).
+
+## E63 — The complete-batch replacement and everything rebuilt from the final 480 runs   (2026-10-25)
+- **Replaced as a whole, never fold by fold:** the 300 Tesla T4 results of P18 (CatBoost, LightGBM, TabM) moved intact
+  to `archive/results/raw/p18_t4/`; the 300 A100 results of P18c put in `results/raw/cte_depth_top3_attn/`. Final batch
+  = 480 runs on an NVIDIA A100 (300 at `7a36f4e`, 180 TabPFN at `c63c26e`), 480 unique jobs.
+- **Rebuilt:** `reports/tables/fold_scores.csv` (exactly the 300 rows replaced, export `export_p18_a100`; every other row
+  byte-identical; `check_fold_scores.py`: 3,195 rows, 0 mismatches); `reports/p18/p18_report.json` (= the check report
+  of E62; final_method `cte_depth_top3_attn`); `results/*.csv`; the depth profile (final CatBoost runs);
+  `paper/generated/*` and the paper's figures; notebook 02 (19 code cells, 0 errors); `check_recompute.py` reproduces
+  all 5 learners from `results/raw` and the upstream leaderboard.
+- **Code fix:** `paper_assets.py` read the failed Spotify fold of the T4 batch (it would have failed on the A100 batch,
+  where no fold fails); replaced by a data-driven sentence on the attention probe's paired gain; notebook 02's
+  attention-probe timing counts the 300-job batch only (the TabPFN batch trained its own probes).
+- **Paper, beyond the numbers:** the attention paragraph no longer describes a LightGBM exception (now: +0.002 to +0.003
+  for all five learners, significantly for four, LightGBM p = 0.123); Setup: "over all 24 pre-registered comparisons,
+  all five pass" (was four); Jigsaw +0.009 to +0.015; new appendix Table 5 (raw p, Holm over 5, Holm over 24);
+  Wilcoxon (1945) and Holm (1979) cited; the unused `\pending` macro removed. Main text still within 4 pages.
+- **READMEs:** results table and claims; "one GPU type" with the archived T4 batch; method README runtimes from the
+  A100 batch (attention probe median 3.5 min per dataset-fold on an A100 shared by four jobs, max 35 min).

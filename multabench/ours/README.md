@@ -86,7 +86,7 @@ leaderboard's Joint TAR and Joint Frozen scores for the same learner and fold), 
 `--learner` picks the model that makes the final prediction from our features. **Final method**, CatBoost, Product
 Sentiment fold 0 (4,582 training rows, one text column), on a laptop CPU (Intel i7-13700H, no GPU, dataset already
 downloaded): `train.py` 2.1 min including the e5 encoding and the attention probe, `predict.py` 17 s for 509 rows.
-Its test AUROC there is 0.898, against 0.895 for the same job in the benchmark run on a Tesla T4: the attention probe
+Its test AUROC there is 0.898, against 0.895 for the same job in the benchmark run (A100 GPU): the attention probe
 and the learners train with different floating-point arithmetic on CPU and GPU, which moves single-job scores by a few
 thousandths.
 
@@ -107,10 +107,10 @@ same laptop and per job on a Colab A100 machine during its benchmark runs:
 - TabPFN warns that it is not meant for CPU use on more than about 1,000 rows; on this laptop both versions passed
   12 minutes, so use a GPU for them.
 - Building the depth-probe version's features takes about 2.7 minutes per job on the A100 machine's CPU (median over
-  90 jobs); the attention probe adds a median 2.8 minutes on a Tesla T4 GPU (max 27 minutes, Zomato Restaurants); see
-  notebook 02, sections 7b and 8. In the final method's benchmark runs, the median job took 1.0 (CatBoost), 7.1
-  (LightGBM, the first learner per dataset and fold, so it built the features), 1.3 (TabM) minutes on a Tesla T4, and
-  7.6 (TabPFN-v2, which built the features) and 0.6 (TabPFN-2.5) minutes on an A100.
+  90 jobs); the attention probe adds a median 3.5 minutes on an A100 GPU shared by four jobs (max 35 minutes, Zomato
+  Restaurants); see notebook 02, sections 7b and 8. In the final method's benchmark runs (all on an A100), the median
+  job took 10.3 (CatBoost, the first learner per dataset and fold, so it built the features), 0.2 (LightGBM), 0.4
+  (TabM), 7.6 (TabPFN-v2, which built the features for TabPFN) and 0.6 (TabPFN-2.5) minutes.
 
 ## Run the benchmark evaluation
 

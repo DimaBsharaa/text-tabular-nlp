@@ -1,5 +1,8 @@
 # Provenance of the Tesla T4 results of P18
 
+These results are the first batch of CatBoost / LightGBM / TabM runs, now kept in
+`archive/results/raw/p18_t4/`; the final results use an A100 re-run of the same 300 jobs (lab notebook E62–E63).
+
 Made on the T4 machine on 2026-10-24 in its copy of the repository (HEAD `8b3bb76`, never pushed; `c63c26e` fetched from
 GitHub), with:
 

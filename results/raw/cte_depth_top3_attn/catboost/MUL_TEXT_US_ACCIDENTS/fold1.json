@@ -9,12 +9,12 @@
  "dataset": "MUL_TEXT_US_ACCIDENTS",
  "fold": 1,
  "task": "MUL",
- "score": 0.9756472088645733,
+ "score": 0.9728796188647498,
  "metrics": {
-  "score": 0.9756472088645733,
+  "score": 0.9728796188647498,
   "metrics": {
-   "auc": 0.9756472088645733,
-   "logloss": 0.1788788909796447
+   "auc": 0.9728796188647498,
+   "logloss": 0.18155775500425578
   }
  },
  "reference": {
@@ -23,11 +23,11 @@
   "unimodal_structured": 0.872126999742042,
   "unimodal_text": 0.9626922545637836
  },
- "diff_vs_csv_joint_tar": 0.002375898750482164,
+ "diff_vs_csv_joint_tar": -0.0003916912493413527,
  "runtime_s": {
-  "total": 277.9,
-  "fit": 277.8,
-  "predict": 0.1,
+  "total": 1243.1,
+  "fit": 1242.9,
+  "predict": 0.2,
   "tar_lower_cache": null,
   "tar_train": null,
   "tar_encode": null
@@ -52,13 +52,13 @@
   "micro_batch_size": 256,
   "fast": true,
   "pca_components": 30,
-  "cache_dir": "/home/student/p18/results/_cache"
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache"
  },
  "git": {
-  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
-  "dirty": true
+  "commit": "7a36f4e7b21cfa5df7b3cbeae3ede75d2b2b7700",
+  "dirty": false
  },
- "timestamp": "2026-10-24 01:37:35",
+ "timestamp": "2026-10-24 20:05:47",
  "argv": [
   "--method",
   "cte_depth_top3_attn",
@@ -71,9 +71,9 @@
   "--seed",
   "42",
   "--out",
-  "/home/student/p18/results",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100",
   "--cache_dir",
-  "/home/student/p18/results/_cache",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache",
   "--train_examples",
   "10000",
   "--epochs",
@@ -81,16 +81,16 @@
   "--micro_batch_size",
   "256"
  ],
- "gpu": "Tesla T4",
+ "gpu": "NVIDIA A100-SXM4-40GB",
  "hardware": {
-  "gpu_type": "Tesla T4",
-  "gpu_total_memory_gb": 15.55816650390625,
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
   "use_gpu": true,
   "cpu_cores": 8,
-  "system_ram_gb": 54.923683166503906,
-  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
  },
- "learner_threads": 2,
+ "learner_threads": 3,
  "torch": "2.7.1+cu126",
  "numpy": "2.3.5",
  "stacking": {
@@ -100,8 +100,8 @@
    "probe"
   ],
   "seconds": {
-   "base": 4.3,
-   "probe": 33.4
+   "base": 93.3,
+   "probe": 27.7
   },
   "cte": {
    "lex_alpha": {
@@ -113,28 +113,28 @@
      10.0
     ],
     "oof_metric": [
-     0.93821,
-     0.947906,
-     0.95354,
-     0.954084
+     0.938209,
+     0.947941,
+     0.95357,
+     0.954099
     ]
    },
    "expert_cache_hits": {
-    "lex": true,
-    "nbr": true
+    "lex": false,
+    "nbr": false
    },
    "seconds": {
-    "frozen_embeddings": 0.5,
-    "experts": 3.7
+    "frozen_embeddings": 20.6,
+    "experts": 72.4
    }
   },
   "probe": {
    "alpha": 3.0,
    "oof_metric": [
-    0.9417529560189873,
-    0.9447779203832788,
-    0.945941775085602,
-    0.9451044186321479
+    0.9417240807210694,
+    0.9447579141306032,
+    0.9459308354811421,
+    0.9450932386678637
    ]
   },
   "n_extra_columns": {
@@ -182,18 +182,18 @@
    "aggregate": "top3",
    "solver": "eig",
    "layer_oof_metric": {
-    "1": 0.943015,
-    "2": 0.94657,
+    "1": 0.943013,
+    "2": 0.946569,
     "3": 0.948945,
-    "4": 0.949386,
-    "5": 0.94895,
-    "6": 0.948742,
-    "7": 0.947271,
-    "8": 0.94865,
-    "9": 0.946473,
-    "10": 0.94768,
-    "11": 0.945167,
-    "12": 0.946089
+    "4": 0.949391,
+    "5": 0.948947,
+    "6": 0.948729,
+    "7": 0.94727,
+    "8": 0.948647,
+    "9": 0.946471,
+    "10": 0.947669,
+    "11": 0.945178,
+    "12": 0.946079
    },
    "layer_alpha": {
     "1": 100.0,
@@ -224,32 +224,32 @@
     1
    ],
    "probe_oof_metric_final_layer_cte_probe": [
-    0.9417529560189873,
-    0.9447779203832788,
-    0.945941775085602,
-    0.9451044186321479
+    0.9417240807210694,
+    0.9447579141306032,
+    0.9459308354811421,
+    0.9450932386678637
    ],
-   "probe_cache_hits": 12,
+   "probe_cache_hits": 0,
    "sl_weights": null,
    "sl_intercept": null,
    "seconds": {
-    "states": 2.3,
-    "probes": 0.1
+    "states": 47.5,
+    "probes": 486.9
    },
    "attn": {
     "layer": 4,
-    "oof_metric": 0.972046,
-    "seconds": 0.0
+    "oof_metric": 0.971776,
+    "seconds": 232.0
    }
   },
   "catboost_importance": {
    "pred_columns": {
-    "Airport_Code_txt_pca_30": 1.573,
-    "Airport_Code_txt_pca_31": 1.158,
-    "Airport_Code_txt_pca_32": 2.444,
-    "Airport_Code_txt_pca_33": 1.102,
-    "Airport_Code_txt_pca_34": 0.82,
-    "Airport_Code_txt_pca_35": 0.216,
+    "Airport_Code_txt_pca_30": 1.639,
+    "Airport_Code_txt_pca_31": 1.179,
+    "Airport_Code_txt_pca_32": 2.068,
+    "Airport_Code_txt_pca_33": 1.099,
+    "Airport_Code_txt_pca_34": 0.606,
+    "Airport_Code_txt_pca_35": 0.344,
     "Airport_Code_txt_pca_36": 0.0,
     "Airport_Code_txt_pca_37": 0.0,
     "Airport_Code_txt_pca_38": 0.0,
@@ -270,15 +270,15 @@
     "Airport_Code_txt_pca_53": 0.0,
     "Airport_Code_txt_pca_54": 0.0,
     "Airport_Code_txt_pca_55": 0.0,
-    "Airport_Code_txt_pca_56": 1.432,
-    "Airport_Code_txt_pca_57": 0.57,
-    "Airport_Code_txt_pca_58": 1.066,
-    "Airport_Code_txt_pca_59": 1.725,
-    "Airport_Code_txt_pca_60": 2.139,
-    "Airport_Code_txt_pca_61": 0.755,
-    "Airport_Code_txt_pca_62": 8.872,
-    "Airport_Code_txt_pca_63": 8.373,
-    "Airport_Code_txt_pca_64": 1.453,
+    "Airport_Code_txt_pca_56": 0.372,
+    "Airport_Code_txt_pca_57": 0.988,
+    "Airport_Code_txt_pca_58": 1.952,
+    "Airport_Code_txt_pca_59": 1.499,
+    "Airport_Code_txt_pca_60": 1.94,
+    "Airport_Code_txt_pca_61": 0.993,
+    "Airport_Code_txt_pca_62": 8.638,
+    "Airport_Code_txt_pca_63": 9.105,
+    "Airport_Code_txt_pca_64": 1.723,
     "City_txt_pca_30": 0.0,
     "City_txt_pca_31": 0.0,
     "City_txt_pca_32": 0.0,
@@ -288,16 +288,16 @@
     "City_txt_pca_36": 0.0,
     "City_txt_pca_37": 0.0,
     "City_txt_pca_38": 0.0,
-    "City_txt_pca_39": 0.036,
-    "City_txt_pca_40": 0.006,
+    "City_txt_pca_39": 0.034,
+    "City_txt_pca_40": 0.003,
     "City_txt_pca_41": 0.0,
     "City_txt_pca_42": 0.0,
-    "City_txt_pca_43": 0.0,
+    "City_txt_pca_43": 0.066,
     "City_txt_pca_44": 0.0,
     "City_txt_pca_45": 0.0,
     "City_txt_pca_46": 0.0,
     "City_txt_pca_47": 0.0,
-    "City_txt_pca_48": 0.005,
+    "City_txt_pca_48": 0.0,
     "City_txt_pca_49": 0.0,
     "County_txt_pca_30": 0.0,
     "County_txt_pca_31": 0.0,
@@ -308,43 +308,43 @@
     "County_txt_pca_36": 0.0,
     "County_txt_pca_37": 0.0,
     "County_txt_pca_38": 0.0,
-    "County_txt_pca_39": 0.093,
-    "County_txt_pca_40": 0.048,
+    "County_txt_pca_39": 0.034,
+    "County_txt_pca_40": 0.0,
     "County_txt_pca_41": 0.0,
-    "County_txt_pca_42": 0.048,
-    "County_txt_pca_43": 0.047,
+    "County_txt_pca_42": 0.02,
+    "County_txt_pca_43": 0.031,
     "County_txt_pca_44": 0.0,
-    "County_txt_pca_45": 0.003,
+    "County_txt_pca_45": 0.008,
     "County_txt_pca_46": 0.0,
     "County_txt_pca_47": 0.0,
     "County_txt_pca_48": 0.0,
     "County_txt_pca_49": 0.0,
-    "Description_txt_pca_30": 0.048,
-    "Description_txt_pca_31": 0.02,
-    "Description_txt_pca_32": 0.172,
-    "Description_txt_pca_33": 0.122,
+    "Description_txt_pca_30": 0.401,
+    "Description_txt_pca_31": 0.227,
+    "Description_txt_pca_32": 0.152,
+    "Description_txt_pca_33": 0.029,
     "Description_txt_pca_34": 0.0,
-    "Description_txt_pca_35": 0.0,
+    "Description_txt_pca_35": 0.001,
     "Description_txt_pca_36": 0.0,
     "Description_txt_pca_37": 0.0,
     "Description_txt_pca_38": 0.0,
-    "Description_txt_pca_39": 0.44,
-    "Description_txt_pca_40": 0.442,
-    "Description_txt_pca_41": 0.233,
-    "Description_txt_pca_42": 0.416,
-    "Description_txt_pca_43": 0.313,
-    "Description_txt_pca_44": 0.252,
-    "Description_txt_pca_45": 1.3,
+    "Description_txt_pca_39": 0.145,
+    "Description_txt_pca_40": 0.102,
+    "Description_txt_pca_41": 0.227,
+    "Description_txt_pca_42": 0.415,
+    "Description_txt_pca_43": 0.463,
+    "Description_txt_pca_44": 0.463,
+    "Description_txt_pca_45": 0.901,
     "Description_txt_pca_46": 0.0,
     "Description_txt_pca_47": 0.0,
-    "Description_txt_pca_48": 0.346,
+    "Description_txt_pca_48": 0.156,
     "Description_txt_pca_49": 0.0,
     "End_Time_txt_pca_30": 0.0,
-    "End_Time_txt_pca_31": 0.0,
-    "End_Time_txt_pca_32": 0.453,
-    "End_Time_txt_pca_33": 0.182,
+    "End_Time_txt_pca_31": 0.364,
+    "End_Time_txt_pca_32": 0.138,
+    "End_Time_txt_pca_33": 0.0,
     "End_Time_txt_pca_34": 0.0,
-    "End_Time_txt_pca_35": 0.028,
+    "End_Time_txt_pca_35": 0.4,
     "End_Time_txt_pca_36": 0.0,
     "End_Time_txt_pca_37": 0.0,
     "End_Time_txt_pca_38": 0.0,
@@ -354,17 +354,17 @@
     "End_Time_txt_pca_42": 0.0,
     "End_Time_txt_pca_43": 0.0,
     "End_Time_txt_pca_44": 0.0,
-    "End_Time_txt_pca_45": 0.0,
+    "End_Time_txt_pca_45": 0.002,
     "End_Time_txt_pca_46": 0.0,
     "End_Time_txt_pca_47": 0.0,
     "End_Time_txt_pca_48": 0.0,
     "End_Time_txt_pca_49": 0.0,
     "Start_Time_txt_pca_30": 0.0,
-    "Start_Time_txt_pca_31": 0.026,
-    "Start_Time_txt_pca_32": 0.303,
-    "Start_Time_txt_pca_33": 0.12,
+    "Start_Time_txt_pca_31": 0.0,
+    "Start_Time_txt_pca_32": 0.058,
+    "Start_Time_txt_pca_33": 0.249,
     "Start_Time_txt_pca_34": 0.0,
-    "Start_Time_txt_pca_35": 0.202,
+    "Start_Time_txt_pca_35": 0.787,
     "Start_Time_txt_pca_36": 0.0,
     "Start_Time_txt_pca_37": 0.0,
     "Start_Time_txt_pca_38": 0.0,
@@ -380,31 +380,31 @@
     "Start_Time_txt_pca_48": 0.0,
     "Start_Time_txt_pca_49": 0.0,
     "Street_txt_pca_30": 0.0,
-    "Street_txt_pca_31": 0.042,
+    "Street_txt_pca_31": 0.032,
     "Street_txt_pca_32": 0.078,
-    "Street_txt_pca_33": 0.041,
+    "Street_txt_pca_33": 0.081,
     "Street_txt_pca_34": 0.0,
     "Street_txt_pca_35": 0.0,
     "Street_txt_pca_36": 0.0,
     "Street_txt_pca_37": 0.0,
     "Street_txt_pca_38": 0.0,
-    "Street_txt_pca_39": 0.001,
-    "Street_txt_pca_40": 0.009,
+    "Street_txt_pca_39": 0.239,
+    "Street_txt_pca_40": 0.015,
     "Street_txt_pca_41": 0.0,
-    "Street_txt_pca_42": 0.012,
-    "Street_txt_pca_43": 0.083,
-    "Street_txt_pca_44": 0.062,
-    "Street_txt_pca_45": 0.133,
+    "Street_txt_pca_42": 0.077,
+    "Street_txt_pca_43": 0.091,
+    "Street_txt_pca_44": 0.0,
+    "Street_txt_pca_45": 0.028,
     "Street_txt_pca_46": 0.0,
     "Street_txt_pca_47": 0.0,
     "Street_txt_pca_48": 0.0,
     "Street_txt_pca_49": 0.0,
     "Weather_Timestamp_txt_pca_30": 0.0,
-    "Weather_Timestamp_txt_pca_31": 0.438,
-    "Weather_Timestamp_txt_pca_32": 0.0,
+    "Weather_Timestamp_txt_pca_31": 0.0,
+    "Weather_Timestamp_txt_pca_32": 0.054,
     "Weather_Timestamp_txt_pca_33": 0.0,
     "Weather_Timestamp_txt_pca_34": 0.0,
-    "Weather_Timestamp_txt_pca_35": 0.742,
+    "Weather_Timestamp_txt_pca_35": 0.517,
     "Weather_Timestamp_txt_pca_36": 0.0,
     "Weather_Timestamp_txt_pca_37": 0.0,
     "Weather_Timestamp_txt_pca_38": 0.0,
@@ -413,84 +413,84 @@
     "Weather_Timestamp_txt_pca_41": 0.0,
     "Weather_Timestamp_txt_pca_42": 0.0,
     "Weather_Timestamp_txt_pca_43": 0.0,
-    "Weather_Timestamp_txt_pca_44": 0.0,
+    "Weather_Timestamp_txt_pca_44": 0.006,
     "Weather_Timestamp_txt_pca_45": 0.0,
     "Weather_Timestamp_txt_pca_46": 0.0,
     "Weather_Timestamp_txt_pca_47": 0.0,
     "Weather_Timestamp_txt_pca_48": 0.0,
     "Weather_Timestamp_txt_pca_49": 0.0,
     "Zipcode_txt_pca_30": 0.0,
-    "Zipcode_txt_pca_31": 0.037,
-    "Zipcode_txt_pca_32": 0.108,
-    "Zipcode_txt_pca_33": 0.025,
+    "Zipcode_txt_pca_31": 0.083,
+    "Zipcode_txt_pca_32": 0.102,
+    "Zipcode_txt_pca_33": 0.142,
     "Zipcode_txt_pca_34": 0.0,
-    "Zipcode_txt_pca_35": 0.006,
+    "Zipcode_txt_pca_35": 0.001,
     "Zipcode_txt_pca_36": 0.0,
     "Zipcode_txt_pca_37": 0.0,
     "Zipcode_txt_pca_38": 0.0,
     "Zipcode_txt_pca_39": 0.0,
     "Zipcode_txt_pca_40": 0.0,
     "Zipcode_txt_pca_41": 0.0,
-    "Zipcode_txt_pca_42": 0.0,
+    "Zipcode_txt_pca_42": 0.101,
     "Zipcode_txt_pca_43": 0.0,
-    "Zipcode_txt_pca_44": 0.052,
+    "Zipcode_txt_pca_44": 0.0,
     "Zipcode_txt_pca_45": 0.0,
     "Zipcode_txt_pca_46": 0.0,
     "Zipcode_txt_pca_47": 0.0,
     "Zipcode_txt_pca_48": 0.0,
     "Zipcode_txt_pca_49": 0.0
    },
-   "pred_share": 0.4127,
+   "pred_share": 0.4167,
    "group_share": {
-    "structured": 0.087,
-    "pca": 0.5003,
-    "lex": 0.0517,
-    "nbr": 0.0214,
-    "num": 0.0757,
-    "probe": 0.0307,
-    "depthtop3": 0.0462,
-    "attn": 0.187
+    "structured": 0.0762,
+    "pca": 0.5071,
+    "lex": 0.0489,
+    "nbr": 0.0205,
+    "num": 0.0752,
+    "probe": 0.0331,
+    "depthtop3": 0.0443,
+    "attn": 0.1947
    },
    "top10": [
     [
-     "Airport_Code_txt_pca_62",
-     8.872
+     "Airport_Code_txt_pca_63",
+     9.105
     ],
     [
-     "Airport_Code_txt_pca_63",
-     8.373
+     "Airport_Code_txt_pca_62",
+     8.638
+    ],
+    [
+     "Source",
+     2.173
     ],
     [
      "Airport_Code_txt_pca_32",
-     2.444
+     2.068
     ],
     [
-     "Distance(mi)",
-     2.416
+     "Airport_Code_txt_pca_58",
+     1.952
     ],
     [
      "Airport_Code_txt_pca_60",
-     2.139
+     1.94
     ],
     [
-     "Airport_Code_txt_pca_59",
-     1.725
+     "Distance(mi)",
+     1.841
     ],
     [
-     "Airport_Code_txt_pca_30",
-     1.573
+     "Weather_Timestamp_txt_pca_1",
+     1.761
     ],
     [
      "Airport_Code_txt_pca_64",
-     1.453
+     1.723
     ],
     [
-     "Airport_Code_txt_pca_56",
-     1.432
-    ],
-    [
-     "End_Time_txt_pca_0",
-     1.416
+     "Airport_Code_txt_pca_30",
+     1.639
     ]
    ]
   }

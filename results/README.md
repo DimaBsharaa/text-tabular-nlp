@@ -12,7 +12,7 @@ the published Joint TAR and Joint Frozen scores of the same learner, dataset and
 | [`class_balance.csv`](class_balance.csv) | Class shares of the 10 classification datasets (from the benchmark's loader) |
 | [`compute_cost.csv`](compute_cost.csv) | Feature-building time of the depth-probe version vs Joint TAR fine-tuning, per (dataset, fold), same machine |
 | [`figures/`](figures/) | The figures of [notebook 02](../notebooks/02_results.ipynb) |
-| [`raw/`](raw/) | One result JSON per run (score, leaderboard references, config, git commit, hardware): the final method (`cte_depth_top3_attn`) and the depth-probe version (`cte_depth_top3`, also with cross-fitting seeds 43 / 44) |
+| [`raw/`](raw/) | One result JSON per run (score, leaderboard references, config, git commit, hardware): the final method (`cte_depth_top3_attn`, all 480 runs on an NVIDIA A100) and the depth-probe version (`cte_depth_top3`, also with cross-fitting seeds 43 / 44). A first batch of the final method's CatBoost / LightGBM / TabM runs on a Tesla T4, replaced as a whole, is kept in [`../archive/results/raw/p18_t4/`](../archive/results/raw/p18_t4/) |
 
 TabPFN cannot run Spotify Genres (114 classes) and Wine Review (30 classes), so MulTaBench has no TabPFN baseline there
 and its rows cover 18 datasets.

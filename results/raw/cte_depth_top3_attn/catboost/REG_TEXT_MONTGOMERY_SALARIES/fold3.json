@@ -9,13 +9,13 @@
  "dataset": "REG_TEXT_MONTGOMERY_SALARIES",
  "fold": 3,
  "task": "REG",
- "score": 0.9842333236189982,
+ "score": 0.9839851268227952,
  "metrics": {
-  "score": 0.9842333236189982,
+  "score": 0.9839851268227952,
   "metrics": {
-   "r2": 0.9842333236189982,
-   "mse": 12859705.411248118,
-   "rmse": 3586.0431412976777
+   "r2": 0.9839851268227952,
+   "mse": 13062141.080380807,
+   "rmse": 3614.158419380756
   }
  },
  "reference": {
@@ -24,11 +24,11 @@
   "unimodal_structured": 0.9636295732633292,
   "unimodal_text": 0.8846844669942707
  },
- "diff_vs_csv_joint_tar": 0.0013215364059325774,
+ "diff_vs_csv_joint_tar": 0.0010733396097295511,
  "runtime_s": {
-  "total": 54.3,
-  "fit": 54.2,
-  "predict": 0.0,
+  "total": 316.9,
+  "fit": 316.8,
+  "predict": 0.1,
   "tar_lower_cache": null,
   "tar_train": null,
   "tar_encode": null
@@ -53,13 +53,13 @@
   "micro_batch_size": 256,
   "fast": true,
   "pca_components": 30,
-  "cache_dir": "/home/student/p18/results/_cache"
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache"
  },
  "git": {
-  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
-  "dirty": true
+  "commit": "7a36f4e7b21cfa5df7b3cbeae3ede75d2b2b7700",
+  "dirty": false
  },
- "timestamp": "2026-10-24 02:20:21",
+ "timestamp": "2026-10-24 23:55:43",
  "argv": [
   "--method",
   "cte_depth_top3_attn",
@@ -72,9 +72,9 @@
   "--seed",
   "42",
   "--out",
-  "/home/student/p18/results",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100",
   "--cache_dir",
-  "/home/student/p18/results/_cache",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache",
   "--train_examples",
   "10000",
   "--epochs",
@@ -82,16 +82,16 @@
   "--micro_batch_size",
   "256"
  ],
- "gpu": "Tesla T4",
+ "gpu": "NVIDIA A100-SXM4-40GB",
  "hardware": {
-  "gpu_type": "Tesla T4",
-  "gpu_total_memory_gb": 15.55816650390625,
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
   "use_gpu": true,
   "cpu_cores": 8,
-  "system_ram_gb": 54.923683166503906,
-  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
  },
- "learner_threads": 2,
+ "learner_threads": 3,
  "torch": "2.7.1+cu126",
  "numpy": "2.3.5",
  "stacking": {
@@ -101,8 +101,8 @@
    "probe"
   ],
   "seconds": {
-   "base": 1.1,
-   "probe": 3.1
+   "base": 12.4,
+   "probe": 2.3
   },
   "cte": {
    "lex_alpha": {
@@ -114,28 +114,28 @@
      10.0
     ],
     "oof_metric": [
-     0.930532,
-     0.934869,
+     0.930533,
+     0.934868,
      0.932305,
      0.920715
     ]
    },
    "expert_cache_hits": {
-    "lex": true,
-    "nbr": true
+    "lex": false,
+    "nbr": false
    },
    "seconds": {
-    "frozen_embeddings": 0.1,
-    "experts": 1.0
+    "frozen_embeddings": 0.2,
+    "experts": 12.2
    }
   },
   "probe": {
    "alpha": 0.3,
    "oof_metric": [
-    0.9307086187708092,
-    0.9234227658256245,
-    0.9111576680276471,
-    0.8867266327354923
+    0.9307183019200644,
+    0.9234385483514523,
+    0.9111770368678396,
+    0.886752282547492
    ]
   },
   "n_extra_columns": {
@@ -178,18 +178,18 @@
    "aggregate": "top3",
    "solver": "sparse_cg",
    "layer_oof_metric": {
-    "1": 0.9322,
-    "2": 0.932359,
-    "3": 0.931989,
-    "4": 0.930742,
-    "5": 0.930241,
-    "6": 0.93131,
-    "7": 0.930979,
-    "8": 0.93078,
-    "9": 0.930699,
-    "10": 0.932371,
-    "11": 0.933917,
-    "12": 0.93525
+    "1": 0.932213,
+    "2": 0.932369,
+    "3": 0.932,
+    "4": 0.930754,
+    "5": 0.930263,
+    "6": 0.931321,
+    "7": 0.930974,
+    "8": 0.930805,
+    "9": 0.930681,
+    "10": 0.932339,
+    "11": 0.933893,
+    "12": 0.935247
    },
    "layer_alpha": {
     "1": 1.0,
@@ -208,8 +208,8 @@
    "ranked_layers": [
     12,
     11,
-    10,
     2,
+    10,
     1,
     3,
     6,
@@ -220,35 +220,35 @@
     5
    ],
    "probe_oof_metric_final_layer_cte_probe": [
-    0.9307086187708092,
-    0.9234227658256245,
-    0.9111576680276471,
-    0.8867266327354923
+    0.9307183019200644,
+    0.9234385483514523,
+    0.9111770368678396,
+    0.886752282547492
    ],
-   "probe_cache_hits": 12,
+   "probe_cache_hits": 0,
    "sl_weights": null,
    "sl_intercept": null,
    "seconds": {
-    "states": 0.3,
-    "probes": 0.0
+    "states": 0.5,
+    "probes": 137.7
    },
    "attn": {
     "layer": 12,
-    "oof_metric": 0.933878,
-    "seconds": 0.0
+    "oof_metric": 0.934386,
+    "seconds": 107.8
    }
   },
   "catboost_importance": {
    "pred_columns": {
-    "date_first_hired_txt_pca_30": 14.328,
-    "date_first_hired_txt_pca_31": 0.953,
-    "date_first_hired_txt_pca_32": 0.044,
+    "date_first_hired_txt_pca_30": 14.772,
+    "date_first_hired_txt_pca_31": 0.546,
+    "date_first_hired_txt_pca_32": 0.045,
     "date_first_hired_txt_pca_33": 0.0,
-    "date_first_hired_txt_pca_34": 0.436,
-    "date_first_hired_txt_pca_35": 0.451,
-    "date_first_hired_txt_pca_36": 0.009,
+    "date_first_hired_txt_pca_34": 0.517,
+    "date_first_hired_txt_pca_35": 0.435,
+    "date_first_hired_txt_pca_36": 0.031,
     "date_first_hired_txt_pca_37": 0.0,
-    "date_first_hired_txt_pca_38": 0.597,
+    "date_first_hired_txt_pca_38": 0.527,
     "date_first_hired_txt_pca_39": 0.0,
     "date_first_hired_txt_pca_40": 0.0,
     "date_first_hired_txt_pca_41": 0.0,
@@ -263,31 +263,31 @@
     "date_first_hired_txt_pca_50": 0.0,
     "date_first_hired_txt_pca_51": 0.0,
     "date_first_hired_txt_pca_52": 0.0,
-    "date_first_hired_txt_pca_53": 8.233,
-    "date_first_hired_txt_pca_54": 8.478,
-    "date_first_hired_txt_pca_55": 7.488,
-    "division_txt_pca_30": 0.109,
+    "date_first_hired_txt_pca_53": 8.533,
+    "date_first_hired_txt_pca_54": 7.031,
+    "date_first_hired_txt_pca_55": 9.203,
+    "division_txt_pca_30": 0.091,
     "division_txt_pca_31": 0.0,
-    "division_txt_pca_32": 0.0,
-    "division_txt_pca_33": 0.008,
-    "division_txt_pca_34": 0.173,
+    "division_txt_pca_32": 0.007,
+    "division_txt_pca_33": 0.0,
+    "division_txt_pca_34": 0.258,
     "division_txt_pca_35": 0.0,
     "division_txt_pca_36": 0.0,
     "division_txt_pca_37": 0.0,
     "division_txt_pca_38": 0.0,
     "division_txt_pca_39": 0.0,
-    "division_txt_pca_40": 0.024,
+    "division_txt_pca_40": 0.02,
     "division_txt_pca_41": 0.002,
     "division_txt_pca_42": 0.0,
-    "division_txt_pca_43": 0.032,
-    "division_txt_pca_44": 0.017,
-    "division_txt_pca_45": 0.004,
-    "division_txt_pca_46": 0.009,
+    "division_txt_pca_43": 0.017,
+    "division_txt_pca_44": 0.049,
+    "division_txt_pca_45": 0.002,
+    "division_txt_pca_46": 0.01,
     "division_txt_pca_47": 0.0,
     "division_txt_pca_48": 0.0,
-    "division_txt_pca_49": 0.01,
+    "division_txt_pca_49": 0.001,
     "division_txt_pca_50": 0.0,
-    "employee_position_title_txt_pca_30": 7.659,
+    "employee_position_title_txt_pca_30": 7.478,
     "employee_position_title_txt_pca_31": 0.0,
     "employee_position_title_txt_pca_32": 0.0,
     "employee_position_title_txt_pca_33": 0.0,
@@ -297,18 +297,18 @@
     "employee_position_title_txt_pca_37": 0.0,
     "employee_position_title_txt_pca_38": 0.0,
     "employee_position_title_txt_pca_39": 0.0,
-    "employee_position_title_txt_pca_40": 0.299,
-    "employee_position_title_txt_pca_41": 0.267,
+    "employee_position_title_txt_pca_40": 0.067,
+    "employee_position_title_txt_pca_41": 0.349,
     "employee_position_title_txt_pca_42": 0.0,
-    "employee_position_title_txt_pca_43": 0.221,
-    "employee_position_title_txt_pca_44": 0.139,
+    "employee_position_title_txt_pca_43": 0.229,
+    "employee_position_title_txt_pca_44": 0.084,
     "employee_position_title_txt_pca_45": 0.0,
-    "employee_position_title_txt_pca_46": 0.12,
+    "employee_position_title_txt_pca_46": 0.168,
     "employee_position_title_txt_pca_47": 0.0,
     "employee_position_title_txt_pca_48": 0.0,
     "employee_position_title_txt_pca_49": 0.0,
     "employee_position_title_txt_pca_50": 0.0,
-    "full_name_txt_pca_30": 0.031,
+    "full_name_txt_pca_30": 0.035,
     "full_name_txt_pca_31": 0.0,
     "full_name_txt_pca_32": 0.0,
     "full_name_txt_pca_33": 0.0,
@@ -318,10 +318,10 @@
     "full_name_txt_pca_37": 0.0,
     "full_name_txt_pca_38": 0.0,
     "full_name_txt_pca_39": 0.0,
-    "full_name_txt_pca_40": 0.004,
+    "full_name_txt_pca_40": 0.003,
     "full_name_txt_pca_41": 0.0,
-    "full_name_txt_pca_42": 0.0,
-    "full_name_txt_pca_43": 0.008,
+    "full_name_txt_pca_42": 0.002,
+    "full_name_txt_pca_43": 0.005,
     "full_name_txt_pca_44": 0.005,
     "full_name_txt_pca_45": 0.0,
     "full_name_txt_pca_46": 0.005,
@@ -330,57 +330,57 @@
     "full_name_txt_pca_49": 0.0,
     "full_name_txt_pca_50": 0.0
    },
-   "pred_share": 0.5016,
+   "pred_share": 0.5053,
    "group_share": {
-    "structured": 0.4255,
-    "pca": 0.0729,
-    "lex": 0.1433,
-    "nbr": 0.088,
-    "num": 0.0284,
-    "probe": 0.0823,
-    "depthtop3": 0.0848,
-    "attn": 0.0749
+    "structured": 0.4213,
+    "pca": 0.0734,
+    "lex": 0.1477,
+    "nbr": 0.0819,
+    "num": 0.0279,
+    "probe": 0.0853,
+    "depthtop3": 0.0703,
+    "attn": 0.092
    },
    "top10": [
     [
      "2016_gross_pay_received",
-     29.687
+     29.295
     ],
     [
      "date_first_hired_txt_pca_30",
-     14.328
-    ],
-    [
-     "date_first_hired_txt_pca_54",
-     8.478
-    ],
-    [
-     "date_first_hired_txt_pca_53",
-     8.233
-    ],
-    [
-     "employee_position_title_txt_pca_30",
-     7.659
+     14.772
     ],
     [
      "date_first_hired_txt_pca_55",
-     7.488
+     9.203
+    ],
+    [
+     "date_first_hired_txt_pca_53",
+     8.533
+    ],
+    [
+     "employee_position_title_txt_pca_30",
+     7.478
     ],
     [
      "2016_overtime_pay",
-     7.211
+     7.057
+    ],
+    [
+     "date_first_hired_txt_pca_54",
+     7.031
     ],
     [
      "assignment_category",
-     5.244
-    ],
-    [
-     "date_first_hired_txt_pca_31",
-     0.953
+     5.311
     ],
     [
      "employee_position_title_txt_pca_13",
-     0.62
+     0.676
+    ],
+    [
+     "date_first_hired_txt_pca_31",
+     0.546
     ]
    ]
   }

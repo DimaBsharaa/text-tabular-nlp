@@ -166,12 +166,6 @@ print("datasets where we lose with every learner:", int((n_pos == 0).sum()), "->
 print("datasets won by >= 4 of the learners:", int((n_pos >= 4).sum()))
 """)
 
-md("""
-**The one dark cell: LightGBM on Spotify Genres.** It is a single failed run, not a pattern. Fold 3 scores AUROC 0.536
-on the Tesla T4 GPU, against 0.906–0.915 on the other four folds and 0.913 when the same job is re-run on an A100;
-CatBoost and TabM score 0.963 and 0.962 on the same fold's features. Averaged over the 5 folds, that one run gives the
-−0.067. It is kept as measured (section 7b has the per-fold scores and the re-run).
-""")
 
 md("""
 ## 4. Consistency: folds, learners and noise
@@ -272,13 +266,12 @@ type, one point per learner. Classification uses AUROC (macro one-vs-rest for mu
 All five learners have positive overall mean gains, and their 95% dataset-bootstrap intervals lie above zero. Every
 learner also has a positive mean gain within each of the three task groups.
 
-Regression shows the largest numerical gains across learners (+0.0256 to +0.0484), followed by binary classification
-(+0.0180 to +0.0261) and multiclass classification (+0.0007 to +0.0088; LightGBM's +0.0007 is pulled down by its one
-failed Spotify Genres fold, section 7b). These are changes in different metrics—R² and AUROC—so their magnitudes
+Regression shows the largest numerical gains across learners (+0.0258 to +0.0484), followed by binary classification
+(+0.0191 to +0.0263) and multiclass classification (+0.0057 to +0.0118). These are changes in different metrics—R² and AUROC—so their magnitudes
 require separate interpretation.
 
 Positive group averages do not mean improvement on every dataset. Regression improves on 9–10 of 10 datasets per
-learner, and binary classification on 3 of 3. Multiclass improvements are less uniform (3–6 datasets per learner). The binary group is
+learner, and binary classification on 3 of 3. Multiclass improvements are less uniform (3 of 5 to 7 of 7 per learner). The binary group is
 small, and multiclass coverage differs between learners, so this figure describes the observed pattern rather than
 establishing a statistically significant difference between task types.
 """)
@@ -337,7 +330,7 @@ fs = pd.read_csv(R("reports", "tables", "fold_scores.csv"))
 STAGES = [("Joint Frozen (leaderboard)", None), ("our Joint TAR re-implementation", "tar_repro"),
           ("numeracy features only", "cte_num"), ("neighbour expert only", "cte_nbr"),
           ("lexical expert, NOT cross-fitted", "cte_lex_insample"), ("lexical expert only", "cte_lex"),
-          ("all experts (CTE)", "cte"), ("+ probe on the full embedding", "cte_probe"),
+          ("base experts + numeracy (CTE)", "cte"), ("+ probe on the full embedding", "cte_probe"),
           ("+ depth probes", "cte_depth_top3"), ("+ attention probe = final method", "cte_depth_top3_attn")]
 cb = fs[(fs.learner == "catboost") & fs.dataset.isin(per_ds.dataset.unique())]
 rows = []
@@ -378,7 +371,7 @@ md("""
 The final method is the depth-probe version plus one expert, a cross-fitted attention probe on the frozen token states
 (`reports/p18/`, specified before its run). Below: the paired difference between the two versions per learner (same
 datasets, folds and cross-fitting folds), the one dataset where Joint TAR used to win with every learner (Jigsaw
-Toxicity), and LightGBM on Spotify Genres, the one case where the new version is clearly worse.
+Toxicity), and Spotify Genres per fold, where the first batch (Tesla T4) had its one failed run.
 """)
 
 code("""
@@ -398,34 +391,34 @@ display(sp.pivot_table(index=["method", "learner"], columns="fold", values="scor
 """)
 
 md("""
-**Reading.** The attention probe improves four of the five learners by +0.002 to +0.003 on average (p < 0.01 each)
-and turns Jigsaw Toxicity from a loss into a win with every learner. LightGBM is the exception (−0.0006 on average,
-not significant), and that comes from a single run: on Spotify Genres fold 3, LightGBM scores 0.536 against 0.906–0.915
-on the other folds. The features of that fold are sound: CatBoost and TabM score 0.963 and 0.962 on exactly the same
-features. LightGBM, run with the benchmark's default settings (100 trees, no early stopping), fails on that fold. We
-report the result as measured. Re-run on an A100 GPU instead of the Tesla T4, the same job scores 0.9135 (table
-below).
+**Reading.** The attention probe improves every learner on average (+0.0016 to +0.0034), significantly for four
+(p ≤ 0.009; LightGBM: p = 0.12), and turns Jigsaw Toxicity from a loss into a win with every learner (+0.009 to
++0.015). On Spotify Genres every LightGBM fold scores about 0.91. In the first batch, run on a Tesla T4 and replaced as
+a whole (below), LightGBM's fold 3 had scored 0.536; the same job scores 0.9135 on the A100.
 """)
 
 code("""
 import glob
 rows = []
 for p in glob.glob(R("results", "raw", "cte_depth_top3_attn", "*", "*", "fold[0-4].json")):
+    if "tabpfn" in p:  # the TabPFN runs are a separate batch that trained its own probes; count the 300-job batch only
+        continue
     r = json.load(open(p)); a = r["stacking"]["depth"]["attn"]
     if a["seconds"] > 0:  # the first job of each (dataset, fold) trains the probe; later learners reuse it
         rows.append({"gpu": r["gpu"], "dataset": r["dataset"], "fold": r["fold"], "seconds": a["seconds"]})
 at = pd.DataFrame(rows)
-t4 = at[at.gpu == "Tesla T4"]
-print(f"attention probe training per (dataset, fold) on a Tesla T4: median {t4.seconds.median() / 60:.1f} min, "
-      f"max {t4.seconds.max() / 60:.1f} min ({len(t4)} of 100)")
+print(f"attention probe training per (dataset, fold), {at.gpu.iloc[0]} shared by four jobs: median "
+      f"{at.seconds.median() / 60:.1f} min, max {at.seconds.max() / 60:.1f} min ({len(at)} of 100 dataset-folds)")
 """)
 
 md("""
-**Same code, other machine.** 19 of the Tesla T4 jobs were re-run on an A100 machine from the published code
-(`reports/p18/a100_check.csv`): the 18 fold-0 jobs differ by +0.0005 on average but up to ±0.02, most on Video Games
-Sales, the noisiest dataset, and 5 of them by more than the 0.005 tolerance fixed for this check; LightGBM's failed
-Spotify Genres fold does not recur. The machines differ in GPU type, drivers and CPU threads; hardware-dependent
-arithmetic in the attention probe's GPU training is a plausible cause. CatBoost, LightGBM and TabM ran on the T4 and TabPFN on the A100, so each learner's comparisons use one GPU type.
+**The first batch, on a Tesla T4.** CatBoost, LightGBM and TabM first ran on a Tesla T4 (TabPFN on an A100). 19 of
+those jobs were re-run on an A100 from the published code (`reports/p18/a100_check.csv`): the 18 fold-0 jobs differ by
++0.0005 on average but up to ±0.02, most on Video Games Sales, the noisiest dataset, and 5 of them by more than the
+0.005 tolerance fixed for this check; the failed Spotify Genres fold does not recur. The machines differ in GPU type,
+drivers and CPU threads; hardware-dependent arithmetic in the attention probe's GPU training is a plausible cause. All
+300 jobs were then re-run on the A100 and, by a rule fixed before their results were seen, replaced the T4 batch as a
+whole: every result above uses one GPU type. The T4 batch is kept in `archive/results/raw/p18_t4/`.
 """)
 
 code("""
@@ -440,7 +433,8 @@ md("""
 ## 8. Cost of building the text features
 
 Joint TAR fine-tunes e5 on a GPU. The depth-probe version builds its features on the CPU; the final method adds the
-attention probe, which trains on a GPU (section 7b: median 2.8 min per (dataset, fold) on a Tesla T4). Below, both
+attention probe, which trains on a GPU (section 7b: median 3.5 min per (dataset, fold) on an A100 shared by four
+jobs). Below, both
 timed on the same Colab A100 machine, per (dataset, fold) (`scripts/compute_cost.py`): Joint TAR's time is our fast
 re-implementation of its fine-tuning, about 11× faster per epoch than upstream's own code; ours is the depth-probe
 version, every expert and probe built from scratch.
@@ -457,8 +451,8 @@ print(f"median per job: Joint TAR {cc.tar_seconds.median() / 60:.1f} min (GPU), 
 
 md("""
 **Reading.** Our method is not faster than an optimised fine-tuning. The depth-probe version takes about 2× its time
-per job, on a CPU; the final method adds about 2.8 GPU-minutes for the attention probe, so it costs roughly 4× an
-optimised Joint TAR fine-tuning. Both build features once per (dataset, fold) for all learners that share the same
+per job, on a CPU; the final method adds about 3.5 GPU-minutes for the attention probe (an A100 shared by four
+jobs), so it costs roughly 5× an optimised Joint TAR fine-tuning. Both build features once per (dataset, fold) for all learners that share the same
 training rows, whereas upstream's Joint TAR fine-tunes again inside every learner's run.
 """)
 
@@ -534,33 +528,32 @@ md("""
 ## 11. Summary
 
 1. **Better than Joint TAR with every learner.** The mean gain is +0.019 to +0.033 (AUROC / R²). Measured from Joint
-   Frozen, our method adds 1.8× (LightGBM) to 3.4× (TabPFN-2.5) what fine-tuning adds, without fine-tuning.
-2. **Significant for all 5 learners** (two-sided Wilcoxon over datasets, p ≤ 0.0073); **4 of 5 also survive** the
-   Holm correction over the 24 pre-registered comparisons (LightGBM: 0.095); all 5 survive it over the five final
-   comparisons.
-3. **Broad, not driven by a few datasets.** 83% of the 480 individual runs beat Joint TAR; 13 of the 20 datasets are
-   won with every learner and 16 with at least 4; the learners agree on win / loss for 78–94% of the datasets.
-4. **Above the noise.** On 11 of the 20 datasets the mean gain exceeds one standard deviation of the baseline's own
-   fold-to-fold noise; two lose by more than that: Wine Review (by 0.0015) and Spotify Genres (by 0.022, from
-   LightGBM's one failed fold).
-5. **Largest on regression** (+0.026 to +0.048), then binary (+0.018 to +0.026), smallest on multiclass (+0.001 to
-   +0.009).
+   Frozen, our method adds 1.9× (LightGBM) to 3.4× (TabPFN-2.5) what fine-tuning adds, without fine-tuning.
+2. **Significant for all 5 learners** (two-sided Wilcoxon over datasets, p ≤ 0.0009); **all 5 also survive** the
+   Holm correction over the five final comparisons and over all 24 pre-registered comparisons (largest: LightGBM,
+   0.015).
+3. **Broad, not driven by a few datasets.** 84% of the 480 individual runs beat Joint TAR (402); 15 of the 20 datasets
+   are won with every learner and 16 with at least 4; the learners agree on win / loss for 83–100% of the datasets.
+4. **Above the noise.** On 12 of the 20 datasets the mean gain exceeds one standard deviation of the baseline's own
+   fold-to-fold noise; none loses by more than that (the only mean loss: Wine Review, −0.001).
+5. **Largest on regression** (+0.026 to +0.048), then binary (+0.019 to +0.026), smallest on multiclass (+0.006 to
+   +0.012).
 6. **The target sits at different depths**: the best probe layer ranges from 2 to 12 and is an inner layer in 14 of
    the 20 datasets (largest gain: Book Readability, layer 3), which is what the depth probes exploit.
-7. **The attention probe** adds +0.002 to +0.003 for four learners (p < 0.01 each) and turns Jigsaw Toxicity, where
-   Joint TAR used to win with every learner (by 0.008–0.013), into a win with every learner (+0.006 to +0.016). With
-   LightGBM it is −0.0006 on average, all from one failed fold (Spotify Genres fold 3: 0.536). Across datasets the gain
-   is not significantly related to how much fine-tuning helps (Spearman ρ = 0.28, p = 0.23).
+7. **The attention probe** adds +0.002 to +0.003 for every learner, significantly for four (p ≤ 0.009; LightGBM:
+   p = 0.12), and turns Jigsaw Toxicity, where Joint TAR used to win with every learner (by 0.008–0.013), into a win
+   with every learner (+0.009 to +0.015). Across datasets the gain is not significantly related to how much
+   fine-tuning helps (Spearman ρ = 0.26, p = 0.27).
 8. **Class imbalance**: stratified splits and a class-ratio-free metric (AUROC) keep the paired comparison fair, though
-   imbalance can still affect how well either method learns. The gain is smaller on the datasets with the rarest classes (ρ = 0.70 with the rarest class's share,
-   p = 0.03, 10 datasets): these are the multiclass tasks with 4 to 114 classes, the task type with the smallest gains
+   imbalance can still affect how well either method learns. The gain is smaller on the datasets with the rarest classes (ρ = 0.76 with the rarest class's share,
+   p = 0.01, 10 datasets): these are the multiclass tasks with 4 to 114 classes, the task type with the smallest gains
    (section 5).
 9. **Cross-fitting is essential**: the same lexical expert without it scores 0.034 lower (−0.034 vs. Joint TAR
    instead of ±0.000), and 0.045 below the full set of cross-fitted experts.
 10. **On 36 further datasets** (depth-probe version) the gain is positive but small (median +0.003, 24 of 36 won);
    significant on its own (p = 0.017), not after the 24-test correction.
 11. **Cost** (section 8): the depth-probe version builds its features in about 2.7 min per job on a CPU, the attention
-    probe adds a median 2.8 min on a GPU (T4); an optimised GPU fine-tuning of Joint TAR takes 1.3 min.
+    probe adds a median 3.5 min on an A100 shared by four jobs; an optimised GPU fine-tuning of Joint TAR takes 1.3 min.
 12. **No leakage detected in these checks**: with shuffled training labels the final method falls to chance (AUROC 0.45–0.57,
     R² ≤ 0.01), with the same spread as the depth-probe version on the same permutations.
 13. **Not a lucky seed** (depth-probe version): with two other cross-fitting fold seeds (LightGBM) the gain is +0.017

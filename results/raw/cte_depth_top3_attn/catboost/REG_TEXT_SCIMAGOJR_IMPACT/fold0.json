@@ -9,13 +9,13 @@
  "dataset": "REG_TEXT_SCIMAGOJR_IMPACT",
  "fold": 0,
  "task": "REG",
- "score": 0.8874602514008185,
+ "score": 0.8887572063276048,
  "metrics": {
-  "score": 0.8874602514008185,
+  "score": 0.8887572063276048,
   "metrics": {
-   "r2": 0.8874602514008185,
-   "mse": 318.81756691495144,
-   "rmse": 17.855463223197305
+   "r2": 0.8887572063276048,
+   "mse": 315.143380511452,
+   "rmse": 17.752278178066387
   }
  },
  "reference": {
@@ -24,11 +24,11 @@
   "unimodal_structured": 0.7492186198525468,
   "unimodal_text": 0.7946860498845318
  },
- "diff_vs_csv_joint_tar": -0.0008662774224291736,
+ "diff_vs_csv_joint_tar": 0.00043067750435710206,
  "runtime_s": {
-  "total": 126.2,
-  "fit": 126.1,
-  "predict": 0.1,
+  "total": 965.1,
+  "fit": 964.9,
+  "predict": 0.2,
   "tar_lower_cache": null,
   "tar_train": null,
   "tar_encode": null
@@ -53,13 +53,13 @@
   "micro_batch_size": 256,
   "fast": true,
   "pca_components": 30,
-  "cache_dir": "/home/student/p18/results/_cache"
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache"
  },
  "git": {
-  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
-  "dirty": true
+  "commit": "7a36f4e7b21cfa5df7b3cbeae3ede75d2b2b7700",
+  "dirty": false
  },
- "timestamp": "2026-10-24 02:01:10",
+ "timestamp": "2026-10-24 22:02:48",
  "argv": [
   "--method",
   "cte_depth_top3_attn",
@@ -72,9 +72,9 @@
   "--seed",
   "42",
   "--out",
-  "/home/student/p18/results",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100",
   "--cache_dir",
-  "/home/student/p18/results/_cache",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache",
   "--train_examples",
   "10000",
   "--epochs",
@@ -82,16 +82,16 @@
   "--micro_batch_size",
   "256"
  ],
- "gpu": "Tesla T4",
+ "gpu": "NVIDIA A100-SXM4-40GB",
  "hardware": {
-  "gpu_type": "Tesla T4",
-  "gpu_total_memory_gb": 15.55816650390625,
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
   "use_gpu": true,
   "cpu_cores": 8,
-  "system_ram_gb": 54.923683166503906,
-  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
  },
- "learner_threads": 2,
+ "learner_threads": 3,
  "torch": "2.7.1+cu126",
  "numpy": "2.3.5",
  "stacking": {
@@ -101,8 +101,8 @@
    "probe"
   ],
   "seconds": {
-   "base": 5.0,
-   "probe": 11.7
+   "base": 40.7,
+   "probe": 9.1
   },
   "cte": {
    "lex_alpha": {
@@ -114,28 +114,28 @@
      10.0
     ],
     "oof_metric": [
-     0.912989,
-     0.917309,
-     0.912872,
-     0.897143
+     0.912947,
+     0.917276,
+     0.912848,
+     0.897125
     ]
    },
    "expert_cache_hits": {
-    "lex": true,
-    "nbr": true
+    "lex": false,
+    "nbr": false
    },
    "seconds": {
-    "frozen_embeddings": 0.4,
-    "experts": 4.4
+    "frozen_embeddings": 14.6,
+    "experts": 26.0
    }
   },
   "probe": {
    "alpha": 0.3,
    "oof_metric": [
-    0.9280178932367277,
-    0.9278269417116074,
-    0.9261836563941269,
-    0.9217084006902788
+    0.9280124077332806,
+    0.9278232174605386,
+    0.92618236305823,
+    0.9217069458995356
    ]
   },
   "n_extra_columns": {
@@ -184,17 +184,17 @@
    "solver": "sparse_cg",
    "layer_oof_metric": {
     "1": 0.923302,
-    "2": 0.927699,
-    "3": 0.929779,
-    "4": 0.930842,
-    "5": 0.932018,
-    "6": 0.93218,
-    "7": 0.933077,
-    "8": 0.933461,
-    "9": 0.933094,
-    "10": 0.933139,
+    "2": 0.927697,
+    "3": 0.929784,
+    "4": 0.93084,
+    "5": 0.932016,
+    "6": 0.932182,
+    "7": 0.93308,
+    "8": 0.933463,
+    "9": 0.933089,
+    "10": 0.933143,
     "11": 0.931354,
-    "12": 0.92976
+    "12": 0.929763
    },
    "layer_alpha": {
     "1": 10.0,
@@ -225,29 +225,29 @@
     1
    ],
    "probe_oof_metric_final_layer_cte_probe": [
-    0.9280178932367277,
-    0.9278269417116074,
-    0.9261836563941269,
-    0.9217084006902788
+    0.9280124077332806,
+    0.9278232174605386,
+    0.92618236305823,
+    0.9217069458995356
    ],
-   "probe_cache_hits": 12,
+   "probe_cache_hits": 0,
    "sl_weights": null,
    "sl_intercept": null,
    "seconds": {
-    "states": 1.7,
-    "probes": 0.1
+    "states": 36.5,
+    "probes": 400.3
    },
    "attn": {
     "layer": 8,
-    "oof_metric": 0.930981,
-    "seconds": 0.0
+    "oof_metric": 0.929196,
+    "seconds": 380.0
    }
   },
   "catboost_importance": {
    "pred_columns": {
-    "Areas_txt_pca_30": 5.853,
-    "Areas_txt_pca_31": 0.23,
-    "Areas_txt_pca_32": 0.805,
+    "Areas_txt_pca_30": 3.283,
+    "Areas_txt_pca_31": 0.282,
+    "Areas_txt_pca_32": 0.925,
     "Areas_txt_pca_33": 0.0,
     "Areas_txt_pca_34": 0.0,
     "Areas_txt_pca_35": 0.0,
@@ -257,21 +257,21 @@
     "Areas_txt_pca_39": 0.0,
     "Areas_txt_pca_40": 0.0,
     "Areas_txt_pca_41": 0.0,
-    "Areas_txt_pca_42": 0.022,
-    "Areas_txt_pca_43": 0.0,
+    "Areas_txt_pca_42": 0.007,
+    "Areas_txt_pca_43": 0.028,
     "Areas_txt_pca_44": 0.0,
-    "Areas_txt_pca_45": 0.069,
-    "Areas_txt_pca_46": 0.014,
+    "Areas_txt_pca_45": 0.095,
+    "Areas_txt_pca_46": 0.062,
     "Areas_txt_pca_47": 0.0,
-    "Areas_txt_pca_48": 0.06,
+    "Areas_txt_pca_48": 0.031,
     "Areas_txt_pca_49": 0.0,
     "Areas_txt_pca_50": 0.0,
-    "Areas_txt_pca_51": 0.002,
+    "Areas_txt_pca_51": 0.009,
     "Areas_txt_pca_52": 0.0,
-    "Areas_txt_pca_53": 15.063,
-    "Areas_txt_pca_54": 11.508,
-    "Areas_txt_pca_55": 11.15,
-    "Categories_txt_pca_30": 0.251,
+    "Areas_txt_pca_53": 13.97,
+    "Areas_txt_pca_54": 12.695,
+    "Areas_txt_pca_55": 11.958,
+    "Categories_txt_pca_30": 0.37,
     "Categories_txt_pca_31": 0.0,
     "Categories_txt_pca_32": 0.0,
     "Categories_txt_pca_33": 0.0,
@@ -281,31 +281,31 @@
     "Categories_txt_pca_37": 0.0,
     "Categories_txt_pca_38": 0.0,
     "Categories_txt_pca_39": 0.0,
-    "Categories_txt_pca_40": 0.115,
-    "Categories_txt_pca_41": 0.012,
+    "Categories_txt_pca_40": 0.121,
+    "Categories_txt_pca_41": 0.027,
     "Categories_txt_pca_42": 0.0,
-    "Categories_txt_pca_43": 0.074,
-    "Categories_txt_pca_44": 0.075,
-    "Categories_txt_pca_45": 0.055,
-    "Categories_txt_pca_46": 0.029,
+    "Categories_txt_pca_43": 0.057,
+    "Categories_txt_pca_44": 0.113,
+    "Categories_txt_pca_45": 0.094,
+    "Categories_txt_pca_46": 0.019,
     "Categories_txt_pca_47": 0.0,
     "Categories_txt_pca_48": 0.0,
-    "Categories_txt_pca_49": 0.033,
+    "Categories_txt_pca_49": 0.079,
     "Categories_txt_pca_50": 0.0,
-    "Citations / Doc  (2years)_txt_pca_30": 0.246,
+    "Citations / Doc  (2years)_txt_pca_30": 0.254,
     "Citations / Doc  (2years)_txt_pca_31": 0.0,
     "Citations / Doc  (2years)_txt_pca_32": 0.21,
-    "Citations / Doc  (2years)_txt_pca_33": 0.468,
-    "Citations / Doc  (2years)_txt_pca_34": 0.159,
+    "Citations / Doc  (2years)_txt_pca_33": 0.198,
+    "Citations / Doc  (2years)_txt_pca_34": 0.351,
     "Citations / Doc  (2years)_txt_pca_35": 0.0,
     "Citations / Doc  (2years)_txt_pca_36": 0.0,
     "Citations / Doc  (2years)_txt_pca_37": 0.0,
     "Citations / Doc  (2years)_txt_pca_38": 0.0,
     "Citations / Doc  (2years)_txt_pca_39": 0.0,
-    "Citations / Doc  (2years)_txt_pca_40": 0.018,
+    "Citations / Doc  (2years)_txt_pca_40": 0.002,
     "Citations / Doc  (2years)_txt_pca_41": 0.0,
     "Citations / Doc  (2years)_txt_pca_42": 0.0,
-    "Citations / Doc  (2years)_txt_pca_43": 0.0,
+    "Citations / Doc  (2years)_txt_pca_43": 0.014,
     "Citations / Doc  (2years)_txt_pca_44": 0.0,
     "Citations / Doc  (2years)_txt_pca_45": 0.0,
     "Citations / Doc  (2years)_txt_pca_46": 0.0,
@@ -313,49 +313,49 @@
     "Citations / Doc  (2years)_txt_pca_48": 0.0,
     "Citations / Doc  (2years)_txt_pca_49": 0.0,
     "Citations / Doc  (2years)_txt_pca_50": 0.0,
-    "Coverage_txt_pca_30": 0.241,
-    "Coverage_txt_pca_31": 0.012,
-    "Coverage_txt_pca_32": 0.684,
-    "Coverage_txt_pca_33": 0.081,
-    "Coverage_txt_pca_34": 1.511,
-    "Coverage_txt_pca_35": 0.006,
-    "Coverage_txt_pca_36": 0.008,
+    "Coverage_txt_pca_30": 0.637,
+    "Coverage_txt_pca_31": 0.0,
+    "Coverage_txt_pca_32": 1.159,
+    "Coverage_txt_pca_33": 0.011,
+    "Coverage_txt_pca_34": 1.347,
+    "Coverage_txt_pca_35": 0.002,
+    "Coverage_txt_pca_36": 0.07,
     "Coverage_txt_pca_37": 0.0,
     "Coverage_txt_pca_38": 0.0,
     "Coverage_txt_pca_39": 0.0,
-    "Coverage_txt_pca_40": 0.01,
-    "Coverage_txt_pca_41": 0.011,
+    "Coverage_txt_pca_40": 0.026,
+    "Coverage_txt_pca_41": 0.004,
     "Coverage_txt_pca_42": 0.0,
-    "Coverage_txt_pca_43": 0.019,
+    "Coverage_txt_pca_43": 0.022,
     "Coverage_txt_pca_44": 0.0,
-    "Coverage_txt_pca_45": 0.017,
-    "Coverage_txt_pca_46": 0.029,
+    "Coverage_txt_pca_45": 0.018,
+    "Coverage_txt_pca_46": 0.004,
     "Coverage_txt_pca_47": 0.0,
     "Coverage_txt_pca_48": 0.0,
     "Coverage_txt_pca_49": 0.0,
     "Coverage_txt_pca_50": 0.0,
-    "Issn_txt_pca_30": 0.259,
-    "Issn_txt_pca_31": 0.004,
-    "Issn_txt_pca_32": 0.044,
-    "Issn_txt_pca_33": 0.241,
-    "Issn_txt_pca_34": 0.278,
+    "Issn_txt_pca_30": 0.299,
+    "Issn_txt_pca_31": 0.001,
+    "Issn_txt_pca_32": 0.112,
+    "Issn_txt_pca_33": 0.279,
+    "Issn_txt_pca_34": 0.195,
     "Issn_txt_pca_35": 0.0,
     "Issn_txt_pca_36": 0.0,
     "Issn_txt_pca_37": 0.0,
     "Issn_txt_pca_38": 0.0,
     "Issn_txt_pca_39": 0.0,
-    "Issn_txt_pca_40": 0.087,
-    "Issn_txt_pca_41": 0.002,
+    "Issn_txt_pca_40": 0.12,
+    "Issn_txt_pca_41": 0.049,
     "Issn_txt_pca_42": 0.0,
-    "Issn_txt_pca_43": 0.096,
-    "Issn_txt_pca_44": 0.0,
-    "Issn_txt_pca_45": 0.019,
-    "Issn_txt_pca_46": 0.0,
+    "Issn_txt_pca_43": 0.07,
+    "Issn_txt_pca_44": 0.002,
+    "Issn_txt_pca_45": 0.024,
+    "Issn_txt_pca_46": 0.003,
     "Issn_txt_pca_47": 0.0,
     "Issn_txt_pca_48": 0.0,
     "Issn_txt_pca_49": 0.0,
     "Issn_txt_pca_50": 0.0,
-    "Publisher_txt_pca_30": 0.248,
+    "Publisher_txt_pca_30": 0.458,
     "Publisher_txt_pca_31": 0.0,
     "Publisher_txt_pca_32": 0.0,
     "Publisher_txt_pca_33": 0.0,
@@ -365,62 +365,62 @@
     "Publisher_txt_pca_37": 0.0,
     "Publisher_txt_pca_38": 0.0,
     "Publisher_txt_pca_39": 0.0,
-    "Publisher_txt_pca_40": 0.214,
-    "Publisher_txt_pca_41": 0.005,
+    "Publisher_txt_pca_40": 0.225,
+    "Publisher_txt_pca_41": 0.0,
     "Publisher_txt_pca_42": 0.0,
-    "Publisher_txt_pca_43": 0.096,
-    "Publisher_txt_pca_44": 0.16,
+    "Publisher_txt_pca_43": 0.064,
+    "Publisher_txt_pca_44": 0.194,
     "Publisher_txt_pca_45": 0.0,
-    "Publisher_txt_pca_46": 0.053,
+    "Publisher_txt_pca_46": 0.018,
     "Publisher_txt_pca_47": 0.0,
     "Publisher_txt_pca_48": 0.0,
-    "Publisher_txt_pca_49": 0.005,
+    "Publisher_txt_pca_49": 0.0,
     "Publisher_txt_pca_50": 0.0,
-    "Ref  / Doc _txt_pca_30": 0.042,
+    "Ref  / Doc _txt_pca_30": 0.06,
     "Ref  / Doc _txt_pca_31": 0.0,
-    "Ref  / Doc _txt_pca_32": 0.144,
-    "Ref  / Doc _txt_pca_33": 0.074,
-    "Ref  / Doc _txt_pca_34": 0.124,
+    "Ref  / Doc _txt_pca_32": 0.208,
+    "Ref  / Doc _txt_pca_33": 0.084,
+    "Ref  / Doc _txt_pca_34": 0.081,
     "Ref  / Doc _txt_pca_35": 0.0,
     "Ref  / Doc _txt_pca_36": 0.0,
     "Ref  / Doc _txt_pca_37": 0.0,
     "Ref  / Doc _txt_pca_38": 0.0,
     "Ref  / Doc _txt_pca_39": 0.0,
-    "Ref  / Doc _txt_pca_40": 0.0,
+    "Ref  / Doc _txt_pca_40": 0.003,
     "Ref  / Doc _txt_pca_41": 0.0,
     "Ref  / Doc _txt_pca_42": 0.0,
-    "Ref  / Doc _txt_pca_43": 0.0,
+    "Ref  / Doc _txt_pca_43": 0.006,
     "Ref  / Doc _txt_pca_44": 0.0,
-    "Ref  / Doc _txt_pca_45": 0.002,
+    "Ref  / Doc _txt_pca_45": 0.0,
     "Ref  / Doc _txt_pca_46": 0.0,
     "Ref  / Doc _txt_pca_47": 0.0,
     "Ref  / Doc _txt_pca_48": 0.0,
     "Ref  / Doc _txt_pca_49": 0.0,
     "Ref  / Doc _txt_pca_50": 0.0,
-    "SJR_txt_pca_30": 0.225,
+    "SJR_txt_pca_30": 0.443,
     "SJR_txt_pca_31": 0.0,
-    "SJR_txt_pca_32": 0.904,
-    "SJR_txt_pca_33": 0.944,
-    "SJR_txt_pca_34": 0.758,
+    "SJR_txt_pca_32": 0.944,
+    "SJR_txt_pca_33": 1.101,
+    "SJR_txt_pca_34": 0.864,
     "SJR_txt_pca_35": 0.0,
     "SJR_txt_pca_36": 0.0,
     "SJR_txt_pca_37": 0.0,
     "SJR_txt_pca_38": 0.0,
     "SJR_txt_pca_39": 0.0,
-    "SJR_txt_pca_40": 0.493,
+    "SJR_txt_pca_40": 0.481,
     "SJR_txt_pca_41": 0.0,
     "SJR_txt_pca_42": 0.0,
-    "SJR_txt_pca_43": 0.371,
+    "SJR_txt_pca_43": 0.549,
     "SJR_txt_pca_44": 0.0,
-    "SJR_txt_pca_45": 0.537,
-    "SJR_txt_pca_46": 0.151,
+    "SJR_txt_pca_45": 0.154,
+    "SJR_txt_pca_46": 0.493,
     "SJR_txt_pca_47": 0.0,
     "SJR_txt_pca_48": 0.0,
     "SJR_txt_pca_49": 0.0,
     "SJR_txt_pca_50": 0.0,
-    "Title_txt_pca_30": 0.595,
+    "Title_txt_pca_30": 0.653,
     "Title_txt_pca_31": 0.0,
-    "Title_txt_pca_32": 0.0,
+    "Title_txt_pca_32": 0.001,
     "Title_txt_pca_33": 0.0,
     "Title_txt_pca_34": 0.0,
     "Title_txt_pca_35": 0.0,
@@ -428,69 +428,69 @@
     "Title_txt_pca_37": 0.0,
     "Title_txt_pca_38": 0.0,
     "Title_txt_pca_39": 0.0,
-    "Title_txt_pca_40": 0.064,
-    "Title_txt_pca_41": 0.005,
+    "Title_txt_pca_40": 0.023,
+    "Title_txt_pca_41": 0.0,
     "Title_txt_pca_42": 0.0,
-    "Title_txt_pca_43": 0.191,
-    "Title_txt_pca_44": 0.223,
+    "Title_txt_pca_43": 0.07,
+    "Title_txt_pca_44": 0.239,
     "Title_txt_pca_45": 0.0,
-    "Title_txt_pca_46": 0.01,
+    "Title_txt_pca_46": 0.027,
     "Title_txt_pca_47": 0.0,
     "Title_txt_pca_48": 0.0,
-    "Title_txt_pca_49": 0.017,
+    "Title_txt_pca_49": 0.018,
     "Title_txt_pca_50": 0.0
    },
-   "pred_share": 0.5684,
+   "pred_share": 0.5717,
    "group_share": {
-    "structured": 0.1955,
-    "pca": 0.2362,
-    "lex": 0.0585,
-    "nbr": 0.0314,
-    "num": 0.1012,
-    "probe": 0.1506,
-    "depthtop3": 0.1151,
-    "attn": 0.1115
+    "structured": 0.1978,
+    "pca": 0.2305,
+    "lex": 0.0328,
+    "nbr": 0.0438,
+    "num": 0.1088,
+    "probe": 0.1397,
+    "depthtop3": 0.127,
+    "attn": 0.1196
    },
    "top10": [
     [
      "Areas_txt_pca_53",
-     15.063
+     13.97
     ],
     [
      "Areas_txt_pca_54",
-     11.508
+     12.695
     ],
     [
      "Areas_txt_pca_55",
-     11.15
+     11.958
     ],
     [
      "Total Citations (3years)",
-     7.645
-    ],
-    [
-     "Areas_txt_pca_30",
-     5.853
+     8.686
     ],
     [
      "Total Docs  (3years)",
-     4.287
+     3.475
+    ],
+    [
+     "Areas_txt_pca_30",
+     3.283
     ],
     [
      "Citable Docs  (3years)",
-     3.056
+     2.852
     ],
     [
      "Total Refs ",
-     1.705
+     1.437
     ],
     [
      "Coverage_txt_pca_34",
-     1.511
+     1.347
     ],
     [
-     "Total Docs  (2024)",
-     1.103
+     "Coverage_txt_pca_32",
+     1.159
     ]
    ]
   }

@@ -1,0 +1,408 @@
+{
+ "method": "cte_depth_top3_attn",
+ "run_name": "cte_depth_top3_attn",
+ "engine_version": "depth/1+attn/1",
+ "xfit_seed": 42,
+ "tar_path": null,
+ "learner": "catboost",
+ "learner_model_name": "CatBoost \ud83d\ude38",
+ "dataset": "BIN_TEXT_KICKSTARTER_FUNDING",
+ "fold": 2,
+ "task": "BIN",
+ "score": 0.7820645680147058,
+ "metrics": {
+  "score": 0.7820645680147058,
+  "metrics": {
+   "auc": 0.7820645680147058
+  }
+ },
+ "reference": {
+  "joint_frozen": 0.7447150735294118,
+  "joint_tar": 0.7602286305147059,
+  "unimodal_structured": 0.6162321920955882,
+  "unimodal_text": 0.7194921875
+ },
+ "diff_vs_csv_joint_tar": 0.021835937499999902,
+ "runtime_s": {
+  "total": 49.2,
+  "fit": 49.2,
+  "predict": 0.1,
+  "tar_lower_cache": null,
+  "tar_train": null,
+  "tar_encode": null
+ },
+ "tar": {
+  "cache_hit": null,
+  "head_quality": {},
+  "config": {
+   "engine_version": "depth/1+attn/1",
+   "method": "cte_depth_top3_attn",
+   "base": null
+  },
+  "base_skipped": true
+ },
+ "leakage_gap_head_train_minus_test": null,
+ "n_train": 9998,
+ "n_test": 2000,
+ "train_examples": 10000,
+ "config": {
+  "epochs": 50,
+  "seed": 42,
+  "micro_batch_size": 256,
+  "fast": true,
+  "pca_components": 30,
+  "cache_dir": "/home/student/p18/results/_cache"
+ },
+ "git": {
+  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
+  "dirty": true
+ },
+ "timestamp": "2026-10-24 02:18:14",
+ "argv": [
+  "--method",
+  "cte_depth_top3_attn",
+  "--learner",
+  "catboost",
+  "--dataset",
+  "BIN_TEXT_KICKSTARTER_FUNDING",
+  "--fold",
+  "2",
+  "--seed",
+  "42",
+  "--out",
+  "/home/student/p18/results",
+  "--cache_dir",
+  "/home/student/p18/results/_cache",
+  "--train_examples",
+  "10000",
+  "--epochs",
+  "50",
+  "--micro_batch_size",
+  "256"
+ ],
+ "gpu": "Tesla T4",
+ "hardware": {
+  "gpu_type": "Tesla T4",
+  "gpu_total_memory_gb": 15.55816650390625,
+  "use_gpu": true,
+  "cpu_cores": 8,
+  "system_ram_gb": 54.923683166503906,
+  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+ },
+ "learner_threads": 2,
+ "torch": "2.7.1+cu126",
+ "numpy": "2.3.5",
+ "stacking": {
+  "engine_version": "depth/1",
+  "method": "cte_depth_top3_attn",
+  "groups": [
+   "probe"
+  ],
+  "seconds": {
+   "base": 3.8,
+   "probe": 6.9
+  },
+  "cte": {
+   "lex_alpha": {
+    "chosen": 10.0,
+    "alphas": [
+     0.3,
+     1.0,
+     3.0,
+     10.0
+    ],
+    "oof_metric": [
+     0.665323,
+     0.683412,
+     0.701237,
+     0.712983
+    ]
+   },
+   "expert_cache_hits": {
+    "lex": true,
+    "nbr": true
+   },
+   "seconds": {
+    "frozen_embeddings": 0.6,
+    "experts": 3.0
+   }
+  },
+  "probe": {
+   "alpha": 10.0,
+   "oof_metric": [
+    0.6767838586423874,
+    0.6892576736786785,
+    0.6982441373236936,
+    0.7002185134156214
+   ]
+  },
+  "n_extra_columns": {
+   "created_at": 24,
+   "deadline": 21,
+   "desc": 21,
+   "keywords": 21,
+   "name": 21
+  },
+  "spec": {
+   "pooling": "mean",
+   "aggregate": "top3",
+   "layers": null,
+   "top_k": 3,
+   "alphas": [
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0
+   ],
+   "attn": true
+  },
+  "depth": {
+   "n_layers": 12,
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "aggregate": "top3",
+   "solver": "sparse_cg",
+   "layer_oof_metric": {
+    "1": 0.688359,
+    "2": 0.692275,
+    "3": 0.69424,
+    "4": 0.696826,
+    "5": 0.696806,
+    "6": 0.701301,
+    "7": 0.700864,
+    "8": 0.69944,
+    "9": 0.695897,
+    "10": 0.701881,
+    "11": 0.699788,
+    "12": 0.700435
+   },
+   "layer_alpha": {
+    "1": 30.0,
+    "2": 30.0,
+    "3": 30.0,
+    "4": 30.0,
+    "5": 30.0,
+    "6": 30.0,
+    "7": 10.0,
+    "8": 30.0,
+    "9": 30.0,
+    "10": 30.0,
+    "11": 30.0,
+    "12": 100.0
+   },
+   "ranked_layers": [
+    10,
+    6,
+    7,
+    12,
+    11,
+    8,
+    4,
+    5,
+    9,
+    3,
+    2,
+    1
+   ],
+   "probe_oof_metric_final_layer_cte_probe": [
+    0.6767838586423874,
+    0.6892576736786785,
+    0.6982441373236936,
+    0.7002185134156214
+   ],
+   "probe_cache_hits": 12,
+   "sl_weights": null,
+   "sl_intercept": null,
+   "seconds": {
+    "states": 2.2,
+    "probes": 0.0
+   },
+   "attn": {
+    "layer": 10,
+    "oof_metric": 0.702988,
+    "seconds": 0.0
+   }
+  },
+  "catboost_importance": {
+   "pred_columns": {
+    "created_at_txt_pca_30": 6.132,
+    "created_at_txt_pca_31": 0.827,
+    "created_at_txt_pca_32": 0.351,
+    "created_at_txt_pca_33": 0.0,
+    "created_at_txt_pca_34": 0.0,
+    "created_at_txt_pca_35": 0.0,
+    "created_at_txt_pca_36": 0.0,
+    "created_at_txt_pca_37": 0.0,
+    "created_at_txt_pca_38": 0.0,
+    "created_at_txt_pca_39": 0.0,
+    "created_at_txt_pca_40": 0.0,
+    "created_at_txt_pca_41": 0.0,
+    "created_at_txt_pca_42": 0.0,
+    "created_at_txt_pca_43": 0.0,
+    "created_at_txt_pca_44": 0.0,
+    "created_at_txt_pca_45": 0.0,
+    "created_at_txt_pca_46": 0.0,
+    "created_at_txt_pca_47": 0.0,
+    "created_at_txt_pca_48": 0.0,
+    "created_at_txt_pca_49": 0.0,
+    "created_at_txt_pca_50": 0.0,
+    "created_at_txt_pca_51": 0.0,
+    "created_at_txt_pca_52": 0.0,
+    "created_at_txt_pca_53": 1.679,
+    "created_at_txt_pca_54": 4.662,
+    "created_at_txt_pca_55": 5.559,
+    "deadline_txt_pca_30": 1.17,
+    "deadline_txt_pca_31": 0.0,
+    "deadline_txt_pca_32": 0.0,
+    "deadline_txt_pca_33": 0.0,
+    "deadline_txt_pca_34": 0.0,
+    "deadline_txt_pca_35": 0.0,
+    "deadline_txt_pca_36": 0.0,
+    "deadline_txt_pca_37": 0.0,
+    "deadline_txt_pca_38": 0.0,
+    "deadline_txt_pca_39": 0.0,
+    "deadline_txt_pca_40": 0.0,
+    "deadline_txt_pca_41": 0.0,
+    "deadline_txt_pca_42": 0.0,
+    "deadline_txt_pca_43": 0.0,
+    "deadline_txt_pca_44": 0.0,
+    "deadline_txt_pca_45": 0.0,
+    "deadline_txt_pca_46": 0.0,
+    "deadline_txt_pca_47": 0.0,
+    "deadline_txt_pca_48": 0.0,
+    "deadline_txt_pca_49": 0.0,
+    "deadline_txt_pca_50": 0.0,
+    "desc_txt_pca_30": 1.133,
+    "desc_txt_pca_31": 0.035,
+    "desc_txt_pca_32": 0.098,
+    "desc_txt_pca_33": 0.044,
+    "desc_txt_pca_34": 0.112,
+    "desc_txt_pca_35": 0.009,
+    "desc_txt_pca_36": 0.0,
+    "desc_txt_pca_37": 0.0,
+    "desc_txt_pca_38": 0.043,
+    "desc_txt_pca_39": 0.0,
+    "desc_txt_pca_40": 0.291,
+    "desc_txt_pca_41": 0.419,
+    "desc_txt_pca_42": 0.0,
+    "desc_txt_pca_43": 0.355,
+    "desc_txt_pca_44": 0.217,
+    "desc_txt_pca_45": 0.104,
+    "desc_txt_pca_46": 0.29,
+    "desc_txt_pca_47": 0.151,
+    "desc_txt_pca_48": 0.0,
+    "desc_txt_pca_49": 0.232,
+    "desc_txt_pca_50": 0.0,
+    "keywords_txt_pca_30": 0.571,
+    "keywords_txt_pca_31": 0.019,
+    "keywords_txt_pca_32": 0.127,
+    "keywords_txt_pca_33": 0.0,
+    "keywords_txt_pca_34": 0.061,
+    "keywords_txt_pca_35": 0.0,
+    "keywords_txt_pca_36": 0.014,
+    "keywords_txt_pca_37": 0.0,
+    "keywords_txt_pca_38": 0.0,
+    "keywords_txt_pca_39": 0.0,
+    "keywords_txt_pca_40": 0.041,
+    "keywords_txt_pca_41": 0.0,
+    "keywords_txt_pca_42": 0.0,
+    "keywords_txt_pca_43": 0.121,
+    "keywords_txt_pca_44": 0.0,
+    "keywords_txt_pca_45": 0.08,
+    "keywords_txt_pca_46": 0.163,
+    "keywords_txt_pca_47": 0.0,
+    "keywords_txt_pca_48": 0.0,
+    "keywords_txt_pca_49": 0.0,
+    "keywords_txt_pca_50": 0.0,
+    "name_txt_pca_30": 1.204,
+    "name_txt_pca_31": 0.0,
+    "name_txt_pca_32": 0.02,
+    "name_txt_pca_33": 0.11,
+    "name_txt_pca_34": 0.032,
+    "name_txt_pca_35": 0.0,
+    "name_txt_pca_36": 0.021,
+    "name_txt_pca_37": 0.006,
+    "name_txt_pca_38": 0.022,
+    "name_txt_pca_39": 0.0,
+    "name_txt_pca_40": 0.061,
+    "name_txt_pca_41": 0.1,
+    "name_txt_pca_42": 0.103,
+    "name_txt_pca_43": 0.329,
+    "name_txt_pca_44": 0.889,
+    "name_txt_pca_45": 0.098,
+    "name_txt_pca_46": 0.218,
+    "name_txt_pca_47": 0.051,
+    "name_txt_pca_48": 0.0,
+    "name_txt_pca_49": 0.056,
+    "name_txt_pca_50": 0.0
+   },
+   "pred_share": 0.2843,
+   "group_share": {
+    "structured": 0.0884,
+    "pca": 0.6273,
+    "lex": 0.0613,
+    "nbr": 0.0526,
+    "num": 0.0514,
+    "probe": 0.0168,
+    "depthtop3": 0.0466,
+    "attn": 0.0556
+   },
+   "top10": [
+    [
+     "goal",
+     8.132
+    ],
+    [
+     "created_at_txt_pca_30",
+     6.132
+    ],
+    [
+     "created_at_txt_pca_55",
+     5.559
+    ],
+    [
+     "created_at_txt_pca_54",
+     4.662
+    ],
+    [
+     "name_txt_pca_5",
+     1.849
+    ],
+    [
+     "created_at_txt_pca_53",
+     1.679
+    ],
+    [
+     "name_txt_pca_11",
+     1.262
+    ],
+    [
+     "name_txt_pca_30",
+     1.204
+    ],
+    [
+     "deadline_txt_pca_30",
+     1.17
+    ],
+    [
+     "desc_txt_pca_30",
+     1.133
+    ]
+   ]
+  }
+ }
+}

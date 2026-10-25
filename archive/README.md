@@ -33,7 +33,7 @@ Every result was followed by a "hostile review" that looked for leakage, split m
 | Path | Contents |
 |---|---|
 | [`PROGRESS.md`](PROGRESS.md) | The lab notebook: all pre-registrations (P…), entries (E…) and claims (C…), in order |
-| [`results/raw/`](results/raw/) | The raw result JSONs of the earlier full runs in `reports/tables/fold_scores.csv` (ablations, our Joint TAR re-implementation, earlier versions), by export; `scripts/check_fold_scores.py` checks every row against them |
+| [`results/raw/`](results/raw/) | The raw result JSONs of the earlier full runs in `reports/tables/fold_scores.csv` (ablations, our Joint TAR re-implementation, earlier versions), by export; `scripts/check_fold_scores.py` checks every row against them. `p18_t4/`: the first batch of the final method's CatBoost / LightGBM / TabM runs (Tesla T4), replaced as a whole by the A100 re-run (lab notebook E62–E63) |
 | `../multabench/ours/archive/` | Code of stages 2, 5 and 7 (`p6.py`, `p9.py`, `context_text.py`, `feature_tokens.py`, `structured_offset.py`); our TAR re-implementation stays in `multabench/ours/tar_engine.py` (the final method uses its encoding helpers) |
 | [`scripts/`](scripts/) | Reports and tools of earlier claims (`pilot_report.py`, `cte_report.py`, `p6_report.py`, `p8_report.py`, `p10_report.py`, …) |
 | [`jobs/`](jobs/) | The jobs files of earlier runs |

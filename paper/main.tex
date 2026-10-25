@@ -21,8 +21,6 @@
 
 % every number below comes from paper/generated/numbers.tex (scripts/paper_assets.py), none is typed by hand
 \input{generated/numbers}
-% marks a sentence that waits for a running experiment; none may remain in the submitted PDF
-\newcommand{\pending}[1]{\textcolor{red}{[PENDING: #1]}}
 
 \title{Can Cross-Fitted Text Experts Outperform\\Encoder Fine-Tuning?\\Fusing Frozen Text Embeddings with Tabular Data}
 
@@ -214,9 +212,9 @@ We use the 20 MulTaBench text-tabular datasets (3 binary, 7 multiclass, 10 regre
 Baselines are the published Joint TAR and Joint Frozen scores of the same learner, dataset, fold and seed (42); TabPFN cannot
 run the two datasets with 30 and 114 classes ($n = 18$). Our re-implementation of Joint TAR scores \tarReproDiff{} against the
 published numbers ($p = \tarReproP$), so our environment does not appear to favor us. Per learner, the fold-averaged
-differences to Joint TAR are tested over datasets with a two-sided Wilcoxon signed-rank test; each
-test and its threshold ($p < 0.05$, positive mean) were fixed in writing before its run. We Holm-correct over the
-five learners; over all \nTests{} pre-registered comparisons (Table~\ref{tab:tests}), \holmAllNote.
+differences to Joint TAR are tested over datasets with a two-sided Wilcoxon signed-rank test~\citep{wilcoxon1945individual}; each
+test and its threshold ($p < 0.05$, positive mean) were fixed in writing before its run. We Holm-correct~\citep{holm1979simple} over the
+five learners; over all \nTests{} pre-registered comparisons (Tables~\ref{tab:tests}--\ref{tab:final_p}), \holmAllNote.
 
 \begin{table}[t]
 \caption{Ours is above the published Joint TAR of the same learner for every learner (means over datasets): gain
@@ -259,9 +257,7 @@ mainly an analysis.
 \paragraph{The attention probe.}
 Without it, Jigsaw Toxicity was the one dataset Joint TAR won with every learner, and a single word can decide its label. Screened on training-row development splits, the
 attention probe turns Jigsaw into a win with every learner on the benchmark folds (\jigsawNewMin{} to \jigsawNewMax) and adds \attnIncPosMin{} to
-\attnIncPosMax{} over the \emph{depth-probe version} (the method without it) for \attnIncN{} learners ($p \le
-\attnIncPosPMax$). With LightGBM it is \attnIncLightGBM, all from one run (Spotify Genres fold \spotifyFold: \spotifyBad;
-\spotifyAhundred{} when re-run on an A100 GPU).
+\attnIncPosMax{} over the \emph{depth-probe version} (the method without it) \attnIncNote.
 
 \paragraph{Robustness and checks.}
 Two checks used the depth-probe version. On 36 further text datasets never used in development (CatBoost, folds
@@ -325,6 +321,15 @@ specified with a Holm correction within their own family of two ($p = \seedHolm$
 \centering
 \scriptsize
 \input{generated/table_tests}
+\end{table}
+
+\begin{table}[h]
+\caption{The final claim per learner (Table~\ref{tab:main}): raw two-sided Wilcoxon $p$, Holm-corrected over the five
+learners (the correction registered for this claim) and over all \nTests{} pre-registered comparisons (Table~\ref{tab:tests}).}
+\label{tab:final_p}
+\centering
+\small
+\input{generated/table_final_p}
 \end{table}
 
 \end{document}

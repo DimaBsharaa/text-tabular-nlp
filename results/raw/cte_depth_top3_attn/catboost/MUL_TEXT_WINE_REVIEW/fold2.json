@@ -9,12 +9,12 @@
  "dataset": "MUL_TEXT_WINE_REVIEW",
  "fold": 2,
  "task": "MUL",
- "score": 0.9825598526046377,
+ "score": 0.9824912019000496,
  "metrics": {
-  "score": 0.9825598526046377,
+  "score": 0.9824912019000496,
   "metrics": {
-   "auc": 0.9825598526046377,
-   "logloss": 0.7705388934424728
+   "auc": 0.9824912019000496,
+   "logloss": 0.7684148402234386
   }
  },
  "reference": {
@@ -23,11 +23,11 @@
   "unimodal_structured": 0.8550676459925367,
   "unimodal_text": 0.973656769440291
  },
- "diff_vs_csv_joint_tar": 0.0008200184150375378,
+ "diff_vs_csv_joint_tar": 0.0007513677104493688,
  "runtime_s": {
-  "total": 1072.5,
-  "fit": 1072.5,
-  "predict": 0.1,
+  "total": 1576.7,
+  "fit": 1576.6,
+  "predict": 0.2,
   "tar_lower_cache": null,
   "tar_train": null,
   "tar_encode": null
@@ -52,13 +52,13 @@
   "micro_batch_size": 256,
   "fast": true,
   "pca_components": 30,
-  "cache_dir": "/home/student/p18/results/_cache"
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache"
  },
  "git": {
-  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
-  "dirty": true
+  "commit": "7a36f4e7b21cfa5df7b3cbeae3ede75d2b2b7700",
+  "dirty": false
  },
- "timestamp": "2026-10-24 01:24:37",
+ "timestamp": "2026-10-24 19:23:14",
  "argv": [
   "--method",
   "cte_depth_top3_attn",
@@ -71,9 +71,9 @@
   "--seed",
   "42",
   "--out",
-  "/home/student/p18/results",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100",
   "--cache_dir",
-  "/home/student/p18/results/_cache",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache",
   "--train_examples",
   "10000",
   "--epochs",
@@ -81,16 +81,16 @@
   "--micro_batch_size",
   "256"
  ],
- "gpu": "Tesla T4",
+ "gpu": "NVIDIA A100-SXM4-40GB",
  "hardware": {
-  "gpu_type": "Tesla T4",
-  "gpu_total_memory_gb": 15.55816650390625,
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
   "use_gpu": true,
   "cpu_cores": 8,
-  "system_ram_gb": 54.923683166503906,
-  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
  },
- "learner_threads": 2,
+ "learner_threads": 3,
  "torch": "2.7.1+cu126",
  "numpy": "2.3.5",
  "stacking": {
@@ -100,8 +100,8 @@
    "probe"
   ],
   "seconds": {
-   "base": 1.7,
-   "probe": 54.7
+   "base": 242.2,
+   "probe": 22.2
   },
   "cte": {
    "lex_alpha": {
@@ -116,25 +116,25 @@
      0.943275,
      0.95178,
      0.95865,
-     0.963385
+     0.963384
     ]
    },
    "expert_cache_hits": {
-    "lex": true,
-    "nbr": true
+    "lex": false,
+    "nbr": false
    },
    "seconds": {
-    "frozen_embeddings": 0.1,
-    "experts": 1.4
+    "frozen_embeddings": 7.4,
+    "experts": 234.7
    }
   },
   "probe": {
    "alpha": 3.0,
    "oof_metric": [
-    0.9528528327566346,
-    0.9559966201957185,
-    0.9576777427725206,
-    0.9572640674206159
+    0.952858534151219,
+    0.9559998547186105,
+    0.9576801113265171,
+    0.9572634666135015
    ]
   },
   "n_extra_columns": {
@@ -175,18 +175,18 @@
    "aggregate": "top3",
    "solver": "eig",
    "layer_oof_metric": {
-    "1": 0.94749,
-    "2": 0.943651,
-    "3": 0.94176,
+    "1": 0.947491,
+    "2": 0.943653,
+    "3": 0.941761,
     "4": 0.940576,
-    "5": 0.939297,
-    "6": 0.939316,
-    "7": 0.939965,
-    "8": 0.941065,
-    "9": 0.944161,
-    "10": 0.948761,
+    "5": 0.939293,
+    "6": 0.939312,
+    "7": 0.93996,
+    "8": 0.941062,
+    "9": 0.944153,
+    "10": 0.948753,
     "11": 0.954003,
-    "12": 0.95837
+    "12": 0.958374
    },
    "layer_alpha": {
     "1": 10.0,
@@ -217,106 +217,106 @@
     5
    ],
    "probe_oof_metric_final_layer_cte_probe": [
-    0.9528528327566346,
-    0.9559966201957185,
-    0.9576777427725206,
-    0.9572640674206159
+    0.952858534151219,
+    0.9559998547186105,
+    0.9576801113265171,
+    0.9572634666135015
    ],
-   "probe_cache_hits": 12,
+   "probe_cache_hits": 0,
    "sl_weights": null,
    "sl_intercept": null,
    "seconds": {
-    "states": 0.5,
-    "probes": 0.1
+    "states": 10.6,
+    "probes": 34.1
    },
    "attn": {
     "layer": 12,
-    "oof_metric": 0.975804,
-    "seconds": 0.0
+    "oof_metric": 0.975803,
+    "seconds": 163.8
    }
   },
   "catboost_importance": {
    "pred_columns": {
-    "description_txt_pca_30": 4.811,
-    "description_txt_pca_31": 2.103,
-    "description_txt_pca_32": 1.365,
-    "description_txt_pca_33": 2.027,
-    "description_txt_pca_34": 1.087,
-    "description_txt_pca_35": 0.994,
-    "description_txt_pca_36": 0.932,
-    "description_txt_pca_37": 0.948,
-    "description_txt_pca_38": 0.876,
-    "description_txt_pca_39": 0.75,
-    "description_txt_pca_40": 0.79,
-    "description_txt_pca_41": 0.627,
-    "description_txt_pca_42": 0.829,
-    "description_txt_pca_43": 3.671,
-    "description_txt_pca_44": 1.194,
-    "description_txt_pca_45": 0.765,
-    "description_txt_pca_46": 0.389,
-    "description_txt_pca_47": 1.845,
-    "description_txt_pca_48": 0.253,
-    "description_txt_pca_49": 0.584,
-    "description_txt_pca_50": 0.206,
-    "description_txt_pca_51": 0.4,
-    "description_txt_pca_52": 0.502,
-    "description_txt_pca_53": 0.496,
-    "description_txt_pca_54": 0.024,
-    "description_txt_pca_55": 0.047,
-    "description_txt_pca_56": 0.194,
-    "description_txt_pca_57": 0.013,
+    "description_txt_pca_30": 4.774,
+    "description_txt_pca_31": 1.961,
+    "description_txt_pca_32": 1.627,
+    "description_txt_pca_33": 2.102,
+    "description_txt_pca_34": 0.978,
+    "description_txt_pca_35": 1.232,
+    "description_txt_pca_36": 0.631,
+    "description_txt_pca_37": 0.928,
+    "description_txt_pca_38": 1.155,
+    "description_txt_pca_39": 0.692,
+    "description_txt_pca_40": 0.735,
+    "description_txt_pca_41": 0.438,
+    "description_txt_pca_42": 0.808,
+    "description_txt_pca_43": 3.607,
+    "description_txt_pca_44": 0.682,
+    "description_txt_pca_45": 0.984,
+    "description_txt_pca_46": 0.631,
+    "description_txt_pca_47": 1.825,
+    "description_txt_pca_48": 0.27,
+    "description_txt_pca_49": 0.499,
+    "description_txt_pca_50": 0.165,
+    "description_txt_pca_51": 0.628,
+    "description_txt_pca_52": 0.565,
+    "description_txt_pca_53": 0.304,
+    "description_txt_pca_54": 0.003,
+    "description_txt_pca_55": 0.03,
+    "description_txt_pca_56": 0.045,
+    "description_txt_pca_57": 0.102,
     "description_txt_pca_58": 0.0,
-    "description_txt_pca_59": 0.002,
+    "description_txt_pca_59": 0.007,
     "description_txt_pca_60": 0.0,
     "description_txt_pca_61": 0.0,
-    "description_txt_pca_62": 0.083,
-    "description_txt_pca_63": 0.237,
-    "description_txt_pca_64": 0.072,
-    "description_txt_pca_65": 0.06,
-    "description_txt_pca_66": 0.16,
-    "description_txt_pca_67": 0.654,
-    "description_txt_pca_68": 0.041,
-    "description_txt_pca_69": 0.314,
+    "description_txt_pca_62": 0.025,
+    "description_txt_pca_63": 0.145,
+    "description_txt_pca_64": 0.085,
+    "description_txt_pca_65": 0.075,
+    "description_txt_pca_66": 0.172,
+    "description_txt_pca_67": 0.598,
+    "description_txt_pca_68": 0.085,
+    "description_txt_pca_69": 0.308,
     "description_txt_pca_70": 0.001,
     "description_txt_pca_71": 0.001,
-    "description_txt_pca_72": 0.286,
+    "description_txt_pca_72": 0.151,
     "description_txt_pca_73": 0.0,
-    "description_txt_pca_74": 0.631,
-    "description_txt_pca_75": 0.31,
-    "description_txt_pca_76": 0.741,
-    "description_txt_pca_77": 1.63,
-    "description_txt_pca_78": 0.667,
-    "description_txt_pca_79": 0.849,
-    "description_txt_pca_80": 0.444,
-    "description_txt_pca_81": 0.259,
-    "description_txt_pca_82": 0.212,
-    "description_txt_pca_83": 0.146,
-    "description_txt_pca_84": 0.907,
-    "description_txt_pca_85": 0.53,
-    "description_txt_pca_86": 0.558,
-    "description_txt_pca_87": 1.227,
-    "description_txt_pca_88": 2.378,
-    "description_txt_pca_89": 1.146,
-    "description_txt_pca_90": 1.071,
-    "description_txt_pca_91": 0.148,
-    "description_txt_pca_92": 0.769,
-    "description_txt_pca_93": 0.516,
-    "description_txt_pca_94": 0.822,
-    "description_txt_pca_95": 0.299,
-    "description_txt_pca_96": 0.95,
-    "description_txt_pca_97": 0.407,
-    "description_txt_pca_98": 1.473,
-    "description_txt_pca_99": 1.541,
-    "description_txt_pca_100": 1.812,
-    "description_txt_pca_101": 1.381,
-    "description_txt_pca_102": 3.032,
-    "description_txt_pca_103": 1.434,
-    "description_txt_pca_104": 2.541,
-    "description_txt_pca_105": 1.063,
-    "description_txt_pca_106": 0.932,
-    "description_txt_pca_107": 0.558,
-    "description_txt_pca_108": 0.7,
-    "description_txt_pca_109": 0.778,
+    "description_txt_pca_74": 0.297,
+    "description_txt_pca_75": 0.306,
+    "description_txt_pca_76": 0.549,
+    "description_txt_pca_77": 1.8,
+    "description_txt_pca_78": 0.88,
+    "description_txt_pca_79": 0.772,
+    "description_txt_pca_80": 0.408,
+    "description_txt_pca_81": 0.316,
+    "description_txt_pca_82": 0.521,
+    "description_txt_pca_83": 0.368,
+    "description_txt_pca_84": 1.26,
+    "description_txt_pca_85": 0.519,
+    "description_txt_pca_86": 0.354,
+    "description_txt_pca_87": 1.098,
+    "description_txt_pca_88": 2.295,
+    "description_txt_pca_89": 1.119,
+    "description_txt_pca_90": 1.038,
+    "description_txt_pca_91": 0.217,
+    "description_txt_pca_92": 0.616,
+    "description_txt_pca_93": 0.368,
+    "description_txt_pca_94": 0.682,
+    "description_txt_pca_95": 0.385,
+    "description_txt_pca_96": 0.991,
+    "description_txt_pca_97": 0.656,
+    "description_txt_pca_98": 1.698,
+    "description_txt_pca_99": 1.672,
+    "description_txt_pca_100": 2.252,
+    "description_txt_pca_101": 1.325,
+    "description_txt_pca_102": 3.26,
+    "description_txt_pca_103": 1.188,
+    "description_txt_pca_104": 2.529,
+    "description_txt_pca_105": 1.155,
+    "description_txt_pca_106": 0.635,
+    "description_txt_pca_107": 0.828,
+    "description_txt_pca_108": 0.661,
+    "description_txt_pca_109": 0.753,
     "province_txt_pca_30": 0.0,
     "province_txt_pca_31": 0.0,
     "province_txt_pca_32": 0.0,
@@ -326,11 +326,11 @@
     "province_txt_pca_36": 0.0,
     "province_txt_pca_37": 0.0,
     "province_txt_pca_38": 0.0,
-    "province_txt_pca_39": 0.137,
-    "province_txt_pca_40": 0.0,
+    "province_txt_pca_39": 0.001,
+    "province_txt_pca_40": 0.115,
     "province_txt_pca_41": 0.0,
-    "province_txt_pca_42": 0.055,
-    "province_txt_pca_43": 0.735,
+    "province_txt_pca_42": 0.024,
+    "province_txt_pca_43": 0.372,
     "province_txt_pca_44": 0.0,
     "province_txt_pca_45": 0.0,
     "province_txt_pca_46": 0.0,
@@ -338,57 +338,57 @@
     "province_txt_pca_48": 0.0,
     "province_txt_pca_49": 0.0
    },
-   "pred_share": 0.6642,
+   "pred_share": 0.6634,
    "group_share": {
-    "structured": 0.0662,
-    "pca": 0.2696,
-    "lex": 0.1731,
-    "nbr": 0.1113,
-    "num": 0.0312,
-    "probe": 0.0733,
-    "depthtop3": 0.1029,
-    "attn": 0.1724
+    "structured": 0.0784,
+    "pca": 0.2582,
+    "lex": 0.1725,
+    "nbr": 0.1097,
+    "num": 0.0235,
+    "probe": 0.08,
+    "depthtop3": 0.0982,
+    "attn": 0.1796
    },
    "top10": [
     [
-     "description_txt_pca_30",
-     4.811
+     "country",
+     5.821
     ],
     [
-     "country",
-     4.495
+     "description_txt_pca_30",
+     4.774
     ],
     [
      "description_txt_pca_43",
-     3.671
+     3.607
     ],
     [
      "description_txt_pca_102",
-     3.032
+     3.26
     ],
     [
      "description_txt_pca_104",
-     2.541
+     2.529
     ],
     [
      "description_txt_pca_88",
-     2.378
+     2.295
     ],
     [
-     "description_txt_pca_31",
-     2.103
+     "description_txt_pca_100",
+     2.252
     ],
     [
      "description_txt_pca_33",
-     2.027
+     2.102
+    ],
+    [
+     "description_txt_pca_31",
+     1.961
     ],
     [
      "price",
-     1.911
-    ],
-    [
-     "description_txt_pca_47",
-     1.845
+     1.829
     ]
    ]
   }

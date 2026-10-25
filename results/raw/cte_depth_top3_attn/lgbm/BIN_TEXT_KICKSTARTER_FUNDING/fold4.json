@@ -9,11 +9,11 @@
  "dataset": "BIN_TEXT_KICKSTARTER_FUNDING",
  "fold": 4,
  "task": "BIN",
- "score": 0.7492371323529412,
+ "score": 0.7513442095588235,
  "metrics": {
-  "score": 0.7492371323529412,
+  "score": 0.7513442095588235,
   "metrics": {
-   "auc": 0.7492371323529412
+   "auc": 0.7513442095588235
   }
  },
  "reference": {
@@ -22,10 +22,10 @@
   "unimodal_structured": 0.5852786075367646,
   "unimodal_text": 0.6734731158088235
  },
- "diff_vs_csv_joint_tar": 0.02686925551470587,
+ "diff_vs_csv_joint_tar": 0.028976332720588194,
  "runtime_s": {
-  "total": 807.7,
-  "fit": 807.6,
+  "total": 20.5,
+  "fit": 20.4,
   "predict": 0.1,
   "tar_lower_cache": null,
   "tar_train": null,
@@ -51,13 +51,13 @@
   "micro_batch_size": 256,
   "fast": true,
   "pca_components": 30,
-  "cache_dir": "/home/student/p18/results/_cache"
+  "cache_dir": "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache"
  },
  "git": {
-  "commit": "8b3bb76da1b52fc7e8c1566cee2d95d2a438b76d",
-  "dirty": true
+  "commit": "7a36f4e7b21cfa5df7b3cbeae3ede75d2b2b7700",
+  "dirty": false
  },
- "timestamp": "2026-10-23 21:58:39",
+ "timestamp": "2026-10-25 00:38:01",
  "argv": [
   "--method",
   "cte_depth_top3_attn",
@@ -70,9 +70,9 @@
   "--seed",
   "42",
   "--out",
-  "/home/student/p18/results",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100",
   "--cache_dir",
-  "/home/student/p18/results/_cache",
+  "/content/drive/MyDrive/text-tabular-nlp/results_p18_a100/_cache",
   "--train_examples",
   "10000",
   "--epochs",
@@ -80,16 +80,16 @@
   "--micro_batch_size",
   "256"
  ],
- "gpu": "Tesla T4",
+ "gpu": "NVIDIA A100-SXM4-40GB",
  "hardware": {
-  "gpu_type": "Tesla T4",
-  "gpu_total_memory_gb": 15.55816650390625,
+  "gpu_type": "NVIDIA A100-SXM4-40GB",
+  "gpu_total_memory_gb": 39.4935302734375,
   "use_gpu": true,
   "cpu_cores": 8,
-  "system_ram_gb": 54.923683166503906,
-  "cpu_name": "AMD EPYC 7V12 64-Core Processor"
+  "system_ram_gb": 83.47369384765625,
+  "cpu_name": "Intel(R) Xeon(R) CPU @ 2.20GHz"
  },
- "learner_threads": 2,
+ "learner_threads": 3,
  "torch": "2.7.1+cu126",
  "numpy": "2.3.5",
  "stacking": {
@@ -99,8 +99,8 @@
    "probe"
   ],
   "seconds": {
-   "base": 44.7,
-   "probe": 8.0
+   "base": 4.6,
+   "probe": 6.0
   },
   "cte": {
    "lex_alpha": {
@@ -112,28 +112,28 @@
      10.0
     ],
     "oof_metric": [
-     0.661007,
-     0.678784,
-     0.69675,
-     0.707613
+     0.661261,
+     0.679029,
+     0.696925,
+     0.707728
     ]
    },
    "expert_cache_hits": {
-    "lex": false,
-    "nbr": false
+    "lex": true,
+    "nbr": true
    },
    "seconds": {
-    "frozen_embeddings": 24.5,
-    "experts": 20.1
+    "frozen_embeddings": 0.8,
+    "experts": 3.6
    }
   },
   "probe": {
    "alpha": 10.0,
    "oof_metric": [
-    0.6719815064698947,
-    0.684662471769669,
-    0.694719543201284,
-    0.6966844878769369
+    0.6719809951280485,
+    0.6846596309816343,
+    0.6947050551823075,
+    0.6966798573924406
    ]
   },
   "n_extra_columns": {
@@ -177,18 +177,18 @@
    "aggregate": "top3",
    "solver": "sparse_cg",
    "layer_oof_metric": {
-    "1": 0.685232,
-    "2": 0.690875,
-    "3": 0.692029,
-    "4": 0.695011,
-    "5": 0.698446,
-    "6": 0.702392,
-    "7": 0.701859,
-    "8": 0.7003,
-    "9": 0.695968,
-    "10": 0.700948,
-    "11": 0.693709,
-    "12": 0.692574
+    "1": 0.685228,
+    "2": 0.690887,
+    "3": 0.692042,
+    "4": 0.695045,
+    "5": 0.698455,
+    "6": 0.702421,
+    "7": 0.701871,
+    "8": 0.700332,
+    "9": 0.696011,
+    "10": 0.700929,
+    "11": 0.693712,
+    "12": 0.692575
    },
    "layer_alpha": {
     "1": 30.0,
@@ -219,22 +219,22 @@
     1
    ],
    "probe_oof_metric_final_layer_cte_probe": [
-    0.6719815064698947,
-    0.684662471769669,
-    0.694719543201284,
-    0.6966844878769369
+    0.6719809951280485,
+    0.6846596309816343,
+    0.6947050551823075,
+    0.6966798573924406
    ],
-   "probe_cache_hits": 0,
+   "probe_cache_hits": 12,
    "sl_weights": null,
    "sl_intercept": null,
    "seconds": {
-    "states": 35.9,
-    "probes": 372.7
+    "states": 6.3,
+    "probes": 0.1
    },
    "attn": {
     "layer": 6,
-    "oof_metric": 0.704456,
-    "seconds": 342.3
+    "oof_metric": 0.69935,
+    "seconds": 0.0
    }
   },
   "catboost_importance": null
