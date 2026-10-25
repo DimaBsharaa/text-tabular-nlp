@@ -251,9 +251,12 @@ the 7 multiclass datasets.}
 
 \paragraph{What each part contributes.}
 Figure~\ref{fig:depth}a, Table~\ref{tab:buildup}: no base expert alone is ahead of Joint TAR; combined they are
-(\bucte), and the full method reaches \buattn. Fitted in-sample, the lexical expert scores \buLexInDrop{} lower. The
-depth increment alone is not significant (\depthIncWins{} of 20 datasets, $p = \depthIncP$), so Figure~\ref{fig:depth}b is
-mainly an analysis.
+(\bucte), and the full method reaches \buattn. Fitted in-sample, the lexical expert scores \buLexInDrop{} lower. e5-small-v2 has 12 layers, but MulTaBench reads only the last one (Joint TAR fine-tunes the top
+three). Figure~\ref{fig:depth}b shows, per dataset, which layer predicts the target best: in \depthInner{} of 20
+datasets it is not the last (the best layer ranges from \depthMinLayer{} to \depthMaxLayer; largest gain:
+\depthTopName, \depthTopGain{} at layer \depthTopLayer), so useful information sits in earlier layers. This motivated
+the depth probes, which raise the score by a further \buDepthAdd{} (Figure~\ref{fig:depth}a; not significant on its
+own, $p = \depthIncP$).
 
 \paragraph{The attention probe.}
 Without it, Jigsaw Toxicity was the one dataset Joint TAR won with every learner, and a single word can decide its label. Screened on training-row development splits, the
