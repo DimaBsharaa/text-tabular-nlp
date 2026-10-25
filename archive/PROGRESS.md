@@ -2555,3 +2555,4 @@ Features for the learner = structured columns (upstream preprocessing)
   "the one dataset Joint TAR won with every learner" → "with all five learners" in the paper and README (under the
   "every eligible learner" reading, Wine Review was also lost by the depth-probe version: −0.0012 / −0.0034 / −0.0004;
   found by an independent check). pdfLaTeX: main text ends on page 4, no Type 3 fonts (with cm-super, as on Overleaf).
+- E66 addendum 5 (2026-10-25): "VAERS-Serious" in the Conclusion links to the submitted dataset file (research/data/vaers_v11b/vaers_v11b.csv, public, 5.9 MB); no layout change under pdfLaTeX.
