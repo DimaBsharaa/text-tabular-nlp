@@ -300,7 +300,8 @@ both MulTaBench curation checks with all five learners and in all 25 learner--fo
 \begin{table}[h]
 \caption{Build-up of the method (CatBoost, 20 datasets, each row a full benchmark run): mean difference to Joint TAR
 (Joint Frozen: \bufrozen), datasets won and the Wilcoxon $p$. Each cumulative step raises the mean gain; the full method is ahead on the most
-datasets.}
+datasets. The depth-probe step was also tested directly against the row above it (paired Wilcoxon,
+$p = \depthIncP$).}
 \label{tab:buildup}
 \centering
 \footnotesize

@@ -2548,3 +2548,4 @@ Features for the learner = structured columns (upstream preprocessing)
   36-dataset check ("beats Joint TAR on 24 of them (median +0.003; … Table 4)"; C7d with p = 0.017 and Holm 0.138 in
   Table 4, and Limitations says an earlier version gained less there). The Holm sentence names both corrections;
   "useful information often sits in earlier layers". Main text ends on page 4; audit PASS.
+- E66 addendum 3 (2026-10-25): the depth probes' pre-registered paired test (P14 secondary, p = 0.216) is reported in the Table 2 caption, so every pre-registered result appears in the paper.
