@@ -2472,3 +2472,11 @@ Features for the learner = structured columns (upstream preprocessing)
 - **Notebook 01** now finds the repository from `notebooks/` as well (path setup in its first cell); re-executed from
   `notebooks/`, 0 errors, every benchmark number unchanged. Only the machine-dependent `raw_cached` column and the
   text-length table (now 16 of 20 datasets cached locally, was 1) differ.
+
+## E63 addendum — the full test run behind e70def1   (2026-10-25)
+- `pytest` (3 groups, the whole `tests/` tree): `111 passed` (archive + train/predict), `19 passed` (stacking),
+  `186 passed, 1 skipped` (the rest) → **316 passed, 1 skipped**, exit 0 in each group; on a laptop (Intel Core
+  i7-13700H, no GPU), WSL2 Linux 6.18.54.1, Python 3.11.17, torch 2.7.1+cu126 from `uv.lock`.
+- README: "Runs on Linux or macOS; on Windows use WSL" (`fcntl` locks in `cte.py` / `run_experiment.py`, `os.killpg`
+  in the runner). The reader-facing README, `results/README.md` and notebook 02 state the final hardware (A100) only;
+  the T4 history stays in this notebook and in `archive/results/raw/p18_t4/`.

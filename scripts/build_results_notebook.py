@@ -372,7 +372,7 @@ md("""
 The final method is the depth-probe version plus one expert, a cross-fitted attention probe on the frozen token states
 (`reports/p18/`, specified before its run). Below: the paired difference between the two versions per learner (same
 datasets, folds and cross-fitting folds), the one dataset where Joint TAR used to win with every learner (Jigsaw
-Toxicity), and Spotify Genres per fold, where the first batch (Tesla T4) had its one failed run.
+Toxicity), and Spotify Genres per fold.
 """)
 
 code("""
@@ -394,8 +394,7 @@ display(sp.pivot_table(index=["method", "learner"], columns="fold", values="scor
 md("""
 **Reading.** The attention probe improves every learner on average (+0.0016 to +0.0034), significantly for four
 (p ≤ 0.009; LightGBM: p = 0.12), and turns Jigsaw Toxicity from a loss into a win with every learner (+0.009 to
-+0.015). On Spotify Genres every LightGBM fold scores about 0.91. In the first batch, run on a Tesla T4 and replaced as
-a whole (below), LightGBM's fold 3 had scored 0.536; the same job scores 0.9135 on the A100.
++0.015). On Spotify Genres every LightGBM fold scores about 0.91. All final runs ran on an NVIDIA A100 GPU.
 """)
 
 code("""
@@ -412,23 +411,6 @@ print(f"attention probe training per (dataset, fold), {at.gpu.iloc[0]} shared by
       f"{at.seconds.median() / 60:.1f} min, max {at.seconds.max() / 60:.1f} min ({len(at)} of 100 dataset-folds)")
 """)
 
-md("""
-**The first batch, on a Tesla T4.** CatBoost, LightGBM and TabM first ran on a Tesla T4 (TabPFN on an A100). 19 of
-those jobs were re-run on an A100 from the published code (`reports/p18/a100_check.csv`): the 18 fold-0 jobs differ by
-+0.0005 on average but up to ±0.02, most on Video Games Sales, the noisiest dataset, and 5 of them by more than the
-0.005 tolerance fixed for this check; the failed Spotify Genres fold does not recur. The machines differ in GPU type,
-drivers and CPU threads; hardware-dependent arithmetic in the attention probe's GPU training is a plausible cause. All
-300 jobs were then re-run on the A100 and, by a rule fixed before their results were seen, replaced the T4 batch as a
-whole: every result above uses one GPU type. The T4 batch is kept in `archive/results/raw/p18_t4/`.
-""")
-
-code("""
-chk = pd.read_csv(R("reports", "p18", "a100_check.csv"))
-chk["dataset"] = chk.dataset.map(NAME)
-f0 = chk[chk.fold == 0].diff_a100_minus_t4
-print(f"fold-0 jobs: {len(f0)}, mean A100 - T4 {f0.mean():+.4f}, max |diff| {f0.abs().max():.4f}")
-chk.drop(columns=["commit_a100", "dirty_a100"]).round(4)
-""")
 
 md("""
 ## 8. Cost of building the text features

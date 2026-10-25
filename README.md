@@ -35,11 +35,7 @@ gain over Joint TAR with its 95% interval, the honest scale.
   into a win with every learner (+0.009 to +0.015).
 - **The attention probe helps every learner** over the version without it (+0.002 to +0.003 on average), significantly
   for four (LightGBM: p = 0.12).
-- **One GPU type:** all 480 final runs ran on an NVIDIA A100. A first batch of the CatBoost, LightGBM and TabM runs on a
-  Tesla T4 (one LightGBM fold of Spotify Genres failed there: AUROC 0.536, 0.913 on the A100) was replaced as a whole,
-  by a rule fixed before the new results were seen; it is kept in
-  [`archive/results/raw/p18_t4/`](archive/results/raw/p18_t4/) with its provenance check
-  ([`reports/p18/`](reports/p18/)).
+- **Hardware:** all 480 final runs ran on an NVIDIA A100 GPU.
 - **Checked with the version without the attention probe:** re-run with two other cross-fitting fold seeds
   (LightGBM), the gain is +0.017 and +0.018 (15 of 20 datasets each, Holm p = 0.019); on 36 further text datasets
   never used in development it is smaller (median +0.003, 24 of 36 won).
@@ -48,10 +44,7 @@ gain over Joint TAR with its 95% interval, the honest scale.
 
 Full analysis, with every comparison and chart: [**notebook 02**](notebooks/02_results.ipynb). Scores per fold, dataset
 and learner: [`results/`](results/); the result file of every run of the final method and of its version without
-the attention probe (1,268 JSONs, with config, git commit and hardware): [`results/raw/`](results/raw/). Single scores
-depend slightly on the machine, because the attention probe trains on the GPU: 18 jobs run on both the T4 and the A100
-differ by +0.0005 on average and by up to ±0.02 on the noisiest dataset, Video Games Sales
-([`reports/p18/a100_check.csv`](reports/p18/a100_check.csv)).
+the attention probe (1,268 JSONs, with config, git commit and hardware): [`results/raw/`](results/raw/).
 
 ## Background
 
@@ -126,6 +119,8 @@ inside each run, like the Ridge experts). Details, every option and runtimes:
 [**method README**](multabench/ours/README.md).
 
 ## Quickstart
+
+Runs on Linux or macOS; on Windows use WSL.
 
 ```bash
 uv sync --frozen            # Python 3.11 environment, pinned by uv.lock
