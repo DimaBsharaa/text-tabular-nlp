@@ -1,4 +1,4 @@
-# P15 (PROGRESS.md, claim C10): cte_depth_top3 with LightGBM then TabM, 20 datasets x 5 folds. ~1-1.5 h on A100.
+# P15 (claim C10): cte_depth_top3 with LightGBM then TabM, 20 datasets x 5 folds. ~1-1.5 h on A100.
 # Results root: MyDrive/text-tabular-nlp/results_cte. EXTRA_ARGS = ['--job_timeout_min', '240']. Run AFTER p14_B.
 cte_depth_top3 lgbm MUL_TEXT_SPOTIFY_GENRES 0
 cte_depth_top3 lgbm MUL_TEXT_SPOTIFY_GENRES 1

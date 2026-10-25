@@ -1,4 +1,4 @@
-# P4 full run (PROGRESS.md P4). Results root: MyDrive/text-tabular-nlp/results_full (NOT the pilot's results/).
+# P4 full run. Results root: MyDrive/text-tabular-nlp/results_full (NOT the pilot's results/).
 # Same GPU type for every job of the full run (A100, else L4). Finished jobs are skipped; re-run to resume.
 # Part 2: TabPFN (no learner val split -> its own training rows and fold fine-tunes; 18 datasets with a
 # leaderboard TabPFN baseline). v2 first: it computes the folds that v2.5 reuses.

@@ -14,6 +14,8 @@ the published Joint TAR and Joint Frozen scores of the same learner, dataset and
 | [`figures/`](figures/) | The figures of [notebook 02](../notebooks/02_results.ipynb) |
 | [`raw/`](raw/) | One result JSON per run (score, leaderboard references, config, git commit, hardware): the final method (`cte_depth_top3_attn`, all 480 runs on an NVIDIA A100) and the depth-probe version (`cte_depth_top3`, also with cross-fitting seeds 43 / 44). |
 
+Results zip: compute_cost.csv and the per-run files (raw/) are in the code zip, under results/.
+
 TabPFN cannot run Spotify Genres (114 classes) and Wine Review (30 classes), so MulTaBench has no TabPFN baseline there
 and its rows cover 18 datasets.
 

@@ -28,8 +28,6 @@ HOLM_KEY = {"CatBoost": "C13_catboost", "LightGBM": "C13_lgbm", "TabM": "C13_tab
             "TabPFN-2.5": "C13_tabpfnv2p5"}
 SHORT = {"CatBoost": "catboost", "LightGBM": "lgbm", "TabM": "tabm", "TabPFN-v2": "tabpfnv2", "TabPFN-2.5": "tabpfnv2p5"}
 FINAL, PREVIOUS = "cte_depth_top3_attn", "cte_depth_top3"  # the final method and the same method without the attention probe
-# E8 (archive/PROGRESS.md): Joint TAR's head quality, its own training rows minus test rows, 6 pilot datasets x 3 folds
-LEAK = {"gap": "+0.031", "pos": "16", "n": "18", "datasets": "6", "p": "0.0002"}
 
 
 def name(d: str) -> str:
@@ -100,8 +98,12 @@ def main() -> None:
     d = per_ds.assign(tg=per_ds.joint_tar - per_ds.joint_frozen).groupby("dataset")[["tg", "gain_vs_tar"]].mean()
     r_ft = spearmanr(d.tg, d.gain_vs_tar)
     m["rhoFineTune"], m["pFineTune"] = f"{r_ft.statistic:.2f}", f"{r_ft.pvalue:.2f}"
-    m["leakGap"], m["leakPos"], m["leakN"], m["leakDatasets"], m["leakP"] = (LEAK["gap"], LEAK["pos"], LEAK["n"],
-                                                                         LEAK["datasets"], LEAK["p"])
+    # Joint TAR's over-trust: its fine-tuned head's score on its own training rows minus on test rows, from our full
+    # re-implementation runs (tar_repro, CatBoost, 20 datasets x 5 folds)
+    leak = [json.load(open(f)) for f in sorted(glob.glob(R("archive", "results", "raw", "export_20261011_200658", "tar_repro", "*", "*", "fold*.json")))]
+    gap = np.array([r["leakage_gap_head_train_minus_test"] for r in leak])
+    m["leakGap"], m["leakPos"], m["leakN"] = f3(gap.mean(), True), str(int((gap > 0).sum())), str(len(gap))
+    m["leakDatasets"], m["leakP"] = str(len({r["dataset"] for r in leak})), fp(wilcoxon(gap).pvalue)
 
     # ---- build-up (CatBoost, all full runs, vs Joint TAR of the same fold)
     fs = pd.read_csv(R("reports", "tables", "fold_scores.csv"))
@@ -167,7 +169,7 @@ def main() -> None:
     cc = pd.read_csv(R("results", "compute_cost.csv"))
     m["costOurs"], m["costTar"] = f"{cc.ours_seconds.median() / 60:.1f}", f"{cc.tar_seconds.median() / 60:.1f}"
     m["tarReproDiff"] = f3(rows[1][1], True)
-    # label shuffle of the final method (E52: dev split 0 of fold 0, training labels permuted)
+    # label shuffle of the final method (dev split 0 of fold 0, training labels permuted)
     ls = pd.concat([pd.read_csv(R("reports", "dev", "e52", f)) for f in ("label_shuffle.csv", "label_shuffle_jigsaw.csv")])
     ls = ls[ls.method == FINAL]
     sh = ls[(ls.train_labels == "shuffled") & ~ls.dataset.str.startswith("REG")]

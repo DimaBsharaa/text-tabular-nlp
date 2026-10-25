@@ -1,4 +1,4 @@
-# P17 (archive/PROGRESS.md, claim C12): cte_depth_top3 with cross-fitting fold seeds 43 and 44, LightGBM, 20 datasets x 5 folds.
+# P17 (claim C12): cte_depth_top3 with cross-fitting fold seeds 43 and 44, LightGBM, 20 datasets x 5 folds.
 # Results root: MyDrive/text-tabular-nlp/results_cte. EXTRA_ARGS = ['--job_timeout_min', '240'] (parallel: auto).
 cte_depth_top3_xs43 lgbm MUL_TEXT_SPOTIFY_GENRES 0
 cte_depth_top3_xs43 lgbm MUL_TEXT_SPOTIFY_GENRES 1

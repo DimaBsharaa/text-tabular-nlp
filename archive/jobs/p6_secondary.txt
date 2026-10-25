@@ -1,8 +1,8 @@
-# P6 (PROGRESS.md P6): secondary / EXPLORATORY CatBoost variants. Results never replace claim C2.
+# P6: secondary / EXPLORATORY CatBoost variants. Results never replace claim C2.
 # Run AFTER jobs/cte_full.txt with the SAME results root (RESULTS = results_cte) so the frozen-embedding and
 # expert caches in <results>/_cache are reused (cte_plus_native = cte features + CatBoost text_features: cache hits).
 # Finished jobs are skipped; re-run the file to resume. Parallel (auto): cores // 2 jobs at once.
-# Order: the cheap variants first (cte_nb, cte_residual), then the CatBoost native-text ones (E23: slow on many classes).
+# Order: the cheap variants first (cte_nb, cte_residual), then the CatBoost native-text ones (slow on many classes).
 # --- cte_nb (CatBoost, 20 datasets x 5 folds)
 cte_nb catboost MUL_TEXT_PRODUCT_SENTIMENT 0
 cte_nb catboost MUL_TEXT_PRODUCT_SENTIMENT 1

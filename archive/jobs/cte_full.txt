@@ -1,4 +1,4 @@
-# P5 v2 (CTE) full run (PROGRESS.md P5 v2). Results root: MyDrive/text-tabular-nlp/results_cte (fresh).
+# P5 v2 (CTE) full run. Results root: MyDrive/text-tabular-nlp/results_cte (fresh).
 # Cache on Drive (default <results>/_cache): frozen embeddings once per dataset + expert features once per
 # dataset-fold, reused by every later block. Finished jobs are skipped; re-run the file to resume.
 # --- cte catboost (100 jobs, cheapest datasets first, folds 0-4)

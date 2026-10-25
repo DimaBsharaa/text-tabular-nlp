@@ -1,4 +1,4 @@
-"""P17 analysis (archive/PROGRESS.md P17), written before any P17 result. C1-C11 stay as reported.
+"""P17 analysis, written before any P17 result. C1-C11 stay as reported.
 
 C12: is the gain robust to the method's own randomness, the assignment of training rows to the 5 cross-fitting folds?
      cte_depth_top3 with cross-fitting fold seeds 43 and 44 (methods cte_depth_top3_xs43 / _xs44), LightGBM, the 20

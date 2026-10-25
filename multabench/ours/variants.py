@@ -1,4 +1,4 @@
-"""TAR variants (docs/method_spec.md). tar_repro itself lives in tar_engine.run_tar and is never changed here.
+"""TAR variants. tar_repro itself lives in tar_engine.run_tar and is never changed here.
 
 Every variant reuses TAR's split, texts, encoder, LoRA, head, optimizer, schedule, early stopping and PCA, and changes
 only what its spec section says: `offset`, `prefix`, `prefix_offset`, `context`, `context_offset`.
@@ -49,7 +49,7 @@ def engine_version(method: str) -> str:
         return "cte/3"  # P5 v2 amendments 1+2 (cte/1 = original, cte/2 = amendment 1 only)
     from multabench.ours.depth import DEPTH_METHODS, DEPTH_VERSION
     if method in DEPTH_METHODS:  # multabench/ours/depth.py (P11)
-        if DEPTH_METHODS[method].attn:  # E52 / P18: + the attention probe (multabench/ours/attn.py)
+        if DEPTH_METHODS[method].attn:  # P18: + the attention probe (multabench/ours/attn.py)
             from multabench.ours.attn import ATTN_VERSION
             return f"{DEPTH_VERSION}+{ATTN_VERSION}"
         return DEPTH_VERSION

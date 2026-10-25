@@ -1,4 +1,4 @@
-"""P11 analysis (PROGRESS.md P11), written before any P11 result. C1-C6 stay as reported.
+"""P11 analysis, written before any P11 result. C1-C6 stay as reported.
 
 C7 (confirmation on the 36 text datasets in multabench/leaderboard/results/text_source/): cte_probe (CatBoost) vs
     leaderboard Joint Frozen (C7a) and Joint TAR (C7b); two-sided Wilcoxon on fold-averaged differences; Holm over the

@@ -1,4 +1,4 @@
-"""E52 attention probe: leakage, output columns, determinism, and that it reads a single decisive token."""
+"""Attention probe: leakage, output columns, determinism, and that it reads a single decisive token."""
 import numpy as np
 import pytest
 import torch

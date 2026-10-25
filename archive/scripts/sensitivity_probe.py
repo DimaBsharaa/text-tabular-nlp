@@ -1,4 +1,4 @@
-"""Sensitivity probe (docs/method_spec.md section 6; to run later): how much does each method's TEXT embedding move
+"""Sensitivity probe: how much does each method's TEXT embedding move
 when one structured feature of a row changes?
 
 For N test rows and each of the top-k structured features (full-fit CatBoost importance on the E5 pool), make a

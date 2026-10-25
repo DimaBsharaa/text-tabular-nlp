@@ -1,4 +1,4 @@
-"""Full-run analysis for the frozen claim C1 (PROGRESS.md, P4). Written before any full-run result exists.
+"""Full-run analysis for the frozen claim C1. Written before any full-run result exists.
 
 Primary: CatBoost, frozen_xfit_pred vs the leaderboard Joint TAR (`ft`), two-sided Wilcoxon signed-rank over the 20
 datasets on fold-averaged differences; pass = p < 0.05 AND mean difference > 0.

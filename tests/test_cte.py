@@ -346,7 +346,7 @@ def _encode_in_process(args):
 
 
 def test_parallel_jobs_encode_each_text_once(tmp_path):
-    """E24's crash: parallel jobs of one dataset raced on the same caches. With the store lock exactly one process
+    """Parallel jobs of one dataset once raced on the same caches. With the store lock exactly one process
     encodes; the others wait and read its cache (identical embeddings)."""
     import multiprocessing as mp
     args = (str(tmp_path / "c"), str(tmp_path / "lower"))

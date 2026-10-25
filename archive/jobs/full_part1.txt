@@ -1,4 +1,4 @@
-# P4 full run (PROGRESS.md P4). Results root: MyDrive/text-tabular-nlp/results_full (NOT the pilot's results/).
+# P4 full run. Results root: MyDrive/text-tabular-nlp/results_full (NOT the pilot's results/).
 # Same GPU type for every job of the full run (A100, else L4). Finished jobs are skipped; re-run to resume.
 # Part 1: everything that shares the CatBoost/LightGBM/TabM training rows (same fold fine-tunes).
 # --- tar_repro catboost (100 jobs, cheapest datasets first, folds 0-4)

@@ -89,12 +89,12 @@ def test_auto_parallel_for_every_p8_p10_jobs_file(monkeypatch):
               "archive/jobs/cte_full.txt"):
         assert rx.parallel_plan(argparse.Namespace(parallel_jobs="auto"), rx.read_jobs(join(root, f)))[0] == 6, f
     # GPU-bound jobs (the attention probe, the TabPFN learners) share one GPU: one at a time unless asked otherwise
-    for f in ("jobs/p16.txt", "jobs/p18.txt", "jobs/p18_check.txt", "jobs/p18_a100.txt"):
+    for f in ("jobs/p16.txt", "jobs/p18.txt"):
         assert rx.parallel_plan(argparse.Namespace(parallel_jobs="auto"), rx.read_jobs(join(root, f)))[0] == 1, f
 
 
 def test_dataset_lock_serialises_parallel_loads(tmp_path):
-    """E35: parallel jobs of one dataset must not read a half-downloaded file. Two threads: the second waits."""
+    """Parallel jobs of one dataset must not read a half-downloaded file. Two threads: the second waits."""
     import threading
     import time
     order = []

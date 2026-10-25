@@ -3,8 +3,8 @@
 C2 primary : CatBoost cte vs leaderboard Joint TAR (`ft`), two-sided Wilcoxon over 20 datasets on fold-averaged
              differences; pass = p < 0.05 AND positive mean. Also on 16 datasets (without Book Price, Product
              Sentiment, Baby Products, Video Games) and on the strict 14 (also without Fake Job Postings and Data
-             Scientist Salary, explored at fold 0 in E18). Amendment 2: held-out C2_heldout13 / C2_strict11 also
-             exclude Jigsaw, Wine and Spotify Genres (profiled at fold 0, E21).
+             Scientist Salary, explored at fold 0). Amendment 2: held-out C2_heldout13 / C2_strict11 also
+             exclude Jigsaw, Wine and Spotify Genres (profiled at fold 0).
 Secondary  : cte vs leaderboard Joint Frozen (`all`); LightGBM cte vs `ft` (Holm over the secondary learner tests);
              ablations cte_lex / cte_nbr / cte_num / cte_lex_insample (CatBoost) vs `ft` and vs cte.
 Also       : runtime per method, mean CatBoost importance share per feature group, expert OOF-vs-test gaps.
@@ -33,7 +33,7 @@ from p5_report import comparison, leaderboard_state, runtime_hours  # noqa: E402
 REPO_ROOT = dirname(dirname(dirname(abspath(__file__))))
 EXCLUDED_16 = ["REG_TEXT_BOOK_PRICE", "MUL_TEXT_PRODUCT_SENTIMENT", "REG_TEXT_BABIES_PRICES", "REG_TEXT_VIDEO_GAMES_SALES"]
 EXCLUDED_14 = EXCLUDED_16 + ["BIN_TEXT_FAKE_JOB_POSTING", "MUL_TEXT_DATA_SCIENTIST_SALARY"]
-# P5 v2 amendment 2: the held-out report also excludes the datasets profiled at fold 0 (E21)
+# P5 v2 amendment 2: the held-out report also excludes the datasets profiled at fold 0
 PROFILED = ["BIN_TEXT_JIGSAW_TOXICITY", "MUL_TEXT_WINE_REVIEW", "MUL_TEXT_SPOTIFY_GENRES"]
 EXCLUDED_HELDOUT13 = EXCLUDED_16 + PROFILED
 EXCLUDED_STRICT11 = EXCLUDED_14 + PROFILED

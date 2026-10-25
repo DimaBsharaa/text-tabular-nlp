@@ -1,4 +1,4 @@
-"""P9 (PROGRESS.md): development round 2 on top of cte_probe. Engine p9/1. cte/3, p6 and p7 are untouched.
+"""P9: development round 2 on top of cte_probe. Engine p9/1. cte/3, p6 and p7 are untouched.
 
 One configurable builder of the whole cte_probe feature set (lexical expert on all text columns, neighbour expert
 per view, cross-fitted linear probe on the full frozen embeddings, numeracy), so every candidate differs from the
@@ -194,7 +194,7 @@ def run_p9(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str], s
         t1 = time.time()
         rng = np.random.default_rng(SEED)
         sub = Ecat["pool"][rng.choice(len(y), size=min(len(y), 1000), replace=False)].astype(np.float64)
-        sq = (sub ** 2).sum(axis=1)  # pairwise squared distances without an (n, n, d) array (E30: 9 GB, swapped)
+        sq = (sub ** 2).sum(axis=1)  # pairwise squared distances without an (n, n, d) array (9 GB, swapped)
         d2 = np.clip(sq[:, None] + sq[None, :] - 2.0 * sub @ sub.T, 0.0, None)
         gamma = 1.0 / float(np.median(d2[np.triu_indices(len(sub), 1)]))
         rff = RBFSampler(gamma=gamma, n_components=RFF_COMPONENTS, random_state=SEED).fit(Ecat["pool"])

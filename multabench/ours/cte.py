@@ -1,4 +1,4 @@
-"""P5 v2 (PROGRESS.md, amendments 1+2): Cross-fitted Text Experts (CTE) — no fine-tuning. Engine cte/3.
+"""P5 v2: Cross-fitted Text Experts (CTE) — no fine-tuning. Engine cte/3.
 
 Learner features = structured columns + frozen e5-small-v2 PCA-30 per text column (PCA fit on training rows, in the
 learner) + cross-fitted expert predictions + target-free numeracy / form features per text column:
@@ -140,7 +140,7 @@ def _h64(texts: list[str]) -> np.ndarray:
 @contextlib.contextmanager
 def _store_lock(path: Optional[str]):
     """Exclusive lock (local disk) around read-encode-write of one frozen-embedding store. Parallel jobs on one machine
-    otherwise encode the same texts at once and race on tar_engine's lower-layer cache dir (E24's crash)."""
+    otherwise encode the same texts at once and race on tar_engine's lower-layer cache dir (this once crashed a run)."""
     if not path:
         yield
         return

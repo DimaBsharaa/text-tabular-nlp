@@ -23,7 +23,7 @@ Model folder:
     learner_model.joblib          LightGBM, TabM
   learner.joblib    upstream preprocessing state (dates, feature types, label encoder), heavy parts removed
   For learners with upstream's median filling (TabM), meta.json "fill_medians" holds the training-row medians of our
-  appended columns, applied to new rows exactly as in training (learners.py, E41).
+  appended columns, applied to new rows exactly as in training (learners.py).
 """
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-# P11 (PROGRESS.md): C8 = cte_probe LightGBM on the 20; C7 = cte_probe CatBoost on the 36 untouched text_source datasets.
+# P11: C8 = cte_probe LightGBM on the 20; C7 = cte_probe CatBoost on the 36 untouched text_source datasets.
 # Results root: MyDrive/text-tabular-nlp/results_cte. EXTRA_ARGS = ['--job_timeout_min', '240']. ~3-5 h wall on A100.
 cte_probe lgbm MUL_TEXT_SPOTIFY_GENRES 0
 cte_probe lgbm MUL_TEXT_SPOTIFY_GENRES 1

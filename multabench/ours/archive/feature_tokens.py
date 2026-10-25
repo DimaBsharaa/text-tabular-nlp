@@ -1,4 +1,4 @@
-"""Structured feature tokens for the `prefix` variants (docs/method_spec.md sections 3 and 7.8).
+"""Structured feature tokens for the `prefix` variants.
 
 token_j = W_name · E5_frozen(name_j) + value_enc_j(x_j), for the top-k structured features (by full-fit importance).
 - numerics: piecewise-linear encoding (PLE) over <= 16 pool quantile bins -> Linear(16 -> 384);

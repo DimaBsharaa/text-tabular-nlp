@@ -3,7 +3,7 @@
 Single job:
     python scripts/run_experiment.py --method tar_repro --learner catboost --dataset REG_TEXT_BOOK_PRICE --fold 0 --out results
 Job list (one "method learner dataset fold" per line, # comments allowed; each job runs in its own subprocess):
-    python scripts/run_experiment.py --jobs_file jobs/pilot_tar_repro.txt --out results
+    python scripts/run_experiment.py --jobs_file jobs/p18.txt --out results
 
 Result: <out>/<run_name>/<learner>/<dataset>/fold<k>.json — skipped if it already exists (use --force to redo).
 run_name = method, plus a suffix when a result-changing setting differs from the default (e.g. tar_repro__ep1_n200),
@@ -42,7 +42,7 @@ METHODS = ("tar_repro", "offset", "prefix", "prefix_offset", "context", "context
            "frozen0_query", "tf_num_lsa_query",
            "cte_depth", "cte_depth_mm", "cte_depth_top3", "cte_depth_sl",  # P13 depth probes (Cowork)
            "cte_depth_top3_xs43", "cte_depth_top3_xs44",  # P17: final method, cross-fitting fold seed 43 / 44
-           "cte_depth_top3_attn")  # P18: + the cross-fitted attention probe (E52)
+           "cte_depth_top3_attn")  # P18: + the cross-fitted attention probe
 DEFAULTS = {"train_examples": 10_000, "epochs": 50, "seed": 42}
 
 
@@ -130,7 +130,7 @@ def reference_scores(dataset: str, model_name: str, fold: int) -> dict:
 @contextlib.contextmanager
 def dataset_lock(name: str):
     """Exclusive local lock around a dataset's download + load. Parallel jobs of the same dataset otherwise download
-    into the same cache at once, and a job can read a half-written file (E35: NaN labels in upstream's split)."""
+    into the same cache at once, and a job can read a half-written file (NaN labels in upstream's split)."""
     import fcntl
     root = join(os.path.expanduser("~"), ".cache", "ours_locks")
     os.makedirs(root, exist_ok=True)

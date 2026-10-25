@@ -1,4 +1,4 @@
-"""E52 (PROGRESS.md, development round): a cross-fitted ATTENTION PROBE on the frozen encoder's token states.
+"""A cross-fitted ATTENTION PROBE on the frozen encoder's token states.
 
 Motivation. Every other expert reads a text cell through a mean pool (or TF-IDF counts). When one token decides the
 target (a slur for toxicity, one symptom for severity), the mean pool blurs it. Joint TAR can re-weight tokens because

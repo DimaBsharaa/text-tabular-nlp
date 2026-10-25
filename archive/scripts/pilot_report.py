@@ -1,4 +1,4 @@
-"""Pilot analysis (PROGRESS.md P1): engine-bias check, A/A control, and the advance rule for variants.
+"""Pilot analysis: engine-bias check, A/A control, and the advance rule for variants.
 
 Reads result JSONs only (pandas + scipy; no torch). Every comparison is paired on the same (dataset, fold).
     python scripts/pilot_report.py --out RESULTS                      # engine bias + A/A (whatever exists)

@@ -1,7 +1,7 @@
 """Progress table for a jobs file: which jobs are done, their scores vs upstream's CSV, TAR diagnostics, runtimes.
 
 Only needs pandas (runs in Colab's own Python as well as in .venv):
-    python scripts/progress_table.py --jobs_file jobs/pilot_tar_repro.txt --out results
+    python scripts/progress_table.py --jobs_file jobs/p18.txt --out results
 """
 from __future__ import annotations
 

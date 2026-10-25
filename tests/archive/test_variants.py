@@ -1,4 +1,4 @@
-"""CPU tests for the TAR variants (docs/method_spec.md section 6) and the structured offset module."""
+"""CPU tests for the TAR variants and the structured offset module."""
 import dataclasses
 
 import numpy as np

@@ -180,7 +180,7 @@ class OursTextMixin:
             self.tar_result = run_tar(x_fit=x_train[text_cols], y_fit=y_train, text_cols=text_cols, is_cls=self.is_cls,
                                       extra=extra, cfg=self.ours_cfg, device=self.device, cache_root=self.ours_cache_dir,
                                       dataset=self.ours_dataset, fold=self.ours_fold, variant=self.ours_variant)
-        else:  # variants also see the structured columns (docs/method_spec.md, PROGRESS.md P3)
+        else:  # variants also see the structured columns
             from multabench.ours.stacking import STACK_METHODS, run_stacking
             from multabench.ours.variants import run_variant
             struct_cols = sorted((set(self.numerical_features) | set(self.categorical_features)) - set(text_cols))
@@ -213,7 +213,7 @@ class OursTextMixin:
             else:  # P3: the head's prediction features are appended after this column's PCA components
                 feats = stack.features[col]
                 if self.USE_MEDIAN_FILLING and feats.shape[1]:
-                    # E41: learners that need complete inputs (TabM) get upstream's own rule for numerical columns,
+                    # learners that need complete inputs (TabM) get upstream's own rule for numerical columns,
                     # the training-row median (label-free), also for our appended columns (numeracy has NaN by
                     # design). CatBoost / LightGBM / TabPFN keep NaN, as before.
                     med = feats.loc[np.asarray(x_train.index)].median()

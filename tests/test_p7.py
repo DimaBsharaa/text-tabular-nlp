@@ -97,7 +97,7 @@ def test_cte3_golden_still_holds():
 
 
 def test_median_filling_for_tabm_only(tmp_path, cfg):
-    """E41: TabM (USE_MEDIAN_FILLING) gets the training-row median for NaN in our appended columns; CatBoost keeps NaN."""
+    """TabM (USE_MEDIAN_FILLING) gets the training-row median for NaN in our appended columns; CatBoost keeps NaN."""
     from multabench.datasets.objects import SupervisedTask
     from multabench.ours.learners import make_learner
     x, y = _table(n=300, task="reg")

@@ -1,4 +1,4 @@
-"""P6 (PROGRESS.md, + amendments 1-2; claim C3): secondary CatBoost variants on top of CTE (cte/3). Engines p6/2-p6/3.
+"""P6 (claim C3): secondary CatBoost variants on top of CTE (cte/3). Engines p6/2-p6/3.
 
 catboost_native_text : structured features + raw text columns as CatBoost text_features (no embeddings, no experts).
 cte_plus_native      : CTE features (same caches as cte) + the same CatBoost text_features.

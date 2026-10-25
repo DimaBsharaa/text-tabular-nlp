@@ -1,4 +1,4 @@
-"""P8 analysis (PROGRESS.md P8, approved 2026-10-16), written before any P8 result. C2 / C3 stay as reported.
+"""P8 analysis, written before any P8 result. C2 / C3 stay as reported.
 
 C4 (label-free): tf_num_lsa (CatBoost) vs leaderboard Joint Frozen (`all`), 20 datasets, fold-averaged, two-sided
     Wilcoxon. Environment control (secondary): tf_num_lsa vs our frozen0, and frozen0 vs leaderboard Joint Frozen, on the

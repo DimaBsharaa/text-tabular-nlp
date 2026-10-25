@@ -1,4 +1,4 @@
-"""P14 analysis (PROGRESS.md P14), written before any P14 result. C1-C8 stay as reported.
+"""P14 analysis, written before any P14 result. C1-C8 stay as reported.
 
 C9: cte_depth_top3 (CatBoost) vs leaderboard Joint TAR on the 20 datasets (folds 0-4); pass = p < 0.05 AND positive
     mean. Secondary: vs our cte_probe (paired). Final method = cte_depth_top3 iff C9 passes AND that paired mean > 0,
@@ -26,7 +26,7 @@ from p11_report import EARLIER, source_leaderboard  # noqa: E402
 
 REPO_ROOT = dirname(dirname(abspath(__file__)))
 C7_FOLDS = (0, 1, 2)
-EARLIER_ALL = dict(EARLIER, C8=0.01068878173828125)  # E36
+EARLIER_ALL = dict(EARLIER, C8=0.01068878173828125)
 
 
 def compare_folds(a: pd.DataFrame, b: pd.DataFrame, folds=C7_FOLDS) -> dict:

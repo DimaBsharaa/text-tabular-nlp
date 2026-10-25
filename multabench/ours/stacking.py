@@ -1,4 +1,4 @@
-"""P3 (PROGRESS.md): TAR head predictions as extra features for the learner ("stacking").
+"""P3: TAR head predictions as extra features for the learner ("stacking").
 
 Methods:
 - insample_pred     tar_repro embeddings + the full-fit tar_repro head's predictions (training rows in-sample; ablation)
@@ -31,7 +31,7 @@ from multabench.ours.archive.structured_offset import fit_structured_offset
 STACKING_ENGINE_VERSION = "stacking/1"
 K_FOLDS = 3
 SEED = 42
-# P5 (PROGRESS.md): (base embeddings, experts, mode). C2 = tar_experts, C3 = frozen_experts, the rest are ablations.
+# P5: (base embeddings, experts, mode). C2 = tar_experts, C3 = frozen_experts, the rest are ablations.
 EXPERT_METHODS = {
     "tar_experts": ("tar", ("lex", "nbr"), "oof"),
     "frozen_experts": ("frozen", ("lex", "nbr"), "oof"),

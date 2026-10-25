@@ -1,4 +1,4 @@
-"""P5 analysis (PROGRESS.md P5), written before any P5 full-run result. Reuses full_report's tested statistics.
+"""P5 analysis, written before any P5 full-run result. Reuses full_report's tested statistics.
 
 C2 primary : CatBoost tar_experts vs leaderboard Joint TAR (`ft`); two-sided Wilcoxon over 20 datasets on fold-averaged
              differences; pass = p < 0.05 AND mean > 0.

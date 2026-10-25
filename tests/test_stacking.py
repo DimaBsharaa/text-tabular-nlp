@@ -1,4 +1,4 @@
-"""CPU tests for P3 stacking (PROGRESS.md P3): cross-fitted head predictions as features."""
+"""CPU tests for P3 stacking: cross-fitted head predictions as features."""
 import dataclasses
 
 import numpy as np

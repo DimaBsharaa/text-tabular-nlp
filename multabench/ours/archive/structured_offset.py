@@ -1,4 +1,4 @@
-"""Structured-only model used by the offset / prefix / context variants (docs/method_spec.md, sections 1 and 7).
+"""Structured-only model used by the offset / prefix / context variants.
 
 5-fold out-of-fold CatBoost on the structured columns of the E5 train + val pool (the rows TAR fine-tunes on):
 - OOF predictions (class probabilities / regression values) for every pool row, each from a model that never saw

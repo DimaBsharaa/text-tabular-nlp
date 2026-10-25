@@ -62,8 +62,8 @@ with the e5-small-v2 encoder, the 384-dimensional embedding is reduced to 30 dim
 Each one measured on the benchmark, while studying it or while developing the method:
 
 1. **Over-trust.** The encoder is fine-tuned on the training rows and then embeds those same rows, so their text
-   features look better than they will on new rows: TAR's prediction head scores +0.031 higher on its own training
-   rows than on test rows (16 of 18 runs on 6 datasets, p = 0.0002). A downstream learner may trust them too much; like
+   features look better than they will on new rows: TAR's prediction head scores +0.032 higher on its own training
+   rows than on test rows (92 of 100 runs on 20 datasets). A downstream learner may trust them too much; like
    point 2, this is a motivation, not a measured cause.
 2. **PCA does not look at the target.** 384 → 30 dimensions keeps the directions in which the texts vary most, not
    necessarily the ones that predict the target. This is a motivation, not a measured cause of Joint TAR's shortfall (the
@@ -180,16 +180,6 @@ check them against the raw result files ([`results/README.md`](results/README.md
 | 02 | [Results](notebooks/02_results.ipynb) | Every comparison with the baselines: per learner, per dataset, consistency, noise, task type, class imbalance, ablations, the 36 further datasets, trust checks |
 | – | [Colab runner](notebooks/colab_run.ipynb) | Runs a jobs file of experiments on a Colab GPU, results to Google Drive |
 
-## How we got here
-
-The method was reached in steps, each tested on development splits of the training rows and then, once specified in
-advance, on the full benchmark. Fine-tuning variants that put the structured columns into the encoder's input did not
-beat Joint TAR. Cross-fitting the fine-tuned head fixed the over-trust but cost 22 GPU-hours and was no better, which
-raised the question of whether the target-awareness needs fine-tuning at all. Cheap frozen experts matched Joint TAR;
-a probe on the full embedding, then probes on the inner layers, took it clearly past, and an attention probe on the
-frozen token states removed the last dataset Joint TAR won with all five learners (Jigsaw Toxicity). Every stage, with its numbers:
-[`archive/README.md`](archive/README.md).
-
 ## Limitations
 
 - **Smaller gains on new data.** On 36 further datasets the gain is positive but small, and not significant after
@@ -212,7 +202,7 @@ reports/                  the pre-registered analysis of each final claim (p14 t
 notebooks/                01 benchmark study, 02 results, the Colab runner
 jobs/                     the jobs files of the final runs
 paper/                    the paper (LaTeX)
-archive/                  development history: lab notebook, earlier raw results, reports, jobs, scripts
+archive/                  raw results and analyses of the earlier comparisons (Tables 2 and 4)
 tests/                    unit and end-to-end tests
 multabench/ (the rest), benchmark.py   upstream MulTaBench, unmodified
 ```

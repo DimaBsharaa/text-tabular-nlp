@@ -74,7 +74,7 @@ def test_every_depth_variant_end_to_end(tmp_path, cfg, method, task):
     assert np.isfinite(f[dcols].to_numpy()).all()
     assert set(d["depth"]["layer_oof_metric"]) == set(range(1, 13))
     acols = [c for c in f.columns if c.startswith("attn")]
-    if spec.attn:  # E52: the attention probe's columns follow the depth columns, same column budget
+    if spec.attn:  # the attention probe's columns follow the depth columns, same column budget
         assert len(acols) == k and np.isfinite(f[acols].to_numpy()).all()
         assert d["depth"]["attn"]["layer"] == d["depth"]["ranked_layers"][0]
     else:

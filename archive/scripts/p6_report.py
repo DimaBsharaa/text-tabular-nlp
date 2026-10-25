@@ -1,6 +1,6 @@
 """P6 analysis, written before any P6 result. Never changes claim C2 (scripts/cte_report.py).
 
-Claim C3 (PROGRESS.md, pre-registered 2026-10-14; P6 amendment 2, 2026-10-15): cte_nb and cte_residual (CatBoost)
+Claim C3: cte_nb and cte_residual (CatBoost)
 each vs leaderboard Joint TAR (`ft`); two-sided Wilcoxon over 20 datasets on fold-averaged differences, Holm over these
 2 tests; pass = Holm-adjusted p < 0.05 AND positive mean. Also the held-out 13 (Holm over the same 2, secondary).
 catboost_native_text / cte_plus_native were dropped for runtime (amendment 2); finished catboost_native_text jobs are

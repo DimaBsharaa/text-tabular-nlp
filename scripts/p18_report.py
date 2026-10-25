@@ -1,6 +1,6 @@
-"""P18 analysis (archive/PROGRESS.md P18), written before any P18 result. C1-C12 stay as reported.
+"""P18 analysis, written before any P18 result. C1-C12 stay as reported.
 
-C13: cte_depth_top3_attn (the final method + the cross-fitted attention probe, E52) vs the leaderboard Joint TAR of
+C13: cte_depth_top3_attn (the final method + the cross-fitted attention probe) vs the leaderboard Joint TAR of
      the SAME learner, for each of the 5 learners; the 20 datasets (TabPFN: the 18 with a leaderboard baseline),
      folds 0-4, fold-averaged; two-sided Wilcoxon over datasets; Holm over the 5 learners; a learner passes if
      Holm p < 0.05 AND the mean gain is positive.

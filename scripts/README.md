@@ -25,5 +25,5 @@
 | | [`phase0_diagnostics.py`](phase0_diagnostics.py) | What the published baselines show before any method was built → [`reports/phase0/`](../reports/phase0/), notebook 01 |
 | | [`depth_profile.py`](depth_profile.py) | Layer-by-layer probe scores on training rows, used while developing the depth probes |
 
-The `pNN` names refer to the pre-registration in [`archive/PROGRESS.md`](../archive/PROGRESS.md) that each analysis
-belongs to; each report script was committed before its run.
+The `pNN` names are the pre-registered comparisons each analysis belongs to (Table 4 of the paper); each report
+script was committed before its run.

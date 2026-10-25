@@ -1,4 +1,4 @@
-"""P10 analysis (PROGRESS.md P10), written before any P10 result. C1-C5 stay as reported.
+"""P10 analysis, written before any P10 result. C1-C5 stay as reported.
 
 C6: p9_query (cte_probe with the e5 "query:" prefix, CatBoost) vs leaderboard Joint TAR (`ft`), 20 datasets,
     fold-averaged, two-sided Wilcoxon; pass = p < 0.05 AND positive mean.

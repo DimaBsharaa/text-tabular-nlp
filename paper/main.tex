@@ -62,9 +62,9 @@ columns for a tabular learner. In \emph{Joint Frozen} the encoder is used as pub
 layers are first fine-tuned on the target with LoRA~\citep{hu2022lora}, which makes the embeddings target-aware and
 provides the main baseline for our evaluation.
 
-Five considerations shape our design: (i)~in our pilot reimplementation of Joint TAR, the fine-tuned prediction head
+Five considerations shape our design: (i)~in our reimplementation of Joint TAR, the fine-tuned prediction head
 scored an average of \leakGap{} higher on its own training rows than on test rows, with a positive gap in \leakPos{}
-of \leakN{} runs across six datasets, motivating cross-fitted expert predictions; (ii)~PCA keeps the directions of
+of \leakN{} runs across \leakDatasets{} datasets, motivating cross-fitted expert predictions; (ii)~PCA keeps the directions of
 largest variance, not necessarily those that predict the target, motivating a probe on the full embeddings before
 compression; (iii)~only the last encoder layer is read, although our out-of-fold layer probes on training rows
 identify a layer other than the last as the most predictive in \depthInner{} of 20 datasets (Figure~\ref{fig:depth}b), motivating depth probes;

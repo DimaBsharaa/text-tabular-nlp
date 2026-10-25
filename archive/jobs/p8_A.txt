@@ -1,4 +1,4 @@
-# P8 part A (PROGRESS.md P8, claim C5): cte_probe, CatBoost, 20 datasets x 5 folds. ~3.6 h wall on A100.
+# P8 part A (claim C5): cte_probe, CatBoost, 20 datasets x 5 folds. ~3.6 h wall on A100.
 # Results root: MyDrive/text-tabular-nlp/results_cte (reuses the CTE caches). Longest datasets first.
 cte_probe catboost MUL_TEXT_SPOTIFY_GENRES 0
 cte_probe catboost MUL_TEXT_SPOTIFY_GENRES 1

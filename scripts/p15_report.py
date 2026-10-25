@@ -1,4 +1,4 @@
-"""P15 analysis (PROGRESS.md P15), written before any P15 result. C1-C9 stay as reported.
+"""P15 analysis, written before any P15 result. C1-C9 stay as reported.
 
 C10: cte_depth_top3 with LightGBM and with TabM, each vs the leaderboard Joint TAR of the same learner (20 datasets,
      folds 0-4, two-sided Wilcoxon), Holm over the 2; pass = Holm p < 0.05 AND positive mean.
@@ -20,7 +20,7 @@ from p5_report import comparison, leaderboard_state  # noqa: E402
 from p14_report import EARLIER_ALL  # noqa: E402
 
 REPO_ROOT = dirname(dirname(abspath(__file__)))
-C9_P = 0.0023250579833984375  # E38
+C9_P = 0.0023250579833984375
 
 
 def p15_report(out: str) -> dict:

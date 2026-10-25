@@ -1,4 +1,4 @@
-"""CPU tests for P5 experts (PROGRESS.md P5): OOF never sees own label, determinism, in-sample leaks, PCA on train
+"""CPU tests for P5 experts: OOF never sees own label, determinism, in-sample leaks, PCA on train
 only, tiny end-to-end for every P5 method."""
 import dataclasses
 

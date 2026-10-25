@@ -1,4 +1,4 @@
-"""P16 analysis (PROGRESS.md P16), written before any P16 result. C1-C10 stay as reported.
+"""P16 analysis, written before any P16 result. C1-C10 stay as reported.
 
 C11: cte_depth_top3 with TabPFN-v2 and TabPFN-2.5 as the learner, each vs the leaderboard Joint TAR of the same
      learner (18 datasets: no TabPFN baseline for Spotify / Wine), folds 0-4, two-sided Wilcoxon, Holm over the 2;
@@ -19,14 +19,14 @@ from p5_report import comparison, leaderboard_state  # noqa: E402
 from p14_report import EARLIER_ALL  # noqa: E402
 
 REPO_ROOT = dirname(dirname(abspath(__file__)))
-EARLIER_PASSES = {"catboost": True, "lgbm": True, "tabm": True}  # C9 (E38), C10 (E43)
+EARLIER_PASSES = {"catboost": True, "lgbm": True, "tabm": True}  # C9, C10
 # raw two-sided Wilcoxon p-values of the earlier pre-registered tests, from reports/p14 and reports/p15
-EARLIER_P = dict(EARLIER_ALL, C9=0.0023250579833984375,  # E38
-                 **{"C7:cte_probe|vs_joint_frozen": 0.01918059220770374,  # E39
+EARLIER_P = dict(EARLIER_ALL, C9=0.0023250579833984375,
+                 **{"C7:cte_probe|vs_joint_frozen": 0.01918059220770374,
                     "C7:cte_probe|vs_joint_tar": 0.024941622250480577,
                     "C7:cte_depth_top3|vs_joint_frozen": 0.27855437609832734,
                     "C7:cte_depth_top3|vs_joint_tar": 0.016752589581301436,
-                    "C10_lgbm": 0.005580902099609375, "C10_tabm": 0.0007076263427734375})  # E43
+                    "C10_lgbm": 0.005580902099609375, "C10_tabm": 0.0007076263427734375})
 
 
 def p16_report(out: str) -> dict:

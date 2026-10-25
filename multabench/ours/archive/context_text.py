@@ -1,4 +1,4 @@
-"""Verbalized structured context for the `context` variants (docs/method_spec.md sections 4 and 7.10).
+"""Verbalized structured context for the `context` variants.
 
 context = "; ".join(top-8 features by importance as "name=1.23 (decile 4/10)" | "name=<raw, <= 30 chars>" |
 "name=missing"); cell input = "passage: {context} | {col}: {val}". The context is capped at 80 tokens and the text

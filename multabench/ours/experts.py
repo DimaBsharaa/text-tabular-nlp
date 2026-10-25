@@ -1,4 +1,4 @@
-"""P5 (PROGRESS.md): cheap label-aware text "experts" whose out-of-fold predictions are stacked as learner features.
+"""P5: cheap label-aware text "experts" whose out-of-fold predictions are stacked as learner features.
 
 LEGACY (P5 v1, engine experts/1; superseded by P5 v2 = multabench/ours/cte.py, never run as a claim): LexicalExpert,
 NeighbourExpert and compute_expert_features below implement P5 v1 only (used by stacking.run_experts). CTE (cte/3)

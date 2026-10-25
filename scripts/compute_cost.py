@@ -2,7 +2,7 @@
 machine -> results/compute_cost.csv (read by notebooks/02_results.ipynb).
     python scripts/compute_cost.py --export <P16 export>/results
 - Joint TAR: our re-implementation's fine-tuning + encoding seconds (GPU; reports/tables/fold_scores.csv, method
-  tar_repro). Its fast path is about 11x faster per epoch than upstream's implementation (archive/PROGRESS.md E6).
+  tar_repro). Its fast path is about 11x faster per epoch than upstream's implementation.
 - Ours: the cte_depth_top3 feature seconds (experts, probe, layer states, depth probes; CPU, 6 threads, 2 jobs in
   parallel) of the TabPFN-v2 run, the one run in which every expert and probe was built from scratch (no cache hits;
   the frozen embeddings were cached and take seconds).

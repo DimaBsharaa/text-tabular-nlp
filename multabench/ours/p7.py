@@ -1,4 +1,4 @@
-"""P7 (PROGRESS.md): development round on top of CTE. Engine p7/1. cte/3 is untouched: label-aware variants call
+"""P7: development round on top of CTE. Engine p7/1. cte/3 is untouched: label-aware variants call
 cte.run_cte("cte") (same caches) and append extra feature groups; label-free variants start from frozen PCA only.
 
 Extra feature groups (all fitted on the learner's training rows only; val/test rows are only transformed):

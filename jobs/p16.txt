@@ -1,4 +1,4 @@
-# P16 (PROGRESS.md, claim C11): cte_depth_top3 with TabPFN-v2 and TabPFN-2.5, 18 datasets x 5 folds.
+# P16 (claim C11): cte_depth_top3 with TabPFN-v2 and TabPFN-2.5, 18 datasets x 5 folds.
 # Results root: MyDrive/text-tabular-nlp/results_cte. EXTRA_ARGS = ['--job_timeout_min', '240', '--parallel_jobs', '2'].
 cte_depth_top3 tabpfnv2 MUL_TEXT_US_ACCIDENTS 0
 cte_depth_top3 tabpfnv2 MUL_TEXT_US_ACCIDENTS 1

@@ -37,3 +37,7 @@ archive/paper_notes/
 CLAUDE.md
 !paper/figures/
 !reports/figures/
+
+# the lab notebook: kept locally, not part of the repository
+archive/PROGRESS.md
+trash/

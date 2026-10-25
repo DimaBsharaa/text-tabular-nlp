@@ -1,4 +1,4 @@
-# P14 part A (PROGRESS.md P14, claim C9): cte_depth_top3, CatBoost, 20 datasets x 5 folds. ~4-4.5 h on A100.
+# P14 part A (claim C9): cte_depth_top3, CatBoost, 20 datasets x 5 folds. ~4-4.5 h on A100.
 # Results root: MyDrive/text-tabular-nlp/results_cte. EXTRA_ARGS = ['--job_timeout_min', '240']. Longest first.
 cte_depth_top3 catboost MUL_TEXT_SPOTIFY_GENRES 0
 cte_depth_top3 catboost MUL_TEXT_SPOTIFY_GENRES 1

@@ -114,7 +114,7 @@ def test_prompt_uses_target_name_not_values(tmp_path, cfg, monkeypatch):
 
 
 def test_rff_gamma_memory_light(tmp_path, cfg):
-    """E30 bug: the gamma heuristic built an (n, n, d) array (9 GB for 3 text columns). Now (n, n) only."""
+    """Bug: the gamma heuristic built an (n, n, d) array (9 GB for 3 text columns). Now (n, n) only."""
     import tracemalloc
     x, y = _table(n=300, task="bin")
     tracemalloc.start()

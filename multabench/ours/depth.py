@@ -1,4 +1,4 @@
-"""P11 (PROGRESS.md): Depth probes — target-aware read-outs of EVERY layer of the frozen encoder. Engine depth/1.
+"""P11: Depth probes — target-aware read-outs of EVERY layer of the frozen encoder. Engine depth/1.
 
 Motivation. Joint TAR adapts the top 3 of e5-small-v2's 12 layers with LoRA and then reads only the final layer.
 Our cte_probe also reads only the final layer (a cross-fitted Ridge on the L2-normalised mean pool). Probing work on
@@ -56,7 +56,7 @@ class DepthSpec:
     layers: Optional[tuple] = None  # None = all layers 1..L (hidden_states[1:]); 0 would be the embedding layer
     top_k: int = 3
     alphas: tuple = (1.0, 3.0, 10.0, 30.0, 100.0, 300.0)  # wider than cte's (0.3..10): standardised layer states
-    attn: bool = False  # E52: + a cross-fitted attention probe on the best layer's token states (multabench/ours/attn.py)
+    attn: bool = False  # + a cross-fitted attention probe on the best layer's token states (multabench/ours/attn.py)
 
     def cte_config(self):
         return dataclasses.replace(cte.CTE_CONFIG, ridge_alphas=self.alphas)
@@ -67,10 +67,10 @@ DEPTH_METHODS = {
     "cte_depth_mm": DepthSpec(pooling="meanmax"),
     "cte_depth_top3": DepthSpec(aggregate="top3"),
     "cte_depth_sl": DepthSpec(aggregate="sl"),
-    # Development round E51 (exploratory until pre-registered):
+    # Development round (exploratory until pre-registered):
     "cte_depth_top3_mm": DepthSpec(pooling="meanmax", aggregate="top3"),  # max pool keeps single-token signals
     "cte_depth_cat3": DepthSpec(aggregate="cat3"),  # one probe on the 3 best layers together, not their mean
-    "cte_depth_top3_attn": DepthSpec(aggregate="top3", attn=True),  # E52: + token-level attention probe
+    "cte_depth_top3_attn": DepthSpec(aggregate="top3", attn=True),  # + token-level attention probe
 }
 
 
@@ -326,7 +326,7 @@ def run_depth(method: str, x_fit: DataFrame, y_fit: Series, text_cols: list[str]
         new[f"depthtop{spec.top_k}:{ALL_COLS}"] = {k: np.mean([per_layer[l][0] if k == "pool" else per_layer[l][1][k]
                                                                for l in top], axis=0) for k in splits}
     attn_meta, attn_fit = None, {}
-    if spec.attn:  # E52: token-level attention probe on the best-ranked layer (training-row OOF selection, as top3)
+    if spec.attn:  # token-level attention probe on the best-ranked layer (training-row OOF selection, as top3)
         from multabench.ours import attn
         layer_a = ranked[0]
 
