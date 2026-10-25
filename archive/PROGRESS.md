@@ -2480,3 +2480,24 @@ Features for the learner = structured columns (upstream preprocessing)
 - README: "Runs on Linux or macOS; on Windows use WSL" (`fcntl` locks in `cte.py` / `run_experiment.py`, `os.killpg`
   in the runner). The reader-facing README, `results/README.md` and notebook 02 state the final hardware (A100) only;
   the T4 history stays in this notebook and in `archive/results/raw/p18_t4/`.
+
+## E65 — Paper checked line by line against the official NeurIPS 2026 template (no number change)   (2026-10-25)
+- **Commit:** the one after 9252b11. **Question:** does the paper follow every instruction of the NeurIPS 2026 template?
+- **Style file:** `paper/neurips_2026.sty` is byte-identical (SHA-256 c3fc2894…) to the one in the official kit
+  (media.neurips.cc/Conferences/NeurIPS2026/Formatting_Instructions_For_NeurIPS_2026.zip); our template reference
+  equals its `neurips_2026.tex`. The official template, compiled the same way, measures as ours: title 17.2 pt
+  (LaTeX's 17 pt, `\@xviipt`), captions flush left, Table 1 caption 29.0 pt above its top rule, 70 lines protruding
+  ≤ 2.6 pt into the right margin (microtype; ours ≤ 2.6 pt as well, so no fix).
+- **Fixed:** (1) headings flush left: the three Related-work labels sat mid-line ("Probing." at x = 199.9 pt), now
+  removed (Related work is one paragraph, text unchanged); `\paragraph` everywhere would cost ~7 lines and break
+  the 4-page limit, labels on their own paragraphs ~5 lines. (2) take-away sentences in the captions of Figure 1 and
+  Tables 2–5 (approved; Figure 1 and Table 2 worded for accuracy: numeracy columns are also added; the first four
+  build-up rows are single parts). (3) figure text ≥ 6 pt as printed (was 5.4 pt in Figure 2a, whose title ran past
+  the figure and shrank it; Figure 2b labels even layers). (4) Figure 3: a marker shape per learner (grayscale-legible).
+- **Not added:** acknowledgments/funding section (a NeurIPS conference rule; not among the course's required
+  sections). Checklist excluded as before. `preprint` option kept (the course needs the author's name).
+- **Checks:** main text ends on page 4, References at the top of page 5, 7 pages, US Letter, no Type 3 fonts, no
+  undefined references; audit PASS (480 raw JSONs → CSVs → tables/macros → PDF text); `check_fold_scores.py` 3,195
+  rows, 0 mismatches; `check_recompute.py` CatBoost +0.0192, 18/20; `pytest` 316 passed, 1 skipped, exit 0 (49.8 min,
+  one run); 0 upstream files changed. **Next:** the author compiles the Overleaf zip with pdfLaTeX (the template's
+  required engine; our builds use Tectonic) and the two PDFs are compared before the `submission` tag.

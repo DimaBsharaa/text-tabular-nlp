@@ -81,18 +81,18 @@ learners; we analyze feature contributions, cross-fitting and encoder depth. Cod
 
 \section{Related work}
 \label{sec:related}
-\textbf{Text-tabular learning.} MulTaBench~\citep{arazi2026multabench} compares five learners on text- and
+MulTaBench~\citep{arazi2026multabench} compares five learners on text- and
 image-tabular datasets under unimodal, frozen and target-aware (TAR) conditions; TAR follows the representation tuning
 of TabSTAR~\citep{arazi2025tabstar}, an end-to-end model that reads the text itself. We improve the modular pipeline
 instead: our method retains the frozen e5-small-v2 encoder~\citep{wang2022e5}, while the Joint TAR baseline adapts it
 using LoRA~\citep{hu2022lora}. The learners are gradient-boosted trees (CatBoost~\citep{prokhorenkova2018catboost},
 LightGBM~\citep{ke2017lightgbm}), a parameter-efficient MLP ensemble (TabM~\citep{gorishniy2025tabm}) and in-context
 tabular foundation models (TabPFN-v2~\citep{hollmann2025tabpfnv2}, TabPFN-2.5~\citep{grinsztajn2025tabpfn25}).
-\textbf{Stacking and cross-fitting.} Using held-out model predictions as features follows stacked
+Using held-out model predictions as features follows stacked
 generalization~\citep{wolpert1992stacked,breiman1996stacked}. Our text experts serve as first-stage predictors whose
 outputs become inputs to the tabular learner. Cross-fitting is also used to limit overfitting in double/debiased
 machine learning~\citep{chernozhukov2018dml}.
-\textbf{Probing.} Layer-wise probing has shown that different linguistic properties are accessible at different depths
+Layer-wise probing has shown that different linguistic properties are accessible at different depths
 in BERT~\citep{tenney2019bert}. We apply this idea to task-specific predictions from the layers of a frozen E5 encoder.
 
 \section{Method}
@@ -148,7 +148,8 @@ its settings, the splits and the metrics are the benchmark's own.
   \draw[->] (struct.east) -| ([xshift=4mm]f.south);
 \end{tikzpicture}
 \caption{CTE augments Joint Frozen: five supervised experts (orange) provide cross-fitted predictions; PCA features and
-our label-free numeracy features reach the learner through separate routes. The encoder remains frozen.}
+our label-free numeracy features reach the learner through separate routes. The encoder remains frozen and the tabular learner unchanged; CTE only adds
+columns to its input.}
 \label{fig:pipeline}
 \end{figure}
 
@@ -298,7 +299,8 @@ provided for consideration as additional project work.
 
 \begin{table}[h]
 \caption{Build-up of the method (CatBoost, 20 datasets, each row a full benchmark run): mean difference to Joint TAR
-(Joint Frozen: \bufrozen), datasets won and the Wilcoxon $p$.}
+(Joint Frozen: \bufrozen), datasets won and the Wilcoxon $p$. Each cumulative step raises the mean gain; the full method is ahead on the most
+datasets.}
 \label{tab:buildup}
 \centering
 \footnotesize
@@ -307,7 +309,7 @@ provided for consideration as additional project work.
 
 \begin{table}[h]
 \caption{Fold-averaged scores per dataset (AUROC for binary (B) and multiclass (M), $R^2$ for regression (R)): the
-published Joint TAR and ours, per learner; bold where ours is higher. TabPFN cannot run the two datasets with 30 and 114 classes.}
+published Joint TAR and ours, per learner; bold where ours is higher. TabPFN cannot run the two datasets with 30 and 114 classes. Ours is higher on most datasets for every learner.}
 \label{tab:per_dataset}
 \centering
 \scriptsize
@@ -320,7 +322,8 @@ published Joint TAR and ours, per learner; bold where ours is higher. TabPFN can
 Wilcoxon $p$ and the Holm-adjusted $p$ over all \nTests. Bold: the final method (C13). C1--C6 and C8 are earlier versions of the
 method; C9--C11 the depth-probe version, i.e.\ the final method without the attention probe; C7a--d the checks on 36
 further datasets (CatBoost, folds 0--2); C12a--b replicate C10 (LightGBM) with other cross-fitting fold seeds,
-specified with a Holm correction within their own family of two ($p = \seedHolm$).}
+specified with a Holm correction within their own family of two ($p = \seedHolm$). The final method remains significant after correcting over all
+\nTests{} tests.}
 \label{tab:tests}
 \centering
 \scriptsize
@@ -329,7 +332,8 @@ specified with a Holm correction within their own family of two ($p = \seedHolm$
 
 \begin{table}[h]
 \caption{The final claim per learner (Table~\ref{tab:main}): raw two-sided Wilcoxon $p$, Holm-corrected over the five
-learners (the correction registered for this claim) and over all \nTests{} pre-registered comparisons (Table~\ref{tab:tests}).}
+learners (the correction registered for this claim) and over all \nTests{} pre-registered comparisons (Table~\ref{tab:tests}). Every learner stays below 0.05 under both
+corrections.}
 \label{tab:final_p}
 \centering
 \small

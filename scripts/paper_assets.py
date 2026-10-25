@@ -297,13 +297,14 @@ def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame, buildup:
     # one color per learner (as in notebook 02, fig. 4a), the same in both results panels and their shared legend
     colors = {"CatBoost": "#2a78d6", "LightGBM": "#eb6834", "TabM": "#1baf7a", "TabPFN-v2": "#eda100",
               "TabPFN-2.5": "#e87ba4"}
+    markers = {"CatBoost": "o", "LightGBM": "s", "TabM": "^", "TabPFN-v2": "v", "TabPFN-2.5": "P"}
     # results figure (a): gain per learner with its 95% interval (rows name the learners: no legend)
     fig, ax = plt.subplots(figsize=(2.6, 1.2))
     y = np.arange(len(LEARNERS))
     for yi, l in enumerate(LEARNERS):
         sl = summ.loc[l]
-        ax.errorbar(sl.mean_gain, yi, xerr=[[sl.mean_gain - sl.ci95_low], [sl.ci95_high - sl.mean_gain]], fmt="o",
-                    color=colors[l], ms=3.6, capsize=2, lw=0.9)
+        ax.errorbar(sl.mean_gain, yi, xerr=[[sl.mean_gain - sl.ci95_low], [sl.ci95_high - sl.mean_gain]], fmt=markers[l],
+                    color=colors[l], ms=3.8, capsize=2, lw=0.9)
         ax.text(sl.ci95_high + 0.002, yi, f"+{sl.mean_gain:.3f}", va="center", fontsize=6.5, color=grey)
     ax.axvline(0, color="k", lw=0.7)
     ax.set_yticks(y, LEARNERS, fontsize=6.5); ax.set_ylim(len(LEARNERS) - 0.4, -0.6)  # inverted, padded
@@ -318,7 +319,7 @@ def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame, buildup:
     for gi, (t, _) in enumerate(groups):
         v = g[t]
         for l in LEARNERS:
-            ax.scatter([v[l]], [gi + off[l]], s=11, color=colors[l], lw=0, zorder=2)
+            ax.scatter([v[l]], [gi + off[l]], s=14, marker=markers[l], color=colors[l], lw=0, zorder=2)
         ax.scatter([v.mean()], [gi - 0.24], s=26, marker="D", color="k", zorder=3)
         ax.text(v.mean() + 0.0025, gi - 0.24, f"+{v.mean():.3f}", va="center", fontsize=6.5, color=grey)
     ax.axvline(0, color="k", lw=0.7)
@@ -329,7 +330,7 @@ def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame, buildup:
     fig.tight_layout(pad=0.3); fig.savefig(join(FIGS, "fig_tasks.pdf"), bbox_inches="tight", pad_inches=0.02); plt.close(fig)
     # shared horizontal legend below both results panels
     from matplotlib.lines import Line2D
-    handles = [Line2D([], [], marker="o", ls="", color=colors[l], ms=4, label=l) for l in LEARNERS] + \
+    handles = [Line2D([], [], marker=markers[l], ls="", color=colors[l], ms=4.5, label=l) for l in LEARNERS] + \
               [Line2D([], [], marker="D", ls="", color="k", ms=4, label="mean of the learners")]
     fig = plt.figure(figsize=(5.4, 0.22))
     fig.legend(handles=handles, loc="center", ncol=len(handles), frameon=False, fontsize=6.8, handletextpad=0.25,
@@ -341,17 +342,20 @@ def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame, buildup:
              "base experts + numeracy": "base experts + numeracy", "+ full-embedding probe": "+ full-embedding probe", "+ depth probes": "+ depth probes",
              "+ attention probe (final method)": "+ attention probe"}
     labels, gains = [short[r[0]] for r in buildup], [r[1] for r in buildup]
-    fig, ax = plt.subplots(figsize=(2.3, 1.9))
+    fig, ax = plt.subplots(figsize=(2.3, 1.95))
     yb = np.arange(len(labels))
     ax.barh(yb, gains, height=0.62, color=[orange if v > 0 else "#7b3294" for v in gains])
     for yi, v in enumerate(gains):
         ax.text(max(v, 0) + 0.0012, yi, f"{v:+.3f}".replace("-", "$-$") if abs(v) >= 0.0005 else "0.000",
-                va="center", ha="left", fontsize=6.3, color=grey)
+                va="center", ha="left", fontsize=7.2, color=grey)
     ax.axvline(0, color="k", lw=0.7)
-    ax.set_yticks(yb, labels, fontsize=6.5); ax.invert_yaxis(); ax.set_xlim(-0.04, 0.032)
-    ax.set_xticks([-0.03, 0, 0.03]); ax.tick_params(labelsize=6.5, length=2)
-    ax.set_xlabel("score $-$ Joint TAR", fontsize=7); ax.set_title("(a) build-up of the method", fontsize=7, loc="left", pad=3)
-    fig.tight_layout(pad=0.3); fig.savefig(join(FIGS, "fig_buildup.pdf"), bbox_inches="tight", pad_inches=0.02); plt.close(fig)
+    ax.set_yticks(yb, labels, fontsize=7.4); ax.invert_yaxis(); ax.set_xlim(-0.04, 0.036)
+    ax.set_xticks([-0.03, 0, 0.03]); ax.tick_params(labelsize=7.4, length=2)
+    ax.set_xlabel("score $-$ Joint TAR", fontsize=7.8)
+    title = ax.set_title("(a) build-up of the method", fontsize=7.8, loc="left", pad=3)
+    fig.tight_layout(pad=0.3)
+    pos = ax.get_position(); title.set_x(-pos.x0 / pos.width)  # start at the figure's left edge, not beyond its right
+    fig.savefig(join(FIGS, "fig_buildup.pdf"), bbox_inches="tight", pad_inches=0.02); plt.close(fig)
     # (c) depth profile heatmap
     best = hm.idxmax(axis=1)
     hm = hm.loc[best.sort_values(kind="stable").index]
@@ -359,10 +363,11 @@ def figures(summ: pd.DataFrame, hm: pd.DataFrame, per_ds: pd.DataFrame, buildup:
     fig, ax = plt.subplots(figsize=(3.15, 2.0))
     im = ax.imshow(hm.clip(-lim, lim), cmap="PuOr_r", vmin=-lim, vmax=lim, aspect="auto")
     ax.scatter(hm.idxmax(axis=1).to_numpy() - 1, range(len(hm)), s=6, color="k")
-    ax.set_xticks(range(12), range(1, 13)); ax.set_yticks(range(len(hm)), [name(d) for d in hm.index], fontsize=5.6)
+    ax.set_xticks(range(1, 12, 2), range(2, 13, 2)); ax.set_xticks(range(12), minor=True)  # every layer ticked, even ones labeled
+    ax.set_yticks(range(len(hm)), [name(d) for d in hm.index], fontsize=6.3)
     ax.set_xlabel("layer of frozen e5-small-v2"); ax.tick_params(length=1.5)
     ax.set_title("(b) where the target is best read", fontsize=7, loc="left", pad=3)
-    ax.tick_params(axis="x", labelsize=5.8); ax.tick_params(axis="y", labelsize=5.6)  # 10, 11, 12 and the names stay distinct
+    ax.tick_params(axis="x", labelsize=6.3); ax.tick_params(axis="y", labelsize=6.3); ax.tick_params(which="minor", length=1)
     cb = fig.colorbar(im, ax=ax, shrink=0.75, pad=0.02)
     cb.set_label("layer probe $-$ full-embedding probe", fontsize=6.5); cb.ax.tick_params(labelsize=6.5)
     fig.tight_layout(pad=0.3); fig.savefig(join(FIGS, "fig_depth.pdf"), bbox_inches="tight", pad_inches=0.02); plt.close(fig)
