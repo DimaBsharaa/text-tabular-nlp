@@ -28,6 +28,10 @@ def code(text: str) -> None:
 md("""
 # Results: Cross-fitted Text Experts vs. MulTaBench Joint TAR
 
+> This notebook is saved with all its outputs (tables and figures), so it can be read as it is. Re-running it needs the
+> full repository at the `submission` tag, whose `results/` and `reports/` folders it reads:
+> https://github.com/DimaBsharaa/text-tabular-nlp/tree/submission
+
 This notebook compares our method (`cte_depth_top3_attn`: cross-fitted text experts, a linear probe, depth probes and
 an attention probe on a frozen e5-small-v2 encoder) with the baselines published by
 [MulTaBench](https://github.com/alanarazi7/MulTaBench). "Depth-probe version" (`cte_depth_top3`) is the same method

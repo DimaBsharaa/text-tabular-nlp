@@ -14,6 +14,7 @@
 | | [`p18_report.py`](p18_report.py) | Claim C13 (the final method, all 5 learners), its paired comparison with the depth-probe version, and the Holm correction over all tests → [`reports/p18/`](../reports/p18/) |
 | | [`collect_fold_scores.py`](collect_fold_scores.py) | Result JSONs → [`reports/tables/fold_scores.csv`](../reports/tables/fold_scores.csv) (every run, one row each) |
 | | [`make_results.py`](make_results.py) | `fold_scores.csv` → [`results/`](../results/) (final method vs Joint TAR / Joint Frozen, per fold, dataset, learner) |
+| | [`summarize_results.py`](summarize_results.py) | the runs of `run_experiment.py` → our results tables (`results_summary.csv`, `results_per_dataset.csv`, `results_per_fold.csv`; no baselines) |
 | | [`build_results_notebook.py`](build_results_notebook.py) | Builds and runs [`notebooks/02_results.ipynb`](../notebooks/02_results.ipynb) from `results/` and `reports/` |
 | | [`depth_figures.py`](depth_figures.py) | The depth-profile figure (which encoder layer predicts the target best) |
 | | [`compute_cost.py`](compute_cost.py), [`class_balance.py`](class_balance.py) | `results/compute_cost.csv`, `results/class_balance.csv` |

@@ -126,12 +126,10 @@ Useful options: `--parallel_jobs` (default `auto`: half the CPU cores for CPU-bo
 attention probe and TabPFN, which use the GPU), `--job_timeout_min` (default 240 minutes; the longest final job took
 114), `--filter` (run matching jobs only), `--max_jobs`.
 Each JSON records the score, the leaderboard references for the same fold, runtimes, the git commit and the engine
-version. [`notebooks/colab_run.ipynb`](../../notebooks/colab_run.ipynb) runs a jobs file on a Colab GPU with results
-on Google Drive. The final runs: `jobs/p18.txt` (all five learners); of the version without the attention probe,
-`jobs/p14_A.txt` (CatBoost), `jobs/p15.txt` (LightGBM, TabM), `jobs/p16.txt` (TabPFN-v2, TabPFN-2.5), `jobs/p14_B.txt`
-(36 further datasets) and `jobs/p17.txt` (other cross-fitting seeds). Reports: `scripts/p14_report.py` to
-`p18_report.py` (`--out <results root>`); `scripts/make_results.py` and `scripts/build_results_notebook.py` rebuild
-`results/` and notebook 02.
+version. `scripts/summarize_results.py --out <results root>` turns the runs into our results tables. The final runs:
+`jobs/p18.txt` (all five learners). The jobs files of the version without the attention probe, the pre-registered
+report scripts, the scripts that rebuild the results and notebook 02, and a Colab runner are in the
+[full repository](https://github.com/DimaBsharaa/text-tabular-nlp/tree/submission).
 
 ## Code map
 
@@ -149,7 +147,7 @@ on Google Drive. The final runs: `jobs/p18.txt` (all five learners); of the vers
 
 ## Tests
 
-`.venv/bin/python -m pytest tests` covers:
+The tests are in the [full repository](https://github.com/DimaBsharaa/text-tabular-nlp/tree/submission) (`.venv/bin/python -m pytest tests`) and cover:
 - the leakage rules: out-of-fold features come from models that never saw that row; PCA, TF-IDF and target transforms are fit on
   training rows only
 - the attention probe: it recovers a decisive token on synthetic states, a row's own label never changes its own

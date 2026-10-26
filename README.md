@@ -24,7 +24,7 @@ regression), compared with the published Joint TAR score of the **same learner, 
 | TabPFN-v2 | 18 | 0.783 | 0.815 | +0.033 [0.017, 0.051] | 16 | 0.0003 |
 | TabPFN-2.5 | 18 | 0.807 | 0.829 | +0.023 [0.013, 0.033] | 18 | < 0.0001 |
 
-![Mean score per learner: Joint TAR vs ours, and the gain with its 95% interval](results/figures/fig1_mean_by_learner.png)
+![Mean score per learner: Joint TAR vs ours, and the gain with its 95% interval](https://github.com/DimaBsharaa/text-tabular-nlp/raw/submission/results/figures/fig1_mean_by_learner.png)
 
 Left: mean scores (the axis starts at 0.70 and averages AUROC with R², as the benchmark's summaries do). Right: the
 gain over Joint TAR with its 95% interval, the honest scale.
@@ -46,9 +46,9 @@ gain over Joint TAR with its 95% interval, the honest scale.
 - TabPFN cannot run 2 of the 20 datasets (Spotify Genres, 114 classes; Wine Review, 30 classes), so MulTaBench has no
   TabPFN baseline there and TabPFN rows cover 18 datasets.
 
-Full analysis, with every comparison and chart: [**notebook 02**](notebooks/02_results.ipynb). Scores per fold, dataset
-and learner: [`results/`](results/); the result file of every run of the final method and of its version without
-the attention probe (1,268 JSONs, with config, git commit and hardware): [`results/raw/`](results/raw/).
+Full analysis, with every comparison and chart: [**notebook 02**](https://github.com/DimaBsharaa/text-tabular-nlp/blob/submission/notebooks/02_results.ipynb). Scores per fold, dataset
+and learner: [`results/`](https://github.com/DimaBsharaa/text-tabular-nlp/tree/submission/results/); the result file of every run of the final method and of its version without
+the attention probe (1,268 JSONs, with config, git commit and hardware): [`results/raw/`](https://github.com/DimaBsharaa/text-tabular-nlp/tree/submission/results/raw/).
 
 ## Background
 
@@ -155,15 +155,12 @@ There is therefore no single trained model to publish: `scripts/train.py` is the
 ```bash
 # the 480 final runs (5 learners x 20 datasets x 5 folds; TabPFN: 18 datasets), about 47 GPU-hours one job at a time
 .venv/bin/python scripts/run_experiment.py --jobs_file jobs/p18.txt --out my_results/
-.venv/bin/python scripts/p18_report.py --out my_results/ --report_dir my_reports/   # the pre-registered test (claim C13)
+# our results tables from those runs (any subset works): results_summary.csv, results_per_dataset.csv, results_per_fold.csv
+.venv/bin/python scripts/summarize_results.py --out my_results/
 ```
 
-The pre-registered analysis (`p18_report.py`) and every report are in the
-[full repository](https://github.com/DimaBsharaa/text-tabular-nlp/tree/submission).
-[`notebooks/colab_run.ipynb`](notebooks/colab_run.ipynb) runs the same jobs file on a Colab GPU. From the committed
-results, `scripts/make_results.py`, `scripts/paper_assets.py` and `scripts/build_results_notebook.py` rebuild
-`results/`, every number of the paper and notebook 02; `scripts/check_recompute.py` and `scripts/check_fold_scores.py`
-check them against the raw result files ([`results/README.md`](results/README.md)).
+The pre-registered statistical tests, the scripts that rebuild every number of the paper and the checks against the
+raw result files are in the [full repository](https://github.com/DimaBsharaa/text-tabular-nlp/tree/submission), with a Colab notebook that runs the same jobs file on a GPU.
 
 ## Is this the official benchmark?
 
@@ -175,16 +172,18 @@ check them against the raw result files ([`results/README.md`](results/README.md
   are upstream's own.
 - Our re-implementation of Joint TAR reproduces the published scores (mean difference −0.002).
 - Every headline number is recomputed from the committed raw result files (`results/raw/`) by a script that uses no
-  project code ([`check_recompute.py`](scripts/check_recompute.py)), and with shuffled training labels the method falls to chance
-  ([`check_label_shuffle.py`](scripts/check_label_shuffle.py)).
+  project code ([`check_recompute.py`](https://github.com/DimaBsharaa/text-tabular-nlp/blob/submission/scripts/check_recompute.py)), and with shuffled training labels the method falls to chance
+  ([`check_label_shuffle.py`](https://github.com/DimaBsharaa/text-tabular-nlp/blob/submission/scripts/check_label_shuffle.py)).
 
 ## Notebooks
 
+In the full repository; notebook 02 is also in the results zip, with all its outputs.
+
 | # | Notebook | What it answers |
 |---|---|---|
-| 01 | [Benchmark study](notebooks/01_benchmark_study.ipynb) | What the published baselines show before building anything: how much fine-tuning adds per dataset and learner, and how large the fold noise is |
-| 02 | [Results](notebooks/02_results.ipynb) | Every comparison with the baselines: per learner, per dataset, consistency, noise, task type, class imbalance, ablations, the 36 further datasets, trust checks |
-| – | [Colab runner](notebooks/colab_run.ipynb) | Runs a jobs file of experiments on a Colab GPU, results to Google Drive |
+| 01 | [Benchmark study](https://github.com/DimaBsharaa/text-tabular-nlp/blob/submission/notebooks/01_benchmark_study.ipynb) | What the published baselines show before building anything: how much fine-tuning adds per dataset and learner, and how large the fold noise is |
+| 02 | [Results](https://github.com/DimaBsharaa/text-tabular-nlp/blob/submission/notebooks/02_results.ipynb) | Every comparison with the baselines: per learner, per dataset, consistency, noise, task type, class imbalance, ablations, the 36 further datasets, trust checks |
+| – | [Colab runner](https://github.com/DimaBsharaa/text-tabular-nlp/blob/submission/notebooks/colab_run.ipynb) | Runs a jobs file of experiments on a Colab GPU, results to Google Drive |
 
 ## Limitations
 
@@ -198,6 +197,9 @@ check them against the raw result files ([`results/README.md`](results/README.md
   cross-fitting folds, was checked with two more seeds (version without the attention probe).
 
 ## Repository layout
+
+The full repository (the code package holds `README.md`, `pyproject.toml`, `uv.lock`, `multabench/`, `jobs/p18.txt` and
+`scripts/` train, predict, run_experiment and summarize_results):
 
 ```
 multabench/ours/          the method (cte.py, p7.py, depth.py, attn.py) and its plumbing; README with every detail
