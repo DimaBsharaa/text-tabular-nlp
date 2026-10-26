@@ -1,0 +1,21 @@
+dataset_id,dataset_name,task_type,metric,CatBoost,LightGBM,TabM,TabPFN-v2,TabPFN-2.5
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,0.958,0.9511,0.9545,0.9576,0.9663
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,0.9418,0.9358,0.9414,0.9452,0.9462
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,0.7614,0.7524,0.7708,0.7672,0.7705
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),0.8599,0.854,0.8649,0.8587,0.8709
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),0.9243,0.9193,0.9279,0.9263,0.9309
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),0.9215,0.9113,0.9277,0.9198,0.9292
+MUL_TEXT_SPOTIFY_GENRES,Spotify Genres,multiclass classification,AUROC (macro one-vs-rest),0.964,0.9099,0.9637,,
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),0.977,0.9738,0.9758,0.9791,0.9824
+MUL_TEXT_WINE_REVIEW,Wine Review,multiclass classification,AUROC (macro one-vs-rest),0.9804,0.9726,0.9828,,
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),0.9107,0.9039,0.9121,0.913,0.9141
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,0.9135,0.907,0.9275,0.9209,0.9275
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,0.5934,0.6002,0.608,0.6158,0.6244
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,0.8692,0.8616,0.8641,0.8792,0.8804
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,0.505,0.4902,0.5182,0.5048,0.5192
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,0.9784,0.975,0.9814,0.9806,0.9845
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,0.5704,0.5609,0.5778,0.6164,0.6319
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,0.8734,0.8657,0.8779,0.8804,0.8954
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,0.7934,0.7802,0.7817,0.7887,0.8005
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,0.458,0.392,0.5526,0.332,0.4603
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,0.8585,0.8606,0.8679,0.8854,0.8892

@@ -1,5 +1,9 @@
 # Cross-fitted Text Experts: target-aware text features for tabular learning, without fine-tuning
 
+> This submission contains the code to run CTE (Quickstart below); the results are in the separate results zip.
+> The full repository (raw results of every run, reports, tests, notebooks):
+> https://github.com/DimaBsharaa/text-tabular-nlp/tree/submission
+
 An extension of [MulTaBench](https://github.com/alanarazi7/MulTaBench), the benchmark for tables with free-text
 columns ([arXiv:2605.10616](https://arxiv.org/abs/2605.10616)). The benchmark's strongest text pipeline, **Joint TAR**,
 fine-tunes the text encoder on each task. This repository presents a method that makes the text features target-aware
@@ -154,6 +158,8 @@ There is therefore no single trained model to publish: `scripts/train.py` is the
 .venv/bin/python scripts/p18_report.py --out my_results/ --report_dir my_reports/   # the pre-registered test (claim C13)
 ```
 
+The pre-registered analysis (`p18_report.py`) and every report are in the
+[full repository](https://github.com/DimaBsharaa/text-tabular-nlp/tree/submission).
 [`notebooks/colab_run.ipynb`](notebooks/colab_run.ipynb) runs the same jobs file on a Colab GPU. From the committed
 results, `scripts/make_results.py`, `scripts/paper_assets.py` and `scripts/build_results_notebook.py` rebuild
 `results/`, every number of the paper and notebook 02; `scripts/check_recompute.py` and `scripts/check_fold_scores.py`

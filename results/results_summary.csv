@@ -1,0 +1,6 @@
+learner,datasets,mean_score,mean_AUROC_classification,classification_datasets,mean_R2_regression,regression_datasets
+CatBoost,20,0.831,0.92,10,0.741,10
+LightGBM,20,0.819,0.908,10,0.729,10
+TabM,20,0.839,0.922,10,0.756,10
+TabPFN-v2,18,0.815,0.908,8,0.74,10
+TabPFN-2.5,18,0.829,0.914,8,0.761,10

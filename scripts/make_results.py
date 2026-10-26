@@ -2,7 +2,8 @@
 Joint TAR and Joint Frozen scores of the same learner, dataset and fold.
     python scripts/make_results.py
 Writes results/scores_per_fold.csv, results/scores_per_dataset.csv and results/summary.csv (one row per learner: mean
-scores, mean / median gain, wins, two-sided Wilcoxon p over datasets, 95% bootstrap CI of the mean gain).
+scores, mean / median gain, wins, two-sided Wilcoxon p over datasets, 95% bootstrap CI of the mean gain), and the final
+method's own scores without baselines: results/results_summary.csv, results_per_dataset.csv and results_per_fold.csv.
 """
 from __future__ import annotations
 
@@ -47,8 +48,41 @@ def main() -> dict:
     folds.round(6).to_csv(join(out, "scores_per_fold.csv"), index=False)
     per_ds.round(6).to_csv(join(out, "scores_per_dataset.csv"), index=False)
     summary.round(6).to_csv(join(out, "summary.csv"), index=False)
+    our_scores(folds, per_ds, out)
     print(summary.round(4).to_string(index=False))
     return {"folds": folds, "per_dataset": per_ds, "summary": summary}
+
+
+TASKS = {"BIN": ("binary classification", "AUROC"), "MUL": ("multiclass classification", "AUROC (macro one-vs-rest)"),
+         "REG": ("regression", "R2")}
+
+
+def dataset_name(d: str) -> str:
+    n = d.split("_TEXT_", 1)[1].replace("_", " ").title()
+    return n.replace("Us ", "US ").replace("Scimagojr", "SCImago")
+
+
+def our_scores(folds: pd.DataFrame, per_ds: pd.DataFrame, out: str) -> None:
+    """The final method's own scores only (no baselines): per learner, per dataset and per run."""
+    learners = list(LEARNERS.values())
+    label = lambda df: df.assign(dataset_name=df.dataset.map(dataset_name), task_type=df.task.map(lambda t: TASKS[t][0]),
+                                 metric=df.task.map(lambda t: TASKS[t][1])).rename(columns={"dataset": "dataset_id"})
+    wide = (label(per_ds).pivot_table(index=["dataset_id", "dataset_name", "task_type", "metric"], columns="learner",
+                                      values="ours").reindex(columns=learners).reset_index()
+            .sort_values(["task_type", "dataset_name"]))
+    wide.round(4).to_csv(join(out, "results_per_dataset.csv"), index=False)
+    runs = label(folds)[["dataset_id", "dataset_name", "task_type", "metric", "learner", "fold", "ours"]]
+    runs = runs.rename(columns={"ours": "score"}).assign(learner=lambda x: pd.Categorical(x.learner, learners))
+    runs.sort_values(["task_type", "dataset_name", "learner", "fold"]).round(6).to_csv(
+        join(out, "results_per_fold.csv"), index=False)
+    rows = []
+    for learner in learners:
+        g = per_ds[per_ds.learner == learner]
+        cls, reg = g[g.task != "REG"], g[g.task == "REG"]
+        rows.append({"learner": learner, "datasets": len(g), "mean_score": g.ours.mean(),
+                     "mean_AUROC_classification": cls.ours.mean(), "classification_datasets": len(cls),
+                     "mean_R2_regression": reg.ours.mean(), "regression_datasets": len(reg)})
+    pd.DataFrame(rows).round(3).to_csv(join(out, "results_summary.csv"), index=False)
 
 
 if __name__ == "__main__":

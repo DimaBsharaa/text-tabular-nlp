@@ -1,0 +1,481 @@
+dataset_id,dataset_name,task_type,metric,learner,fold,score
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,CatBoost,0,0.955034
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,CatBoost,1,0.953712
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,CatBoost,2,0.967326
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,CatBoost,3,0.973523
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,CatBoost,4,0.94032
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,LightGBM,0,0.946957
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,LightGBM,1,0.951745
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,LightGBM,2,0.955049
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,LightGBM,3,0.96947
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,LightGBM,4,0.932037
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,TabM,0,0.945474
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,TabM,1,0.961334
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,TabM,2,0.962758
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,TabM,3,0.967898
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,TabM,4,0.935253
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,TabPFN-v2,0,0.965938
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,TabPFN-v2,1,0.967157
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,TabPFN-v2,2,0.960152
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,TabPFN-v2,3,0.963551
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,TabPFN-v2,4,0.931031
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,TabPFN-2.5,0,0.971327
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,TabPFN-2.5,1,0.973493
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,TabPFN-2.5,2,0.966276
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,TabPFN-2.5,3,0.975755
+BIN_TEXT_FAKE_JOB_POSTING,Fake Job Posting,binary classification,AUROC,TabPFN-2.5,4,0.944806
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,CatBoost,0,0.913694
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,CatBoost,1,0.93972
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,CatBoost,2,0.948472
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,CatBoost,3,0.946529
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,CatBoost,4,0.960601
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,LightGBM,0,0.915126
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,LightGBM,1,0.930284
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,LightGBM,2,0.940074
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,LightGBM,3,0.944552
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,LightGBM,4,0.9491
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,TabM,0,0.916414
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,TabM,1,0.934169
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,TabM,2,0.949065
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,TabM,3,0.94683
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,TabM,4,0.960745
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,TabPFN-v2,0,0.918989
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,TabPFN-v2,1,0.943847
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,TabPFN-v2,2,0.947112
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,TabPFN-v2,3,0.951501
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,TabPFN-v2,4,0.964597
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,TabPFN-2.5,0,0.922563
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,TabPFN-2.5,1,0.944229
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,TabPFN-2.5,2,0.948727
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,TabPFN-2.5,3,0.95157
+BIN_TEXT_JIGSAW_TOXICITY,Jigsaw Toxicity,binary classification,AUROC,TabPFN-2.5,4,0.963769
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,CatBoost,0,0.763837
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,CatBoost,1,0.743308
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,CatBoost,2,0.780661
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,CatBoost,3,0.761005
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,CatBoost,4,0.757947
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,LightGBM,0,0.753079
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,LightGBM,1,0.736998
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,LightGBM,2,0.765376
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,LightGBM,3,0.755281
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,LightGBM,4,0.751344
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,TabM,0,0.774422
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,TabM,1,0.752695
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,TabM,2,0.779237
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,TabM,3,0.777968
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,TabM,4,0.769436
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,TabPFN-v2,0,0.767347
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,TabPFN-v2,1,0.74969
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,TabPFN-v2,2,0.781396
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,TabPFN-v2,3,0.776585
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,TabPFN-v2,4,0.760756
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,TabPFN-2.5,0,0.769876
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,TabPFN-2.5,1,0.753335
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,TabPFN-2.5,2,0.784729
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,TabPFN-2.5,3,0.781646
+BIN_TEXT_KICKSTARTER_FUNDING,Kickstarter Funding,binary classification,AUROC,TabPFN-2.5,4,0.76267
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),CatBoost,0,0.861565
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),CatBoost,1,0.852969
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),CatBoost,2,0.861386
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),CatBoost,3,0.858495
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),CatBoost,4,0.865269
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),LightGBM,0,0.854726
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),LightGBM,1,0.851546
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),LightGBM,2,0.854356
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),LightGBM,3,0.852311
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),LightGBM,4,0.856858
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),TabM,0,0.86096
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),TabM,1,0.862011
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),TabM,2,0.868625
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),TabM,3,0.861368
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),TabM,4,0.871724
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,0,0.856111
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,1,0.857059
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,2,0.859097
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,3,0.8544
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,4,0.866961
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,0,0.866439
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,1,0.866572
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,2,0.875192
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,3,0.86866
+MUL_TEXT_DATA_SCIENTIST_SALARY,Data Scientist Salary,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,4,0.877753
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),CatBoost,0,0.924911
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),CatBoost,1,0.920533
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),CatBoost,2,0.927212
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),CatBoost,3,0.923986
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),CatBoost,4,0.924882
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),LightGBM,0,0.920437
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),LightGBM,1,0.917477
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),LightGBM,2,0.923253
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),LightGBM,3,0.916821
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),LightGBM,4,0.918409
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),TabM,0,0.927462
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),TabM,1,0.925685
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),TabM,2,0.935038
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),TabM,3,0.925537
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),TabM,4,0.926014
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,0,0.924936
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,1,0.921739
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,2,0.934791
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,3,0.923602
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,4,0.926531
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,0,0.930346
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,1,0.927843
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,2,0.93748
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,3,0.926882
+MUL_TEXT_MICHELIN_RESTAURANTS,Michelin Restaurants,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,4,0.932057
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),CatBoost,0,0.895418
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),CatBoost,1,0.935399
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),CatBoost,2,0.928565
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),CatBoost,3,0.924225
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),CatBoost,4,0.923843
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),LightGBM,0,0.888603
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),LightGBM,1,0.927733
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),LightGBM,2,0.917626
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),LightGBM,3,0.926754
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),LightGBM,4,0.895984
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),TabM,0,0.918847
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),TabM,1,0.938488
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),TabM,2,0.923467
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),TabM,3,0.93099
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),TabM,4,0.92647
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,0,0.913226
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,1,0.918964
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,2,0.919319
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,3,0.928444
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,4,0.918951
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,0,0.920425
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,1,0.936933
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,2,0.927837
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,3,0.934371
+MUL_TEXT_PRODUCT_SENTIMENT,Product Sentiment,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,4,0.926319
+MUL_TEXT_SPOTIFY_GENRES,Spotify Genres,multiclass classification,AUROC (macro one-vs-rest),CatBoost,0,0.965064
+MUL_TEXT_SPOTIFY_GENRES,Spotify Genres,multiclass classification,AUROC (macro one-vs-rest),CatBoost,1,0.96174
+MUL_TEXT_SPOTIFY_GENRES,Spotify Genres,multiclass classification,AUROC (macro one-vs-rest),CatBoost,2,0.964663
+MUL_TEXT_SPOTIFY_GENRES,Spotify Genres,multiclass classification,AUROC (macro one-vs-rest),CatBoost,3,0.963504
+MUL_TEXT_SPOTIFY_GENRES,Spotify Genres,multiclass classification,AUROC (macro one-vs-rest),CatBoost,4,0.965274
+MUL_TEXT_SPOTIFY_GENRES,Spotify Genres,multiclass classification,AUROC (macro one-vs-rest),LightGBM,0,0.90728
+MUL_TEXT_SPOTIFY_GENRES,Spotify Genres,multiclass classification,AUROC (macro one-vs-rest),LightGBM,1,0.908364
+MUL_TEXT_SPOTIFY_GENRES,Spotify Genres,multiclass classification,AUROC (macro one-vs-rest),LightGBM,2,0.908226
+MUL_TEXT_SPOTIFY_GENRES,Spotify Genres,multiclass classification,AUROC (macro one-vs-rest),LightGBM,3,0.913468
+MUL_TEXT_SPOTIFY_GENRES,Spotify Genres,multiclass classification,AUROC (macro one-vs-rest),LightGBM,4,0.912109
+MUL_TEXT_SPOTIFY_GENRES,Spotify Genres,multiclass classification,AUROC (macro one-vs-rest),TabM,0,0.962436
+MUL_TEXT_SPOTIFY_GENRES,Spotify Genres,multiclass classification,AUROC (macro one-vs-rest),TabM,1,0.961976
+MUL_TEXT_SPOTIFY_GENRES,Spotify Genres,multiclass classification,AUROC (macro one-vs-rest),TabM,2,0.965311
+MUL_TEXT_SPOTIFY_GENRES,Spotify Genres,multiclass classification,AUROC (macro one-vs-rest),TabM,3,0.963325
+MUL_TEXT_SPOTIFY_GENRES,Spotify Genres,multiclass classification,AUROC (macro one-vs-rest),TabM,4,0.965504
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),CatBoost,0,0.979982
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),CatBoost,1,0.97288
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),CatBoost,2,0.977892
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),CatBoost,3,0.969769
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),CatBoost,4,0.984363
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),LightGBM,0,0.973841
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),LightGBM,1,0.972014
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),LightGBM,2,0.975893
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),LightGBM,3,0.963248
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),LightGBM,4,0.984245
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),TabM,0,0.977459
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),TabM,1,0.974432
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),TabM,2,0.975997
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),TabM,3,0.968034
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),TabM,4,0.982949
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,0,0.980916
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,1,0.976817
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,2,0.97918
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,3,0.972049
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,4,0.986298
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,0,0.982054
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,1,0.979253
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,2,0.982948
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,3,0.978487
+MUL_TEXT_US_ACCIDENTS,US Accidents,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,4,0.989193
+MUL_TEXT_WINE_REVIEW,Wine Review,multiclass classification,AUROC (macro one-vs-rest),CatBoost,0,0.978005
+MUL_TEXT_WINE_REVIEW,Wine Review,multiclass classification,AUROC (macro one-vs-rest),CatBoost,1,0.979423
+MUL_TEXT_WINE_REVIEW,Wine Review,multiclass classification,AUROC (macro one-vs-rest),CatBoost,2,0.982491
+MUL_TEXT_WINE_REVIEW,Wine Review,multiclass classification,AUROC (macro one-vs-rest),CatBoost,3,0.981694
+MUL_TEXT_WINE_REVIEW,Wine Review,multiclass classification,AUROC (macro one-vs-rest),CatBoost,4,0.98057
+MUL_TEXT_WINE_REVIEW,Wine Review,multiclass classification,AUROC (macro one-vs-rest),LightGBM,0,0.970787
+MUL_TEXT_WINE_REVIEW,Wine Review,multiclass classification,AUROC (macro one-vs-rest),LightGBM,1,0.970977
+MUL_TEXT_WINE_REVIEW,Wine Review,multiclass classification,AUROC (macro one-vs-rest),LightGBM,2,0.973298
+MUL_TEXT_WINE_REVIEW,Wine Review,multiclass classification,AUROC (macro one-vs-rest),LightGBM,3,0.974241
+MUL_TEXT_WINE_REVIEW,Wine Review,multiclass classification,AUROC (macro one-vs-rest),LightGBM,4,0.973737
+MUL_TEXT_WINE_REVIEW,Wine Review,multiclass classification,AUROC (macro one-vs-rest),TabM,0,0.980356
+MUL_TEXT_WINE_REVIEW,Wine Review,multiclass classification,AUROC (macro one-vs-rest),TabM,1,0.983135
+MUL_TEXT_WINE_REVIEW,Wine Review,multiclass classification,AUROC (macro one-vs-rest),TabM,2,0.983933
+MUL_TEXT_WINE_REVIEW,Wine Review,multiclass classification,AUROC (macro one-vs-rest),TabM,3,0.982782
+MUL_TEXT_WINE_REVIEW,Wine Review,multiclass classification,AUROC (macro one-vs-rest),TabM,4,0.983954
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),CatBoost,0,0.912141
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),CatBoost,1,0.910203
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),CatBoost,2,0.915518
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),CatBoost,3,0.907791
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),CatBoost,4,0.907962
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),LightGBM,0,0.904532
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),LightGBM,1,0.901799
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),LightGBM,2,0.909826
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),LightGBM,3,0.900169
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),LightGBM,4,0.903009
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),TabM,0,0.913658
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),TabM,1,0.912006
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),TabM,2,0.918725
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),TabM,3,0.90468
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),TabM,4,0.911454
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,0,0.912997
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,1,0.91307
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,2,0.917911
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,3,0.909338
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),TabPFN-v2,4,0.911745
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,0,0.914128
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,1,0.913271
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,2,0.91937
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,3,0.911105
+MUL_TEXT_WOMEN_CLOTHING_REVIEW,Women Clothing Review,multiclass classification,AUROC (macro one-vs-rest),TabPFN-2.5,4,0.912573
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,CatBoost,0,0.907991
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,CatBoost,1,0.950131
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,CatBoost,2,0.897434
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,CatBoost,3,0.916598
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,CatBoost,4,0.895403
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,LightGBM,0,0.90743
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,LightGBM,1,0.949505
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,LightGBM,2,0.873513
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,LightGBM,3,0.924192
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,LightGBM,4,0.880217
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,TabM,0,0.926208
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,TabM,1,0.950943
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,TabM,2,0.922816
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,TabM,3,0.946609
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,TabM,4,0.890815
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,TabPFN-v2,0,0.920149
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,TabPFN-v2,1,0.938458
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,TabPFN-v2,2,0.921123
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,TabPFN-v2,3,0.915838
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,TabPFN-v2,4,0.908994
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,TabPFN-2.5,0,0.941272
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,TabPFN-2.5,1,0.955792
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,TabPFN-2.5,2,0.873648
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,TabPFN-2.5,3,0.951372
+REG_TEXT_BABIES_PRICES,Babies Prices,regression,R2,TabPFN-2.5,4,0.915384
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,CatBoost,0,0.618709
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,CatBoost,1,0.606495
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,CatBoost,2,0.585883
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,CatBoost,3,0.586211
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,CatBoost,4,0.569721
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,LightGBM,0,0.615849
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,LightGBM,1,0.612237
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,LightGBM,2,0.609169
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,LightGBM,3,0.580971
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,LightGBM,4,0.582973
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,TabM,0,0.633424
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,TabM,1,0.626592
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,TabM,2,0.610183
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,TabM,3,0.580438
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,TabM,4,0.589282
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,TabPFN-v2,0,0.64909
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,TabPFN-v2,1,0.63031
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,TabPFN-v2,2,0.601426
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,TabPFN-v2,3,0.601718
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,TabPFN-v2,4,0.596681
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,TabPFN-2.5,0,0.659046
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,TabPFN-2.5,1,0.635313
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,TabPFN-2.5,2,0.607227
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,TabPFN-2.5,3,0.616761
+REG_TEXT_BOOK_PRICE,Book Price,regression,R2,TabPFN-2.5,4,0.603602
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,CatBoost,0,0.843992
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,CatBoost,1,0.856133
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,CatBoost,2,0.891148
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,CatBoost,3,0.870584
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,CatBoost,4,0.883906
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,LightGBM,0,0.844101
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,LightGBM,1,0.844913
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,LightGBM,2,0.886384
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,LightGBM,3,0.858412
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,LightGBM,4,0.874039
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,TabM,0,0.838909
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,TabM,1,0.858472
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,TabM,2,0.875056
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,TabM,3,0.876445
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,TabM,4,0.871774
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,TabPFN-v2,0,0.854945
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,TabPFN-v2,1,0.87726
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,TabPFN-v2,2,0.90498
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,TabPFN-v2,3,0.874039
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,TabPFN-v2,4,0.884986
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,TabPFN-2.5,0,0.860931
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,TabPFN-2.5,1,0.870815
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,TabPFN-2.5,2,0.904003
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,TabPFN-2.5,3,0.879989
+REG_TEXT_BOOK_READABILITY,Book Readability,regression,R2,TabPFN-2.5,4,0.886241
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,CatBoost,0,0.509745
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,CatBoost,1,0.495937
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,CatBoost,2,0.538742
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,CatBoost,3,0.463138
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,CatBoost,4,0.517221
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,LightGBM,0,0.500345
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,LightGBM,1,0.470811
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,LightGBM,2,0.523197
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,LightGBM,3,0.446658
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,LightGBM,4,0.509786
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,TabM,0,0.53351
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,TabM,1,0.499809
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,TabM,2,0.545952
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,TabM,3,0.475069
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,TabM,4,0.536902
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,TabPFN-v2,0,0.509998
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,TabPFN-v2,1,0.489449
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,TabPFN-v2,2,0.53874
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,TabPFN-v2,3,0.462376
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,TabPFN-v2,4,0.523495
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,TabPFN-2.5,0,0.525439
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,TabPFN-2.5,1,0.498204
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,TabPFN-2.5,2,0.553259
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,TabPFN-2.5,3,0.480554
+REG_TEXT_MERCARI_MARKETPLACE,Mercari Marketplace,regression,R2,TabPFN-2.5,4,0.538568
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,CatBoost,0,0.986404
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,CatBoost,1,0.968047
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,CatBoost,2,0.975593
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,CatBoost,3,0.983985
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,CatBoost,4,0.977759
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,LightGBM,0,0.98447
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,LightGBM,1,0.962855
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,LightGBM,2,0.975088
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,LightGBM,3,0.982915
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,LightGBM,4,0.969801
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,TabM,0,0.986234
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,TabM,1,0.969942
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,TabM,2,0.987558
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,TabM,3,0.985628
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,TabM,4,0.977669
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,TabPFN-v2,0,0.987632
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,TabPFN-v2,1,0.973837
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,TabPFN-v2,2,0.96955
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,TabPFN-v2,3,0.988742
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,TabPFN-v2,4,0.983465
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,TabPFN-2.5,0,0.98887
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,TabPFN-2.5,1,0.973113
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,TabPFN-2.5,2,0.988314
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,TabPFN-2.5,3,0.988874
+REG_TEXT_MONTGOMERY_SALARIES,Montgomery Salaries,regression,R2,TabPFN-2.5,4,0.983448
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,CatBoost,0,0.568163
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,CatBoost,1,0.602869
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,CatBoost,2,0.592214
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,CatBoost,3,0.563588
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,CatBoost,4,0.525214
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,LightGBM,0,0.561887
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,LightGBM,1,0.578451
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,LightGBM,2,0.589223
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,LightGBM,3,0.554079
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,LightGBM,4,0.520865
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,TabM,0,0.585259
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,TabM,1,0.604808
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,TabM,2,0.58573
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,TabM,3,0.56913
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,TabM,4,0.543927
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,TabPFN-v2,0,0.612859
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,TabPFN-v2,1,0.648209
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,TabPFN-v2,2,0.619937
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,TabPFN-v2,3,0.619042
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,TabPFN-v2,4,0.582052
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,TabPFN-2.5,0,0.62344
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,TabPFN-2.5,1,0.661555
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,TabPFN-2.5,2,0.647201
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,TabPFN-2.5,3,0.628539
+REG_TEXT_ROTTEN_TOMATOES,Rotten Tomatoes,regression,R2,TabPFN-2.5,4,0.598583
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,CatBoost,0,0.888757
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,CatBoost,1,0.876554
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,CatBoost,2,0.864906
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,CatBoost,3,0.859237
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,CatBoost,4,0.877553
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,LightGBM,0,0.876032
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,LightGBM,1,0.877027
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,LightGBM,2,0.855507
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,LightGBM,3,0.84896
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,LightGBM,4,0.871174
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,TabM,0,0.879791
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,TabM,1,0.888085
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,TabM,2,0.883112
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,TabM,3,0.856672
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,TabM,4,0.882055
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,TabPFN-v2,0,0.89515
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,TabPFN-v2,1,0.881935
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,TabPFN-v2,2,0.872595
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,TabPFN-v2,3,0.879873
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,TabPFN-v2,4,0.872343
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,TabPFN-2.5,0,0.891379
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,TabPFN-2.5,1,0.903832
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,TabPFN-2.5,2,0.894143
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,TabPFN-2.5,3,0.894562
+REG_TEXT_SCIMAGOJR_IMPACT,SCImago Impact,regression,R2,TabPFN-2.5,4,0.892917
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,CatBoost,0,0.812941
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,CatBoost,1,0.782764
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,CatBoost,2,0.768296
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,CatBoost,3,0.797916
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,CatBoost,4,0.805216
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,LightGBM,0,0.795562
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,LightGBM,1,0.770782
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,LightGBM,2,0.76298
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,LightGBM,3,0.779619
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,LightGBM,4,0.792072
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,TabM,0,0.791103
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,TabM,1,0.775172
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,TabM,2,0.757165
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,TabM,3,0.789078
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,TabM,4,0.796095
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,TabPFN-v2,0,0.809687
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,TabPFN-v2,1,0.771344
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,TabPFN-v2,2,0.771917
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,TabPFN-v2,3,0.796552
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,TabPFN-v2,4,0.793924
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,TabPFN-2.5,0,0.818425
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,TabPFN-2.5,1,0.785215
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,TabPFN-2.5,2,0.777285
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,TabPFN-2.5,3,0.805318
+REG_TEXT_VANCOUVER_SALARIES,Vancouver Salaries,regression,R2,TabPFN-2.5,4,0.816196
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,CatBoost,0,0.57424
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,CatBoost,1,0.52477
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,CatBoost,2,0.510662
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,CatBoost,3,0.402908
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,CatBoost,4,0.277614
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,LightGBM,0,0.531197
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,LightGBM,1,0.539454
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,LightGBM,2,0.388778
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,LightGBM,3,0.351204
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,LightGBM,4,0.149258
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,TabM,0,0.64213
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,TabM,1,0.628807
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,TabM,2,0.575028
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,TabM,3,0.534169
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,TabM,4,0.382877
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,TabPFN-v2,0,0.369721
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,TabPFN-v2,1,0.380508
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,TabPFN-v2,2,0.259072
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,TabPFN-v2,3,0.364955
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,TabPFN-v2,4,0.285667
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,TabPFN-2.5,0,0.525891
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,TabPFN-2.5,1,0.503048
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,TabPFN-2.5,2,0.376341
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,TabPFN-2.5,3,0.513595
+REG_TEXT_VIDEO_GAMES_SALES,Video Games Sales,regression,R2,TabPFN-2.5,4,0.38239
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,CatBoost,0,0.858406
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,CatBoost,1,0.85464
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,CatBoost,2,0.851259
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,CatBoost,3,0.866692
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,CatBoost,4,0.861667
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,LightGBM,0,0.859055
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,LightGBM,1,0.861972
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,LightGBM,2,0.854577
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,LightGBM,3,0.864379
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,LightGBM,4,0.862993
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,TabM,0,0.874364
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,TabM,1,0.858026
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,TabM,2,0.860569
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,TabM,3,0.87384
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,TabM,4,0.872799
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,TabPFN-v2,0,0.882578
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,TabPFN-v2,1,0.889622
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,TabPFN-v2,2,0.878935
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,TabPFN-v2,3,0.889559
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,TabPFN-v2,4,0.886457
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,TabPFN-2.5,0,0.890415
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,TabPFN-2.5,1,0.893348
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,TabPFN-2.5,2,0.878341
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,TabPFN-2.5,3,0.894344
+REG_TEXT_ZOMATO_RESTAURANTS,Zomato Restaurants,regression,R2,TabPFN-2.5,4,0.889713
